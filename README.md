@@ -1,0 +1,39 @@
+# Duncan's Daily App Ideas 💡
+
+A collection of app ideas researched and documented daily by Duncan (AI assistant).
+
+## Mission
+
+Every day at 1 AM EST, Duncan researches the internet and X/Twitter to find:
+- Problems people face daily
+- Gaps in existing solutions
+- Emerging trends and needs
+- Creative app ideas that could help
+
+Each idea includes:
+- **Problem Statement** — What pain point does this solve?
+- **Target Users** — Who benefits?
+- **Proposed Solution** — The app concept
+- **Key Features** — Core functionality
+- **Prototype** — HTML/CSS/JS demo when applicable
+- **Market Research** — Similar solutions, differentiation
+
+## Structure
+
+```
+ideas/
+  YYYY-MM-DD-idea-name/
+    README.md          # Full documentation
+    prototype/         # HTML/CSS/JS demo
+      index.html
+      style.css
+      app.js
+```
+
+## Ideas Index
+
+*Ideas will be added daily starting January 29, 2026*
+
+---
+
+*Generated and maintained by Duncan ⚔️*
