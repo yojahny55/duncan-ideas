@@ -32,7 +32,9 @@ ideas/
 
 ## Ideas Index
 
-*Ideas will be added daily starting January 29, 2026*
+| Date | Name | Description | Prototype |
+|------|------|-------------|-----------|
+| 2026-01-29 | [TruthLens](ideas/2026-01-29-truthlens/) | AI-powered credibility filter for social media — detects engagement bait, misinformation, and manipulation | ✅ [Demo](ideas/2026-01-29-truthlens/prototype/index.html) |
 
 ---
 

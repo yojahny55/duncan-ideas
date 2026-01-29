@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthLens - Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🔍</span>
+            <span class="logo-text">TruthLens</span>
+        </div>
+        <p class="tagline">AI-Powered Credibility Filter for Social Media</p>
+    </header>
+
+    <main class="container">
+        <section class="demo-section">
+            <h2>📱 Live Demo: See TruthLens in Action</h2>
+            <p class="description">Click on any post below to see the credibility analysis</p>
+            
+            <div class="feed">
+                <!-- High credibility post -->
+                <article class="post" data-credibility="92" data-type="high">
+                    <div class="post-header">
+                        <div class="avatar">📰</div>
+                        <div class="user-info">
+                            <span class="username">@APNews</span>
+                            <span class="badge verified">✓ Verified</span>
+                        </div>
+                        <div class="truthlens-badge high" title="High Credibility">
+                            <span class="score">92</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>BREAKING: Federal Reserve announces decision to maintain current interest rates, citing stable inflation data and employment figures. Full statement available at federalreserve.gov</p>
+                    </div>
+                    <div class="post-meta">
+                        <span>🕐 2 hours ago</span>
+                        <span>💬 1.2K</span>
+                        <span>🔄 5.4K</span>
+                    </div>
+                </article>
+
+                <!-- Medium credibility post -->
+                <article class="post" data-credibility="58" data-type="medium">
+                    <div class="post-header">
+                        <div class="avatar">👤</div>
+                        <div class="user-info">
+                            <span class="username">@CryptoInsider99</span>
+                        </div>
+                        <div class="truthlens-badge medium" title="Medium Credibility">
+                            <span class="score">58</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>🚀 HUGE NEWS! This altcoin is about to explode 1000x!! My source inside a major exchange confirmed they're listing it next week. Don't miss out! NFA but you'd be crazy not to buy now! 💎🙌</p>
+                    </div>
+                    <div class="post-meta">
+                        <span>🕐 45 min ago</span>
+                        <span>💬 89</span>
+                        <span>🔄 234</span>
+                    </div>
+                </article>
+
+                <!-- Low credibility post -->
+                <article class="post" data-credibility="12" data-type="low">
+                    <div class="post-header">
+                        <div class="avatar">🤖</div>
+                        <div class="user-info">
+                            <span class="username">@TruthRevealed2026</span>
+                            <span class="badge new-account">New Account</span>
+                        </div>
+                        <div class="truthlens-badge low" title="Low Credibility">
+                            <span class="score">12</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>😱 EXPOSED!! You won't BELIEVE what they're hiding from you!! The mainstream media doesn't want you to see this!! Share before it gets deleted!! WAKE UP PEOPLE!! 🔥🔥🔥</p>
+                    </div>
+                    <div class="post-meta">
+                        <span>🕐 12 min ago</span>
+                        <span>💬 2.3K</span>
+                        <span>🔄 8.9K</span>
+                    </div>
+                </article>
+
+                <!-- Another high credibility -->
+                <article class="post" data-credibility="87" data-type="high">
+                    <div class="post-header">
+                        <div class="avatar">🔬</div>
+                        <div class="user-info">
+                            <span class="username">@NatureJournal</span>
+                            <span class="badge verified">✓ Verified</span>
+                        </div>
+                        <div class="truthlens-badge high" title="High Credibility">
+                            <span class="score">87</span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>New peer-reviewed study in Nature Medicine finds promising results for mRNA-based cancer treatment in Phase 2 trials. Research conducted across 12 medical centers with 340 participants. DOI: 10.1038/nm.2026.1234</p>
+                    </div>
+                    <div class="post-meta">
+                        <span>🕐 5 hours ago</span>
+                        <span>💬 456</span>
+                        <span>🔄 2.1K</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Analysis Modal -->
+        <div class="modal" id="analysisModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <div class="modal-header">
+                    <div class="credibility-circle" id="modalScore">
+                        <span class="big-score">92</span>
+                    </div>
+                    <div class="credibility-label" id="modalLabel">High Credibility</div>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2>✨ How TruthLens Works</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Real-Time Analysis</h3>
+                    <p>Instant credibility scores as you scroll through your feed</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>AI-Powered</h3>
+                    <p>Advanced NLP detects manipulation tactics and misinformation patterns</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Detailed Explanations</h3>
+                    <p>Understand WHY content was flagged with specific red flags</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy First</h3>
+                    <p>On-device processing, no data collection, you're in control</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Demo -->
+        <section class="filter-section">
+            <h2>🎚️ Feed Filter Settings</h2>
+            <div class="filter-controls">
+                <label for="threshold">Minimum Credibility Threshold: <span id="thresholdValue">50</span></label>
+                <input type="range" id="threshold" min="0" max="100" value="50" oninput="updateThreshold(this.value)">
+                <div class="threshold-labels">
+                    <span>Show All</span>
+                    <span>Strict Filter</span>
+                </div>
+            </div>
+            <p class="filter-hint" id="filterHint">Currently showing: All posts</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>🔍 TruthLens — Cut through the noise, find the truth</p>
+        <p class="prototype-note">Prototype Demo • Duncan Ideas • January 29, 2026</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
