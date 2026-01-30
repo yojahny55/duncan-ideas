@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LastMinute Slots - Find Last-Minute Appointments</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🕐</span>
+                    <span class="logo-text">LastMinute</span>
+                </div>
+                <div class="location-picker">
+                    <span class="location-icon">📍</span>
+                    <span class="location-text">Tampa, FL</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <button class="notifications-btn" id="notificationsBtn">
+                    <span>🔔</span>
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Find Last-Minute<br><span class="gradient-text">Appointments</span></h1>
+            <p class="hero-subtitle">Book cancellation slots from salons, spas, groomers & more. Often at a discount!</p>
+        </section>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search services, salons, or locations...">
+            <button class="search-btn">🔍</button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="categories-scroll">
+            <div class="categories">
+                <button class="category-pill active" data-category="all">All</button>
+                <button class="category-pill" data-category="hair">💇 Hair</button>
+                <button class="category-pill" data-category="spa">💆 Spa</button>
+                <button class="category-pill" data-category="pets">🐕 Pets</button>
+                <button class="category-pill" data-category="fitness">💪 Fitness</button>
+                <button class="category-pill" data-category="medical">⚕️ Medical</button>
+                <button class="category-pill" data-category="beauty">💅 Beauty</button>
+                <button class="category-pill" data-category="auto">🚗 Auto</button>
+            </div>
+        </div>
+
+        <!-- Time Filter -->
+        <div class="time-filter">
+            <button class="time-pill active" data-time="now">Right Now</button>
+            <button class="time-pill" data-time="today">Today</button>
+            <button class="time-pill" data-time="tomorrow">Tomorrow</button>
+            <button class="time-pill" data-time="week">This Week</button>
+        </div>
+
+        <!-- Available Slots -->
+        <section class="slots-section">
+            <div class="section-header">
+                <h2>Available Now</h2>
+                <span class="live-badge">
+                    <span class="pulse"></span>
+                    Live
+                </span>
+            </div>
+            
+            <div class="slots-grid" id="slotsGrid">
+                <!-- Slots will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Slot Detail Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="slotModal">
+                <button class="modal-close" id="modalClose">✕</button>
+                <div class="modal-content" id="modalContent">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Success Modal -->
+        <div class="success-overlay" id="successOverlay">
+            <div class="success-modal">
+                <div class="success-icon">✓</div>
+                <h2>Booking Confirmed!</h2>
+                <p id="successMessage">Your appointment has been booked.</p>
+                <button class="btn btn-primary" id="successClose">Done</button>
+            </div>
+        </div>
+
+        <!-- Push Notification Banner -->
+        <div class="notification-banner" id="notificationBanner">
+            <div class="notification-content">
+                <span class="notification-icon">🔔</span>
+                <div class="notification-text">
+                    <strong>Get instant alerts!</strong>
+                    <span>Enable notifications for slots matching your preferences</span>
+                </div>
+            </div>
+            <div class="notification-actions">
+                <button class="btn btn-small btn-primary" id="enableNotifications">Enable</button>
+                <button class="btn btn-small btn-secondary" id="dismissNotifications">Later</button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">🔍</span>
+                <span class="nav-label">Search</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">❤️</span>
+                <span class="nav-label">Favorites</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Bookings</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
