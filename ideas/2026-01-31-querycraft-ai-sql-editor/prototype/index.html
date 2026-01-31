@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QueryCraft - AI-Powered SQL Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-header__left">
+        <div class="app-logo">
+          <div class="app-logo__icon">⚡</div>
+          <span>QueryCraft</span>
+        </div>
+        <div style="display: flex; gap: 4px;">
+          <button class="toolbar-btn" title="New Query">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <button class="toolbar-btn" title="Open File">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
+          <button class="toolbar-btn" title="Save">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="app-header__right" style="display: flex; align-items: center; gap: 16px; -webkit-app-region: no-drag;">
+        <button class="toolbar-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Settings
+        </button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar__header">
+          <div class="sidebar__search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Search tables, columns..." id="schemaSearch">
+          </div>
+        </div>
+        <div class="sidebar__content">
+          <!-- Connection -->
+          <div class="sidebar__section">
+            <div class="sidebar__section-header">
+              <span>Connection</span>
+            </div>
+            <div class="tree-item tree-item--active">
+              <span class="tree-item__icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                </svg>
+              </span>
+              <span class="tree-item__label">production_db</span>
+              <span class="status-dot" title="Connected"></span>
+            </div>
+          </div>
+
+          <!-- Tables -->
+          <div class="sidebar__section">
+            <div class="sidebar__section-header">
+              <span>Tables</span>
+              <span style="color: var(--color-text-tertiary);">12</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">users</span>
+              <span class="tree-item__badge">1.2M</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">orders</span>
+              <span class="tree-item__badge">856K</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">products</span>
+              <span class="tree-item__badge">24K</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">order_items</span>
+              <span class="tree-item__badge">2.4M</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">categories</span>
+              <span class="tree-item__badge">156</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">reviews</span>
+              <span class="tree-item__badge">412K</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">inventory</span>
+              <span class="tree-item__badge">24K</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📋</span>
+              <span class="tree-item__label">sessions</span>
+              <span class="tree-item__badge">5.1M</span>
+            </div>
+          </div>
+
+          <!-- Saved Queries -->
+          <div class="sidebar__section">
+            <div class="sidebar__section-header">
+              <span>Saved Queries</span>
+              <button style="background: none; border: none; color: var(--color-text-tertiary); cursor: pointer;">+</button>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📄</span>
+              <span class="tree-item__label">Monthly Revenue</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📄</span>
+              <span class="tree-item__label">Top Products Q4</span>
+            </div>
+            <div class="tree-item">
+              <span class="tree-item__icon">📄</span>
+              <span class="tree-item__label">User Retention</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="content">
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab tab--active">
+            <span>Query 1</span>
+            <span class="tab__close">×</span>
+          </button>
+          <button class="tab">
+            <span>Monthly Revenue.sql</span>
+            <span class="tab__close">×</span>
+          </button>
+          <button class="tab" style="color: var(--color-text-tertiary);">+</button>
+        </div>
+
+        <!-- Editor -->
+        <div class="editor-container">
+          <div class="editor-toolbar">
+            <button class="toolbar-btn toolbar-btn--primary" id="runQueryBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              Run Query
+            </button>
+            <span style="font-size: 11px; color: var(--color-text-tertiary);">⌘ Enter</span>
+            <div class="toolbar-separator"></div>
+            <button class="toolbar-btn" id="formatBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="21" y1="10" x2="3" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="21" y1="18" x2="3" y2="18"></line>
+              </svg>
+              Format
+            </button>
+            <button class="toolbar-btn" id="explainBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              Explain
+            </button>
+            <div style="flex: 1;"></div>
+            <span style="font-size: 11px; color: var(--color-text-tertiary);">Ln 5, Col 23</span>
+          </div>
+
+          <div class="editor">
+            <div class="editor__gutter">
+              <div>1</div>
+              <div>2</div>
+              <div>3</div>
+              <div>4</div>
+              <div>5</div>
+              <div>6</div>
+              <div>7</div>
+              <div>8</div>
+              <div>9</div>
+              <div>10</div>
+            </div>
+            <pre class="editor__code" id="codeEditor" contenteditable="true" spellcheck="false"><span class="sql-keyword">SELECT</span>
+  u.id,
+  u.name,
+  u.email,
+  <span class="sql-function">COUNT</span>(o.id) <span class="sql-keyword">AS</span> total_orders,
+  <span class="sql-function">SUM</span>(o.total) <span class="sql-keyword">AS</span> revenue
+<span class="sql-keyword">FROM</span> users u
+<span class="sql-keyword">LEFT JOIN</span> orders o <span class="sql-keyword">ON</span> u.id <span class="sql-operator">=</span> o.user_id
+<span class="sql-keyword">WHERE</span> o.created_at <span class="sql-operator">>=</span> <span class="sql-string">'2026-01-01'</span>
+<span class="sql-keyword">GROUP BY</span> u.id, u.name, u.email</pre>
+          </div>
+
+          <!-- Results -->
+          <div class="results-panel">
+            <div class="results-header">
+              <div class="results-tabs">
+                <button class="results-tab results-tab--active">Results</button>
+                <button class="results-tab">Messages</button>
+                <button class="results-tab">Execution Plan</button>
+              </div>
+              <div class="results-info">
+                <span>247 rows</span>
+                <span style="margin: 0 8px;">•</span>
+                <span>0.034s</span>
+              </div>
+            </div>
+            <div class="results-content">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>email</th>
+                    <th>total_orders</th>
+                    <th>revenue</th>
+                  </tr>
+                </thead>
+                <tbody id="resultsBody">
+                  <tr>
+                    <td>1</td>
+                    <td>Sarah Chen</td>
+                    <td>sarah.chen@email.com</td>
+                    <td>47</td>
+                    <td>$12,847.50</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Marcus Johnson</td>
+                    <td>m.johnson@company.io</td>
+                    <td>38</td>
+                    <td>$9,234.00</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Emily Williams</td>
+                    <td>emily.w@startup.co</td>
+                    <td>52</td>
+                    <td>$15,672.25</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>David Kim</td>
+                    <td>dkim@enterprise.net</td>
+                    <td>29</td>
+                    <td>$7,891.00</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>Lisa Anderson</td>
+                    <td>l.anderson@firm.com</td>
+                    <td>61</td>
+                    <td>$18,445.75</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>James Wilson</td>
+                    <td>jwilson@tech.io</td>
+                    <td>33</td>
+                    <td>$8,567.50</td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td>Maria Garcia</td>
+                    <td>m.garcia@agency.co</td>
+                    <td>44</td>
+                    <td>$11,234.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Panel -->
+      <aside class="ai-panel">
+        <div class="ai-panel__header">
+          <div class="ai-panel__title">
+            <div class="ai-panel__title-icon">✨</div>
+            <span>AI Assistant</span>
+          </div>
+          <button class="toolbar-btn" style="padding: 4px 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <polyline points="9 21 3 21 3 15"></polyline>
+              <line x1="21" y1="3" x2="14" y2="10"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="ai-panel__content" id="aiMessages">
+          <!-- User Message -->
+          <div class="ai-message ai-message--user">
+            <div class="ai-message__label">You</div>
+            <div class="ai-message__content">
+              Show me users who made purchases this month but haven't left a review
+            </div>
+          </div>
+
+          <!-- AI Response -->
+          <div class="ai-message ai-message--assistant">
+            <div class="ai-message__label">QueryCraft AI</div>
+            <div class="ai-message__content">
+              Here's a query to find users with purchases this month but no reviews:
+            </div>
+            <div class="ai-message__code">
+              <div class="ai-message__code-header">
+                <span>SQL</span>
+                <button style="background: none; border: none; color: var(--color-text-secondary); cursor: pointer; font-size: 11px;">Copy</button>
+              </div>
+              <div class="ai-message__code-content">
+<span class="sql-keyword">SELECT DISTINCT</span> u.id, u.name, u.email
+<span class="sql-keyword">FROM</span> users u
+<span class="sql-keyword">INNER JOIN</span> orders o <span class="sql-keyword">ON</span> u.id <span class="sql-operator">=</span> o.user_id
+<span class="sql-keyword">LEFT JOIN</span> reviews r <span class="sql-keyword">ON</span> u.id <span class="sql-operator">=</span> r.user_id
+  <span class="sql-keyword">AND</span> r.created_at <span class="sql-operator">>=</span> <span class="sql-function">DATE_TRUNC</span>(<span class="sql-string">'month'</span>, <span class="sql-function">NOW</span>())
+<span class="sql-keyword">WHERE</span> o.created_at <span class="sql-operator">>=</span> <span class="sql-function">DATE_TRUNC</span>(<span class="sql-string">'month'</span>, <span class="sql-function">NOW</span>())
+  <span class="sql-keyword">AND</span> r.id <span class="sql-keyword">IS NULL</span>;
+              </div>
+            </div>
+            <div class="ai-message__actions">
+              <button class="ai-action-btn ai-action-btn--primary" id="insertToEditor">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Insert to Editor
+              </button>
+              <button class="ai-action-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy
+              </button>
+              <button class="ai-action-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Run
+              </button>
+            </div>
+          </div>
+
+          <!-- Optimization Card -->
+          <div class="optimization-card">
+            <div class="optimization-card__header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+              </svg>
+              Optimization Suggestion
+            </div>
+            <div class="optimization-card__content">
+              Your current query could benefit from an index on <code style="background: var(--color-bg-primary); padding: 2px 6px; border-radius: 4px;">orders.created_at</code>
+            </div>
+            <div class="optimization-card__metric">
+              <span class="metric-label">Estimated time:</span>
+              <span class="metric-before">2.4s</span>
+              <span class="metric-arrow">→</span>
+              <span class="metric-after">0.08s</span>
+            </div>
+            <button class="ai-action-btn ai-action-btn--primary" style="width: 100%; justify-content: center;">
+              Apply Optimization
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Input -->
+        <div class="ai-input-container">
+          <div class="ai-input">
+            <textarea class="ai-input__textarea" id="aiInput" placeholder="Ask AI anything... 'Find users without orders', 'Optimize this query', 'Explain the execution plan'"></textarea>
+            <div class="ai-input__actions">
+              <div class="ai-input__hints">
+                <button class="ai-hint-chip" data-hint="Optimize this">⚡ Optimize</button>
+                <button class="ai-hint-chip" data-hint="Explain this query">💡 Explain</button>
+                <button class="ai-hint-chip" data-hint="Find errors">🔍 Debug</button>
+              </div>
+              <button class="toolbar-btn toolbar-btn--primary" id="sendAiBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+      <div class="status-bar__left">
+        <div class="status-item">
+          <span class="status-dot"></span>
+          <span>Connected to production_db</span>
+        </div>
+        <div class="status-item">
+          <span>PostgreSQL 15.2</span>
+        </div>
+      </div>
+      <div class="status-bar__right">
+        <div class="status-item">
+          <span>AI: GPT-4</span>
+        </div>
+        <div class="status-item">
+          <span>UTF-8</span>
+        </div>
+        <div class="status-item">
+          <span>SQL</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

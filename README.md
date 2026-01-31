@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Prototype |
 |------|------|-------------|-----------|
+| 2026-01-31 | [QueryCraft](ideas/2026-01-31-querycraft-ai-sql-editor/) | AI-native SQL editor with natural language queries, optimization suggestions, and privacy-first local AI option | ✅ [Demo](ideas/2026-01-31-querycraft-ai-sql-editor/prototype/index.html) |
 | 2026-01-30 | [LastMinute Slots](ideas/2026-01-30-lastminute-slots/) | Real-time marketplace for last-minute appointment cancellations — haircuts, spas, groomers & more | ✅ [Demo](ideas/2026-01-30-lastminute-slots/prototype/index.html) |
 | 2026-01-29 | [TruthLens](ideas/2026-01-29-truthlens/) | AI-powered credibility filter for social media — detects engagement bait, misinformation, and manipulation | ✅ [Demo](ideas/2026-01-29-truthlens/prototype/index.html) |
 
