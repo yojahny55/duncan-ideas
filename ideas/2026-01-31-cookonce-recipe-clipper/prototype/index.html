@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CookOnce - Offline-first minimalist recipe clipper. Just the recipe, nothing else.">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>CookOnce - Just the Recipe</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <button class="menu-btn" aria-label="Open menu" id="menuBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <h1 class="logo">
+          <span class="logo-icon">🍳</span>
+          CookOnce
+        </h1>
+        <button class="add-btn" aria-label="Add recipe" id="addBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Search Bar -->
+      <div class="search-container">
+        <div class="search-box">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" class="search-input" placeholder="Search recipes..." id="searchInput" aria-label="Search recipes">
+        </div>
+      </div>
+
+      <!-- Filter Tags -->
+      <div class="filter-tags" role="tablist">
+        <button class="filter-tag active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="filter-tag" data-filter="quick" role="tab" aria-selected="false">Quick</button>
+        <button class="filter-tag" data-filter="dinner" role="tab" aria-selected="false">Dinner</button>
+        <button class="filter-tag" data-filter="dessert" role="tab" aria-selected="false">Dessert</button>
+        <button class="filter-tag" data-filter="vegetarian" role="tab" aria-selected="false">Vegetarian</button>
+      </div>
+
+      <!-- Recipe Grid -->
+      <section class="recipes-section" aria-label="Your recipes">
+        <div class="section-header">
+          <h2 class="section-title">Your Recipes</h2>
+          <span class="recipe-count" id="recipeCount">3 recipes</span>
+        </div>
+        
+        <div class="recipe-grid" id="recipeGrid">
+          <!-- Recipes will be inserted here -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state hidden" id="emptyState">
+          <div class="empty-icon">📖</div>
+          <h3 class="empty-title">No recipes yet</h3>
+          <p class="empty-text">Paste a recipe URL or add your own to get started</p>
+          <button class="btn btn-primary" id="emptyAddBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Recipe
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Add Recipe Modal -->
+    <div class="modal-overlay hidden" id="addModal">
+      <div class="modal" role="dialog" aria-labelledby="modalTitle">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalTitle">Add Recipe</h2>
+          <button class="modal-close" aria-label="Close" id="modalClose">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="modal-tabs" role="tablist">
+          <button class="modal-tab active" data-tab="url" role="tab" aria-selected="true">Paste URL</button>
+          <button class="modal-tab" data-tab="manual" role="tab" aria-selected="false">Manual Entry</button>
+        </div>
+
+        <!-- URL Import Tab -->
+        <div class="tab-content active" id="urlTab">
+          <div class="form-group">
+            <label for="recipeUrl" class="form-label">Recipe URL</label>
+            <input type="url" class="form-input" id="recipeUrl" placeholder="https://example.com/recipe/...">
+            <p class="form-hint">Paste any recipe URL and we'll extract just the good stuff</p>
+          </div>
+          <button class="btn btn-primary btn-full" id="importBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Import Recipe
+          </button>
+        </div>
+
+        <!-- Manual Entry Tab -->
+        <div class="tab-content hidden" id="manualTab">
+          <div class="form-group">
+            <label for="recipeName" class="form-label">Recipe Name</label>
+            <input type="text" class="form-input" id="recipeName" placeholder="Grandma's Pasta">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prepTime" class="form-label">Prep Time</label>
+              <input type="text" class="form-input" id="prepTime" placeholder="15 min">
+            </div>
+            <div class="form-group">
+              <label for="cookTime" class="form-label">Cook Time</label>
+              <input type="text" class="form-input" id="cookTime" placeholder="30 min">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="servings" class="form-label">Servings</label>
+            <input type="number" class="form-input" id="servings" placeholder="4" min="1">
+          </div>
+          <div class="form-group">
+            <label for="ingredients" class="form-label">Ingredients</label>
+            <textarea class="form-textarea" id="ingredients" rows="5" placeholder="1 cup flour&#10;2 eggs&#10;1/2 tsp salt"></textarea>
+            <p class="form-hint">One ingredient per line</p>
+          </div>
+          <div class="form-group">
+            <label for="instructions" class="form-label">Instructions</label>
+            <textarea class="form-textarea" id="instructions" rows="6" placeholder="1. Mix dry ingredients&#10;2. Add wet ingredients&#10;3. Knead dough"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tags</label>
+            <div class="tag-select">
+              <label class="tag-checkbox">
+                <input type="checkbox" value="quick"> Quick
+              </label>
+              <label class="tag-checkbox">
+                <input type="checkbox" value="dinner"> Dinner
+              </label>
+              <label class="tag-checkbox">
+                <input type="checkbox" value="dessert"> Dessert
+              </label>
+              <label class="tag-checkbox">
+                <input type="checkbox" value="vegetarian"> Vegetarian
+              </label>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" id="saveBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Save Recipe
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recipe Detail Modal -->
+    <div class="modal-overlay hidden" id="recipeModal">
+      <div class="modal modal-large" role="dialog" aria-labelledby="recipeTitle">
+        <div class="recipe-detail">
+          <div class="recipe-detail-header">
+            <button class="back-btn" id="backBtn" aria-label="Back to recipes">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <div class="recipe-detail-actions">
+              <button class="action-btn" id="scaleBtn" aria-label="Scale recipe">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </button>
+              <button class="action-btn cook-mode-btn" id="cookModeBtn" aria-label="Enter cook mode">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 8l4 4-4 4"></path>
+                  <path d="M3 12h18"></path>
+                </svg>
+                Cook
+              </button>
+            </div>
+          </div>
+
+          <div class="recipe-detail-body" id="recipeDetailBody">
+            <!-- Recipe content will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cook Mode -->
+    <div class="cook-mode hidden" id="cookMode">
+      <div class="cook-mode-header">
+        <button class="cook-exit-btn" id="cookExitBtn" aria-label="Exit cook mode">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Exit
+        </button>
+        <span class="cook-progress" id="cookProgress">Step 1 of 5</span>
+        <button class="cook-timer-btn" id="cookTimerBtn" aria-label="Set timer">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </button>
+      </div>
+      <div class="cook-mode-content">
+        <div class="cook-step" id="cookStep">
+          <p class="cook-step-text">Mix flour and salt in a large bowl</p>
+        </div>
+        <div class="cook-nav">
+          <button class="cook-nav-btn" id="cookPrevBtn">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Previous
+          </button>
+          <button class="cook-nav-btn cook-nav-next" id="cookNextBtn">
+            Next
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="cook-ingredients-toggle">
+        <button class="toggle-btn" id="toggleIngredients">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Ingredients
+        </button>
+      </div>
+      <div class="cook-ingredients hidden" id="cookIngredients">
+        <!-- Ingredients list -->
+      </div>
+    </div>
+
+    <!-- Scale Modal -->
+    <div class="modal-overlay hidden" id="scaleModal">
+      <div class="modal modal-small" role="dialog" aria-labelledby="scaleTitle">
+        <div class="modal-header">
+          <h2 class="modal-title" id="scaleTitle">Scale Recipe</h2>
+          <button class="modal-close" id="scaleModalClose" aria-label="Close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="scale-options">
+          <p class="scale-label">Original: <span id="originalServings">4</span> servings</p>
+          <div class="scale-buttons">
+            <button class="scale-btn" data-scale="0.5">½×</button>
+            <button class="scale-btn active" data-scale="1">1×</button>
+            <button class="scale-btn" data-scale="2">2×</button>
+            <button class="scale-btn" data-scale="3">3×</button>
+          </div>
+          <div class="scale-custom">
+            <label for="customServings" class="form-label">Custom servings</label>
+            <input type="number" class="form-input" id="customServings" min="1" max="100">
+          </div>
+          <button class="btn btn-primary btn-full" id="applyScaleBtn">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="side-menu hidden" id="sideMenu">
+      <div class="side-menu-header">
+        <h2>CookOnce</h2>
+        <button class="side-menu-close" id="sideMenuClose" aria-label="Close menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <nav class="side-menu-nav">
+        <a href="#" class="side-menu-item active">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          All Recipes
+        </a>
+        <a href="#" class="side-menu-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          Favorites
+        </a>
+        <a href="#" class="side-menu-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Grocery List
+        </a>
+      </nav>
+      <div class="side-menu-footer">
+        <div class="unit-toggle">
+          <span>Units:</span>
+          <button class="unit-btn active" data-unit="imperial">Imperial</button>
+          <button class="unit-btn" data-unit="metric">Metric</button>
+        </div>
+        <div class="storage-info">
+          <span class="storage-label">Local Storage</span>
+          <div class="storage-bar">
+            <div class="storage-fill" style="width: 15%"></div>
+          </div>
+          <span class="storage-text">3 of 25 recipes (Free)</span>
+        </div>
+        <a href="#" class="upgrade-link">Upgrade to Pro →</a>
+      </div>
+    </div>
+    <div class="side-menu-backdrop hidden" id="sideMenuBackdrop"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast hidden" id="toast" role="alert">
+      <span class="toast-message">Recipe saved!</span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
