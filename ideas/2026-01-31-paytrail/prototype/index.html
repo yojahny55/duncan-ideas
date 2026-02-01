@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayTrail - Payment Tracker for Freelancers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">$</div>
+        <span class="logo-text">PayTrail</span>
+      </div>
+      
+      <nav class="nav-section">
+        <div class="nav-label">Overview</div>
+        <a href="#" class="nav-item active" data-view="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item" data-view="invoices">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          Invoices
+        </a>
+        <a href="#" class="nav-item" data-view="clients">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Clients
+        </a>
+      </nav>
+      
+      <nav class="nav-section">
+        <div class="nav-label">Tools</div>
+        <a href="#" class="nav-item" data-view="reminders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          Reminders
+        </a>
+        <a href="#" class="nav-item" data-view="forecast">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="20" x2="12" y2="10"/>
+            <line x1="18" y1="20" x2="18" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="16"/>
+          </svg>
+          Cash Flow
+        </a>
+        <a href="#" class="nav-item" data-view="insights">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          Insights
+        </a>
+      </nav>
+      
+      <nav class="nav-section">
+        <div class="nav-label">Settings</div>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          Integrations
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Settings
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">YC</div>
+          <div class="user-details">
+            <div class="user-name">Yojahny</div>
+            <div class="user-plan">Pro Plan</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Page Header -->
+      <header class="page-header">
+        <div>
+          <h1 class="page-title">Payment Dashboard</h1>
+          <p class="page-subtitle">Track your invoices and cash flow at a glance</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="importBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Import
+          </button>
+          <button class="btn btn-primary" id="newInvoiceBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Invoice
+          </button>
+        </div>
+      </header>
+      
+      <!-- Stats Grid -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Total Outstanding</span>
+            <div class="stat-icon yellow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value">$14,850</div>
+          <div class="stat-change positive">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+              <path d="M7 17l5-5 5 5"/>
+            </svg>
+            12% from last month
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Paid This Month</span>
+            <div class="stat-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value">$8,420</div>
+          <div class="stat-change positive">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+              <path d="M7 17l5-5 5 5"/>
+            </svg>
+            23% from last month
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Overdue</span>
+            <div class="stat-icon red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value">$3,200</div>
+          <div class="stat-change negative">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+              <path d="M17 7l-5 5-5-5"/>
+            </svg>
+            2 invoices past due
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Avg. Days to Pay</span>
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+          </div>
+          <div class="stat-value">18 days</div>
+          <div class="stat-change positive">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+              <path d="M7 17l5-5 5 5"/>
+            </svg>
+            3 days faster
+          </div>
+        </div>
+      </section>
+      
+      <!-- Payment Pipeline -->
+      <section class="pipeline-section">
+        <div class="section-header">
+          <h2 class="section-title">Payment Pipeline</h2>
+          <button class="btn btn-ghost btn-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            Filter
+          </button>
+        </div>
+        
+        <div class="pipeline">
+          <!-- Sent Column -->
+          <div class="pipeline-column">
+            <div class="column-header">
+              <div class="column-title">
+                <span class="column-dot sent"></span>
+                Sent
+              </div>
+              <span class="column-count">3</span>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2026-001">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">TechStart Inc</div>
+                  <div class="invoice-id">#INV-2026-001</div>
+                </div>
+                <div class="invoice-amount">$2,500</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date">Due Feb 14</span>
+                <span class="health-badge excellent">95</span>
+              </div>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2026-002">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">Creative Labs</div>
+                  <div class="invoice-id">#INV-2026-002</div>
+                </div>
+                <div class="invoice-amount">$1,800</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date">Due Feb 15</span>
+                <span class="health-badge good">82</span>
+              </div>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2026-003">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">DataFlow Corp</div>
+                  <div class="invoice-id">#INV-2026-003</div>
+                </div>
+                <div class="invoice-amount">$4,200</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date">Due Feb 20</span>
+                <span class="health-badge excellent">91</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Due Soon Column -->
+          <div class="pipeline-column">
+            <div class="column-header">
+              <div class="column-title">
+                <span class="column-dot due"></span>
+                Due Soon
+              </div>
+              <span class="column-count">2</span>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2026-004">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">Rapid Deploy</div>
+                  <div class="invoice-id">#INV-2026-004</div>
+                </div>
+                <div class="invoice-amount">$3,150</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date">Due in 3 days</span>
+                <span class="health-badge warning">68</span>
+              </div>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2026-005">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">Scale Systems</div>
+                  <div class="invoice-id">#INV-2026-005</div>
+                </div>
+                <div class="invoice-amount">$950</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date">Due tomorrow</span>
+                <span class="health-badge excellent">94</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Overdue Column -->
+          <div class="pipeline-column">
+            <div class="column-header">
+              <div class="column-title">
+                <span class="column-dot overdue"></span>
+                Overdue
+              </div>
+              <span class="column-count">2</span>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2025-089">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">SlowPay LLC</div>
+                  <div class="invoice-id">#INV-2025-089</div>
+                </div>
+                <div class="invoice-amount">$2,200</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date" style="color: var(--color-danger);">14 days late</span>
+                <span class="health-badge risk">42</span>
+              </div>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2025-092">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">Budget Builders</div>
+                  <div class="invoice-id">#INV-2025-092</div>
+                </div>
+                <div class="invoice-amount">$1,000</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date" style="color: var(--color-danger);">7 days late</span>
+                <span class="health-badge warning">55</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Paid Column -->
+          <div class="pipeline-column">
+            <div class="column-header">
+              <div class="column-title">
+                <span class="column-dot paid"></span>
+                Paid
+              </div>
+              <span class="column-count">4</span>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2025-088">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">TechStart Inc</div>
+                  <div class="invoice-id">#INV-2025-088</div>
+                </div>
+                <div class="invoice-amount">$2,800</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date" style="color: var(--color-success);">Paid Jan 28</span>
+                <span class="health-badge excellent">95</span>
+              </div>
+            </div>
+            
+            <div class="invoice-card" data-invoice="INV-2025-087">
+              <div class="invoice-header">
+                <div>
+                  <div class="invoice-client">Scale Systems</div>
+                  <div class="invoice-id">#INV-2025-087</div>
+                </div>
+                <div class="invoice-amount">$1,620</div>
+              </div>
+              <div class="invoice-footer">
+                <span class="invoice-date" style="color: var(--color-success);">Paid Jan 25</span>
+                <span class="health-badge excellent">94</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Client Health Table -->
+      <section class="clients-section">
+        <div class="table-header">
+          <h2 class="table-title">Client Health Scores</h2>
+          <div class="search-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" placeholder="Search clients..." id="clientSearch">
+          </div>
+        </div>
+        
+        <table class="client-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Health Score</th>
+              <th>Avg. Days to Pay</th>
+              <th>Total Invoices</th>
+              <th>Outstanding</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientTableBody">
+            <tr>
+              <td>
+                <div class="client-info">
+                  <div class="client-avatar" style="background: #3b82f6;">TS</div>
+                  <div>
+                    <div class="client-name">TechStart Inc</div>
+                    <div class="client-email">billing@techstart.io</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="health-score">
+                  <div class="score-bar">
+                    <div class="score-fill excellent" style="width: 95%;"></div>
+                  </div>
+                  <span class="score-value">95</span>
+                </div>
+              </td>
+              <td><span class="days-badge fast">12 days</span></td>
+              <td>8</td>
+              <td class="font-mono">$2,500</td>
+              <td class="text-right">
+                <div class="action-buttons">
+                  <button class="btn btn-ghost btn-icon btn-sm" title="Send Reminder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    </svg>
+                  </button>
+                  <button class="btn btn-ghost btn-icon btn-sm" title="View Details">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
+                      <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-info">
+                  <div class="client-avatar" style="background: #8b5cf6;">SS</div>
+                  <div>
+                    <div class="client-name">Scale Systems</div>
+                    <div class="client-email">accounts@scalesys.com</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="health-score">
+                  <div class="score-bar">
+                    <div class="score-fill excellent" style="width: 94%;"></div>
+                  </div>
+                  <span class="score-value">94</span>
+                </div>
+              </td>
+              <td><span class="days-badge fast">14 days</span></td>
+              <td>5</td>
+              <td class="font-mono">$950</td>
+              <td class="text-right">
+                <div class="action-buttons">
+                  <button class="btn btn-ghost btn-icon btn-sm" title="Send Reminder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    </svg>
+                  </button>
+                  <button class="btn btn-ghost btn-icon btn-sm" title="View Details">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
+                      <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-info">
+                  <div class="client-avatar" style="background: #22c55e;">CL</div>
+                  <div>
+                    <div class="client-name">Creative Labs</div>
+                    <div class="client-email">pay@creativelabs.co</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="health-score">
+                  <div class="score-bar">
+                    <div class="score-fill good" style="width: 82%;"></div>
+                  </div>
+                  <span class="score-value">82</span>
+                </div>
+              </td>
+              <td><span class="days-badge normal">21 days</span></td>
+              <td>3</td>
+              <td class="font-mono">$1,800</td>
+              <td class="text-right">
+                <div class="action-buttons">
+                  <button class="btn btn-ghost btn-icon btn-sm" title="Send Reminder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    </svg>
+                  </button>
+                  <button class="btn btn-ghost btn-icon btn-sm" title="View Details">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
+                      <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-info">
+                  <div class="client-avatar" style="background: #f59e0b;">RD</div>
+                  <div>
+                    <div class="client-name">Rapid Deploy</div>
+                    <div class="client-email">finance@rapiddeploy.io</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="health-score">
+                  <div class="score-bar">
+                    <div class="score-fill warning" style="width: 68%;"></div>
+                  </div>
+                  <span class="score-value">68</span>
+                </div>
+              </td>
+              <td><span class="days-badge slow">32 days</span></td>
+              <td>4</td>
+              <td class="font-mono">$3,150</td>
+              <td class="text-right">
+                <div class="action-buttons">
+                  <button class="btn btn-ghost btn-icon btn-sm reminder-btn" title="Send Reminder" data-client="Rapid Deploy">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    </svg>
+                  </button>
+                  <button class="btn btn-ghost btn-icon btn-sm" title="View Details">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
+                      <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-info">
+                  <div class="client-avatar" style="background: #ef4444;">SP</div>
+                  <div>
+                    <div class="client-name">SlowPay LLC</div>
+                    <div class="client-email">ap@slowpay.biz</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="health-score">
+                  <div class="score-bar">
+                    <div class="score-fill risk" style="width: 42%;"></div>
+                  </div>
+                  <span class="score-value">42</span>
+                </div>
+              </td>
+              <td><span class="days-badge very-slow">45 days</span></td>
+              <td>2</td>
+              <td class="font-mono" style="color: var(--color-danger);">$2,200</td>
+              <td class="text-right">
+                <div class="action-buttons">
+                  <button class="btn btn-ghost btn-icon btn-sm reminder-btn" title="Send Reminder" data-client="SlowPay LLC">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    </svg>
+                  </button>
+                  <button class="btn btn-ghost btn-icon btn-sm" title="View Details">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
+                      <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <!-- Cash Flow Chart -->
+      <section class="cashflow-section">
+        <div class="chart-header">
+          <h2 class="chart-title">Cash Flow Forecast</h2>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <span class="legend-dot optimistic"></span>
+              If all pay on time
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot realistic"></span>
+              Realistic (based on history)
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot baseline"></span>
+              Monthly baseline
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <div class="chart-bars" id="cashflowChart">
+            <!-- Bars will be generated by JavaScript -->
+          </div>
+          <div class="chart-baseline" style="bottom: 80px;">
+            <span class="baseline-label">$5,000</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <!-- Reminder Modal -->
+  <div class="modal-overlay" id="reminderModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Send Payment Reminder</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Recipient</label>
+          <input type="text" class="form-input" id="reminderRecipient" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reminder Tone</label>
+          <select class="form-input form-select" id="reminderTone">
+            <option value="friendly">Friendly - First reminder</option>
+            <option value="firm">Firm - Second reminder</option>
+            <option value="final">Final - Last notice</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-input form-textarea" id="reminderMessage" placeholder="Customize your message..."></textarea>
+        </div>
+        <div class="reminder-preview">
+          <div class="reminder-preview-label">AI-Generated Preview</div>
+          <div class="reminder-preview-text" id="reminderPreview">
+            Hi there! Just a friendly reminder that invoice #INV-2025-089 for $2,200 was due on January 17th. If you've already sent the payment, please disregard this message. Otherwise, we'd appreciate if you could let us know when we can expect payment. Thanks!
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelReminder">Cancel</button>
+        <button class="btn btn-primary" id="sendReminder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          Send Reminder
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+  
+  <script src="app.js"></script>
+</body>
+</html>

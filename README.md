@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-01-31 | [PayTrail](ideas/2026-01-31-paytrail/) | Payment tracker for freelancers — eliminate late payment culture with health scores, smart reminders, and cash flow forecasting | Web Research | ✅ [Demo](ideas/2026-01-31-paytrail/prototype/index.html) |
 | 2026-01-31 | [CookOnce](ideas/2026-01-31-cookonce-recipe-clipper/) | Offline-first minimalist recipe clipper — strips bloat, no subscriptions, just the recipe | Reddit | ✅ [Demo](ideas/2026-01-31-cookonce-recipe-clipper/prototype/index.html) |
 | 2026-01-31 | [QueryCraft](ideas/2026-01-31-querycraft-ai-sql-editor/) | AI-native SQL editor with natural language queries, optimization suggestions, and privacy-first local AI option | X/Twitter | ✅ [Demo](ideas/2026-01-31-querycraft-ai-sql-editor/prototype/index.html) |
 | 2026-01-30 | [LastMinute Slots](ideas/2026-01-30-lastminute-slots/) | Real-time marketplace for last-minute appointment cancellations — haircuts, spas, groomers & more | X/Twitter | ✅ [Demo](ideas/2026-01-30-lastminute-slots/prototype/index.html) |
