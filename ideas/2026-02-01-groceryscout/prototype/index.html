@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GroceryScout — Find the Best Grocery Prices</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">🛒</span>
+        <h1 class="app-title">GroceryScout</h1>
+      </div>
+      <div class="header-right">
+        <div class="user-xp">
+          <span class="xp-badge">⭐ 2,450 XP</span>
+          <span class="rank-badge">Scout Rank</span>
+        </div>
+        <button class="btn-icon" aria-label="Notifications">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notification-dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-section">
+      <div class="search-bar">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search products (eggs, milk, bread...)" autocomplete="off">
+        <button class="btn-scan" aria-label="Scan barcode">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+            <line x1="7" y1="12" x2="17" y2="12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="location-bar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span>Tampa, FL 33612</span>
+        <button class="btn-text">Change</button>
+      </div>
+    </div>
+
+    <!-- Nav Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="prices">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+        Prices
+      </button>
+      <button class="nav-tab" data-tab="list">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6"/>
+          <line x1="8" y1="12" x2="21" y2="12"/>
+          <line x1="8" y1="18" x2="21" y2="18"/>
+          <line x1="3" y1="6" x2="3.01" y2="6"/>
+          <line x1="3" y1="12" x2="3.01" y2="12"/>
+          <line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+        My List
+      </button>
+      <button class="nav-tab" data-tab="report">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Report
+      </button>
+      <button class="nav-tab" data-tab="profile">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Profile
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Prices Tab -->
+      <section class="tab-content active" id="tab-prices">
+        <!-- Trending Products -->
+        <div class="section">
+          <div class="section-header">
+            <h2>🔥 Trending Now</h2>
+            <span class="badge badge-alert">Price Alert!</span>
+          </div>
+          <div class="product-scroll">
+            <div class="product-card trending" data-product="eggs">
+              <div class="product-image">🥚</div>
+              <div class="product-info">
+                <span class="product-name">Large Eggs (12ct)</span>
+                <span class="product-price-range">$3.49 - $8.99</span>
+              </div>
+              <span class="trending-badge">📈 +47%</span>
+            </div>
+            <div class="product-card" data-product="milk">
+              <div class="product-image">🥛</div>
+              <div class="product-info">
+                <span class="product-name">Whole Milk (1 gal)</span>
+                <span class="product-price-range">$3.29 - $4.99</span>
+              </div>
+            </div>
+            <div class="product-card" data-product="bread">
+              <div class="product-image">🍞</div>
+              <div class="product-info">
+                <span class="product-name">White Bread</span>
+                <span class="product-price-range">$2.49 - $4.29</span>
+              </div>
+            </div>
+            <div class="product-card" data-product="butter">
+              <div class="product-image">🧈</div>
+              <div class="product-info">
+                <span class="product-name">Butter (1 lb)</span>
+                <span class="product-price-range">$4.99 - $7.49</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Product Detail -->
+        <div class="section" id="product-detail">
+          <div class="section-header">
+            <h2>🥚 Large Eggs (12ct)</h2>
+            <button class="btn-alert">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              </svg>
+              Set Alert
+            </button>
+          </div>
+          
+          <!-- Price Chart -->
+          <div class="price-chart-container">
+            <div class="chart-header">
+              <span class="chart-title">30-Day Price History</span>
+              <div class="chart-legend">
+                <span class="legend-item lowest">● Lowest</span>
+                <span class="legend-item average">● Average</span>
+              </div>
+            </div>
+            <div class="price-chart" id="priceChart">
+              <!-- Chart rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Store Prices -->
+          <div class="store-list">
+            <div class="store-card best-price">
+              <div class="store-info">
+                <span class="store-logo aldi">A</span>
+                <div class="store-details">
+                  <span class="store-name">ALDI</span>
+                  <span class="store-distance">2.3 mi away</span>
+                </div>
+              </div>
+              <div class="store-price">
+                <span class="price">$3.49</span>
+                <span class="price-badge best">LOWEST</span>
+              </div>
+              <div class="store-meta">
+                <span class="updated">Updated 2h ago</span>
+                <span class="reporter">by @FrugalMom</span>
+              </div>
+            </div>
+
+            <div class="store-card">
+              <div class="store-info">
+                <span class="store-logo walmart">W</span>
+                <div class="store-details">
+                  <span class="store-name">Walmart</span>
+                  <span class="store-distance">1.1 mi away</span>
+                </div>
+              </div>
+              <div class="store-price">
+                <span class="price">$4.78</span>
+              </div>
+              <div class="store-meta">
+                <span class="updated">Updated 5h ago</span>
+                <span class="reporter">by @DealHunter99</span>
+              </div>
+            </div>
+
+            <div class="store-card">
+              <div class="store-info">
+                <span class="store-logo publix">P</span>
+                <div class="store-details">
+                  <span class="store-name">Publix</span>
+                  <span class="store-distance">0.8 mi away</span>
+                </div>
+              </div>
+              <div class="store-price">
+                <span class="price">$6.29</span>
+              </div>
+              <div class="store-meta">
+                <span class="updated">Updated 1d ago</span>
+                <span class="reporter">by @TampaShop</span>
+              </div>
+            </div>
+
+            <div class="store-card">
+              <div class="store-info">
+                <span class="store-logo target">T</span>
+                <div class="store-details">
+                  <span class="store-name">Target</span>
+                  <span class="store-distance">3.5 mi away</span>
+                </div>
+              </div>
+              <div class="store-price">
+                <span class="price">$5.99</span>
+              </div>
+              <div class="store-meta">
+                <span class="updated">Updated 3h ago</span>
+                <span class="reporter">by @BudgetKing</span>
+              </div>
+            </div>
+
+            <div class="store-card">
+              <div class="store-info">
+                <span class="store-logo costco">C</span>
+                <div class="store-details">
+                  <span class="store-name">Costco</span>
+                  <span class="store-distance">5.2 mi away</span>
+                </div>
+              </div>
+              <div class="store-price">
+                <span class="price">$8.99</span>
+                <span class="price-note">24ct</span>
+              </div>
+              <div class="store-meta">
+                <span class="updated">Updated 6h ago</span>
+                <span class="reporter">by @BulkBuyer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shopping List Tab -->
+      <section class="tab-content" id="tab-list">
+        <div class="section">
+          <div class="section-header">
+            <h2>🗒️ My Shopping List</h2>
+            <button class="btn-secondary">+ Add Item</button>
+          </div>
+
+          <!-- List Summary -->
+          <div class="list-summary">
+            <div class="summary-card">
+              <span class="summary-label">Estimated Total</span>
+              <span class="summary-value">$24.56</span>
+            </div>
+            <div class="summary-card savings">
+              <span class="summary-label">Potential Savings</span>
+              <span class="summary-value">-$8.47</span>
+            </div>
+          </div>
+
+          <!-- Optimization Toggle -->
+          <div class="optimization-toggle">
+            <button class="opt-btn active">🏪 One Store</button>
+            <button class="opt-btn">🚗 Multi-Stop</button>
+          </div>
+
+          <div class="optimized-result">
+            <div class="best-store">
+              <span class="store-logo walmart">W</span>
+              <div>
+                <span class="store-name">Walmart</span>
+                <span class="store-total">Best total: $24.56</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shopping List Items -->
+          <div class="shopping-list">
+            <div class="list-item">
+              <input type="checkbox" id="item-1">
+              <label for="item-1">
+                <span class="item-emoji">🥚</span>
+                <div class="item-info">
+                  <span class="item-name">Large Eggs (12ct)</span>
+                  <span class="item-best">Best: ALDI $3.49</span>
+                </div>
+                <span class="item-price">$4.78</span>
+              </label>
+            </div>
+            <div class="list-item">
+              <input type="checkbox" id="item-2">
+              <label for="item-2">
+                <span class="item-emoji">🥛</span>
+                <div class="item-info">
+                  <span class="item-name">Whole Milk (1 gal)</span>
+                  <span class="item-best">Best: Walmart $3.29</span>
+                </div>
+                <span class="item-price">$3.29</span>
+              </label>
+            </div>
+            <div class="list-item">
+              <input type="checkbox" id="item-3">
+              <label for="item-3">
+                <span class="item-emoji">🍞</span>
+                <div class="item-info">
+                  <span class="item-name">White Bread</span>
+                  <span class="item-best">Best: ALDI $2.49</span>
+                </div>
+                <span class="item-price">$2.99</span>
+              </label>
+            </div>
+            <div class="list-item">
+              <input type="checkbox" id="item-4">
+              <label for="item-4">
+                <span class="item-emoji">🧈</span>
+                <div class="item-info">
+                  <span class="item-name">Butter (1 lb)</span>
+                  <span class="item-best">Best: Walmart $4.99</span>
+                </div>
+                <span class="item-price">$4.99</span>
+              </label>
+            </div>
+            <div class="list-item">
+              <input type="checkbox" id="item-5" checked>
+              <label for="item-5">
+                <span class="item-emoji">🍌</span>
+                <div class="item-info">
+                  <span class="item-name">Bananas (1 lb)</span>
+                  <span class="item-best">Best: Walmart $0.58</span>
+                </div>
+                <span class="item-price">$0.58</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Report Price Tab -->
+      <section class="tab-content" id="tab-report">
+        <div class="section">
+          <div class="section-header">
+            <h2>📝 Report a Price</h2>
+          </div>
+
+          <div class="xp-banner">
+            <span class="xp-icon">⭐</span>
+            <div class="xp-info">
+              <span class="xp-title">Earn 10-50 XP per report!</span>
+              <span class="xp-subtitle">Verified prices earn bonus XP</span>
+            </div>
+          </div>
+
+          <form class="report-form" id="reportForm">
+            <div class="form-group">
+              <label>Product</label>
+              <div class="input-with-icon">
+                <input type="text" placeholder="Search or scan product" id="productInput">
+                <button type="button" class="btn-icon-sm">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                    <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                    <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                    <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Store</label>
+              <select id="storeSelect">
+                <option value="">Select a store...</option>
+                <option value="walmart">Walmart - Fletcher Ave</option>
+                <option value="publix">Publix - Temple Terrace</option>
+                <option value="aldi">ALDI - Fowler Ave</option>
+                <option value="target">Target - University Mall</option>
+                <option value="costco">Costco - Tampa</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Price</label>
+                <div class="price-input">
+                  <span class="currency">$</span>
+                  <input type="number" step="0.01" placeholder="0.00" id="priceInput">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Unit</label>
+                <select id="unitSelect">
+                  <option value="each">Each</option>
+                  <option value="lb">Per lb</option>
+                  <option value="oz">Per oz</option>
+                  <option value="gal">Per gal</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Sale or Regular?</label>
+              <div class="toggle-group">
+                <button type="button" class="toggle-btn active" data-value="regular">Regular Price</button>
+                <button type="button" class="toggle-btn" data-value="sale">🏷️ On Sale</button>
+              </div>
+            </div>
+
+            <div class="form-group optional">
+              <label>Photo (optional)</label>
+              <div class="photo-upload">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21,15 16,10 5,21"/>
+                </svg>
+                <span>Tap to add price tag photo</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary btn-large">
+              Submit Price Report
+              <span class="btn-xp">+10 XP</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Profile Tab -->
+      <section class="tab-content" id="tab-profile">
+        <div class="section">
+          <div class="profile-header">
+            <div class="avatar">
+              <span>🛒</span>
+            </div>
+            <div class="profile-info">
+              <h2>@TampaScout</h2>
+              <span class="member-since">Member since Jan 2026</span>
+            </div>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-value">2,450</span>
+              <span class="stat-label">Total XP</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">47</span>
+              <span class="stat-label">Reports</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">94%</span>
+              <span class="stat-label">Accuracy</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">#142</span>
+              <span class="stat-label">Local Rank</span>
+            </div>
+          </div>
+
+          <!-- Badges -->
+          <div class="badges-section">
+            <h3>🏆 Badges Earned</h3>
+            <div class="badges-grid">
+              <div class="badge-item earned">
+                <span class="badge-icon">🥚</span>
+                <span class="badge-name">Egg Expert</span>
+              </div>
+              <div class="badge-item earned">
+                <span class="badge-icon">🥛</span>
+                <span class="badge-name">Dairy Detective</span>
+              </div>
+              <div class="badge-item earned">
+                <span class="badge-icon">🔥</span>
+                <span class="badge-name">Hot Streak</span>
+              </div>
+              <div class="badge-item locked">
+                <span class="badge-icon">🌟</span>
+                <span class="badge-name">Super Scout</span>
+              </div>
+              <div class="badge-item locked">
+                <span class="badge-icon">📸</span>
+                <span class="badge-name">Photo Pro</span>
+              </div>
+              <div class="badge-item locked">
+                <span class="badge-icon">🎯</span>
+                <span class="badge-name">Perfect Aim</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rank Progress -->
+          <div class="rank-section">
+            <h3>📈 Rank Progress</h3>
+            <div class="rank-card">
+              <div class="rank-current">
+                <span class="rank-icon">🛒</span>
+                <span class="rank-name">Scout</span>
+              </div>
+              <div class="rank-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 65%"></div>
+                </div>
+                <span class="progress-text">650 XP to Ranger</span>
+              </div>
+              <div class="rank-next">
+                <span class="rank-icon">🎖️</span>
+                <span class="rank-name">Ranger</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="activity-section">
+            <h3>📋 Recent Activity</h3>
+            <div class="activity-list">
+              <div class="activity-item">
+                <span class="activity-icon">✅</span>
+                <div class="activity-info">
+                  <span class="activity-text">Reported eggs at ALDI</span>
+                  <span class="activity-xp">+15 XP (verified)</span>
+                </div>
+                <span class="activity-time">2h ago</span>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">🏆</span>
+                <div class="activity-info">
+                  <span class="activity-text">Earned "Egg Expert" badge</span>
+                  <span class="activity-xp">+100 XP</span>
+                </div>
+                <span class="activity-time">Yesterday</span>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">✅</span>
+                <div class="activity-info">
+                  <span class="activity-text">Reported milk at Walmart</span>
+                  <span class="activity-xp">+10 XP</span>
+                </div>
+                <span class="activity-time">2 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
