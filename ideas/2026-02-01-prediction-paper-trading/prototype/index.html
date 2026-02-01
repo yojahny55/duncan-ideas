@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PredictPaper — Paper Trading for Prediction Markets</title>
+  <meta name="description" content="Practice trading prediction markets without risking real money. Learn before you trade.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <a href="#" class="logo">
+        <div class="logo-icon">📈</div>
+        <span>PredictPaper</span>
+        <span class="badge badge-paper">Paper Trading</span>
+      </a>
+      
+      <nav class="nav">
+        <a href="#" class="nav-link active">Markets</a>
+        <a href="#" class="nav-link">Portfolio</a>
+        <a href="#" class="nav-link">Leaderboard</a>
+        <a href="#" class="nav-link">Learn</a>
+        <button class="btn btn-primary btn-sm">
+          Sign Up Free
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Portfolio Stats -->
+      <section class="stats-grid" aria-label="Portfolio Statistics">
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>💰</span>
+            Portfolio Value
+          </div>
+          <div class="stat-value" id="portfolio-value">$10,847.23</div>
+          <div class="stat-change positive">
+            <span>↑</span> +$847.23 (8.47%)
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>📊</span>
+            Open Positions
+          </div>
+          <div class="stat-value">5</div>
+          <div class="stat-change">
+            3 winning, 2 losing
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>🎯</span>
+            Win Rate
+          </div>
+          <div class="stat-value positive">68%</div>
+          <div class="stat-change">
+            17 of 25 resolved
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>🏆</span>
+            Leaderboard Rank
+          </div>
+          <div class="stat-value">#142</div>
+          <div class="stat-change positive">
+            <span>↑</span> 23 spots today
+          </div>
+        </div>
+      </section>
+
+      <!-- Markets Section -->
+      <section>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">📊 Live Markets</h2>
+              <p class="card-subtitle">Synced from Polymarket • Updated 30s ago</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-ghost btn-sm">All</button>
+              <button class="btn btn-secondary btn-sm">Politics</button>
+              <button class="btn btn-ghost btn-sm">Sports</button>
+              <button class="btn btn-ghost btn-sm">Crypto</button>
+              <button class="btn btn-ghost btn-sm">Science</button>
+            </div>
+          </div>
+
+          <div class="markets-grid" id="markets-container">
+            <!-- Market cards rendered by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Positions Section -->
+      <section class="mt-6">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">📋 Your Positions</h2>
+              <p class="card-subtitle">Track your open trades</p>
+            </div>
+            <button class="btn btn-ghost btn-sm">Export CSV</button>
+          </div>
+
+          <div id="positions-container">
+            <table class="positions-table">
+              <thead>
+                <tr>
+                  <th>Market</th>
+                  <th>Side</th>
+                  <th>Shares</th>
+                  <th>Entry</th>
+                  <th>Current</th>
+                  <th>P&L</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="positions-body">
+                <!-- Positions rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leaderboard Preview -->
+      <section class="mt-6">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">🏆 Weekly Leaderboard</h2>
+              <p class="card-subtitle">Top traders this week • Resets Sunday</p>
+            </div>
+            <a href="#" class="btn btn-ghost btn-sm">View All →</a>
+          </div>
+
+          <div id="leaderboard-container">
+            <!-- Leaderboard rendered by JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Trade Modal -->
+    <div class="modal-overlay" id="trade-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title" id="modal-title">Place Trade</h3>
+          <button class="modal-close" id="modal-close" aria-label="Close modal">✕</button>
+        </div>
+
+        <p class="market-question" id="modal-question" style="font-size: var(--text-lg); margin-bottom: var(--space-5);">
+          <!-- Question rendered by JS -->
+        </p>
+
+        <div class="trade-type-tabs">
+          <button class="trade-tab yes active" id="tab-yes">Buy YES</button>
+          <button class="trade-tab no" id="tab-no">Buy NO</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="trade-amount">Amount (USD)</label>
+          <input 
+            type="number" 
+            id="trade-amount" 
+            class="form-input" 
+            placeholder="100.00"
+            min="1"
+            max="10000"
+            step="1"
+          >
+          <div class="quick-amounts">
+            <button class="quick-amount" data-amount="10">$10</button>
+            <button class="quick-amount" data-amount="50">$50</button>
+            <button class="quick-amount" data-amount="100">$100</button>
+            <button class="quick-amount" data-amount="500">$500</button>
+          </div>
+        </div>
+
+        <div class="trade-summary">
+          <div class="summary-row">
+            <span class="summary-label">Current Price</span>
+            <span class="summary-value" id="summary-price">$0.65</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Shares to Buy</span>
+            <span class="summary-value" id="summary-shares">0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Potential Profit (if YES)</span>
+            <span class="summary-value" id="summary-profit">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Total Cost</span>
+            <span class="summary-value" id="summary-total">$0.00</span>
+          </div>
+        </div>
+
+        <button class="btn btn-success btn-lg" style="width: 100%;" id="confirm-trade">
+          Confirm Trade
+        </button>
+
+        <p style="text-align: center; margin-top: var(--space-4); font-size: var(--text-sm); color: var(--text-secondary);">
+          💡 This is paper trading. No real money involved.
+        </p>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
