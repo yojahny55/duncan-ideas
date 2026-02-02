@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SubSlayer - Kill Forgotten Subscriptions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🗡️</div>
+        <span class="logo-text">SubSlayer</span>
+      </div>
+      
+      <nav>
+        <div class="nav-section">
+          <div class="nav-label">Overview</div>
+          <div class="nav-item active" data-page="dashboard">
+            <span class="nav-item-icon">📊</span>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" data-page="subscriptions">
+            <span class="nav-item-icon">💳</span>
+            <span>Subscriptions</span>
+            <span class="nav-item-badge">23</span>
+          </div>
+          <div class="nav-item" data-page="alerts">
+            <span class="nav-item-icon">🔔</span>
+            <span>Alerts</span>
+            <span class="nav-item-badge" style="background: var(--color-primary-500);">3</span>
+          </div>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-label">Actions</div>
+          <div class="nav-item" data-page="cancel">
+            <span class="nav-item-icon">💀</span>
+            <span>Cancel Assist</span>
+          </div>
+          <div class="nav-item" data-page="savings">
+            <span class="nav-item-icon">💰</span>
+            <span>Savings</span>
+          </div>
+          <div class="nav-item" data-page="scan">
+            <span class="nav-item-icon">📧</span>
+            <span>Email Scan</span>
+          </div>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-label">Settings</div>
+          <div class="nav-item" data-page="notifications">
+            <span class="nav-item-icon">⚙️</span>
+            <span>Notifications</span>
+          </div>
+          <div class="nav-item" data-page="account">
+            <span class="nav-item-icon">👤</span>
+            <span>Account</span>
+          </div>
+        </div>
+      </nav>
+      
+      <!-- Upgrade CTA -->
+      <div style="margin-top: auto; padding-top: var(--space-6);">
+        <div style="background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-800)); border-radius: var(--radius-xl); padding: var(--space-5); text-align: center;">
+          <div style="font-size: var(--text-2xl); margin-bottom: var(--space-2);">⚡</div>
+          <div style="font-weight: var(--font-weight-semibold); margin-bottom: var(--space-1);">Upgrade to Pro</div>
+          <div style="font-size: var(--text-sm); color: var(--color-primary-200); margin-bottom: var(--space-4);">Unlimited subs, AI cancel assist</div>
+          <button class="btn btn-ghost" style="width: 100%; border-color: rgba(255,255,255,0.3); color: white;">$4.99/month</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Page: Dashboard -->
+      <div id="page-dashboard" class="page">
+        <!-- Header -->
+        <div style="margin-bottom: var(--space-8);">
+          <h1 style="margin-bottom: var(--space-2);">Good evening, Yojahny 👋</h1>
+          <p style="font-size: var(--text-lg);">You have <strong style="color: var(--color-primary-400);">3 subscriptions</strong> renewing soon. Let's slay them.</p>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card danger">
+            <div class="stat-header">
+              <div class="stat-icon danger">🔥</div>
+              <div class="stat-trend up">↑ +$23 this month</div>
+            </div>
+            <div class="stat-value danger">$287</div>
+            <div class="stat-label">Monthly Burn Rate</div>
+          </div>
+          
+          <div class="stat-card warning">
+            <div class="stat-header">
+              <div class="stat-icon warning">📅</div>
+            </div>
+            <div class="stat-value warning">$3,444</div>
+            <div class="stat-label">Projected Annual Cost</div>
+          </div>
+          
+          <div class="stat-card success">
+            <div class="stat-header">
+              <div class="stat-icon success">💰</div>
+              <div class="stat-trend down">↓ Great job!</div>
+            </div>
+            <div class="stat-value success">$847</div>
+            <div class="stat-label">Total Saved This Year</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon" style="background-color: var(--color-neutral-700);">💀</div>
+            </div>
+            <div class="stat-value" style="color: var(--color-text-primary);">12</div>
+            <div class="stat-label">Subscriptions Slayed</div>
+          </div>
+        </div>
+
+        <!-- Health Score -->
+        <div class="health-score-card">
+          <div class="health-score-circle" style="--score: 65;">
+            <div>
+              <div class="health-score-value">65</div>
+              <div class="health-score-label">/ 100</div>
+            </div>
+          </div>
+          <h3 class="health-score-title">Subscription Health Score</h3>
+          <p class="health-score-subtitle">Your score is <strong>Fair</strong> — there's room to optimize.</p>
+          <div class="health-tips">
+            <span class="health-tip">⚠️ 2 duplicate services detected</span>
+            <span class="health-tip">💤 3 unused in 30+ days</span>
+            <span class="health-tip">💸 $89/mo in "nice-to-haves"</span>
+          </div>
+        </div>
+
+        <!-- Urgent Renewals -->
+        <div class="section-header">
+          <h3 class="section-title">🚨 Urgent: Renewing Soon</h3>
+          <div class="section-actions">
+            <button class="btn btn-ghost">View All</button>
+          </div>
+        </div>
+        
+        <div class="subscription-list">
+          <!-- Netflix - Renewing Tomorrow -->
+          <div class="subscription-card urgent">
+            <div class="subscription-logo" style="background: linear-gradient(135deg, #E50914, #B81D24);">N</div>
+            <div class="subscription-info">
+              <div class="subscription-name">
+                Netflix Premium
+                <span class="renewal-badge critical">⚡ RENEWS TOMORROW</span>
+              </div>
+              <div class="subscription-meta">
+                <span>📺 Streaming</span>
+                <span>•</span>
+                <span>Last used: 3 days ago</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount">$22.99</div>
+              <div class="subscription-period">/month</div>
+            </div>
+            <div class="subscription-actions">
+              <button class="btn btn-danger" onclick="showCancelModal('Netflix')">🗡️ Slay</button>
+              <button class="btn btn-ghost btn-icon">⋮</button>
+            </div>
+          </div>
+
+          <!-- Adobe - 3 Days -->
+          <div class="subscription-card urgent">
+            <div class="subscription-logo" style="background: linear-gradient(135deg, #FF0000, #CC0000);">Ai</div>
+            <div class="subscription-info">
+              <div class="subscription-name">
+                Adobe Creative Cloud
+                <span class="renewal-badge critical">⚡ 3 DAYS LEFT</span>
+              </div>
+              <div class="subscription-meta">
+                <span>🎨 Productivity</span>
+                <span>•</span>
+                <span>Last used: 2 weeks ago</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount">$59.99</div>
+              <div class="subscription-period">/month</div>
+            </div>
+            <div class="subscription-actions">
+              <button class="btn btn-danger" onclick="showCancelModal('Adobe Creative Cloud')">🗡️ Slay</button>
+              <button class="btn btn-ghost btn-icon">⋮</button>
+            </div>
+          </div>
+
+          <!-- Spotify - 7 Days -->
+          <div class="subscription-card">
+            <div class="subscription-logo" style="background: linear-gradient(135deg, #1DB954, #191414);">🎵</div>
+            <div class="subscription-info">
+              <div class="subscription-name">
+                Spotify Premium Family
+                <span class="renewal-badge warning">7 days</span>
+              </div>
+              <div class="subscription-meta">
+                <span>🎵 Music</span>
+                <span>•</span>
+                <span>Last used: today</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount">$16.99</div>
+              <div class="subscription-period">/month</div>
+            </div>
+            <div class="subscription-actions">
+              <button class="btn btn-success">✓ Keep</button>
+              <button class="btn btn-ghost btn-icon">⋮</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page: Subscriptions -->
+      <div id="page-subscriptions" class="page hidden">
+        <div style="margin-bottom: var(--space-8);">
+          <h1 style="margin-bottom: var(--space-2);">All Subscriptions</h1>
+          <p style="font-size: var(--text-lg);">23 active subscriptions totaling <strong style="color: var(--color-primary-400);">$287/month</strong></p>
+        </div>
+
+        <div class="section-header">
+          <div class="flex items-center gap-4">
+            <button class="btn btn-ghost" style="background: var(--color-surface-elevated);">All (23)</button>
+            <button class="btn btn-ghost">Essential (8)</button>
+            <button class="btn btn-ghost">Nice-to-have (10)</button>
+            <button class="btn btn-ghost">Forgotten (5)</button>
+          </div>
+          <button class="btn btn-primary">+ Add Subscription</button>
+        </div>
+
+        <div class="subscription-list" style="margin-top: var(--space-6);">
+          <!-- Sample subscriptions -->
+          <div class="subscription-card safe">
+            <div class="subscription-logo" style="background: linear-gradient(135deg, #FF9900, #FF6600);">A</div>
+            <div class="subscription-info">
+              <div class="subscription-name">
+                Amazon Prime
+                <span class="subscription-category">Essential</span>
+              </div>
+              <div class="subscription-meta">
+                <span>🛒 Shopping</span>
+                <span>•</span>
+                <span>Renews Mar 15</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount">$14.99</div>
+              <div class="subscription-period">/month</div>
+            </div>
+            <div class="subscription-actions">
+              <button class="btn btn-success">✓ Keep</button>
+              <button class="btn btn-ghost btn-icon">⋮</button>
+            </div>
+          </div>
+
+          <div class="subscription-card">
+            <div class="subscription-logo" style="background: linear-gradient(135deg, #5865F2, #3B44B3);">D</div>
+            <div class="subscription-info">
+              <div class="subscription-name">
+                Discord Nitro
+                <span class="subscription-category">Nice-to-have</span>
+              </div>
+              <div class="subscription-meta">
+                <span>💬 Social</span>
+                <span>•</span>
+                <span>Renews Feb 20</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount">$9.99</div>
+              <div class="subscription-period">/month</div>
+            </div>
+            <div class="subscription-actions">
+              <button class="btn btn-ghost">Review</button>
+              <button class="btn btn-ghost btn-icon">⋮</button>
+            </div>
+          </div>
+
+          <div class="subscription-card" style="opacity: 0.7;">
+            <div class="subscription-logo" style="background: linear-gradient(135deg, #6366F1, #4F46E5);">H</div>
+            <div class="subscription-info">
+              <div class="subscription-name">
+                Headspace
+                <span class="subscription-category" style="background: var(--color-primary-900); color: var(--color-primary-300);">Forgotten</span>
+              </div>
+              <div class="subscription-meta">
+                <span>🧘 Wellness</span>
+                <span>•</span>
+                <span style="color: var(--color-primary-400);">Not used in 67 days</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount">$12.99</div>
+              <div class="subscription-period">/month</div>
+            </div>
+            <div class="subscription-actions">
+              <button class="btn btn-danger" onclick="showCancelModal('Headspace')">🗡️ Slay</button>
+              <button class="btn btn-ghost btn-icon">⋮</button>
+            </div>
+          </div>
+
+          <div class="subscription-card" style="opacity: 0.7;">
+            <div class="subscription-logo" style="background: linear-gradient(135deg, #00A4EF, #0078D4);">M</div>
+            <div class="subscription-info">
+              <div class="subscription-name">
+                Microsoft 365
+                <span class="subscription-category" style="background: var(--color-primary-900); color: var(--color-primary-300);">Forgotten</span>
+              </div>
+              <div class="subscription-meta">
+                <span>💼 Productivity</span>
+                <span>•</span>
+                <span style="color: var(--color-primary-400);">Not used in 45 days</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount">$9.99</div>
+              <div class="subscription-period">/month</div>
+            </div>
+            <div class="subscription-actions">
+              <button class="btn btn-danger" onclick="showCancelModal('Microsoft 365')">🗡️ Slay</button>
+              <button class="btn btn-ghost btn-icon">⋮</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page: Savings -->
+      <div id="page-savings" class="page hidden">
+        <div style="margin-bottom: var(--space-8);">
+          <h1 style="margin-bottom: var(--space-2);">Your Savings 💰</h1>
+          <p style="font-size: var(--text-lg);">Every dollar saved is a dollar earned. You're crushing it.</p>
+        </div>
+
+        <!-- Big Savings Banner -->
+        <div class="savings-banner">
+          <div class="savings-label">Total Saved Since Joining</div>
+          <div class="savings-amount">$2,340</div>
+          <div class="savings-detail">That's 47x what you paid for SubSlayer Pro!</div>
+          <div class="savings-slayed">
+            <span>🗡️</span>
+            <span><strong>12 subscriptions</strong> slayed</span>
+          </div>
+        </div>
+
+        <!-- Savings Breakdown -->
+        <div class="stats-grid">
+          <div class="stat-card success">
+            <div class="stat-header">
+              <div class="stat-icon success">📅</div>
+            </div>
+            <div class="stat-value success">$195</div>
+            <div class="stat-label">Saved This Month</div>
+          </div>
+          
+          <div class="stat-card success">
+            <div class="stat-header">
+              <div class="stat-icon success">📊</div>
+            </div>
+            <div class="stat-value success">$847</div>
+            <div class="stat-label">Saved This Year</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon" style="background-color: var(--color-neutral-700);">🔮</div>
+            </div>
+            <div class="stat-value" style="color: var(--color-text-primary);">$28,080</div>
+            <div class="stat-label">Projected 10-Year Savings</div>
+          </div>
+        </div>
+
+        <!-- Recently Slayed -->
+        <div class="section-header" style="margin-top: var(--space-8);">
+          <h3 class="section-title">🗡️ Recently Slayed</h3>
+        </div>
+        
+        <div class="subscription-list">
+          <div class="subscription-card" style="border-color: var(--color-success-600); background: rgba(34, 197, 94, 0.05);">
+            <div class="subscription-logo" style="background: var(--color-neutral-700); text-decoration: line-through;">G</div>
+            <div class="subscription-info">
+              <div class="subscription-name" style="text-decoration: line-through; opacity: 0.7;">
+                Grammarly Premium
+              </div>
+              <div class="subscription-meta">
+                <span style="color: var(--color-success-400);">Cancelled Jan 15, 2026</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount" style="color: var(--color-success-400);">+$12.00</div>
+              <div class="subscription-period">saved/month</div>
+            </div>
+          </div>
+
+          <div class="subscription-card" style="border-color: var(--color-success-600); background: rgba(34, 197, 94, 0.05);">
+            <div class="subscription-logo" style="background: var(--color-neutral-700); text-decoration: line-through;">C</div>
+            <div class="subscription-info">
+              <div class="subscription-name" style="text-decoration: line-through; opacity: 0.7;">
+                Canva Pro
+              </div>
+              <div class="subscription-meta">
+                <span style="color: var(--color-success-400);">Cancelled Jan 8, 2026</span>
+              </div>
+            </div>
+            <div class="subscription-price">
+              <div class="subscription-amount" style="color: var(--color-success-400);">+$14.99</div>
+              <div class="subscription-period">saved/month</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Share Achievement -->
+        <div style="text-align: center; margin-top: var(--space-10); padding: var(--space-8); background: var(--color-surface); border-radius: var(--radius-2xl); border: 1px solid var(--color-border);">
+          <h3 style="margin-bottom: var(--space-2);">Brag About It 🎉</h3>
+          <p style="color: var(--color-text-secondary); margin-bottom: var(--space-6);">Share your savings and help friends stop wasting money too.</p>
+          <div class="flex items-center justify-center gap-4">
+            <button class="btn btn-ghost">📱 Share on X</button>
+            <button class="btn btn-ghost">📋 Copy Stats</button>
+            <button class="btn btn-primary">👥 Invite Friends</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page: Cancel Assist -->
+      <div id="page-cancel" class="page hidden">
+        <div style="margin-bottom: var(--space-8);">
+          <h1 style="margin-bottom: var(--space-2);">Cancel Assist 💀</h1>
+          <p style="font-size: var(--text-lg);">Some services make it hard to leave. We make it easy.</p>
+        </div>
+
+        <div class="subscription-list">
+          <!-- Dark Pattern Warning -->
+          <div style="background: linear-gradient(135deg, var(--color-primary-900), var(--color-surface)); border: 1px solid var(--color-primary-700); border-radius: var(--radius-xl); padding: var(--space-6); margin-bottom: var(--space-6);">
+            <div class="flex items-center gap-4" style="margin-bottom: var(--space-4);">
+              <span style="font-size: var(--text-3xl);">🚨</span>
+              <div>
+                <h4 style="color: var(--color-primary-400); margin-bottom: var(--space-1);">Dark Pattern Detected</h4>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">Adobe Creative Cloud has been flagged by 847 users as difficult to cancel.</p>
+              </div>
+            </div>
+            <div style="background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--space-4);">
+              <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2);">Common tricks:</div>
+              <ul style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-left: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2);">
+                <li>Requires phone call to cancel (no online option)</li>
+                <li>Offers multiple "save" screens before confirming</li>
+                <li>Early termination fee: $149.50</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Cancel Scripts -->
+          <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-6);">
+            <h4 style="margin-bottom: var(--space-4);">📝 Your Cancellation Script</h4>
+            <div style="background: var(--color-surface-elevated); border-radius: var(--radius-lg); padding: var(--space-5); font-family: var(--font-family-mono); font-size: var(--text-sm); line-height: 1.8; color: var(--color-text-secondary);">
+              <p style="margin-bottom: var(--space-3);">"Hi, I'd like to cancel my Adobe Creative Cloud subscription effective immediately."</p>
+              <p style="margin-bottom: var(--space-3);"><strong style="color: var(--color-warning-400);">If they offer a discount:</strong> "No thank you, I've made my decision. Please proceed with the cancellation."</p>
+              <p style="margin-bottom: var(--space-3);"><strong style="color: var(--color-warning-400);">If they mention early termination fee:</strong> "I understand there may be a fee. Can you tell me the exact amount? Also, is there any way to waive this given I've been a customer for [X months]?"</p>
+              <p><strong style="color: var(--color-success-400);">Pro tip:</strong> Ask for confirmation number and email receipt.</p>
+            </div>
+            <div class="flex gap-4" style="margin-top: var(--space-4);">
+              <button class="btn btn-ghost">📋 Copy Script</button>
+              <button class="btn btn-primary">📞 Adobe Support: 800-833-6687</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Cancel Modal -->
+  <div id="cancel-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">🗡️ Slay <span id="cancel-service-name">Netflix</span>?</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div style="margin-bottom: var(--space-6);">
+        <div style="background: var(--color-surface-elevated); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-4);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+            <span style="color: var(--color-text-secondary);">Monthly cost</span>
+            <span style="font-weight: var(--font-weight-semibold);">$22.99</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+            <span style="color: var(--color-text-secondary);">Annual cost</span>
+            <span style="font-weight: var(--font-weight-semibold);">$275.88</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--color-border); padding-top: var(--space-2); margin-top: var(--space-2);">
+            <span style="color: var(--color-success-400);">You'll save</span>
+            <span style="font-weight: var(--font-weight-bold); color: var(--color-success-400);">$275.88/year</span>
+          </div>
+        </div>
+        <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">We'll remind you how to cancel and track your progress.</p>
+      </div>
+      <div class="flex gap-4">
+        <button class="btn btn-ghost" style="flex: 1;" onclick="closeModal()">Keep it</button>
+        <button class="btn btn-primary" style="flex: 1;" onclick="confirmCancel()">🗡️ Start Cancellation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
