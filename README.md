@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-02 | [HeartPing](ideas/2026-02-02-heartping-relationship-keeper/) | Personal relationship CRM — stay in touch with people who matter, smart nudges, connection health tracking, never forget birthdays | Reddit | ✅ [Demo](ideas/2026-02-02-heartping-relationship-keeper/prototype/index.html) |
 | 2026-02-02 | [SubSlayer](ideas/2026-02-02-subslayer/) | Kill forgotten subscriptions before they kill your wallet — aggressive pre-renewal alerts, savings gamification, AI cancel assist | X/Twitter | ✅ [Demo](ideas/2026-02-02-subslayer/prototype/index.html) |
 | 2026-02-01 | [ShelfLife](ideas/2026-02-01-shelflife/) | Smart pantry & expiration tracker — reduce food waste, get AI recipe suggestions for expiring items, save money | Web/Product Hunt | ✅ [Demo](ideas/2026-02-01-shelflife/prototype/index.html) |
 | 2026-02-01 | [GroceryScout](ideas/2026-02-01-groceryscout/) | Crowdsourced grocery price tracker — like GasBuddy for groceries. Compare prices, find deals, earn XP for reporting | Reddit | ✅ [Demo](ideas/2026-02-01-groceryscout/prototype/index.html) |

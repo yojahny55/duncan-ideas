@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#8B5CF6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>HeartPing - Stay in Touch</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <span class="logo-icon">💜</span>
+            <span>HeartPing</span>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn" aria-label="Notifications">
+              🔔
+            </button>
+            <button class="icon-btn" aria-label="Settings">
+              ⚙️
+            </button>
+          </div>
+        </div>
+        
+        <!-- Greeting -->
+        <div class="greeting">
+          <p class="greeting-text">Good morning,</p>
+          <h1 class="greeting-name">Yojahny 👋</h1>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        
+        <!-- Connection Health Overview -->
+        <div class="health-overview">
+          <div class="health-stat">
+            <div class="health-stat-value healthy">8</div>
+            <div class="health-stat-label">Healthy</div>
+          </div>
+          <div class="health-stat">
+            <div class="health-stat-value okay">3</div>
+            <div class="health-stat-label">Okay</div>
+          </div>
+          <div class="health-stat">
+            <div class="health-stat-value needs-attention">2</div>
+            <div class="health-stat-label">Needs Love</div>
+          </div>
+          <div class="health-stat">
+            <div class="health-stat-value overdue">1</div>
+            <div class="health-stat-label">Overdue</div>
+          </div>
+        </div>
+
+        <!-- Nudge Card - Attention Grabbing -->
+        <div class="card nudge-card">
+          <div class="nudge-header">
+            <div class="nudge-avatar">👩</div>
+            <div class="nudge-content">
+              <h3>Time to call Mom!</h3>
+              <p>It's been 3 weeks since you last caught up</p>
+            </div>
+          </div>
+          <div class="nudge-actions">
+            <button class="btn btn-primary btn-sm" onclick="logInteraction('call')">
+              📞 Call Now
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="snoozeNudge()">
+              ⏰ Remind Later
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="skipNudge()">
+              Skip
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button class="quick-action" onclick="showModal('add-person')">
+            <div class="quick-action-icon">➕</div>
+            <span class="quick-action-label">Add Person</span>
+          </button>
+          <button class="quick-action" onclick="showModal('log-interaction')">
+            <div class="quick-action-icon">📝</div>
+            <span class="quick-action-label">Log Chat</span>
+          </button>
+          <button class="quick-action">
+            <div class="quick-action-icon">🎂</div>
+            <span class="quick-action-label">Birthdays</span>
+          </button>
+          <button class="quick-action">
+            <div class="quick-action-icon">📊</div>
+            <span class="quick-action-label">Insights</span>
+          </button>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="section-header">
+          <h3 class="section-title">Coming Up</h3>
+          <a href="#" class="section-link">See all</a>
+        </div>
+        
+        <div class="event-card">
+          <div class="event-date">
+            <span class="event-date-day">14</span>
+            <span class="event-date-month">Feb</span>
+          </div>
+          <div class="event-info">
+            <div class="event-title">🎂 Maria's Birthday</div>
+            <div class="event-person">Turning 35 • Send a gift?</div>
+          </div>
+          <button class="person-action">🎁</button>
+        </div>
+        
+        <div class="event-card">
+          <div class="event-date">
+            <span class="event-date-day">20</span>
+            <span class="event-date-month">Feb</span>
+          </div>
+          <div class="event-info">
+            <div class="event-title">💍 Parents' Anniversary</div>
+            <div class="event-person">40 years! Plan something special</div>
+          </div>
+          <button class="person-action">💐</button>
+        </div>
+
+        <!-- Inner Circle -->
+        <div class="section-header">
+          <h3 class="section-title">Your Inner Circle</h3>
+          <a href="#" class="section-link">Edit</a>
+        </div>
+
+        <!-- Family Section -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-4">
+            <span class="badge badge-family">👨‍👩‍👧 Family</span>
+          </div>
+          
+          <div class="person-card" onclick="showPersonDetail('mom')">
+            <div class="person-avatar family">
+              👩
+              <span class="health-dot overdue"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">Mom</div>
+              <div class="person-status">Last talked: 3 weeks ago</div>
+            </div>
+            <button class="person-action">📞</button>
+          </div>
+          
+          <div class="person-card">
+            <div class="person-avatar family">
+              👨
+              <span class="health-dot okay"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">Dad</div>
+              <div class="person-status">Last talked: 10 days ago</div>
+            </div>
+            <button class="person-action">📞</button>
+          </div>
+          
+          <div class="person-card">
+            <div class="person-avatar family">
+              👧
+              <span class="health-dot healthy"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">Sister Ana</div>
+              <div class="person-status">Texted yesterday ✓</div>
+            </div>
+            <button class="person-action">💬</button>
+          </div>
+        </div>
+
+        <!-- Friends Section -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-4">
+            <span class="badge badge-friends">👫 Close Friends</span>
+          </div>
+          
+          <div class="person-card">
+            <div class="person-avatar friends">
+              🧑
+              <span class="health-dot healthy"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">Miguel</div>
+              <div class="person-status">Had coffee last week</div>
+            </div>
+            <button class="person-action">💬</button>
+          </div>
+          
+          <div class="person-card">
+            <div class="person-avatar friends">
+              👨
+              <span class="health-dot needs-attention"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">Carlos</div>
+              <div class="person-status">Last talked: 1 month ago</div>
+            </div>
+            <button class="person-action">📞</button>
+          </div>
+          
+          <div class="person-card">
+            <div class="person-avatar friends">
+              👩
+              <span class="health-dot healthy"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">Sofia</div>
+              <div class="person-status">Gaming session 2 days ago</div>
+            </div>
+            <button class="person-action">🎮</button>
+          </div>
+        </div>
+
+        <!-- Professional Section -->
+        <div class="card">
+          <div class="flex items-center justify-between mb-4">
+            <span class="badge badge-professional">💼 Professional</span>
+          </div>
+          
+          <div class="person-card">
+            <div class="person-avatar professional">
+              👨‍💼
+              <span class="health-dot healthy"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">David (Mentor)</div>
+              <div class="person-status">Monthly catch-up in 5 days</div>
+            </div>
+            <button class="person-action">📅</button>
+          </div>
+          
+          <div class="person-card">
+            <div class="person-avatar professional">
+              👩‍💻
+              <span class="health-dot okay"></span>
+            </div>
+            <div class="person-info">
+              <div class="person-name">Lisa (Ex-colleague)</div>
+              <div class="person-status">Should reconnect soon</div>
+            </div>
+            <button class="person-action">💼</button>
+          </div>
+        </div>
+
+        <!-- Spacer for bottom nav -->
+        <div style="height: 100px;"></div>
+      </div>
+    </main>
+
+    <!-- FAB Button -->
+    <button class="fab" id="fab-btn" onclick="showModal('add-person')" aria-label="Add person">
+      ➕
+    </button>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <div class="nav-container">
+        <button class="nav-item active">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-item">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">People</span>
+        </button>
+        <button class="nav-item">
+          <span class="nav-icon">📅</span>
+          <span class="nav-label">Calendar</span>
+        </button>
+        <button class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Insights</span>
+        </button>
+        <button class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Add Person Modal -->
+    <div class="modal-overlay" id="modal-add-person">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Add to Inner Circle</h3>
+          <button class="modal-close" onclick="hideModal('add-person')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" placeholder="Who do you want to stay close to?">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Relationship</label>
+            <div class="flex gap-2" style="flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm">👨‍👩‍👧 Family</button>
+              <button class="btn btn-secondary btn-sm">👫 Friend</button>
+              <button class="btn btn-secondary btn-sm">💼 Professional</button>
+              <button class="btn btn-secondary btn-sm">❤️ Partner</button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">How often do you want to connect?</label>
+            <div class="frequency-options">
+              <button class="frequency-option">
+                <span class="frequency-value">1</span>
+                <span class="frequency-label">Week</span>
+              </button>
+              <button class="frequency-option active">
+                <span class="frequency-value">2</span>
+                <span class="frequency-label">Weeks</span>
+              </button>
+              <button class="frequency-option">
+                <span class="frequency-value">1</span>
+                <span class="frequency-label">Month</span>
+              </button>
+              <button class="frequency-option">
+                <span class="frequency-value">3</span>
+                <span class="frequency-label">Months</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Birthday (optional)</label>
+            <input type="date" class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Notes (optional)</label>
+            <input type="text" class="form-input" placeholder="e.g., Loves hiking, ask about new job">
+          </div>
+          
+          <button class="btn btn-primary btn-block" onclick="addPerson()">
+            💜 Add to Inner Circle
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Interaction Modal -->
+    <div class="modal-overlay" id="modal-log-interaction">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Log Interaction</h3>
+          <button class="modal-close" onclick="hideModal('log-interaction')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Who did you connect with?</label>
+            <select class="form-input">
+              <option>Select a person...</option>
+              <option>👩 Mom</option>
+              <option>👨 Dad</option>
+              <option>👧 Sister Ana</option>
+              <option>🧑 Miguel</option>
+              <option>👨 Carlos</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">How did you connect?</label>
+            <div class="flex gap-2" style="flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm">📞 Call</button>
+              <button class="btn btn-secondary btn-sm">💬 Text</button>
+              <button class="btn btn-secondary btn-sm">🎥 Video</button>
+              <button class="btn btn-secondary btn-sm">☕ In Person</button>
+              <button class="btn btn-secondary btn-sm">✉️ Email</button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Quick note (optional)</label>
+            <input type="text" class="form-input" placeholder="e.g., Discussed vacation plans, she's feeling better">
+          </div>
+          
+          <button class="btn btn-primary btn-block" onclick="logInteraction()">
+            ✓ Log It
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
