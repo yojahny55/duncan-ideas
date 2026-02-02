@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ShelfLife - Smart Pantry & Expiration Tracker. Reduce food waste, save money.">
+  <meta name="theme-color" content="#10B981">
+  <title>ShelfLife - Smart Pantry Tracker</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- PWA Manifest (would be added for real app) -->
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header__top">
+        <div class="header__logo">
+          <span class="header__logo-icon">🥬</span>
+          <span>ShelfLife</span>
+        </div>
+        <div class="header__actions">
+          <button class="icon-btn" aria-label="Search items" id="searchBtn">
+            🔍
+          </button>
+          <button class="icon-btn" aria-label="Settings" id="settingsBtn">
+            ⚙️
+          </button>
+        </div>
+      </div>
+      
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-card__value" id="totalItems">24</span>
+          <span class="stat-card__label">Items</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__value" id="expiringSoon">5</span>
+          <span class="stat-card__label">Expiring Soon</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__value" id="savedMoney">$47</span>
+          <span class="stat-card__label">Saved</span>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Filter Tabs -->
+    <nav class="filter-tabs" role="tablist" aria-label="Filter by location">
+      <button class="filter-tab filter-tab--active" role="tab" aria-selected="true" data-filter="all">
+        All <span class="filter-tab__count">24</span>
+      </button>
+      <button class="filter-tab" role="tab" aria-selected="false" data-filter="fridge">
+        🧊 Fridge <span class="filter-tab__count">12</span>
+      </button>
+      <button class="filter-tab" role="tab" aria-selected="false" data-filter="freezer">
+        ❄️ Freezer <span class="filter-tab__count">4</span>
+      </button>
+      <button class="filter-tab" role="tab" aria-selected="false" data-filter="pantry">
+        🏠 Pantry <span class="filter-tab__count">8</span>
+      </button>
+    </nav>
+    
+    <!-- Alert Banner -->
+    <div class="alert-banner" id="alertBanner">
+      <span class="alert-banner__icon">⚠️</span>
+      <div class="alert-banner__content">
+        <div class="alert-banner__title">3 items expiring today!</div>
+        <div class="alert-banner__text">Milk, Yogurt, and Chicken breast need to be used.</div>
+        <button class="alert-banner__action" id="useItUpBtn">View "Use It Up" Recipes</button>
+      </div>
+    </div>
+    
+    <!-- Expiring Soon Section -->
+    <section class="section" id="expiringSection">
+      <div class="section__header">
+        <h2 class="section__title">
+          <span class="section__title-icon">🔥</span>
+          Use It Up
+        </h2>
+        <a href="#" class="section__link">View all</a>
+      </div>
+      
+      <div class="items-grid" id="expiringItems">
+        <!-- Expiring items loaded by JS -->
+      </div>
+    </section>
+    
+    <!-- Recipe Suggestion -->
+    <section class="section" id="recipeSection">
+      <div class="section__header">
+        <h2 class="section__title">
+          <span class="section__title-icon">👨‍🍳</span>
+          AI Recipe Suggestion
+        </h2>
+      </div>
+      
+      <div class="recipe-card">
+        <div class="recipe-card__image">🍳</div>
+        <div class="recipe-card__body">
+          <span class="recipe-card__tag">Uses 3 expiring items</span>
+          <h3 class="recipe-card__title">Creamy Chicken & Vegetable Stir Fry</h3>
+          <p class="recipe-card__ingredients">Uses: Chicken breast, Milk, Bell peppers</p>
+          <div class="recipe-card__footer">
+            <span class="recipe-card__time">⏱️ 25 min</span>
+            <button class="recipe-card__btn">View Recipe</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- All Items Section -->
+    <section class="section" id="allItemsSection">
+      <div class="section__header">
+        <h2 class="section__title">
+          <span class="section__title-icon">📦</span>
+          All Items
+        </h2>
+        <a href="#" class="section__link">Sort by</a>
+      </div>
+      
+      <div class="items-grid" id="allItems">
+        <!-- All items loaded by JS -->
+      </div>
+    </section>
+    
+    <!-- Empty State (hidden by default) -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-state__icon">📭</div>
+      <h3 class="empty-state__title">Your pantry is empty</h3>
+      <p class="empty-state__text">Start by adding items to track their expiration dates and reduce food waste.</p>
+      <button class="empty-state__btn" id="emptyAddBtn">Add Your First Item</button>
+    </div>
+    
+    <!-- FAB (Floating Action Button) -->
+    <button class="fab" id="fabAdd" aria-label="Add new item">
+      +
+    </button>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+      <button class="nav-item nav-item--active" data-nav="home">
+        <span class="nav-item__icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" data-nav="list">
+        <span class="nav-item__icon">📝</span>
+        <span>Shopping</span>
+      </button>
+      <button class="nav-item" data-nav="recipes">
+        <span class="nav-item__icon">📖</span>
+        <span>Recipes</span>
+      </button>
+      <button class="nav-item" data-nav="stats">
+        <span class="nav-item__icon">📊</span>
+        <span>Insights</span>
+      </button>
+    </nav>
+    
+    <!-- Add Item Modal -->
+    <div class="modal-overlay" id="addModal">
+      <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+        <header class="modal__header">
+          <h2 class="modal__title" id="modalTitle">Add Item</h2>
+          <button class="modal__close" id="modalClose" aria-label="Close modal">✕</button>
+        </header>
+        <div class="modal__body">
+          <!-- Quick Add Options -->
+          <div class="quick-add">
+            <button class="quick-add__btn" id="scanBarcode">
+              <span class="quick-add__icon">📷</span>
+              <span class="quick-add__text">Scan Barcode</span>
+            </button>
+            <button class="quick-add__btn" id="scanReceipt">
+              <span class="quick-add__icon">🧾</span>
+              <span class="quick-add__text">Scan Receipt</span>
+            </button>
+          </div>
+          
+          <form id="addItemForm">
+            <div class="form-group">
+              <label class="form-label" for="itemName">Item Name *</label>
+              <input type="text" class="form-input" id="itemName" placeholder="e.g., Milk, Eggs, Chicken" required>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="itemQty">Quantity</label>
+                <input type="number" class="form-input" id="itemQty" value="1" min="1">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="itemUnit">Unit</label>
+                <select class="form-select" id="itemUnit">
+                  <option value="pcs">pieces</option>
+                  <option value="lbs">lbs</option>
+                  <option value="oz">oz</option>
+                  <option value="gal">gallon</option>
+                  <option value="l">liter</option>
+                  <option value="kg">kg</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="itemLocation">Location *</label>
+              <select class="form-select" id="itemLocation" required>
+                <option value="">Select location...</option>
+                <option value="fridge">🧊 Fridge</option>
+                <option value="freezer">❄️ Freezer</option>
+                <option value="pantry">🏠 Pantry</option>
+                <option value="spices">🧂 Spice Rack</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="itemExpiry">Expiration Date *</label>
+              <input type="date" class="form-input" id="itemExpiry" required>
+            </div>
+            
+            <button type="submit" class="btn-primary">Add Item</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
