@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameDev Pulse - Your Gamedev News Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="logo">
+          <span class="logo-icon">🎮</span>
+          <span>GameDev Pulse</span>
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="#" class="nav-item active" data-filter="all">
+            <span class="nav-item-icon">📰</span>
+            <span>All News</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="devlogs">
+            <span class="nav-item-icon">📝</span>
+            <span>Devlogs</span>
+            <span class="nav-item-badge">12</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="jobs">
+            <span class="nav-item-icon">💼</span>
+            <span>Jobs</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="events">
+            <span class="nav-item-icon">📅</span>
+            <span>Events</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Engines</div>
+          <a href="#" class="nav-item" data-filter="unity">
+            <span class="nav-item-icon">🔷</span>
+            <span>Unity</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="godot">
+            <span class="nav-item-icon">🤖</span>
+            <span>Godot</span>
+            <span class="nav-item-badge">5</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="unreal">
+            <span class="nav-item-icon">⚡</span>
+            <span>Unreal</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Topics</div>
+          <a href="#" class="nav-item" data-filter="art">
+            <span class="nav-item-icon">🎨</span>
+            <span>Art & Animation</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="audio">
+            <span class="nav-item-icon">🎵</span>
+            <span>Audio</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="design">
+            <span class="nav-item-icon">🎯</span>
+            <span>Game Design</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="career">
+            <span class="nav-item-icon">🚀</span>
+            <span>Career</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Saved</div>
+          <a href="#" class="nav-item" data-filter="bookmarks">
+            <span class="nav-item-icon">🔖</span>
+            <span>Bookmarks</span>
+          </a>
+          <a href="#" class="nav-item" data-filter="liked">
+            <span class="nav-item-icon">❤️</span>
+            <span>Liked</span>
+          </a>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">YC</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Yojahny</div>
+            <div class="sidebar-user-plan">Pro Member</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <button class="btn-icon mobile-menu-btn" id="menuBtn" aria-label="Toggle menu">
+            ☰
+          </button>
+          <h1 class="header-title" id="feedTitle">All News</h1>
+        </div>
+        
+        <div class="header-right">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="search" 
+              class="search-input" 
+              placeholder="Search gamedev news..." 
+              aria-label="Search"
+            >
+          </div>
+          <button class="btn btn-primary" id="postBtn">
+            <span>+ Post Devlog</span>
+          </button>
+        </div>
+      </header>
+      
+      <!-- Feed -->
+      <div class="feed" id="feed">
+        <!-- Feed Tabs -->
+        <div class="feed-tabs">
+          <button class="feed-tab active" data-tab="latest">Latest</button>
+          <button class="feed-tab" data-tab="trending">Trending</button>
+          <button class="feed-tab" data-tab="following">Following</button>
+        </div>
+        
+        <!-- Feed Content (populated by JS) -->
+        <div id="feedContent">
+          <!-- Loading state shown initially -->
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+  
+  <script src="app.js"></script>
+</body>
+</html>

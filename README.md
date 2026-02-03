@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-03 | [GameDev Pulse](ideas/2026-02-03-gamedev-pulse/) | Focused news and community app for game developers — escape Twitter/X negativity, curated gamedev content, devlog sharing, positive-only culture | X/Twitter | ✅ [Demo](ideas/2026-02-03-gamedev-pulse/prototype/index.html) |
 | 2026-02-02 | [Local Permit AI](ideas/2026-02-02-local-permit-ai/) | AI-powered local regulation assistant — get instant answers about permits, zoning, and business licenses with official source citations | Web/DEV.to | ✅ [Demo](ideas/2026-02-02-local-permit-ai/prototype/index.html) |
 | 2026-02-02 | [HeartPing](ideas/2026-02-02-heartping-relationship-keeper/) | Personal relationship CRM — stay in touch with people who matter, smart nudges, connection health tracking, never forget birthdays | Reddit | ✅ [Demo](ideas/2026-02-02-heartping-relationship-keeper/prototype/index.html) |
 | 2026-02-02 | [SubSlayer](ideas/2026-02-02-subslayer/) | Kill forgotten subscriptions before they kill your wallet — aggressive pre-renewal alerts, savings gamification, AI cancel assist | X/Twitter | ✅ [Demo](ideas/2026-02-02-subslayer/prototype/index.html) |
