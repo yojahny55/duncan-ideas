@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Get instant answers about local permits, zoning, and regulations for your small business. AI-powered, location-aware, always cited.">
+  <title>Local Permit AI — Navigate Local Regulations with Confidence</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#" class="header__logo">
+        <div class="header__logo-icon">🏛️</div>
+        <span class="header__logo-text">Local Permit AI</span>
+      </a>
+      <nav class="header__nav">
+        <a href="#features" class="header__link">Features</a>
+        <a href="#pricing" class="header__link">Pricing</a>
+        <a href="#about" class="header__link">About</a>
+        <a href="#" class="header__cta">Get Started Free</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="hero__badge">
+        <span>✨</span>
+        <span>AI-Powered Permit Research</span>
+      </span>
+      <h1 class="hero__title">
+        Stop Guessing About
+        <span class="hero__title-highlight">Local Permits</span>
+      </h1>
+      <p class="hero__subtitle">
+        Ask any question about permits, zoning, or regulations. 
+        Get instant, accurate answers with official source citations.
+      </p>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <div class="search-box__location">
+          <span class="search-box__location-icon">📍</span>
+          <span class="search-box__location-text" id="location-display">Tampa, FL (Hillsborough County)</span>
+          <button class="search-box__location-change" id="change-location">Change</button>
+        </div>
+        
+        <form class="search-box__form" id="search-form">
+          <div class="search-box__input-wrapper">
+            <span class="search-box__input-icon">🔍</span>
+            <input 
+              type="text" 
+              class="search-box__input" 
+              id="search-input"
+              placeholder="e.g., Do I need a permit to sell food from home?"
+              aria-label="Enter your permit question"
+              autocomplete="off"
+            >
+          </div>
+          <button type="submit" class="search-box__button" id="search-button">
+            <span>Ask AI</span>
+            <span>→</span>
+          </button>
+        </form>
+
+        <!-- Quick Questions -->
+        <div class="quick-questions">
+          <p class="quick-questions__label">Popular questions:</p>
+          <div class="quick-questions__list">
+            <button class="quick-questions__item" data-question="What permits do I need to open a food truck?">
+              🚚 Food truck permits
+            </button>
+            <button class="quick-questions__item" data-question="Can I run a home-based business in a residential zone?">
+              🏠 Home business rules
+            </button>
+            <button class="quick-questions__item" data-question="How do I get a retail sales tax certificate?">
+              🏪 Sales tax certificate
+            </button>
+            <button class="quick-questions__item" data-question="Do I need a license to be a freelance contractor?">
+              🔧 Contractor license
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  <section class="results container" id="results-section">
+    <div class="results__header">
+      <h2 class="results__title">AI Response</h2>
+      <span class="results__meta" id="results-meta"></span>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading" id="loading-state">
+      <div class="loading__spinner"></div>
+      <p class="loading__text">Researching local regulations...</p>
+      <p class="loading__subtext">Checking Hillsborough County codes and Tampa ordinances</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error" id="error-state">
+      <div class="error__icon">⚠️</div>
+      <h3 class="error__title">Something went wrong</h3>
+      <p class="error__message">We couldn't process your question. Please try again.</p>
+      <button class="error__retry" id="retry-button">Try Again</button>
+    </div>
+
+    <!-- Answer Card -->
+    <div class="answer-card" id="answer-card" style="display: none;">
+      <div class="answer-card__header">
+        <div class="answer-card__question">
+          <span class="answer-card__question-icon">Q</span>
+          <span id="answer-question"></span>
+        </div>
+      </div>
+      <div class="answer-card__body">
+        <div class="answer-card__summary" id="answer-summary"></div>
+
+        <div class="requirements" id="requirements-section">
+          <h4 class="requirements__title">📋 What You'll Need</h4>
+          <ul class="requirements__list" id="requirements-list"></ul>
+        </div>
+
+        <div class="sources" id="sources-section">
+          <h4 class="sources__title">
+            <span>🔗</span>
+            <span>Official Sources</span>
+          </h4>
+          <div class="sources__list" id="sources-list"></div>
+        </div>
+
+        <div class="disclaimer">
+          <span>⚠️</span>
+          <span>
+            <strong>Disclaimer:</strong> This information is for reference only and does not constitute legal advice. 
+            Always verify requirements with your local government office before proceeding.
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="features__header">
+        <h2 class="features__title">Why Local Permit AI?</h2>
+        <p class="features__subtitle">Navigate the maze of local regulations with confidence</p>
+      </div>
+      <div class="features__grid">
+        <div class="feature-card">
+          <div class="feature-card__icon">🎯</div>
+          <h3 class="feature-card__title">Location-Aware</h3>
+          <p class="feature-card__text">
+            Answers are tailored to your exact city, county, and state. 
+            No more generic advice that doesn't apply.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">📄</div>
+          <h3 class="feature-card__title">Always Cited</h3>
+          <p class="feature-card__text">
+            Every answer links to official government sources. 
+            Verify everything with one click.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card__icon">⚡</div>
+          <h3 class="feature-card__title">Instant Answers</h3>
+          <p class="feature-card__text">
+            Get answers in seconds instead of hours of research. 
+            Ask follow-up questions naturally.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__text">
+        Built with <span class="footer__heart">❤️</span> for small business owners everywhere
+        <br>
+        <small>© 2026 Local Permit AI — Prototype Demo</small>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
