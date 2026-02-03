@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Recipe Rescue - Strip bloated recipe sites down to what matters: ingredients and steps.">
+  <meta name="theme-color" content="#059669">
+  
+  <title>Recipe Rescue - Just the Recipe, Nothing Else</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="container header__inner">
+        <a href="/" class="logo" aria-label="Recipe Rescue Home">
+          <span class="logo__icon">🍳</span>
+          <span class="logo__text">Recipe<span>Rescue</span></span>
+        </a>
+        
+        <button 
+          class="theme-toggle" 
+          id="themeToggle" 
+          aria-label="Toggle dark mode"
+          title="Toggle dark mode"
+        >
+          <span class="theme-toggle__icon">🌙</span>
+        </button>
+      </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+      <!-- Hero / Input Section -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="container">
+          <h1 class="hero__title" id="hero-title">Rescue Your Recipes</h1>
+          <p class="hero__subtitle">
+            Paste any recipe URL. Get just the ingredients and steps. No ads, no life stories, no fluff.
+          </p>
+          
+          <form class="url-input-group" id="recipeForm" role="search">
+            <label for="recipeUrl" class="sr-only">Recipe URL</label>
+            <input 
+              type="url" 
+              id="recipeUrl" 
+              class="url-input" 
+              placeholder="Paste a recipe URL (e.g., allrecipes.com/...)" 
+              required
+              autocomplete="url"
+            >
+            <button type="submit" class="btn btn--primary" id="rescueBtn">
+              <span>🚀</span>
+              <span>Rescue It</span>
+            </button>
+          </form>
+          
+          <p style="margin-top: var(--space-4); color: var(--color-text-muted); font-size: var(--text-sm);">
+            Try it: 
+            <button class="btn btn--ghost" style="padding: var(--space-1) var(--space-2); font-size: var(--text-sm);" data-demo="demo1">
+              Demo Recipe
+            </button>
+          </p>
+        </div>
+      </section>
+      
+      <!-- Loading State (hidden by default) -->
+      <section class="loading hidden" id="loadingState" aria-label="Loading recipe">
+        <div class="loading__spinner" aria-hidden="true"></div>
+        <p class="loading__text">Rescuing your recipe...</p>
+      </section>
+      
+      <!-- Error State (hidden by default) -->
+      <section class="error hidden" id="errorState" role="alert">
+        <div class="error__icon">😕</div>
+        <h3 class="error__title">Couldn't rescue that recipe</h3>
+        <p class="error__text" id="errorMessage">
+          We couldn't extract the recipe from that URL. Try a different link or check if the page has a recipe.
+        </p>
+      </section>
+      
+      <!-- Recipe Content (hidden by default, shown after extraction) -->
+      <section class="recipe hidden" id="recipeContent" aria-labelledby="recipe-title">
+        <div class="container">
+          <!-- Recipe Header -->
+          <header class="recipe__header">
+            <h2 class="recipe__title" id="recipe-title">Classic Chocolate Chip Cookies</h2>
+            <div class="recipe__meta">
+              <span class="recipe__meta-item">
+                <span aria-hidden="true">⏱️</span>
+                <span>Prep: <strong id="prepTime">15 min</strong></span>
+              </span>
+              <span class="recipe__meta-item">
+                <span aria-hidden="true">🍳</span>
+                <span>Cook: <strong id="cookTime">12 min</strong></span>
+              </span>
+              <span class="recipe__meta-item">
+                <span aria-hidden="true">🍽️</span>
+                <span>Servings: <strong id="servingsDisplay">24</strong></span>
+              </span>
+            </div>
+          </header>
+          
+          <!-- Recipe Grid -->
+          <div class="recipe__content">
+            <!-- Ingredients Panel -->
+            <aside class="ingredients" aria-labelledby="ingredients-title">
+              <header class="ingredients__header">
+                <h3 class="ingredients__title" id="ingredients-title">
+                  <span aria-hidden="true">🥚</span>
+                  Ingredients
+                </h3>
+                <div class="servings-control" role="group" aria-label="Adjust servings">
+                  <button 
+                    class="servings-control__btn" 
+                    id="decreaseServings"
+                    aria-label="Decrease servings"
+                  >−</button>
+                  <span class="servings-control__value" id="servingsValue" aria-live="polite">24</span>
+                  <button 
+                    class="servings-control__btn" 
+                    id="increaseServings"
+                    aria-label="Increase servings"
+                  >+</button>
+                </div>
+              </header>
+              
+              <ul class="ingredients__list" id="ingredientsList" role="list">
+                <!-- Ingredients will be injected here -->
+              </ul>
+              
+              <button class="btn btn--secondary" style="width: 100%; margin-top: var(--space-4);" id="copyIngredientsBtn">
+                📋 Copy Shopping List
+              </button>
+            </aside>
+            
+            <!-- Steps Panel -->
+            <article class="steps" aria-labelledby="steps-title">
+              <header class="steps__header">
+                <h3 class="steps__title" id="steps-title">
+                  <span aria-hidden="true">👩‍🍳</span>
+                  Instructions
+                </h3>
+              </header>
+              
+              <ol class="steps__list" id="stepsList" role="list">
+                <!-- Steps will be injected here -->
+              </ol>
+            </article>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Empty State (shown initially) -->
+      <section class="empty-state" id="emptyState" aria-label="Get started">
+        <div class="container">
+          <div class="empty-state__icon">📖</div>
+          <h3 class="empty-state__title">No recipe yet</h3>
+          <p class="empty-state__text">
+            Paste a recipe URL above to rescue it from ad-filled, story-bloated recipe sites.
+          </p>
+        </div>
+      </section>
+    </main>
+    
+    <!-- Timer Modal -->
+    <div class="timer-modal" id="timerModal" role="dialog" aria-labelledby="timer-label" aria-hidden="true">
+      <div class="timer-modal__content">
+        <div class="timer-modal__time" id="timerDisplay">00:00</div>
+        <p class="timer-modal__label" id="timer-label">Timer running...</p>
+        <div class="timer-modal__actions">
+          <button class="btn btn--secondary" id="pauseTimerBtn">⏸️ Pause</button>
+          <button class="btn btn--primary" id="stopTimerBtn">✓ Done</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="footer__text">
+          Made with 💚 by <a href="https://github.com/yojahny55" class="footer__link">Duncan</a> 
+          • Zero fluff. Just food.
+        </p>
+      </div>
+    </footer>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
