@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepCount AI - Smart Workout Counter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <span class="logo">💪</span>
+                <h1>RepCount AI</h1>
+            </div>
+            <button class="btn-icon" aria-label="Settings">⚙️</button>
+        </header>
+
+        <!-- Main Counter View -->
+        <main class="main">
+            <!-- Camera Preview -->
+            <div class="camera-preview">
+                <div class="camera-placeholder">
+                    <div class="pose-skeleton">
+                        <div class="skeleton-head"></div>
+                        <div class="skeleton-body"></div>
+                        <div class="skeleton-arm-left"></div>
+                        <div class="skeleton-arm-right"></div>
+                        <div class="skeleton-leg-left"></div>
+                        <div class="skeleton-leg-right"></div>
+                    </div>
+                    <span class="camera-label">AI Tracking Active</span>
+                </div>
+                <div class="exercise-badge">
+                    <span class="exercise-icon">🏋️</span>
+                    <span class="exercise-name">Squats</span>
+                    <span class="confidence">98% confident</span>
+                </div>
+            </div>
+
+            <!-- Counter Display -->
+            <div class="counter-section">
+                <div class="set-indicator">
+                    <span class="set-label">SET</span>
+                    <span class="set-number">3</span>
+                    <span class="set-total">of 4</span>
+                </div>
+                
+                <div class="rep-counter">
+                    <button class="btn-adjust" id="btn-minus" aria-label="Decrease">−</button>
+                    <div class="rep-display">
+                        <span class="rep-number" id="rep-count">8</span>
+                        <span class="rep-label">REPS</span>
+                    </div>
+                    <button class="btn-adjust" id="btn-plus" aria-label="Increase">+</button>
+                </div>
+
+                <div class="target-info">
+                    <span class="target-label">Target:</span>
+                    <span class="target-value">12 reps</span>
+                </div>
+            </div>
+
+            <!-- Progress Ring -->
+            <div class="progress-container">
+                <svg class="progress-ring" viewBox="0 0 120 120">
+                    <circle class="progress-bg" cx="60" cy="60" r="54" />
+                    <circle class="progress-bar" cx="60" cy="60" r="54" 
+                            stroke-dasharray="339.292" 
+                            stroke-dashoffset="113" />
+                </svg>
+                <div class="progress-text">67%</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="actions">
+                <button class="btn btn-secondary" id="btn-rest">
+                    <span class="btn-icon-left">⏸️</span>
+                    Rest Timer
+                </button>
+                <button class="btn btn-primary" id="btn-next-set">
+                    <span class="btn-icon-left">✓</span>
+                    Complete Set
+                </button>
+            </div>
+        </main>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <button class="nav-item active">
+                <span class="nav-icon">🎯</span>
+                <span class="nav-label">Workout</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">History</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Templates</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </button>
+        </nav>
+
+        <!-- Rest Timer Modal (hidden by default) -->
+        <div class="modal" id="rest-modal">
+            <div class="modal-content">
+                <h2>Rest Timer</h2>
+                <div class="timer-display">
+                    <span class="timer-value" id="timer-value">01:30</span>
+                </div>
+                <div class="timer-presets">
+                    <button class="preset-btn" data-time="30">30s</button>
+                    <button class="preset-btn active" data-time="90">1:30</button>
+                    <button class="preset-btn" data-time="120">2:00</button>
+                    <button class="preset-btn" data-time="180">3:00</button>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="btn-skip-rest">Skip</button>
+                    <button class="btn btn-primary" id="btn-start-rest">Start Rest</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

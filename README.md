@@ -51,3 +51,5 @@ ideas/
 ---
 
 *Generated and maintained by Duncan ⚔️*
+
+| 2026-02-03 | [RepCount AI](ideas/2026-02-03-repcount-ai/) | AI-powered workout rep & set counter | Reddit |
