@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FixIt Lens - AI Appliance Troubleshooter</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">🔧</span>
+        <span class="logo-text">FixIt Lens</span>
+      </a>
+      <div class="nav-links">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <button class="btn btn-primary btn-sm">Get Started Free</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          AI-Powered Diagnosis
+        </div>
+        <h1 class="hero-title">
+          Fix Your Appliances<br>
+          <span class="gradient-text">Without the Guesswork</span>
+        </h1>
+        <p class="hero-subtitle">
+          Snap a photo, describe the issue, and get instant repair guidance. 
+          Know when to DIY and when to call a pro.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="openDiagnosis()">
+            <span class="btn-icon">📸</span>
+            Start Free Diagnosis
+          </button>
+          <button class="btn btn-secondary btn-lg">
+            Watch Demo
+          </button>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-avatars">
+            <img src="https://i.pravatar.cc/40?img=1" alt="User" class="avatar">
+            <img src="https://i.pravatar.cc/40?img=2" alt="User" class="avatar">
+            <img src="https://i.pravatar.cc/40?img=3" alt="User" class="avatar">
+            <img src="https://i.pravatar.cc/40?img=4" alt="User" class="avatar">
+          </div>
+          <p><strong>2,400+</strong> appliances fixed this week</p>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="diagnosis-preview">
+              <div class="preview-header">
+                <span class="status-badge status-success">✓ Identified</span>
+                <span class="appliance-name">Samsung RF28R7351SR</span>
+              </div>
+              <div class="preview-image">
+                <div class="image-placeholder">
+                  <span>🧊</span>
+                  <small>Refrigerator</small>
+                </div>
+              </div>
+              <div class="preview-diagnosis">
+                <div class="diagnosis-item">
+                  <span class="diagnosis-icon warning">⚠️</span>
+                  <div>
+                    <strong>Ice Maker Not Working</strong>
+                    <p>Likely cause: Frozen water line</p>
+                  </div>
+                </div>
+                <div class="difficulty-badge easy">
+                  <span>🟢 Easy Fix</span>
+                  <span>~15 min</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="section section-light">
+    <div class="container">
+      <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Get from broken to fixed in three simple steps</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-icon">📸</div>
+          <h3>Snap a Photo</h3>
+          <p>Take a photo of your appliance. Our AI identifies the brand, model, and any visible issues.</p>
+        </div>
+        <div class="step-connector">→</div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-icon">🩺</div>
+          <h3>Describe Symptoms</h3>
+          <p>Select what's wrong: won't start, making noise, leaking, etc. Our AI narrows down the cause.</p>
+        </div>
+        <div class="step-connector">→</div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-icon">✅</div>
+          <h3>Get Your Fix</h3>
+          <p>Receive step-by-step repair instructions with difficulty rating and parts links.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnosis Modal/Flow -->
+  <div id="diagnosis-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeDiagnosis()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeDiagnosis()" aria-label="Close">×</button>
+      
+      <!-- Step 1: Upload -->
+      <div id="step-upload" class="diagnosis-step active">
+        <div class="step-header">
+          <div class="step-progress">
+            <div class="progress-dot active"></div>
+            <div class="progress-line"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-line"></div>
+            <div class="progress-dot"></div>
+          </div>
+          <h2>Upload Appliance Photo</h2>
+          <p>Take a clear photo of your appliance or the area with the issue</p>
+        </div>
+        
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon">📷</div>
+          <p class="upload-text">Drag & drop or click to upload</p>
+          <p class="upload-hint">Supports JPG, PNG up to 10MB</p>
+          <input type="file" id="file-input" accept="image/*" hidden>
+        </div>
+        
+        <div id="preview-zone" class="preview-zone hidden">
+          <img id="preview-image" src="" alt="Preview">
+          <button class="btn btn-ghost btn-sm" onclick="clearUpload()">Remove</button>
+        </div>
+        
+        <div class="quick-select">
+          <p>Or select appliance type:</p>
+          <div class="appliance-chips">
+            <button class="chip" onclick="selectAppliance('refrigerator')">🧊 Refrigerator</button>
+            <button class="chip" onclick="selectAppliance('washer')">🧺 Washer</button>
+            <button class="chip" onclick="selectAppliance('dryer')">🌀 Dryer</button>
+            <button class="chip" onclick="selectAppliance('dishwasher')">🍽️ Dishwasher</button>
+            <button class="chip" onclick="selectAppliance('oven')">🔥 Oven/Range</button>
+            <button class="chip" onclick="selectAppliance('microwave')">📻 Microwave</button>
+          </div>
+        </div>
+        
+        <div class="step-actions">
+          <button class="btn btn-primary btn-lg" id="next-to-symptoms" onclick="goToSymptoms()" disabled>
+            Continue
+          </button>
+        </div>
+      </div>
+      
+      <!-- Step 2: Symptoms -->
+      <div id="step-symptoms" class="diagnosis-step">
+        <div class="step-header">
+          <div class="step-progress">
+            <div class="progress-dot completed">✓</div>
+            <div class="progress-line completed"></div>
+            <div class="progress-dot active"></div>
+            <div class="progress-line"></div>
+            <div class="progress-dot"></div>
+          </div>
+          <h2>What's the Problem?</h2>
+          <p id="appliance-context">Select all symptoms that apply</p>
+        </div>
+        
+        <div class="symptoms-grid" id="symptoms-grid">
+          <!-- Populated by JS -->
+        </div>
+        
+        <div class="additional-info">
+          <label for="extra-details">Any additional details?</label>
+          <textarea id="extra-details" placeholder="e.g., Started happening yesterday, makes a clicking sound every 30 seconds..."></textarea>
+        </div>
+        
+        <div class="step-actions">
+          <button class="btn btn-ghost" onclick="goToUpload()">← Back</button>
+          <button class="btn btn-primary btn-lg" id="analyze-btn" onclick="runDiagnosis()" disabled>
+            <span class="btn-icon">🔍</span>
+            Analyze Issue
+          </button>
+        </div>
+      </div>
+      
+      <!-- Step 3: Results -->
+      <div id="step-results" class="diagnosis-step">
+        <div class="step-header">
+          <div class="step-progress">
+            <div class="progress-dot completed">✓</div>
+            <div class="progress-line completed"></div>
+            <div class="progress-dot completed">✓</div>
+            <div class="progress-line completed"></div>
+            <div class="progress-dot active">✓</div>
+          </div>
+          <h2>Diagnosis Complete</h2>
+        </div>
+        
+        <div class="results-container">
+          <div class="result-card primary">
+            <div class="result-header">
+              <span class="confidence-badge">92% Confidence</span>
+              <h3 id="diagnosis-title">Frozen Water Line</h3>
+            </div>
+            <p id="diagnosis-description">The water supply line to your ice maker has likely frozen due to temperature settings or a faulty defrost system.</p>
+            
+            <div class="difficulty-indicator">
+              <div class="difficulty-bar easy">
+                <span class="difficulty-fill" style="width: 30%"></span>
+              </div>
+              <div class="difficulty-meta">
+                <span class="difficulty-label">🟢 Easy DIY Fix</span>
+                <span class="difficulty-time">⏱️ 15-20 minutes</span>
+              </div>
+            </div>
+            
+            <div class="tools-needed">
+              <h4>Tools Needed</h4>
+              <div class="tool-chips">
+                <span class="tool-chip">Hair Dryer</span>
+                <span class="tool-chip">Towels</span>
+                <span class="tool-chip">Thermometer (optional)</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="repair-steps">
+            <h4>Repair Steps</h4>
+            <ol class="steps-list">
+              <li class="step-item">
+                <span class="step-check"></span>
+                <div>
+                  <strong>Unplug the refrigerator</strong>
+                  <p>Safety first! Disconnect power before any work.</p>
+                </div>
+              </li>
+              <li class="step-item">
+                <span class="step-check"></span>
+                <div>
+                  <strong>Locate the water line</strong>
+                  <p>Usually at the back, running from the valve to the ice maker.</p>
+                </div>
+              </li>
+              <li class="step-item">
+                <span class="step-check"></span>
+                <div>
+                  <strong>Apply heat carefully</strong>
+                  <p>Use a hair dryer on low heat along the line. Never use open flame.</p>
+                </div>
+              </li>
+              <li class="step-item">
+                <span class="step-check"></span>
+                <div>
+                  <strong>Check temperature settings</strong>
+                  <p>Freezer should be 0°F (-18°C), fridge 37°F (3°C).</p>
+                </div>
+              </li>
+              <li class="step-item">
+                <span class="step-check"></span>
+                <div>
+                  <strong>Restore power and test</strong>
+                  <p>Wait 24 hours for ice production to resume.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+          
+          <div class="alternative-diagnoses">
+            <h4>Other Possible Causes</h4>
+            <div class="alt-list">
+              <div class="alt-item">
+                <span class="alt-confidence">65%</span>
+                <span class="alt-name">Faulty Water Inlet Valve</span>
+                <span class="alt-difficulty medium">Medium</span>
+              </div>
+              <div class="alt-item">
+                <span class="alt-confidence">40%</span>
+                <span class="alt-name">Defective Ice Maker Assembly</span>
+                <span class="alt-difficulty hard">Call Pro</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="parts-section">
+            <h4>Parts You Might Need</h4>
+            <div class="parts-grid">
+              <a href="#" class="part-card">
+                <div class="part-image">🔧</div>
+                <div class="part-info">
+                  <span class="part-name">Water Inlet Valve</span>
+                  <span class="part-price">$45-65</span>
+                </div>
+              </a>
+              <a href="#" class="part-card">
+                <div class="part-image">❄️</div>
+                <div class="part-info">
+                  <span class="part-name">Ice Maker Assembly</span>
+                  <span class="part-price">$120-180</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="step-actions">
+          <button class="btn btn-ghost" onclick="startOver()">Start New Diagnosis</button>
+          <button class="btn btn-primary btn-lg">
+            <span class="btn-icon">💾</span>
+            Save to My Appliances
+          </button>
+        </div>
+      </div>
+      
+      <!-- Loading State -->
+      <div id="step-loading" class="diagnosis-step loading-step">
+        <div class="loading-animation">
+          <div class="loading-spinner"></div>
+          <h3>Analyzing your appliance...</h3>
+          <p class="loading-status">Identifying model and symptoms</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <section id="features" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Why FixIt Lens?</h2>
+        <p>Everything you need to repair with confidence</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>AI-Powered Accuracy</h3>
+          <p>Our vision AI identifies 500+ appliance models and 2,000+ common issues with 90%+ accuracy.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Instant Diagnosis</h3>
+          <p>Get answers in seconds, not hours of Googling and watching YouTube tutorials.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Safety First</h3>
+          <p>Clear warnings when a repair is dangerous. Know when to DIY and when to call a pro.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛒</div>
+          <h3>Parts Finder</h3>
+          <p>Direct links to the exact parts you need with price comparison across retailers.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Home Inventory</h3>
+          <p>Save your appliances, track warranties, and get proactive maintenance reminders.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>AI Assistant</h3>
+          <p>Stuck on a step? Ask follow-up questions and get clarification in real-time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof -->
+  <section class="section section-light">
+    <div class="container">
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-rating">★★★★★</div>
+          <p>"Saved me $200 on a repair guy. The ice maker fix took 15 minutes and actually worked!"</p>
+          <div class="testimonial-author">
+            <img src="https://i.pravatar.cc/48?img=5" alt="Sarah M." class="avatar">
+            <div>
+              <strong>Sarah M.</strong>
+              <span>Tampa, FL</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-rating">★★★★★</div>
+          <p>"Finally, something that tells me WHEN to call a pro instead of letting me break things worse."</p>
+          <div class="testimonial-author">
+            <img src="https://i.pravatar.cc/48?img=12" alt="Mike R." class="avatar">
+            <div>
+              <strong>Mike R.</strong>
+              <span>Austin, TX</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-rating">★★★★★</div>
+          <p>"Used it for my dryer, washing machine, and dishwasher. This thing pays for itself."</p>
+          <div class="testimonial-author">
+            <img src="https://i.pravatar.cc/48?img=20" alt="Jennifer L." class="avatar">
+            <div>
+              <strong>Jennifer L.</strong>
+              <span>Seattle, WA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Simple Pricing</h2>
+        <p>Start free, upgrade when you need more</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Free</h3>
+            <div class="pricing-price">
+              <span class="price">$0</span>
+              <span class="period">/month</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="check">✓</span> 3 diagnoses per month</li>
+            <li><span class="check">✓</span> Basic repair guides</li>
+            <li><span class="check">✓</span> Community support</li>
+            <li class="disabled"><span class="x">×</span> Parts finder</li>
+            <li class="disabled"><span class="x">×</span> Appliance inventory</li>
+          </ul>
+          <button class="btn btn-secondary btn-block">Get Started</button>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-header">
+            <h3>Pro</h3>
+            <div class="pricing-price">
+              <span class="price">$4.99</span>
+              <span class="period">/month</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="check">✓</span> Unlimited diagnoses</li>
+            <li><span class="check">✓</span> Detailed repair guides</li>
+            <li><span class="check">✓</span> Parts finder & price compare</li>
+            <li><span class="check">✓</span> Appliance inventory</li>
+            <li><span class="check">✓</span> Priority support</li>
+          </ul>
+          <button class="btn btn-primary btn-block">Start Free Trial</button>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Family</h3>
+            <div class="pricing-price">
+              <span class="price">$9.99</span>
+              <span class="period">/month</span>
+            </div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="check">✓</span> Everything in Pro</li>
+            <li><span class="check">✓</span> Up to 5 family members</li>
+            <li><span class="check">✓</span> Shared appliance inventory</li>
+            <li><span class="check">✓</span> Warranty reminders</li>
+            <li><span class="check">✓</span> Maintenance schedules</li>
+          </ul>
+          <button class="btn btn-secondary btn-block">Get Started</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Fix It Yourself?</h2>
+        <p>Join thousands of homeowners who've saved money and learned new skills.</p>
+        <button class="btn btn-primary btn-lg" onclick="openDiagnosis()">
+          <span class="btn-icon">📸</span>
+          Start Your Free Diagnosis
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">
+            <span class="logo-icon">🔧</span>
+            <span class="logo-text">FixIt Lens</span>
+          </a>
+          <p>AI-powered appliance repair guidance for everyone.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <a href="#">Features</a>
+          <a href="#">Pricing</a>
+          <a href="#">API</a>
+        </div>
+        <div class="footer-links">
+          <h4>Resources</h4>
+          <a href="#">Blog</a>
+          <a href="#">Guides</a>
+          <a href="#">Help Center</a>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 FixIt Lens. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-04 | [FixIt Lens](ideas/2026-02-04-fixit-lens/) | AI appliance troubleshooter — snap a photo, describe symptoms, get instant repair guides with difficulty ratings and parts links | Web/Indie Hackers | ✅ [Demo](ideas/2026-02-04-fixit-lens/prototype/index.html) |
 | 2026-02-03 | [BurnRate](ideas/2026-02-03-burnrate-meeting-cost/) | Real-time meeting cost calculator — watch your meeting money burn, encourage shorter meetings, track costs over time | Web/Indie Hackers | ✅ [Demo](ideas/2026-02-03-burnrate-meeting-cost/prototype/index.html) |
 | 2026-02-03 | [RepCount AI](ideas/2026-02-03-repcount-ai/) | AI-powered workout rep & set counter — computer vision for tracking reps, form feedback, voice counting | Reddit | ✅ [Demo](ideas/2026-02-03-repcount-ai/prototype/index.html) |
 | 2026-02-03 | [Recipe Rescue](ideas/2026-02-03-recipe-rescue/) | Strip bloated recipe sites down to essentials — no ads, no life stories, just ingredients & steps. Portion scaling, timers, dark mode, offline-first | Reddit (9.3K post analysis) | ✅ [Demo](ideas/2026-02-03-recipe-rescue/prototype/index.html) |
