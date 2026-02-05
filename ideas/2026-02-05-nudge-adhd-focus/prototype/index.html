@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nudge — ADHD Focus Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo" aria-hidden="true">🧠</div>
+        <div>
+          <div class="header-title">Nudge</div>
+          <div class="header-subtitle">Focus Companion</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" aria-label="Weekly insights" title="Weekly insights">📊</button>
+        <button class="icon-btn" aria-label="Settings" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <div class="app-content">
+      <!-- Energy Selector -->
+      <section class="energy-section" aria-label="Energy level">
+        <div class="energy-card">
+          <div class="energy-label">
+            <span>⚡</span> How's your energy right now?
+          </div>
+          <div class="energy-pills" role="radiogroup" aria-label="Energy level selector">
+            <button class="energy-pill" role="radio" aria-checked="false" data-energy="1">😴 Low</button>
+            <button class="energy-pill" role="radio" aria-checked="false" data-energy="2">😐 Okay</button>
+            <button class="energy-pill active" role="radio" aria-checked="true" data-energy="3">😊 Good</button>
+            <button class="energy-pill" role="radio" aria-checked="false" data-energy="4">🔥 High</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Momentum Visualization -->
+      <section class="momentum-section" aria-label="Today's momentum">
+        <div class="momentum-card">
+          <div class="momentum-header">
+            <div class="momentum-title">Today's Momentum</div>
+            <div class="momentum-streak">🔥 3-day streak</div>
+          </div>
+          <div class="momentum-progress">
+            <div class="momentum-bubbles" id="momentum-bubbles" aria-label="Task progress bubbles">
+              <!-- Populated by JS -->
+            </div>
+            <div class="momentum-stats">
+              <div class="stat">
+                <span class="stat-value" id="tasks-done">3</span>
+                <span class="stat-label">completed</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="focus-time">47m</span>
+                <span class="stat-label">focused</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="accuracy">82%</span>
+                <span class="stat-label">time accuracy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Current Task -->
+      <section class="task-section" aria-label="Current task" id="task-section">
+        <div class="task-card" id="task-card">
+          <span class="task-emoji" id="task-emoji">📧</span>
+          <div class="task-category" id="task-category">Admin · Low Energy</div>
+          <h2 class="task-name" id="task-name">Reply to Sarah's email</h2>
+          <div class="task-estimate" id="task-estimate">
+            <span>⏱️</span>
+            <span>Est. 10 min</span>
+          </div>
+
+          <!-- Timer Ring -->
+          <div class="timer-ring-wrapper" id="timer-ring-wrapper">
+            <svg class="timer-ring" viewBox="0 0 100 100">
+              <circle class="timer-ring-bg" cx="50" cy="50" r="44" />
+              <circle class="timer-ring-progress" id="timer-progress" cx="50" cy="50" r="44"
+                stroke-dasharray="276.46"
+                stroke-dashoffset="276.46" />
+            </svg>
+            <div class="timer-ring-center">
+              <div class="timer-display" id="timer-display">00:00</div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="task-actions" id="task-actions">
+            <button class="btn btn-primary btn-lg" id="start-btn" onclick="startTask()">
+              ▶️ Start Focus
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Micro Tasks Breakdown -->
+      <section class="micro-tasks" id="micro-tasks" aria-label="Task breakdown">
+        <div class="micro-task done">
+          <button class="micro-task-check" aria-label="Completed">✓</button>
+          <span class="micro-task-text">Open inbox & find Sarah's thread</span>
+          <span class="micro-task-time">2m</span>
+        </div>
+        <div class="micro-task done">
+          <button class="micro-task-check" aria-label="Completed">✓</button>
+          <span class="micro-task-text">Read her message carefully</span>
+          <span class="micro-task-time">3m</span>
+        </div>
+        <div class="micro-task" id="current-micro">
+          <button class="micro-task-check" aria-label="Not started"></button>
+          <span class="micro-task-text">Draft your reply (just the key points)</span>
+          <span class="micro-task-time">3m</span>
+        </div>
+        <div class="micro-task">
+          <button class="micro-task-check" aria-label="Not started"></button>
+          <span class="micro-task-text">Quick proofread & hit send</span>
+          <span class="micro-task-time">2m</span>
+        </div>
+      </section>
+
+      <!-- Pick For Me / Skip -->
+      <section class="pick-section" aria-label="Task actions">
+        <button class="pick-btn" onclick="pickForMe()">
+          <span class="pick-icon">🎲</span>
+          Pick For Me
+        </button>
+        <button class="pick-btn" onclick="skipTask()">
+          <span class="pick-icon">⏭️</span>
+          Not Now
+        </button>
+      </section>
+
+      <!-- Time Reality Check -->
+      <section class="time-reality" aria-label="Time awareness">
+        <div class="time-card">
+          <div class="time-card-header">
+            <div class="time-card-title">
+              <span>⏱️</span> Time Reality Check
+            </div>
+            <div class="time-card-badge">Improving! ↗</div>
+          </div>
+          <div class="time-bars">
+            <div class="time-bar-row">
+              <span class="time-bar-label">Estimated</span>
+              <div class="time-bar-track">
+                <div class="time-bar-fill estimated" style="width: 60%"></div>
+              </div>
+              <span class="time-bar-value">15m</span>
+            </div>
+            <div class="time-bar-row">
+              <span class="time-bar-label">Actual</span>
+              <div class="time-bar-track">
+                <div class="time-bar-fill actual" style="width: 72%"></div>
+              </div>
+              <span class="time-bar-value">18m</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" aria-label="Focus" aria-current="page">
+        <span class="nav-icon">🎯</span>
+        <span>Focus</span>
+      </button>
+      <button class="nav-item" aria-label="Tasks">
+        <span class="nav-icon">📋</span>
+        <span>Tasks</span>
+      </button>
+      <button class="nav-item" aria-label="Insights">
+        <span class="nav-icon">💡</span>
+        <span>Insights</span>
+      </button>
+      <button class="nav-item" aria-label="Me">
+        <span class="nav-icon">🌱</span>
+        <span>Me</span>
+      </button>
+    </nav>
+
+    <!-- Nudge Alert (drift detection) -->
+    <div class="nudge-alert" id="nudge-alert" role="alertdialog" aria-label="Focus check-in">
+      <span class="nudge-emoji">👋</span>
+      <div class="nudge-message" id="nudge-message">Hey, still working on that email?</div>
+      <div class="nudge-submessage" id="nudge-submessage">No judgment — just checking in.</div>
+      <div class="nudge-actions">
+        <button class="btn btn-primary" onclick="dismissNudge('focus')">Yep, on it! ✨</button>
+        <button class="btn btn-ghost" onclick="dismissNudge('break')">Need a break 🧘</button>
+      </div>
+    </div>
+
+    <!-- Celebration Overlay -->
+    <div class="celebration" id="celebration" role="dialog" aria-label="Task completed celebration">
+      <div class="celebration-content">
+        <span class="celebration-emoji">🎉</span>
+        <div class="celebration-title" id="celebration-title">Nice work!</div>
+        <div class="celebration-message" id="celebration-message">
+          You finished in 8 minutes — 2 min under your estimate!
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="nextTask()">
+          Next task →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
