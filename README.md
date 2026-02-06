@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-06 | [CineMatch](ideas/2026-02-06-cinematch-movie-buddies/) | Movie buddy finder — connect with local movie lovers based on taste compatibility, create/join watch sessions for theaters or virtual parties | X/Twitter | ✅ [Demo](ideas/2026-02-06-cinematch-movie-buddies/prototype/index.html) |
 | 2026-02-05 | [SceneSnark](ideas/2026-02-05-scenesnark-ai-commentary/) | AI movie commentary companion — real-time snarky, educational, or trivia commentary synced to what you're watching | Web/Indie Hackers | ✅ [Demo](ideas/2026-02-05-scenesnark-ai-commentary/prototype/index.html) |
 | 2026-02-05 | [FeedbackForge](ideas/2026-02-05-feedbackforge-ai-prd/) | AI-powered customer feedback to PRD generator — aggregates scattered feedback, clusters similar requests, generates structured product requirements automatically | Web/YC RFS 2026 | ✅ [Demo](ideas/2026-02-05-feedbackforge-ai-prd/prototype/index.html) |
 | 2026-02-05 | [Nudge](ideas/2026-02-05-nudge-adhd-focus/) | ADHD-first focus companion — one task at a time, energy matching, gentle drift detection, dopamine rewards, time reality tracking. External executive function for your brain | Reddit (r/ADHD, r/SaaS 9.3K analysis) | ✅ [Demo](ideas/2026-02-05-nudge-adhd-focus/prototype/index.html) |

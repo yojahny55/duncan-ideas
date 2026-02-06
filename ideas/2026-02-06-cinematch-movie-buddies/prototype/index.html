@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineMatch - Find Your Movie Buddy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile Frame -->
+        <div class="phone-frame">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <div class="status-icons">
+                    <svg class="icon-signal" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.95 3 3 6.95 3 12s3.95 9 9 9c.63 0 1.24-.07 1.83-.19l-1.43-1.43c-.13.01-.27.02-.4.02-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7c0 .13-.01.27-.02.4l1.43 1.43c.12-.59.19-1.2.19-1.83 0-4.95-4.05-9-9-9z"/></svg>
+                    <svg class="icon-wifi" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm-5.32-4.5l1.42-1.42c1.05-1.05 2.43-1.58 3.9-1.58s2.85.53 3.9 1.58l1.42 1.42c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41-1.44-1.44-3.35-2.23-5.33-2.23s-3.89.79-5.33 2.23c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0z"/></svg>
+                    <div class="battery"><div class="battery-level"></div></div>
+                </div>
+            </div>
+
+            <!-- App Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h1 class="logo">
+                        <span class="logo-icon">🎬</span>
+                        CineMatch
+                    </h1>
+                </div>
+                <div class="header-right">
+                    <button class="icon-btn notification-btn" aria-label="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="icon-btn profile-btn" aria-label="Profile">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="Profile" class="avatar-small">
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="app-content">
+                <!-- View Tabs -->
+                <nav class="view-tabs" role="tablist">
+                    <button class="tab active" role="tab" aria-selected="true" data-view="discover">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        Discover
+                    </button>
+                    <button class="tab" role="tab" aria-selected="false" data-view="sessions">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+                        Sessions
+                    </button>
+                    <button class="tab" role="tab" aria-selected="false" data-view="matches">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
+                        Matches
+                    </button>
+                    <button class="tab" role="tab" aria-selected="false" data-view="clubs">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        Clubs
+                    </button>
+                </nav>
+
+                <!-- Discover View (Default) -->
+                <section id="discover-view" class="view active">
+                    <!-- Featured Movie for Tonight -->
+                    <div class="featured-section">
+                        <div class="section-header">
+                            <h2>🔥 Hot Sessions Tonight</h2>
+                            <button class="text-btn">See all</button>
+                        </div>
+                        <div class="featured-card" data-movie="dune2">
+                            <div class="featured-image">
+                                <img src="https://image.tmdb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg" alt="Dune: Part Two" loading="lazy">
+                                <div class="featured-overlay">
+                                    <span class="session-badge">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                                        12 watching tonight
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="featured-info">
+                                <h3>Dune: Part Two</h3>
+                                <p class="movie-meta">2024 • Sci-Fi, Adventure • 2h 46m</p>
+                                <div class="session-preview">
+                                    <div class="avatars-stack">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maya" alt="">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan" alt="">
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor" alt="">
+                                        <span class="avatar-more">+9</span>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm">Join Session</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Your Matches -->
+                    <div class="matches-section">
+                        <div class="section-header">
+                            <h2>✨ New Matches</h2>
+                            <button class="text-btn">View all</button>
+                        </div>
+                        <div class="matches-scroll">
+                            <div class="match-card" data-match="1">
+                                <div class="match-avatar">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah">
+                                    <span class="compatibility-badge">94%</span>
+                                </div>
+                                <span class="match-name">Sarah K.</span>
+                                <span class="match-genre">Horror Fan</span>
+                            </div>
+                            <div class="match-card" data-match="2">
+                                <div class="match-avatar">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus" alt="Marcus">
+                                    <span class="compatibility-badge">91%</span>
+                                </div>
+                                <span class="match-name">Marcus T.</span>
+                                <span class="match-genre">Sci-Fi Buff</span>
+                            </div>
+                            <div class="match-card" data-match="3">
+                                <div class="match-avatar">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma" alt="Emma">
+                                    <span class="compatibility-badge">88%</span>
+                                </div>
+                                <span class="match-name">Emma L.</span>
+                                <span class="match-genre">Arthouse</span>
+                            </div>
+                            <div class="match-card" data-match="4">
+                                <div class="match-avatar">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Chris" alt="Chris">
+                                    <span class="compatibility-badge">85%</span>
+                                </div>
+                                <span class="match-name">Chris P.</span>
+                                <span class="match-genre">Action</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Sessions Near You -->
+                    <div class="sessions-section">
+                        <div class="section-header">
+                            <h2>🎟️ Sessions Near You</h2>
+                            <button class="text-btn">Filter</button>
+                        </div>
+                        <div class="session-list">
+                            <div class="session-card" data-session="1">
+                                <div class="session-poster">
+                                    <img src="https://image.tmdb.org/t/p/w200/sv1xJUazXeYqALzczSZ3O6nkH75.jpg" alt="Poor Things" loading="lazy">
+                                </div>
+                                <div class="session-details">
+                                    <h4>Poor Things</h4>
+                                    <p class="session-time">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                        Tonight, 7:30 PM
+                                    </p>
+                                    <p class="session-location">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                        AMC Lincoln Square
+                                    </p>
+                                    <div class="session-footer">
+                                        <div class="session-host">
+                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nina" alt="Nina">
+                                            <span>Hosted by Nina</span>
+                                        </div>
+                                        <span class="spots-left">3 spots left</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="session-card" data-session="2">
+                                <div class="session-poster">
+                                    <img src="https://image.tmdb.org/t/p/w200/qhb1qOilapbapxWQn9jtRCMwXJF.jpg" alt="Oppenheimer" loading="lazy">
+                                </div>
+                                <div class="session-details">
+                                    <h4>Oppenheimer (IMAX)</h4>
+                                    <p class="session-time">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                        Sat, Feb 8 • 2:00 PM
+                                    </p>
+                                    <p class="session-location">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                        Regal Union Square
+                                    </p>
+                                    <div class="session-footer">
+                                        <div class="session-host">
+                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=David" alt="David">
+                                            <span>Hosted by David</span>
+                                        </div>
+                                        <span class="spots-left">5 spots left</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="session-card virtual" data-session="3">
+                                <div class="session-poster">
+                                    <img src="https://image.tmdb.org/t/p/w200/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg" alt="Parasite" loading="lazy">
+                                    <span class="virtual-badge">🏠 Virtual</span>
+                                </div>
+                                <div class="session-details">
+                                    <h4>Parasite Watch Party</h4>
+                                    <p class="session-time">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                        Sun, Feb 9 • 8:00 PM
+                                    </p>
+                                    <p class="session-location">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12z"/></svg>
+                                        Sync via Discord
+                                    </p>
+                                    <div class="session-footer">
+                                        <div class="session-host">
+                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mika" alt="Mika">
+                                            <span>Hosted by Mika</span>
+                                        </div>
+                                        <span class="spots-left">8 spots left</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sessions View (Hidden by default) -->
+                <section id="sessions-view" class="view">
+                    <div class="my-sessions">
+                        <div class="section-header">
+                            <h2>Your Sessions</h2>
+                            <button class="btn btn-primary btn-sm" id="create-session-btn">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                                Create
+                            </button>
+                        </div>
+
+                        <div class="session-tabs">
+                            <button class="session-tab active">Upcoming (2)</button>
+                            <button class="session-tab">Past</button>
+                            <button class="session-tab">Hosting</button>
+                        </div>
+
+                        <div class="upcoming-sessions">
+                            <div class="your-session-card confirmed">
+                                <div class="session-status-bar"></div>
+                                <div class="session-content">
+                                    <img src="https://image.tmdb.org/t/p/w200/sv1xJUazXeYqALzczSZ3O6nkH75.jpg" alt="Poor Things">
+                                    <div class="session-info">
+                                        <span class="session-status-label">Confirmed</span>
+                                        <h4>Poor Things</h4>
+                                        <p>Tonight, 7:30 PM • AMC Lincoln Square</p>
+                                        <div class="session-attendees">
+                                            <div class="avatars-stack small">
+                                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nina" alt="">
+                                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="">
+                                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan" alt="">
+                                            </div>
+                                            <span>3 attending</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="session-actions">
+                                    <button class="btn btn-secondary btn-sm">Chat</button>
+                                    <button class="btn btn-ghost btn-sm">Details</button>
+                                </div>
+                            </div>
+
+                            <div class="your-session-card pending">
+                                <div class="session-status-bar"></div>
+                                <div class="session-content">
+                                    <img src="https://image.tmdb.org/t/p/w200/qhb1qOilapbapxWQn9jtRCMwXJF.jpg" alt="Oppenheimer">
+                                    <div class="session-info">
+                                        <span class="session-status-label">Pending</span>
+                                        <h4>Oppenheimer (IMAX)</h4>
+                                        <p>Sat, Feb 8 • 2:00 PM • Regal Union Square</p>
+                                        <div class="session-attendees">
+                                            <div class="avatars-stack small">
+                                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=David" alt="">
+                                            </div>
+                                            <span>Waiting for host approval</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="session-actions">
+                                    <button class="btn btn-secondary btn-sm">Message Host</button>
+                                    <button class="btn btn-ghost btn-sm">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Matches View -->
+                <section id="matches-view" class="view">
+                    <div class="matches-full">
+                        <div class="section-header">
+                            <h2>Your Matches</h2>
+                            <div class="sort-filter">
+                                <select class="select-dropdown">
+                                    <option>Highest compatibility</option>
+                                    <option>Recently active</option>
+                                    <option>Nearby</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="match-list">
+                            <div class="match-list-item">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah" class="match-avatar-large">
+                                <div class="match-info">
+                                    <div class="match-header">
+                                        <h4>Sarah K.</h4>
+                                        <span class="compatibility-pill">94% match</span>
+                                    </div>
+                                    <p class="match-bio">Horror enthusiast. A24 devotee. Will watch anything with practical effects. 🎃</p>
+                                    <div class="match-tags">
+                                        <span class="tag">Horror</span>
+                                        <span class="tag">Thriller</span>
+                                        <span class="tag">A24</span>
+                                    </div>
+                                    <div class="match-common">
+                                        <span>🎬 Both loved: Hereditary, Midsommar, The Witch</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm">Invite</button>
+                            </div>
+
+                            <div class="match-list-item">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus" alt="Marcus" class="match-avatar-large">
+                                <div class="match-info">
+                                    <div class="match-header">
+                                        <h4>Marcus T.</h4>
+                                        <span class="compatibility-pill">91% match</span>
+                                    </div>
+                                    <p class="match-bio">Sci-fi nerd. Villeneuve stan. IMAX or nothing. 🚀</p>
+                                    <div class="match-tags">
+                                        <span class="tag">Sci-Fi</span>
+                                        <span class="tag">IMAX</span>
+                                        <span class="tag">Denis Villeneuve</span>
+                                    </div>
+                                    <div class="match-common">
+                                        <span>🎬 Both loved: Dune, Blade Runner 2049, Arrival</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm">Invite</button>
+                            </div>
+
+                            <div class="match-list-item">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma" alt="Emma" class="match-avatar-large">
+                                <div class="match-info">
+                                    <div class="match-header">
+                                        <h4>Emma L.</h4>
+                                        <span class="compatibility-pill">88% match</span>
+                                    </div>
+                                    <p class="match-bio">Film school dropout. Criterion collection addict. Subtitles preferred. 🎞️</p>
+                                    <div class="match-tags">
+                                        <span class="tag">Arthouse</span>
+                                        <span class="tag">Foreign Films</span>
+                                        <span class="tag">Criterion</span>
+                                    </div>
+                                    <div class="match-common">
+                                        <span>🎬 Both loved: In the Mood for Love, Parasite</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm">Invite</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Clubs View -->
+                <section id="clubs-view" class="view">
+                    <div class="clubs-section">
+                        <div class="section-header">
+                            <h2>Movie Clubs</h2>
+                            <button class="btn btn-primary btn-sm">Create Club</button>
+                        </div>
+
+                        <div class="your-clubs">
+                            <h3>Your Clubs</h3>
+                            <div class="club-card member">
+                                <div class="club-banner" style="background: linear-gradient(135deg, #1a1a2e, #e94560);">
+                                    <span class="club-emoji">🔪</span>
+                                </div>
+                                <div class="club-info">
+                                    <h4>Horror Mondays</h4>
+                                    <p>Weekly horror movie screenings every Monday night</p>
+                                    <div class="club-stats">
+                                        <span>👥 24 members</span>
+                                        <span>📍 Brooklyn</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="discover-clubs">
+                            <h3>Discover Clubs</h3>
+                            <div class="club-card">
+                                <div class="club-banner" style="background: linear-gradient(135deg, #0f3460, #16213e);">
+                                    <span class="club-emoji">🚀</span>
+                                </div>
+                                <div class="club-info">
+                                    <h4>Sci-Fi Saturdays</h4>
+                                    <p>Classic and contemporary science fiction films</p>
+                                    <div class="club-stats">
+                                        <span>👥 42 members</span>
+                                        <span>📍 Manhattan</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary btn-sm">Join</button>
+                            </div>
+
+                            <div class="club-card">
+                                <div class="club-banner" style="background: linear-gradient(135deg, #533483, #e94560);">
+                                    <span class="club-emoji">🎭</span>
+                                </div>
+                                <div class="club-info">
+                                    <h4>Criterion Collective</h4>
+                                    <p>Working through the Criterion Collection together</p>
+                                    <div class="club-stats">
+                                        <span>👥 18 members</span>
+                                        <span>📍 NYC-wide</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary btn-sm">Join</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Bottom Navigation (Tab Bar) -->
+            <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+                <button class="nav-item active" data-view="discover">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    <span>Discover</span>
+                </button>
+                <button class="nav-item" data-view="sessions">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+                    <span>Sessions</span>
+                </button>
+                <button class="nav-item create-btn">
+                    <div class="create-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </div>
+                </button>
+                <button class="nav-item" data-view="matches">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3z"/></svg>
+                    <span>Matches</span>
+                </button>
+                <button class="nav-item" data-view="clubs">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <span>Clubs</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Create Session Modal -->
+        <div class="modal-overlay" id="create-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Create Watch Session</h3>
+                    <button class="close-btn" aria-label="Close">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Search for a movie</label>
+                        <div class="search-input">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            <input type="text" placeholder="e.g., Dune: Part Two" id="movie-search">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Session type</label>
+                        <div class="radio-group">
+                            <label class="radio-option selected">
+                                <input type="radio" name="session-type" value="theater" checked>
+                                <span class="radio-label">🎟️ Theater</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="session-type" value="virtual">
+                                <span class="radio-label">🏠 Virtual Watch Party</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Date & Time</label>
+                        <input type="datetime-local" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Location / Theater</label>
+                        <input type="text" class="input-field" placeholder="Search theaters near you">
+                    </div>
+                    <div class="form-group">
+                        <label>Max attendees</label>
+                        <select class="input-field">
+                            <option>2 (Just me + 1)</option>
+                            <option selected>4 (Small group)</option>
+                            <option>8 (Movie club size)</option>
+                            <option>Unlimited</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary">Create Session</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
