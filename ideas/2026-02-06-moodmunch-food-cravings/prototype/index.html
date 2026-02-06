@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoodMunch - AI Food Craving Decoder</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🍜</span>
+        <span class="logo-text">MoodMunch</span>
+      </div>
+      <button class="history-btn" aria-label="View history">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="hero" id="hero-section">
+        <h1 class="hero-title">What are you <span class="gradient-text">craving</span>?</h1>
+        <p class="hero-subtitle">Tell me how you feel, and I'll decode your perfect meal</p>
+      </section>
+
+      <!-- Mood Input Section -->
+      <section class="mood-input-section">
+        <!-- Text Input -->
+        <div class="mood-textarea-wrapper">
+          <textarea 
+            id="mood-input" 
+            class="mood-textarea" 
+            placeholder="I feel weird and kind of sad..."
+            rows="2"
+            aria-label="Describe your mood"
+          ></textarea>
+          <button id="decode-btn" class="decode-btn" aria-label="Decode my craving">
+            <span class="btn-text">Decode My Craving</span>
+            <span class="btn-icon">✨</span>
+          </button>
+        </div>
+
+        <!-- Quick Mood Cards -->
+        <div class="mood-cards-section">
+          <p class="mood-cards-label">Or pick a vibe:</p>
+          <div class="mood-cards-grid">
+            <button class="mood-card" data-mood="stressed">
+              <span class="mood-emoji">😤</span>
+              <span class="mood-label">Stressed</span>
+            </button>
+            <button class="mood-card" data-mood="cozy">
+              <span class="mood-emoji">🥰</span>
+              <span class="mood-label">Cozy</span>
+            </button>
+            <button class="mood-card" data-mood="adventurous">
+              <span class="mood-emoji">🤠</span>
+              <span class="mood-label">Adventurous</span>
+            </button>
+            <button class="mood-card" data-mood="sad">
+              <span class="mood-emoji">😢</span>
+              <span class="mood-label">Sad</span>
+            </button>
+            <button class="mood-card" data-mood="celebrating">
+              <span class="mood-emoji">🎉</span>
+              <span class="mood-label">Celebrating</span>
+            </button>
+            <button class="mood-card" data-mood="tired">
+              <span class="mood-emoji">😴</span>
+              <span class="mood-label">Tired</span>
+            </button>
+            <button class="mood-card" data-mood="anxious">
+              <span class="mood-emoji">😰</span>
+              <span class="mood-label">Anxious</span>
+            </button>
+            <button class="mood-card" data-mood="chaotic">
+              <span class="mood-emoji">🌪️</span>
+              <span class="mood-label">Chaotic</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Loading State -->
+      <section class="loading-section hidden" id="loading-section">
+        <div class="loading-content">
+          <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <span class="spinner-emoji">🔮</span>
+          </div>
+          <p class="loading-text">Decoding your cravings...</p>
+          <p class="loading-subtext" id="loading-subtext">Analyzing emotional undertones</p>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section class="results-section hidden" id="results-section">
+        <div class="results-header">
+          <button class="back-btn" id="back-btn" aria-label="Go back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <h2 class="results-title">Your Perfect Match</h2>
+        </div>
+
+        <div class="mood-summary" id="mood-summary">
+          <span class="mood-tag">😢 Sad + Cozy</span>
+        </div>
+
+        <!-- Primary Recommendation -->
+        <div class="recommendation-card primary" id="primary-rec">
+          <div class="rec-badge">Top Pick</div>
+          <div class="rec-image" style="background-image: url('https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop')">
+            <div class="rec-image-overlay"></div>
+          </div>
+          <div class="rec-content">
+            <h3 class="rec-title">Spicy Tonkotsu Ramen</h3>
+            <p class="rec-reason">"The rich broth wraps around you like a warm hug, while the spice cuts through the melancholy. It's soul food in a bowl."</p>
+            <div class="rec-tags">
+              <span class="rec-tag">🌶️ Warming</span>
+              <span class="rec-tag">🍜 Comfort</span>
+              <span class="rec-tag">⚡ Quick</span>
+            </div>
+            <div class="rec-actions">
+              <button class="action-btn primary-action">
+                <span>Find Nearby</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              </button>
+              <button class="action-btn secondary-action">
+                <span>Recipe</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- More Options -->
+        <div class="more-options">
+          <h4 class="more-options-title">Also consider</h4>
+          <div class="alt-recommendations" id="alt-recs">
+            <div class="alt-rec-card">
+              <div class="alt-rec-image" style="background-image: url('https://images.unsplash.com/photo-1534938665420-4193effeacc4?w=200&h=150&fit=crop')"></div>
+              <div class="alt-rec-content">
+                <h5>Mac & Cheese</h5>
+                <p>Classic comfort, zero effort</p>
+              </div>
+            </div>
+            <div class="alt-rec-card">
+              <div class="alt-rec-image" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&h=150&fit=crop')"></div>
+              <div class="alt-rec-content">
+                <h5>Warm Brownie</h5>
+                <p>Sweet catharsis with ice cream</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Share Button -->
+        <button class="share-btn" id="share-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          <span>Share my mood-food pairing</span>
+        </button>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>MoodMunch decodes emotions into perfect meals ✨</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast hidden" id="toast">
+    <span class="toast-icon">✓</span>
+    <span class="toast-message" id="toast-message">Copied to clipboard!</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
