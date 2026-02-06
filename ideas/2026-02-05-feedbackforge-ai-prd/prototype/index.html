@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FeedbackForge - Turn Customer Feedback into Product Requirements</title>
+  <meta name="description" content="AI-powered tool that transforms scattered customer feedback into structured PRDs. Stop drowning in feedback, start building what matters.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <a href="#" class="logo" aria-label="FeedbackForge Home">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="var(--color-primary)"/>
+          <path d="M8 12h16M8 16h12M8 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="24" cy="20" r="4" fill="var(--color-accent)"/>
+        </svg>
+        <span>FeedbackForge</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#demo" class="btn btn-secondary btn-sm">Live Demo</a>
+      </div>
+      <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          YC Spring 2026 Thesis
+        </div>
+        <h1>Stop Reading Feedback.<br>Start <span class="gradient-text">Building What Matters</span></h1>
+        <p class="hero-subtitle">
+          FeedbackForge uses AI to aggregate customer feedback from everywhere, 
+          cluster similar requests, and generate structured PRDs—automatically.
+        </p>
+        <div class="hero-cta">
+          <a href="#demo" class="btn btn-primary btn-lg">
+            <span>Try Interactive Demo</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="#how-it-works" class="btn btn-ghost btn-lg">See How It Works</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">30+</span>
+            <span class="stat-label">Hours saved/month</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">10x</span>
+            <span class="stat-label">Cheaper than Productboard</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">15+</span>
+            <span class="stat-label">Integrations</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="dashboard-preview" role="img" aria-label="FeedbackForge dashboard preview">
+          <div class="preview-header">
+            <div class="preview-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="preview-title">FeedbackForge Dashboard</span>
+          </div>
+          <div class="preview-content">
+            <div class="preview-sidebar">
+              <div class="sidebar-item active">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2V3zm0 4h12v2H2V7zm0 4h8v2H2v-2z"/></svg>
+                Feedback Stream
+              </div>
+              <div class="sidebar-item">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 100 12A6 6 0 008 2z"/></svg>
+                Clusters
+              </div>
+              <div class="sidebar-item">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2h10v12H3V2zm2 2v8h6V4H5z"/></svg>
+                PRDs
+              </div>
+            </div>
+            <div class="preview-main">
+              <div class="feedback-card">
+                <div class="feedback-source intercom">Intercom</div>
+                <p>"We need a way to export reports to PDF..."</p>
+                <div class="feedback-meta">
+                  <span class="tag feature">Feature Request</span>
+                  <span class="tag high">High Impact</span>
+                </div>
+              </div>
+              <div class="feedback-card">
+                <div class="feedback-source twitter">Twitter</div>
+                <p>"@yourapp PDF export would be amazing!"</p>
+                <div class="feedback-meta">
+                  <span class="tag feature">Feature Request</span>
+                  <span class="tag clustered">Clustered: PDF Export</span>
+                </div>
+              </div>
+              <div class="feedback-card generating">
+                <div class="generating-badge">
+                  <span class="spinner"></span>
+                  Generating PRD...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Problem Section -->
+  <section class="problem" id="problem">
+    <div class="container">
+      <div class="section-header">
+        <h2>The Feedback Problem</h2>
+        <p>Your customers are talking. Are you listening to all of them?</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-icon">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M24 4L4 14v20l20 10 20-10V14L24 4z" stroke="currentColor" stroke-width="2"/><path d="M4 14l20 10 20-10M24 44V24" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <h3>Scattered Everywhere</h3>
+          <p>Feedback lives in Intercom, Zendesk, Twitter, Discord, App Store, Slack, sales calls... No single source of truth.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">
+            <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M24 14v10l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Time Sink</h3>
+          <p>Product managers spend 10-20+ hours per week manually reading, tagging, and synthesizing feedback.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">
+            <svg viewBox="0 0 48 48" fill="none"><path d="M10 38l14-28 14 28H10z" stroke="currentColor" stroke-width="2"/><path d="M24 20v8M24 32v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Missed Patterns</h3>
+          <p>The same request comes in 50 different ways across 5 channels. Without AI, you miss the signal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Features</span>
+        <h2>Everything You Need to Master Feedback</h2>
+        <p>From ingestion to PRD—fully automated</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card featured">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h3>Multi-Source Ingestion</h3>
+          <p>Connect all your feedback channels in minutes. Intercom, Zendesk, Twitter, Discord, App Store reviews, and more.</p>
+          <div class="feature-integrations">
+            <span class="integration intercom">Intercom</span>
+            <span class="integration zendesk">Zendesk</span>
+            <span class="integration slack">Slack</span>
+            <span class="integration twitter">Twitter</span>
+            <span class="integration more">+12</span>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3>AI-Powered Analysis</h3>
+          <p>Automatically extract pain points, feature requests, and sentiment from every piece of feedback.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v6M18 9v6M9 6h6M9 18h6"/></svg>
+          </div>
+          <h3>Smart Clustering</h3>
+          <p>AI groups similar requests automatically. "These 47 requests are asking for the same thing."</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          </div>
+          <h3>PRD Generator</h3>
+          <p>One-click PRDs from feedback clusters. Problem statement, user quotes, impact metrics—all included.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3>Impact Tracking</h3>
+          <p>Link features to feedback. Track: "This feature addressed 234 requests from 89 customers."</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <h3>Team Collaboration</h3>
+          <p>@mention teammates, vote on priorities with evidence, get Slack alerts for high-priority patterns.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">How It Works</span>
+        <h2>From Chaos to Clarity in 4 Steps</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Connect Your Channels</h3>
+            <p>Link Intercom, Zendesk, social media, review sites—anywhere customers talk about you.</p>
+          </div>
+          <div class="step-visual">
+            <div class="channel-icons">
+              <div class="channel-icon">📧</div>
+              <div class="channel-icon">💬</div>
+              <div class="channel-icon">🐦</div>
+              <div class="channel-icon">⭐</div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>AI Analyzes Everything</h3>
+            <p>Our AI reads every piece of feedback, extracts pain points, and scores impact automatically.</p>
+          </div>
+          <div class="step-visual">
+            <div class="analysis-animation">
+              <div class="analysis-line"></div>
+              <div class="analysis-line"></div>
+              <div class="analysis-line"></div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Smart Clustering</h3>
+            <p>"47 users requested PDF export across 5 channels" — all grouped together automatically.</p>
+          </div>
+          <div class="step-visual">
+            <div class="cluster-visual">
+              <div class="cluster-dot"></div>
+              <div class="cluster-dot"></div>
+              <div class="cluster-dot"></div>
+              <div class="cluster-center">47</div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Generate PRDs</h3>
+            <p>One click creates a structured PRD with problem statement, user quotes, and acceptance criteria.</p>
+          </div>
+          <div class="step-visual">
+            <div class="prd-preview">
+              <div class="prd-line title"></div>
+              <div class="prd-line"></div>
+              <div class="prd-line"></div>
+              <div class="prd-line short"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo Section -->
+  <section class="demo-section" id="demo">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Demo</span>
+        <h2>See FeedbackForge in Action</h2>
+        <p>Watch AI transform raw feedback into a structured PRD</p>
+      </div>
+      <div class="demo-container">
+        <div class="demo-sidebar">
+          <h4>Simulated Feedback</h4>
+          <div class="demo-feedback-list" id="feedbackList">
+            <!-- Feedback items will be added by JS -->
+          </div>
+          <button class="btn btn-secondary btn-sm" id="addFeedbackBtn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
+            Add Sample Feedback
+          </button>
+        </div>
+        <div class="demo-main">
+          <div class="demo-tabs">
+            <button class="demo-tab active" data-tab="clusters">Clusters</button>
+            <button class="demo-tab" data-tab="prd">Generated PRD</button>
+            <button class="demo-tab" data-tab="analytics">Analytics</button>
+          </div>
+          <div class="demo-content">
+            <div class="demo-panel active" id="clusters-panel">
+              <div class="cluster-list" id="clusterList">
+                <div class="empty-state">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="24" cy="24" r="20"/><path d="M24 16v8M24 28v2"/></svg>
+                  <p>Add feedback to see AI clustering in action</p>
+                </div>
+              </div>
+            </div>
+            <div class="demo-panel" id="prd-panel">
+              <div class="prd-output" id="prdOutput">
+                <div class="empty-state">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6h20v36H14z"/><path d="M20 14h8M20 20h8M20 26h4"/></svg>
+                  <p>Select a cluster to generate a PRD</p>
+                </div>
+              </div>
+            </div>
+            <div class="demo-panel" id="analytics-panel">
+              <div class="analytics-grid">
+                <div class="analytics-card">
+                  <span class="analytics-value" id="totalFeedback">0</span>
+                  <span class="analytics-label">Total Feedback</span>
+                </div>
+                <div class="analytics-card">
+                  <span class="analytics-value" id="totalClusters">0</span>
+                  <span class="analytics-label">Clusters Found</span>
+                </div>
+                <div class="analytics-card">
+                  <span class="analytics-value" id="avgSentiment">--</span>
+                  <span class="analytics-label">Avg Sentiment</span>
+                </div>
+                <div class="analytics-card">
+                  <span class="analytics-value" id="topSource">--</span>
+                  <span class="analytics-label">Top Source</span>
+                </div>
+              </div>
+              <div class="chart-placeholder">
+                <div class="chart-bar" style="height: 60%"></div>
+                <div class="chart-bar" style="height: 80%"></div>
+                <div class="chart-bar" style="height: 45%"></div>
+                <div class="chart-bar" style="height: 90%"></div>
+                <div class="chart-bar" style="height: 70%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Pricing</span>
+        <h2>Simple, Transparent Pricing</h2>
+        <p>10x cheaper than enterprise tools. Cancel anytime.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Starter</h3>
+            <p>For small teams getting started</p>
+          </div>
+          <div class="pricing-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">49</span>
+            <span class="price-period">/mo</span>
+          </div>
+          <ul class="pricing-features">
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 500 feedback/month</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 2 team seats</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 3 integrations</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Basic clustering</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Email export</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">Start Free Trial</a>
+        </div>
+        <div class="pricing-card popular">
+          <div class="popular-badge">Most Popular</div>
+          <div class="pricing-header">
+            <h3>Growth</h3>
+            <p>For scaling product teams</p>
+          </div>
+          <div class="pricing-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">149</span>
+            <span class="price-period">/mo</span>
+          </div>
+          <ul class="pricing-features">
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 2,500 feedback/month</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 5 team seats</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> All integrations</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> PRD generator</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Slack alerts</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Notion/Linear export</li>
+          </ul>
+          <a href="#" class="btn btn-primary">Start Free Trial</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Scale</h3>
+            <p>For large teams with high volume</p>
+          </div>
+          <div class="pricing-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">399</span>
+            <span class="price-period">/mo</span>
+          </div>
+          <ul class="pricing-features">
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 10,000 feedback/month</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> 15 team seats</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Custom AI training</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> API access</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> SSO</li>
+            <li><svg viewBox="0 0 20 20" fill="currentColor"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg> Priority support</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Stop Drowning in Feedback?</h2>
+        <p>Join the waitlist and get early access when we launch.</p>
+        <form class="cta-form" id="waitlistForm">
+          <input type="email" placeholder="you@company.com" required aria-label="Email address">
+          <button type="submit" class="btn btn-primary">Join Waitlist</button>
+        </form>
+        <p class="cta-note">No spam. We'll only email you when we launch.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <svg class="logo-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <rect width="32" height="32" rx="8" fill="var(--color-primary)"/>
+              <path d="M8 12h16M8 16h12M8 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="24" cy="20" r="4" fill="var(--color-accent)"/>
+            </svg>
+            <span>FeedbackForge</span>
+          </a>
+          <p>Turn customer feedback into product requirements with AI.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-column">
+            <h4>Product</h4>
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#demo">Demo</a>
+          </div>
+          <div class="footer-column">
+            <h4>Company</h4>
+            <a href="#">About</a>
+            <a href="#">Blog</a>
+            <a href="#">Careers</a>
+          </div>
+          <div class="footer-column">
+            <h4>Legal</h4>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 FeedbackForge. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
