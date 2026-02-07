@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClearOut - Sell Everything When You Move</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#" class="logo">
+        <span class="logo__icon">📦</span>
+        ClearOut
+      </a>
+      
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#" class="nav__link">Browse Sales</a>
+        <a href="#" class="nav__link">How It Works</a>
+        <a href="#" class="nav__link">Pricing</a>
+        <a href="#" class="nav__link">For Realtors</a>
+      </nav>
+
+      <div class="header__actions">
+        <button class="btn btn--secondary" id="loginBtn">Log In</button>
+        <button class="btn btn--primary" id="startSaleBtn">Start a Sale</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <span class="hero__badge">
+          🚀 5% fee vs 35% at estate sales
+        </span>
+        <h1 class="hero__title">
+          Sell <span>everything</span> when you move
+        </h1>
+        <p class="hero__description">
+          Moving? Downsizing? One listing, all your stuff. Buyers browse your home sale online, book time slots, and make offers. No more posting items one by one.
+        </p>
+        <div class="hero__ctas">
+          <button class="btn btn--primary btn--lg" id="createSaleBtn">
+            Create Your Sale
+          </button>
+          <button class="btn btn--secondary btn--lg" id="browseSalesBtn">
+            Browse Sales Near Me
+          </button>
+        </div>
+        <div class="hero__stats">
+          <div class="hero__stat">
+            <div class="hero__stat-value">$2.4M+</div>
+            <div class="hero__stat-label">Items Sold</div>
+          </div>
+          <div class="hero__stat">
+            <div class="hero__stat-value">850+</div>
+            <div class="hero__stat-label">Home Sales</div>
+          </div>
+          <div class="hero__stat">
+            <div class="hero__stat-value">4.9★</div>
+            <div class="hero__stat-label">User Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__visual">
+        <div class="hero__card">
+          <div class="hero__card-image">
+            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop" alt="Living room with furniture for sale" loading="lazy">
+          </div>
+          <div class="hero__card-content">
+            <span class="hero__card-badge">🔥 Ends Saturday</span>
+            <h3 class="hero__card-title">Tampa Heights - Full Home</h3>
+            <div class="hero__card-meta">
+              <span>📍 2.3 miles away</span>
+              <span>⏰ Sat 9am-3pm</span>
+            </div>
+            <div class="hero__card-items">
+              <span class="hero__card-item">Furniture</span>
+              <span class="hero__card-item">Electronics</span>
+              <span class="hero__card-item">Kitchen</span>
+              <span class="hero__card-item">+24 more</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating stats -->
+        <div class="hero__float hero__float--1">
+          <div class="hero__float-icon hero__float-icon--green">💰</div>
+          <div class="hero__float-text">
+            <div class="hero__float-value">$1,240</div>
+            <div class="hero__float-label">Sold today</div>
+          </div>
+        </div>
+
+        <div class="hero__float hero__float--2">
+          <div class="hero__float-icon hero__float-icon--orange">👥</div>
+          <div class="hero__float-text">
+            <div class="hero__float-value">12</div>
+            <div class="hero__float-label">Buyers viewing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section section--gray" id="how-it-works">
+    <div class="container">
+      <div class="section__header">
+        <h2 class="section__title">How ClearOut Works</h2>
+        <p class="section__description">
+          List your entire home in under 30 minutes. No more posting items one by one.
+        </p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step__number">1</div>
+          <h3 class="step__title">Snap Photos by Room</h3>
+          <p class="step__description">
+            Walk through your home and take photos. Our AI automatically detects items and suggests prices based on local market data.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step__number">2</div>
+          <h3 class="step__title">Set Your Sale Window</h3>
+          <p class="step__description">
+            Choose when buyers can visit. Set time slots for browsing. We handle the scheduling and reminders for you.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step__number">3</div>
+          <h3 class="step__title">Accept Offers & Get Paid</h3>
+          <p class="step__description">
+            Buyers make offers on items, rooms, or everything. Accept with one tap. Secure payment, done.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sales Near You -->
+  <section class="section" id="sales">
+    <div class="container">
+      <div class="sales-header">
+        <h2 class="section__title">Sales Near Tampa, FL</h2>
+        <div class="tabs">
+          <button class="tab tab--active">All Sales</button>
+          <button class="tab">Ending Soon</button>
+          <button class="tab">New Today</button>
+        </div>
+      </div>
+
+      <div class="sales-grid" id="salesGrid">
+        <!-- Sale Card 1 -->
+        <article class="sale-card">
+          <div class="sale-card__image">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop" alt="Modern living room" loading="lazy">
+            <div class="sale-card__badges">
+              <span class="badge badge--urgent">Ends Tomorrow</span>
+            </div>
+            <button class="sale-card__favorite" aria-label="Add to favorites">❤️</button>
+          </div>
+          <div class="sale-card__content">
+            <h3 class="sale-card__title">Hyde Park - Relocating Family</h3>
+            <div class="sale-card__location">
+              <span>📍</span> Hyde Park, Tampa • 4.2 mi
+            </div>
+            <div class="sale-card__meta">
+              <span class="sale-card__items"><strong>47</strong> items</span>
+              <span class="sale-card__countdown">⏰ 18h left</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sale Card 2 -->
+        <article class="sale-card">
+          <div class="sale-card__image">
+            <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=300&fit=crop" alt="Kitchen with appliances" loading="lazy">
+            <div class="sale-card__badges">
+              <span class="badge badge--featured">Featured</span>
+            </div>
+            <button class="sale-card__favorite" aria-label="Add to favorites">🤍</button>
+          </div>
+          <div class="sale-card__content">
+            <h3 class="sale-card__title">Davis Islands - Estate Clearance</h3>
+            <div class="sale-card__location">
+              <span>📍</span> Davis Islands • 6.1 mi
+            </div>
+            <div class="sale-card__meta">
+              <span class="sale-card__items"><strong>112</strong> items</span>
+              <span class="sale-card__countdown">📅 Sat-Sun</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sale Card 3 -->
+        <article class="sale-card">
+          <div class="sale-card__image">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop" alt="Bedroom furniture" loading="lazy">
+            <div class="sale-card__badges">
+              <span class="badge badge--new">New</span>
+            </div>
+            <button class="sale-card__favorite" aria-label="Add to favorites">🤍</button>
+          </div>
+          <div class="sale-card__content">
+            <h3 class="sale-card__title">Seminole Heights - Moving to Seattle</h3>
+            <div class="sale-card__location">
+              <span>📍</span> Seminole Heights • 2.8 mi
+            </div>
+            <div class="sale-card__meta">
+              <span class="sale-card__items"><strong>63</strong> items</span>
+              <span class="sale-card__countdown">📅 Feb 15-16</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sale Card 4 -->
+        <article class="sale-card">
+          <div class="sale-card__image">
+            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop" alt="Home office setup" loading="lazy">
+            <div class="sale-card__badges">
+              <span class="badge badge--urgent">Last Day</span>
+            </div>
+            <button class="sale-card__favorite sale-card__favorite--active" aria-label="Remove from favorites">❤️</button>
+          </div>
+          <div class="sale-card__content">
+            <h3 class="sale-card__title">Ybor City - Office + Gaming Setup</h3>
+            <div class="sale-card__location">
+              <span>📍</span> Ybor City • 3.5 mi
+            </div>
+            <div class="sale-card__meta">
+              <span class="sale-card__items"><strong>28</strong> items</span>
+              <span class="sale-card__countdown">⏰ 6h left</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sale Card 5 -->
+        <article class="sale-card">
+          <div class="sale-card__image">
+            <img src="https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=400&h=300&fit=crop" alt="Outdoor patio furniture" loading="lazy">
+            <button class="sale-card__favorite" aria-label="Add to favorites">🤍</button>
+          </div>
+          <div class="sale-card__content">
+            <h3 class="sale-card__title">South Tampa - Patio & Garden</h3>
+            <div class="sale-card__location">
+              <span>📍</span> South Tampa • 5.4 mi
+            </div>
+            <div class="sale-card__meta">
+              <span class="sale-card__items"><strong>35</strong> items</span>
+              <span class="sale-card__countdown">📅 Feb 22</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sale Card 6 -->
+        <article class="sale-card">
+          <div class="sale-card__image">
+            <img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400&h=300&fit=crop" alt="Kids room with toys" loading="lazy">
+            <div class="sale-card__badges">
+              <span class="badge badge--new">New</span>
+            </div>
+            <button class="sale-card__favorite" aria-label="Add to favorites">🤍</button>
+          </div>
+          <div class="sale-card__content">
+            <h3 class="sale-card__title">Carrollwood - Family Home</h3>
+            <div class="sale-card__location">
+              <span>📍</span> Carrollwood • 8.2 mi
+            </div>
+            <div class="sale-card__meta">
+              <span class="sale-card__items"><strong>89</strong> items</span>
+              <span class="sale-card__countdown">📅 Feb 14-15</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="text-center" style="margin-top: var(--space-8);">
+        <button class="btn btn--secondary btn--lg">View All Sales</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section section--gray">
+    <div class="container">
+      <div class="section__header">
+        <h2 class="section__title">Why Sellers Love ClearOut</h2>
+        <p class="section__description">
+          Everything you need to sell your home's contents in days, not weeks.
+        </p>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="feature__icon">📸</div>
+          <h3 class="feature__title">AI-Powered Pricing</h3>
+          <p class="feature__description">
+            Snap a photo and get instant price suggestions based on what similar items sold for in your area.
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">📅</div>
+          <h3 class="feature__title">Smart Scheduling</h3>
+          <p class="feature__description">
+            Buyers book time slots to visit. No more juggling phone calls or dealing with no-shows.
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">💰</div>
+          <h3 class="feature__title">Bundle Deals</h3>
+          <p class="feature__description">
+            Offer discounts when buyers take everything from a room. Move faster, negotiate less.
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🔒</div>
+          <h3 class="feature__title">Secure Payments</h3>
+          <p class="feature__description">
+            All payments processed through the app. No cash handling, automatic receipts.
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🚚</div>
+          <h3 class="feature__title">Mover Connections</h3>
+          <p class="feature__description">
+            Buyers can arrange delivery through our partner moving companies with one tap.
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🎁</div>
+          <h3 class="feature__title">Donation Handoff</h3>
+          <p class="feature__description">
+            Unsold items? Schedule a pickup from Habitat for Humanity or Goodwill right in the app.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <h2 class="cta__title">Ready to clear out?</h2>
+      <p class="cta__description">
+        Join thousands of sellers who've reclaimed their time and sold their stuff the smart way.
+      </p>
+      <button class="btn btn--primary btn--lg" id="getStartedBtn">
+        Get Started Free
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="#" class="logo">
+            <span class="logo__icon">📦</span>
+            ClearOut
+          </a>
+          <p>The smart way to sell everything when you move. One listing, all your stuff.</p>
+        </div>
+
+        <div>
+          <h4 class="footer__title">Product</h4>
+          <ul class="footer__links">
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">For Realtors</a></li>
+            <li><a href="#">For Estate Managers</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__title">Company</h4>
+          <ul class="footer__links">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__title">Support</h4>
+          <ul class="footer__links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Safety</a></li>
+            <li><a href="#">Community</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <p>&copy; 2026 ClearOut. All rights reserved.</p>
+        <div>
+          <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal: Create Sale -->
+  <div class="modal-overlay" id="createModal">
+    <div class="modal" role="dialog" aria-labelledby="modalTitle">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modalTitle">Start Your Sale</h2>
+        <button class="modal__close" id="closeModal" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal__body">
+        <form id="createSaleForm">
+          <div class="form-group">
+            <label class="form-label" for="saleName">Sale Name</label>
+            <input type="text" class="form-input" id="saleName" placeholder="e.g., Tampa Heights - Full Home">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="address">Address</label>
+            <input type="text" class="form-input" id="address" placeholder="123 Main St, Tampa, FL">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="moveDate">Move-Out Date</label>
+            <input type="date" class="form-input" id="moveDate">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reason">Reason for Sale</label>
+            <select class="form-input" id="reason">
+              <option value="">Select a reason...</option>
+              <option value="relocating">Relocating for work</option>
+              <option value="downsizing">Downsizing</option>
+              <option value="estate">Estate clearance</option>
+              <option value="military">Military PCS</option>
+              <option value="divorce">Divorce settlement</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn--primary btn--lg" style="width: 100%;">
+            Continue to Photos
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span id="toastMessage"></span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
