@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamBait AI - Waste Scammers' Time</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="nav-brand">
+                <span class="brand-icon">🎣</span>
+                <span class="brand-text">ScamBait AI</span>
+            </div>
+            <div class="nav-links">
+                <a href="#dashboard" class="nav-link active" data-tab="dashboard">Dashboard</a>
+                <a href="#submit" class="nav-link" data-tab="submit">Submit Scam</a>
+                <a href="#leaderboard" class="nav-link" data-tab="leaderboard">Leaderboard</a>
+            </div>
+            <div class="nav-user">
+                <div class="user-stats">
+                    <span class="stat-badge">🏆 Level 5</span>
+                    <span class="stat-badge time-wasted">⏱️ 47h wasted</span>
+                </div>
+                <div class="user-avatar">YC</div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-time">47h 23m</div>
+                            <div class="stat-label">Total Time Wasted</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📨</div>
+                        <div class="stat-content">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Active Conversations</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">Scammers Baited</div>
+                        </div>
+                    </div>
+                    <div class="stat-card accent">
+                        <div class="stat-icon">🌍</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="global-time">1.2M hours</div>
+                            <div class="stat-label">Community Impact</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Conversations -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Active Conversations</h2>
+                        <span class="badge live">12 Live</span>
+                    </div>
+                    
+                    <div class="conversations-list" id="conversations-list">
+                        <!-- Conversations will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Activity</h2>
+                    </div>
+                    <div class="activity-feed" id="activity-feed">
+                        <!-- Activity will be populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Submit Scam Tab -->
+            <section id="submit" class="tab-content">
+                <div class="submit-container">
+                    <div class="submit-header">
+                        <h1 class="submit-title">Submit a Scam</h1>
+                        <p class="submit-description">Forward your scam messages and let our AI waste their time. The more details, the better the bait!</p>
+                    </div>
+
+                    <form class="submit-form" id="submit-form">
+                        <!-- Scam Type Selection -->
+                        <div class="form-group">
+                            <label class="form-label">Scam Type</label>
+                            <div class="scam-types">
+                                <button type="button" class="scam-type-btn active" data-type="sms">
+                                    <span class="type-icon">📱</span>
+                                    <span class="type-label">SMS</span>
+                                </button>
+                                <button type="button" class="scam-type-btn" data-type="email">
+                                    <span class="type-icon">📧</span>
+                                    <span class="type-label">Email</span>
+                                </button>
+                                <button type="button" class="scam-type-btn" data-type="social">
+                                    <span class="type-icon">💬</span>
+                                    <span class="type-label">Social</span>
+                                </button>
+                                <button type="button" class="scam-type-btn" data-type="other">
+                                    <span class="type-icon">🔗</span>
+                                    <span class="type-label">Other</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="form-group">
+                            <label class="form-label" for="scammer-contact">Scammer's Contact</label>
+                            <input type="text" id="scammer-contact" class="form-input" placeholder="Phone number, email, or username">
+                            <span class="form-hint">We'll use this to engage the scammer</span>
+                        </div>
+
+                        <!-- Message Content -->
+                        <div class="form-group">
+                            <label class="form-label" for="scam-message">Scam Message</label>
+                            <textarea id="scam-message" class="form-textarea" rows="6" placeholder="Paste the scam message here..."></textarea>
+                        </div>
+
+                        <!-- AI Persona Selection -->
+                        <div class="form-group">
+                            <label class="form-label">Choose AI Persona</label>
+                            <div class="persona-grid">
+                                <div class="persona-card active" data-persona="grandma">
+                                    <div class="persona-avatar">👵</div>
+                                    <div class="persona-info">
+                                        <div class="persona-name">Confused Grandma</div>
+                                        <div class="persona-desc">Sweet but tech-challenged. Asks for help with "the computer".</div>
+                                    </div>
+                                    <div class="persona-stats">94% success</div>
+                                </div>
+                                <div class="persona-card" data-persona="eager">
+                                    <div class="persona-avatar">🤑</div>
+                                    <div class="persona-info">
+                                        <div class="persona-name">Eager Victim</div>
+                                        <div class="persona-desc">Super excited about winning! Always "almost" sending money.</div>
+                                    </div>
+                                    <div class="persona-stats">87% success</div>
+                                </div>
+                                <div class="persona-card" data-persona="suspicious">
+                                    <div class="persona-avatar">🤔</div>
+                                    <div class="persona-info">
+                                        <div class="persona-name">Suspicious Steve</div>
+                                        <div class="persona-desc">Needs lots of convincing. Asks many questions.</div>
+                                    </div>
+                                    <div class="persona-stats">76% success</div>
+                                </div>
+                                <div class="persona-card" data-persona="chatty">
+                                    <div class="persona-avatar">🗣️</div>
+                                    <div class="persona-info">
+                                        <div class="persona-name">Chatty Cathy</div>
+                                        <div class="persona-desc">Goes off on tangents. Shares life stories.</div>
+                                    </div>
+                                    <div class="persona-stats">91% success</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="submit-btn" id="submit-btn">
+                            <span class="btn-text">🎣 Start Baiting</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span>
+                                Deploying AI...
+                            </span>
+                        </button>
+                    </form>
+
+                    <!-- Quick Submit Options -->
+                    <div class="quick-submit">
+                        <p class="quick-label">Or submit via:</p>
+                        <div class="quick-options">
+                            <div class="quick-option">
+                                <span class="quick-icon">📱</span>
+                                <span class="quick-text">Forward SMS to<br><strong>+1 (888) SCAMBAIT</strong></span>
+                            </div>
+                            <div class="quick-option">
+                                <span class="quick-icon">📧</span>
+                                <span class="quick-text">Forward email to<br><strong>bait@scambait.ai</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Leaderboard Tab -->
+            <section id="leaderboard" class="tab-content">
+                <div class="leaderboard-container">
+                    <div class="leaderboard-header">
+                        <h1 class="leaderboard-title">🏆 Hall of Fame</h1>
+                        <div class="leaderboard-tabs">
+                            <button class="lb-tab active" data-period="weekly">This Week</button>
+                            <button class="lb-tab" data-period="monthly">This Month</button>
+                            <button class="lb-tab" data-period="alltime">All Time</button>
+                        </div>
+                    </div>
+
+                    <!-- Top 3 Podium -->
+                    <div class="podium">
+                        <div class="podium-item second">
+                            <div class="podium-avatar">🥈</div>
+                            <div class="podium-name">ScamHunter99</div>
+                            <div class="podium-score">124h wasted</div>
+                            <div class="podium-stand">2</div>
+                        </div>
+                        <div class="podium-item first">
+                            <div class="podium-avatar">🥇</div>
+                            <div class="podium-name">BaitMaster3000</div>
+                            <div class="podium-score">203h wasted</div>
+                            <div class="podium-stand">1</div>
+                        </div>
+                        <div class="podium-item third">
+                            <div class="podium-avatar">🥉</div>
+                            <div class="podium-name">GrandmaRevenge</div>
+                            <div class="podium-score">98h wasted</div>
+                            <div class="podium-stand">3</div>
+                        </div>
+                    </div>
+
+                    <!-- Leaderboard Table -->
+                    <div class="leaderboard-table">
+                        <div class="table-header">
+                            <span class="col-rank">Rank</span>
+                            <span class="col-user">User</span>
+                            <span class="col-scams">Scams</span>
+                            <span class="col-time">Time Wasted</span>
+                            <span class="col-streak">Streak</span>
+                        </div>
+                        <div class="table-body" id="leaderboard-body">
+                            <!-- Will be populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Your Rank -->
+                    <div class="your-rank">
+                        <div class="your-rank-content">
+                            <span class="your-rank-label">Your Rank</span>
+                            <span class="your-rank-position">#42</span>
+                            <span class="your-rank-score">47h wasted</span>
+                        </div>
+                        <button class="your-rank-btn">Share Badge 🏅</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Conversation Modal -->
+        <div class="modal" id="conversation-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <span class="scammer-badge">🎣 Baiting in Progress</span>
+                        <h3 id="modal-scammer-id">+1 (555) 123-4567</h3>
+                    </div>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                <div class="modal-stats">
+                    <div class="modal-stat">
+                        <span class="modal-stat-value" id="modal-duration">2h 34m</span>
+                        <span class="modal-stat-label">Duration</span>
+                    </div>
+                    <div class="modal-stat">
+                        <span class="modal-stat-value" id="modal-messages">47</span>
+                        <span class="modal-stat-label">Messages</span>
+                    </div>
+                    <div class="modal-stat">
+                        <span class="modal-stat-value" id="modal-persona">👵</span>
+                        <span class="modal-stat-label">Persona</span>
+                    </div>
+                </div>
+                <div class="chat-container" id="chat-container">
+                    <!-- Messages will be populated by JS -->
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn secondary">Report to FTC</button>
+                    <button class="modal-btn primary">Share Conversation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toast-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

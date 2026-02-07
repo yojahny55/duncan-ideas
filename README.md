@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-07 | [ScamBait AI](ideas/2026-02-07-scambait-ai/) | AI-powered scam fighter — forward scam messages and let AI bots waste scammers' time with endless believable conversations | Reddit | ✅ [Demo](ideas/2026-02-07-scambait-ai/prototype/index.html) |
 | 2026-02-07 | [ClearOut](ideas/2026-02-07-clearout-bulk-sale/) | Bulk home sale app for movers — one listing, all your stuff. Buyers browse, book time slots, make offers. No more posting items one by one | X/Twitter | ✅ [Demo](ideas/2026-02-07-clearout-bulk-sale/prototype/index.html) |
 | 2026-02-06 | [CompeteScope](ideas/2026-02-06-competescope-intelligence/) | AI competitive intelligence dashboard — monitor competitors' changelogs, social mentions, reviews, job postings and get synthesized weekly briefs | Web/YC RFS 2026 | ✅ [Demo](ideas/2026-02-06-competescope-intelligence/prototype/index.html) |
 | 2026-02-06 | [MoodMunch](ideas/2026-02-06-moodmunch-food-cravings/) | AI food craving decoder — describe your mood and get the perfect food recommendation with emotional reasoning | Reddit | ✅ [Demo](ideas/2026-02-06-moodmunch-food-cravings/prototype/index.html) |
