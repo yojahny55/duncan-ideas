@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuoteCraft - AI-Powered Industrial Quoting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">⚙️</div>
+        <span class="logo-text">QuoteCraft</span>
+      </div>
+
+      <nav>
+        <div class="nav-section">
+          <div class="nav-label">Quote</div>
+          <div class="nav-item active">
+            <span class="nav-icon">📝</span>
+            <span>New Quote</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">📋</span>
+            <span>Quote History</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Analytics</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-label">Setup</div>
+          <div class="nav-item">
+            <span class="nav-icon">🏭</span>
+            <span>Shop Settings</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">📦</span>
+            <span>Materials</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">🔧</span>
+            <span>Machines</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-label">Account</div>
+          <div class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">❓</span>
+            <span>Help & Support</span>
+          </div>
+        </div>
+      </nav>
+
+      <div class="shop-rates">
+        <div class="rates-title">
+          <span>💰</span>
+          <span>Your Shop Rates</span>
+        </div>
+        <div class="rate-row">
+          <span>Labor Rate</span>
+          <span class="rate-value">$85/hr</span>
+        </div>
+        <div class="rate-row">
+          <span>CNC Rate</span>
+          <span class="rate-value">$125/hr</span>
+        </div>
+        <div class="rate-row">
+          <span>Material Markup</span>
+          <span class="rate-value">25%</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="page-header">
+        <h1 class="page-title">New Quote</h1>
+        <p class="page-subtitle">Paste job specs or upload a drawing — AI extracts requirements and calculates costs instantly.</p>
+      </header>
+
+      <!-- Input Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <span>📄</span>
+            Job Specifications
+          </h2>
+          <span class="status-badge" id="status-badge" style="display: none;">
+            <span id="status-text">Analyzing</span>
+          </span>
+        </div>
+        <div class="card-body">
+          <!-- Upload Zone -->
+          <div class="upload-zone" id="upload-zone">
+            <div class="upload-icon">📎</div>
+            <div class="upload-text">Drop drawing files here or click to upload</div>
+            <div class="upload-hint">Supports PDF, DXF, JPG, PNG</div>
+          </div>
+
+          <div class="divider">or paste specifications</div>
+
+          <!-- Text Input -->
+          <div class="form-group">
+            <label class="form-label" for="specs-input">Job Description / Specs</label>
+            <textarea 
+              class="form-textarea" 
+              id="specs-input" 
+              placeholder="Example:
+Part: Custom Aluminum Bracket
+Material: 6061-T6 Aluminum, 0.5&quot; plate
+Quantity: 100 pieces
+Dimensions: 4&quot; x 6&quot; x 0.5&quot;
+Operations: CNC milling, drilling (4x 0.25&quot; holes), deburring, anodizing
+Tolerances: ±0.005&quot;
+Delivery: 2 weeks"
+            ></textarea>
+            <p class="form-help">Include material, quantity, dimensions, operations, tolerances, and delivery requirements.</p>
+          </div>
+
+          <!-- Customer Info -->
+          <div class="form-group">
+            <label class="form-label" for="customer-input">Customer Name (optional)</label>
+            <input type="text" class="form-input" id="customer-input" placeholder="e.g., Acme Manufacturing">
+          </div>
+
+          <!-- Action Button -->
+          <button class="btn btn-accent btn-lg btn-block" id="analyze-btn">
+            <span>✨</span>
+            <span>Analyze & Generate Quote</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Quote Preview Panel -->
+    <aside class="preview-panel">
+      <div class="preview-header">
+        <h2 class="preview-title">
+          <span>📊</span>
+          Quote Preview
+        </h2>
+      </div>
+
+      <div class="preview-content" id="preview-content">
+        <!-- Empty State -->
+        <div class="preview-empty" id="empty-state">
+          <div class="preview-empty-icon">📋</div>
+          <div class="preview-empty-text">No quote yet</div>
+          <p>Enter job specs and click "Analyze" to generate a quote</p>
+        </div>
+
+        <!-- Loading State (hidden by default) -->
+        <div class="analyzing-state" id="loading-state" style="display: none;">
+          <div class="spinner"></div>
+          <div class="analyzing-text">Analyzing specifications...</div>
+          <div class="analyzing-subtext">AI is extracting requirements and calculating costs</div>
+        </div>
+
+        <!-- Quote Result (hidden by default) -->
+        <div id="quote-result" style="display: none;">
+          <div class="extracted-section">
+            <div class="extracted-label">Part Name</div>
+            <div class="extracted-value" id="part-name">-</div>
+          </div>
+
+          <div class="extracted-section">
+            <div class="extracted-label">Material</div>
+            <div class="extracted-value" id="material">-</div>
+          </div>
+
+          <div class="extracted-section">
+            <div class="extracted-label">Quantity</div>
+            <div class="extracted-value" id="quantity">-</div>
+          </div>
+
+          <div class="extracted-section">
+            <div class="extracted-label">Operations</div>
+            <div class="extracted-value" id="operations">-</div>
+          </div>
+
+          <div class="extracted-section">
+            <div class="extracted-label">Cost Breakdown</div>
+            <table class="cost-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody id="cost-breakdown">
+                <!-- Populated by JS -->
+              </tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td>Quote Total</td>
+                  <td class="total-amount" id="total-amount">$0.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Margin Slider -->
+          <div class="margin-slider-container">
+            <div class="margin-label">
+              <span class="form-label" style="margin: 0;">Target Margin</span>
+              <span class="margin-value" id="margin-value">30%</span>
+            </div>
+            <input type="range" class="margin-slider" id="margin-slider" min="10" max="50" value="30">
+            <div class="rate-row" style="margin-top: var(--space-3);">
+              <span>Final Price with Margin</span>
+              <span class="rate-value" id="final-price">$0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-actions" id="preview-actions" style="display: none;">
+        <button class="btn btn-success" id="export-btn" style="flex: 1;">
+          <span>📄</span>
+          Export PDF
+        </button>
+        <button class="btn btn-secondary" id="save-btn">
+          <span>💾</span>
+          Save
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
