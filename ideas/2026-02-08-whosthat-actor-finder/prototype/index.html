@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>WhosThat - Shazam for Actors</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app" class="app-container">
+    
+    <!-- Initial State / Home Screen -->
+    <main id="home-screen" class="screen active">
+      <header class="app-header">
+        <div class="logo">
+          <span class="logo-icon">🎬</span>
+          <h1>WhosThat</h1>
+        </div>
+        <p class="tagline">Shazam for Actors</p>
+      </header>
+
+      <section class="capture-section">
+        <div class="capture-area" id="capture-area">
+          <div class="capture-prompt">
+            <div class="pulse-ring"></div>
+            <div class="capture-icon">📸</div>
+            <p>Tap to identify an actor</p>
+            <span class="hint">Snap a photo of any screen</span>
+          </div>
+          <input type="file" id="file-input" accept="image/*" capture="environment" hidden>
+        </div>
+
+        <div class="or-divider">
+          <span>or</span>
+        </div>
+
+        <button class="demo-btn" id="demo-btn">
+          <span>✨</span> Try Demo Recognition
+        </button>
+      </section>
+
+      <section class="recent-section">
+        <h2>Recent Searches</h2>
+        <div class="recent-list" id="recent-list">
+          <div class="empty-state">
+            <span>🎭</span>
+            <p>Your identified actors will appear here</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Loading State -->
+    <div id="loading-screen" class="screen loading-screen">
+      <div class="loading-content">
+        <div class="scanning-animation">
+          <div class="scan-face">
+            <div class="scan-line"></div>
+          </div>
+        </div>
+        <h2>Analyzing face...</h2>
+        <p class="loading-hint">Searching millions of actors</p>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="screen result-screen">
+      <button class="back-btn" id="back-btn">
+        <span>←</span> Back
+      </button>
+      
+      <div class="result-content">
+        <div class="match-badge">
+          <span>✓</span> 98% Match
+        </div>
+        
+        <div class="actor-card">
+          <div class="actor-photo-container">
+            <img id="actor-photo" src="" alt="Actor photo" class="actor-photo">
+          </div>
+          <div class="actor-info">
+            <h1 id="actor-name" class="actor-name">Loading...</h1>
+            <p id="actor-born" class="actor-meta">Born: --</p>
+          </div>
+        </div>
+
+        <section class="known-for-section">
+          <h2>🌟 Known For</h2>
+          <div class="known-for-list" id="known-for-list">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+        <section class="filmography-section">
+          <h2>📽️ Full Filmography</h2>
+          <div class="filmography-tabs">
+            <button class="tab active" data-tab="movies">Movies</button>
+            <button class="tab" data-tab="tv">TV Shows</button>
+          </div>
+          <div class="filmography-list" id="filmography-list">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+        <div class="action-buttons">
+          <button class="action-btn primary">
+            <span>📺</span> Where to Watch
+          </button>
+          <button class="action-btn secondary">
+            <span>🔗</span> Share
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-screen" class="screen error-screen">
+      <div class="error-content">
+        <div class="error-icon">🤔</div>
+        <h2>No actor found</h2>
+        <p>We couldn't identify an actor in this image. Try:</p>
+        <ul>
+          <li>• A clearer photo of the face</li>
+          <li>• Better lighting</li>
+          <li>• Closer crop on the face</li>
+        </ul>
+        <button class="retry-btn" id="retry-btn">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

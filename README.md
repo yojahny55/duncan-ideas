@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-08 | [WhosThat](ideas/2026-02-08-whosthat-actor-finder/) | Shazam for actors — snap a photo of any screen, instantly identify the actor, see their filmography and where you've seen them before | Reddit | ✅ [Demo](ideas/2026-02-08-whosthat-actor-finder/prototype/index.html) |
 | 2026-02-08 | [InkCircle](ideas/2026-02-08-inkcircle-writers-social/) | Social network for creative writers — progress sharing, beta reader matching, writing sprints, craft discussions. Built for writers, not readers | X/Twitter | ✅ [Demo](ideas/2026-02-08-inkcircle-writers-social/prototype/index.html) |
 | 2026-02-07 | [QuoteCraft](ideas/2026-02-07-quotecraft-industrial/) | AI-powered industrial quoting tool — paste job specs, AI extracts requirements, calculates costs, generates professional quotes for small manufacturers | Web/YC RFS 2026 | ✅ [Demo](ideas/2026-02-07-quotecraft-industrial/prototype/index.html) |
 | 2026-02-07 | [VibeGuard](ideas/2026-02-07-vibeguard-code-scanner/) | AI-powered security scanner for vibe-coded projects — scan code for vulnerabilities, get plain-English explanations and fixes | Reddit | ✅ [Demo](ideas/2026-02-07-vibeguard-code-scanner/prototype/index.html) |
