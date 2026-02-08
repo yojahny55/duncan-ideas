@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-08 | [InkCircle](ideas/2026-02-08-inkcircle-writers-social/) | Social network for creative writers — progress sharing, beta reader matching, writing sprints, craft discussions. Built for writers, not readers | X/Twitter | ✅ [Demo](ideas/2026-02-08-inkcircle-writers-social/prototype/index.html) |
 | 2026-02-07 | [QuoteCraft](ideas/2026-02-07-quotecraft-industrial/) | AI-powered industrial quoting tool — paste job specs, AI extracts requirements, calculates costs, generates professional quotes for small manufacturers | Web/YC RFS 2026 | ✅ [Demo](ideas/2026-02-07-quotecraft-industrial/prototype/index.html) |
 | 2026-02-07 | [VibeGuard](ideas/2026-02-07-vibeguard-code-scanner/) | AI-powered security scanner for vibe-coded projects — scan code for vulnerabilities, get plain-English explanations and fixes | Reddit | ✅ [Demo](ideas/2026-02-07-vibeguard-code-scanner/prototype/index.html) |
 | 2026-02-07 | [ScamBait AI](ideas/2026-02-07-scambait-ai/) | AI-powered scam fighter — forward scam messages and let AI bots waste scammers' time with endless believable conversations | Reddit | ✅ [Demo](ideas/2026-02-07-scambait-ai/prototype/index.html) |
