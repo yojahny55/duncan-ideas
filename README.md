@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-09 | [BrickForge](ideas/2026-02-09-brickforge-lego-designer/) | AI-powered custom LEGO designer — describe anything, get a buildable brick model with step-by-step instructions and a complete parts list | X/Twitter | ✅ [Demo](ideas/2026-02-09-brickforge-lego-designer/prototype/index.html) |
 | 2026-02-08 | [WarrantyVault](ideas/2026-02-08-warrantyvault-receipt-manager/) | Digital warranty & receipt manager — scan receipts, track expiration dates, get alerts before warranties expire, never lose a claim again | Web/YC RFS 2026 | ✅ [Demo](ideas/2026-02-08-warrantyvault-receipt-manager/prototype/index.html) |
 | 2026-02-08 | [WhosThat](ideas/2026-02-08-whosthat-actor-finder/) | Shazam for actors — snap a photo of any screen, instantly identify the actor, see their filmography and where you've seen them before | Reddit | ✅ [Demo](ideas/2026-02-08-whosthat-actor-finder/prototype/index.html) |
 | 2026-02-08 | [InkCircle](ideas/2026-02-08-inkcircle-writers-social/) | Social network for creative writers — progress sharing, beta reader matching, writing sprints, craft discussions. Built for writers, not readers | X/Twitter | ✅ [Demo](ideas/2026-02-08-inkcircle-writers-social/prototype/index.html) |

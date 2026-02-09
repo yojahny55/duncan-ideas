@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrickForge - AI-Powered Custom LEGO Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <span class="logo-icon">🧱</span>
+                <span class="logo-text">BrickForge</span>
+            </a>
+            <nav class="nav">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-ghost">Sign In</button>
+                <button class="btn btn-primary">Start Creating</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="badge">✨ AI-Powered Design</div>
+                <h1 class="hero-title">Turn Any Idea Into a<br><span class="gradient-text">Buildable LEGO Project</span></h1>
+                <p class="hero-subtitle">Describe what you want to build. Get step-by-step instructions and a complete brick list in seconds. No design skills needed.</p>
+                
+                <!-- Creator Interface -->
+                <div class="creator-card">
+                    <div class="creator-tabs">
+                        <button class="tab active" data-tab="text">
+                            <span class="tab-icon">✏️</span>
+                            Describe It
+                        </button>
+                        <button class="tab" data-tab="image">
+                            <span class="tab-icon">📷</span>
+                            Upload Image
+                        </button>
+                    </div>
+                    
+                    <div class="creator-content">
+                        <!-- Text Input Tab -->
+                        <div class="tab-content active" id="text-tab">
+                            <div class="input-wrapper">
+                                <textarea 
+                                    id="prompt-input" 
+                                    class="prompt-input" 
+                                    placeholder="A cozy cottage with a garden and chimney..."
+                                    rows="3"
+                                ></textarea>
+                                <div class="input-footer">
+                                    <div class="quick-prompts">
+                                        <button class="quick-prompt" data-prompt="A small medieval castle with towers">🏰 Castle</button>
+                                        <button class="quick-prompt" data-prompt="A futuristic spaceship">🚀 Spaceship</button>
+                                        <button class="quick-prompt" data-prompt="A cute robot with big eyes">🤖 Robot</button>
+                                        <button class="quick-prompt" data-prompt="A cozy treehouse with ladder">🌳 Treehouse</button>
+                                    </div>
+                                    <button id="generate-btn" class="btn btn-primary btn-lg">
+                                        <span class="btn-text">Generate Design</span>
+                                        <span class="btn-icon">→</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Image Upload Tab -->
+                        <div class="tab-content" id="image-tab">
+                            <div class="upload-zone" id="upload-zone">
+                                <div class="upload-icon">📷</div>
+                                <p class="upload-text">Drop an image here or click to browse</p>
+                                <p class="upload-hint">Supports JPG, PNG up to 10MB</p>
+                                <input type="file" id="file-input" accept="image/*" hidden>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Options -->
+                    <div class="creator-options">
+                        <div class="option-group">
+                            <label class="option-label">Size</label>
+                            <div class="option-buttons">
+                                <button class="option-btn" data-value="mini">Mini</button>
+                                <button class="option-btn active" data-value="medium">Medium</button>
+                                <button class="option-btn" data-value="large">Large</button>
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <label class="option-label">Difficulty</label>
+                            <div class="option-buttons">
+                                <button class="option-btn active" data-value="beginner">Beginner</button>
+                                <button class="option-btn" data-value="intermediate">Intermediate</button>
+                                <button class="option-btn" data-value="expert">Expert</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+    <!-- Results Modal (hidden by default) -->
+    <div class="modal" id="results-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">×</button>
+            
+            <!-- Loading State -->
+            <div class="modal-loading" id="modal-loading">
+                <div class="loader">
+                    <div class="loader-brick"></div>
+                    <div class="loader-brick"></div>
+                    <div class="loader-brick"></div>
+                </div>
+                <p class="loader-text">Designing your build...</p>
+                <div class="loader-steps">
+                    <div class="loader-step active">Analyzing prompt</div>
+                    <div class="loader-step">Generating 3D model</div>
+                    <div class="loader-step">Creating instructions</div>
+                    <div class="loader-step">Counting bricks</div>
+                </div>
+            </div>
+            
+            <!-- Result State -->
+            <div class="modal-result" id="modal-result">
+                <div class="result-header">
+                    <h2 class="result-title" id="result-title">Medieval Castle</h2>
+                    <div class="result-meta">
+                        <span class="meta-item">🧱 247 bricks</span>
+                        <span class="meta-item">⏱️ ~45 min</span>
+                        <span class="meta-item">📊 Intermediate</span>
+                    </div>
+                </div>
+                
+                <div class="result-layout">
+                    <!-- 3D Viewer -->
+                    <div class="viewer-container">
+                        <div class="viewer" id="viewer-3d">
+                            <div class="viewer-placeholder">
+                                <div class="brick-model">
+                                    <div class="brick-layer layer-1"></div>
+                                    <div class="brick-layer layer-2"></div>
+                                    <div class="brick-layer layer-3"></div>
+                                    <div class="brick-layer layer-4"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="viewer-controls">
+                            <button class="viewer-btn" title="Rotate Left">↺</button>
+                            <button class="viewer-btn" title="Reset View">⟲</button>
+                            <button class="viewer-btn" title="Rotate Right">↻</button>
+                            <button class="viewer-btn" title="AR View">📱</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Info Panel -->
+                    <div class="info-panel">
+                        <div class="panel-tabs">
+                            <button class="panel-tab active" data-panel="instructions">Instructions</button>
+                            <button class="panel-tab" data-panel="inventory">Brick List</button>
+                        </div>
+                        
+                        <!-- Instructions Panel -->
+                        <div class="panel-content active" id="instructions-panel">
+                            <div class="step-list">
+                                <div class="step active">
+                                    <span class="step-number">1</span>
+                                    <div class="step-content">
+                                        <span class="step-title">Foundation Base</span>
+                                        <span class="step-bricks">12 bricks</span>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <span class="step-number">2</span>
+                                    <div class="step-content">
+                                        <span class="step-title">Main Walls</span>
+                                        <span class="step-bricks">48 bricks</span>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <span class="step-number">3</span>
+                                    <div class="step-content">
+                                        <span class="step-title">Tower Structures</span>
+                                        <span class="step-bricks">64 bricks</span>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <span class="step-number">4</span>
+                                    <div class="step-content">
+                                        <span class="step-title">Battlements</span>
+                                        <span class="step-bricks">32 bricks</span>
+                                    </div>
+                                </div>
+                                <div class="step">
+                                    <span class="step-number">5</span>
+                                    <div class="step-content">
+                                        <span class="step-title">Roof & Details</span>
+                                        <span class="step-bricks">91 bricks</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary btn-full">
+                                <span>📄</span> Download PDF Instructions
+                            </button>
+                        </div>
+                        
+                        <!-- Inventory Panel -->
+                        <div class="panel-content" id="inventory-panel">
+                            <div class="inventory-list">
+                                <div class="inventory-item">
+                                    <div class="brick-preview gray"></div>
+                                    <div class="brick-info">
+                                        <span class="brick-name">2×4 Brick</span>
+                                        <span class="brick-color">Light Bluish Gray</span>
+                                    </div>
+                                    <span class="brick-count">×48</span>
+                                </div>
+                                <div class="inventory-item">
+                                    <div class="brick-preview dark-gray"></div>
+                                    <div class="brick-info">
+                                        <span class="brick-name">2×2 Brick</span>
+                                        <span class="brick-color">Dark Bluish Gray</span>
+                                    </div>
+                                    <span class="brick-count">×36</span>
+                                </div>
+                                <div class="inventory-item">
+                                    <div class="brick-preview tan"></div>
+                                    <div class="brick-info">
+                                        <span class="brick-name">1×4 Brick</span>
+                                        <span class="brick-color">Tan</span>
+                                    </div>
+                                    <span class="brick-count">×24</span>
+                                </div>
+                                <div class="inventory-item">
+                                    <div class="brick-preview brown"></div>
+                                    <div class="brick-info">
+                                        <span class="brick-name">1×2 Plate</span>
+                                        <span class="brick-color">Reddish Brown</span>
+                                    </div>
+                                    <span class="brick-count">×56</span>
+                                </div>
+                                <div class="inventory-item">
+                                    <div class="brick-preview black"></div>
+                                    <div class="brick-info">
+                                        <span class="brick-name">2×2 Slope</span>
+                                        <span class="brick-color">Black</span>
+                                    </div>
+                                    <span class="brick-count">×18</span>
+                                </div>
+                            </div>
+                            <div class="inventory-footer">
+                                <div class="price-estimate">
+                                    <span class="price-label">Est. Cost:</span>
+                                    <span class="price-value">$12-18</span>
+                                </div>
+                                <button class="btn btn-primary">
+                                    <span>🛒</span> Buy on BrickLink
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-actions">
+                    <button class="btn btn-ghost">
+                        <span>💾</span> Save Design
+                    </button>
+                    <button class="btn btn-ghost">
+                        <span>🔄</span> Generate Variation
+                    </button>
+                    <button class="btn btn-ghost">
+                        <span>📤</span> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Everything You Need to Build</h2>
+                <p class="section-subtitle">From idea to finished creation in minutes</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">AI Design Generator</h3>
+                    <p class="feature-desc">Describe anything—our AI creates a buildable brick model optimized for real construction.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📷</div>
+                    <h3 class="feature-title">Image to LEGO</h3>
+                    <p class="feature-desc">Upload any photo and watch it transform into a brick-perfect design.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3 class="feature-title">Step-by-Step Instructions</h3>
+                    <p class="feature-desc">Interactive 3D instructions just like official sets. Easy to follow at any skill level.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛒</div>
+                    <h3 class="feature-title">One-Click Ordering</h3>
+                    <p class="feature-desc">Get the exact brick inventory with purchase links. Know your cost before you build.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📐</div>
+                    <h3 class="feature-title">Size & Difficulty Scaling</h3>
+                    <p class="feature-desc">Adjust from pocket-sized to display piece. Beginner to expert complexity.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">AR Preview</h3>
+                    <p class="feature-desc">See your creation in augmented reality before building. Know exactly what you'll get.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Community Creations</h2>
+                <p class="section-subtitle">See what others are building</p>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <div class="gallery-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="gallery-emoji">🏰</span>
+                    </div>
+                    <div class="gallery-info">
+                        <span class="gallery-title">Fantasy Castle</span>
+                        <span class="gallery-stats">412 bricks • @builder_mike</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-preview" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <span class="gallery-emoji">🚗</span>
+                    </div>
+                    <div class="gallery-info">
+                        <span class="gallery-title">Vintage Car</span>
+                        <span class="gallery-stats">186 bricks • @sarah_builds</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-preview" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <span class="gallery-emoji">🐱</span>
+                    </div>
+                    <div class="gallery-info">
+                        <span class="gallery-title">My Cat Luna</span>
+                        <span class="gallery-stats">89 bricks • @pixel_pet</span>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-preview" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <span class="gallery-emoji">🌳</span>
+                    </div>
+                    <div class="gallery-info">
+                        <span class="gallery-title">Autumn Tree</span>
+                        <span class="gallery-stats">156 bricks • @nature_bricks</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gallery-cta">
+                <button class="btn btn-secondary">Explore Gallery →</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Simple Pricing</h2>
+                <p class="section-subtitle">Start free, upgrade when you need more</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Free</h3>
+                        <div class="pricing-price">
+                            <span class="price">$0</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ 3 designs per month</li>
+                        <li>✓ Basic brick palette</li>
+                        <li>✓ View instructions online</li>
+                        <li>✓ Community gallery access</li>
+                        <li class="disabled">✗ PDF export</li>
+                        <li class="disabled">✗ AR preview</li>
+                    </ul>
+                    <button class="btn btn-secondary btn-full">Get Started</button>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Pro</h3>
+                        <div class="pricing-price">
+                            <span class="price">$9.99</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Unlimited designs</li>
+                        <li>✓ Full brick library</li>
+                        <li>✓ PDF instruction export</li>
+                        <li>✓ AR preview</li>
+                        <li>✓ Priority generation</li>
+                        <li>✓ No watermarks</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Start Free Trial</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Team</h3>
+                        <div class="pricing-price">
+                            <span class="price">$29.99</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Everything in Pro</li>
+                        <li>✓ 5 team members</li>
+                        <li>✓ Shared design library</li>
+                        <li>✓ API access</li>
+                        <li>✓ Bulk export</li>
+                        <li>✓ Priority support</li>
+                    </ul>
+                    <button class="btn btn-secondary btn-full">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Build Something Amazing?</h2>
+                <p class="cta-subtitle">Join thousands of builders creating custom LEGO projects</p>
+                <button class="btn btn-primary btn-lg">Start Creating — It's Free</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🧱</span>
+                    <span class="logo-text">BrickForge</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">About</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Help</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                </div>
+                <p class="footer-copy">© 2026 BrickForge. Not affiliated with LEGO Group.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
