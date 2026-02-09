@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PillCheck - Medication Interaction Checker</title>
+  <meta name="description" content="Check your medications for dangerous interactions. Simple, fast, and free.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-content">
+      <a href="#" class="logo">
+        <div class="logo-icon">💊</div>
+        <span>PillCheck</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Check Your <span>Medications</span> for Interactions</h1>
+      <p>Enter your medications below to instantly see if any of them could interact with each other. Simple, fast, and potentially life-saving.</p>
+    </section>
+
+    <!-- Main Card -->
+    <div class="main-card">
+      <!-- Search Section -->
+      <div class="search-section">
+        <label class="search-label" for="med-search">Add a Medication</label>
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            id="med-search" 
+            class="search-input" 
+            placeholder="Search for a medication (e.g., Lisinopril, Metformin...)"
+            autocomplete="off"
+          >
+          <div class="suggestions" id="suggestions"></div>
+        </div>
+      </div>
+
+      <!-- Medication List -->
+      <div class="med-list-section">
+        <div class="section-header">
+          <h3 class="section-title">Your Medications</h3>
+          <span class="med-count" id="med-count">0</span>
+        </div>
+        
+        <div id="med-list" class="med-list">
+          <!-- Empty State -->
+          <div class="empty-state" id="empty-state">
+            <div class="empty-state-icon">💊</div>
+            <h3>No medications added yet</h3>
+            <p>Search and add at least 2 medications to check for interactions</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Check Button -->
+      <button class="check-btn" id="check-btn" disabled>
+        Check for Interactions
+      </button>
+
+      <!-- Results Section -->
+      <div class="results-section" id="results-section">
+        <div class="section-header" style="margin-top: var(--space-8);">
+          <h3 class="section-title">Interaction Results</h3>
+        </div>
+        <div id="results-content"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>Built with ❤️ for safer medication management</p>
+      <div class="disclaimer">
+        <strong>Disclaimer:</strong> PillCheck is for informational purposes only and is not a substitute for professional medical advice. Always consult your doctor or pharmacist before making changes to your medications.
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
