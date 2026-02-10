@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AccessHub - Find genuinely accessible venues with crowdsourced ratings from the disability community">
+  <title>AccessHub - Crowdsourced Venue Accessibility</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Skip Link for Keyboard Navigation -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header" role="banner">
+      <div class="header-content">
+        <a href="/" class="logo" aria-label="AccessHub Home">
+          <span class="logo-icon" aria-hidden="true">♿</span>
+          <span>AccessHub</span>
+        </a>
+
+        <div class="search-container">
+          <form class="search-form" role="search" aria-label="Search venues">
+            <div class="search-input-wrapper">
+              <span class="search-icon" aria-hidden="true">🔍</span>
+              <input 
+                type="search" 
+                class="search-input" 
+                id="venue-search"
+                placeholder="Search cafes, restaurants, venues..."
+                aria-label="Search for accessible venues"
+                autocomplete="off"
+              >
+            </div>
+            <button type="button" class="location-btn" aria-label="Use current location">
+              <span aria-hidden="true">📍</span>
+              <span>Tampa, FL</span>
+            </button>
+          </form>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="add-venue-btn">
+            <span aria-hidden="true">➕</span>
+            Add Venue
+          </button>
+          <button class="btn btn-icon" aria-label="Notifications">
+            <span aria-hidden="true">🔔</span>
+          </button>
+          <button class="btn btn-primary" id="sign-in-btn">
+            Sign In
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <!-- Filters Sidebar -->
+      <aside class="filters-sidebar" role="complementary" aria-label="Accessibility filters">
+        <div class="filters-header">
+          <h2 class="filters-title">Filters</h2>
+          <button class="clear-filters" id="clear-filters">Clear all</button>
+        </div>
+
+        <!-- Accessibility Categories -->
+        <div class="filter-group">
+          <h3 class="filter-group-title">Accessibility Needs</h3>
+          
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="mobility" checked>
+            <span class="filter-label">
+              <span class="filter-icon" aria-hidden="true">🦽</span>
+              Mobility
+            </span>
+            <span class="filter-count">247</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="hearing">
+            <span class="filter-label">
+              <span class="filter-icon" aria-hidden="true">👂</span>
+              Hearing
+            </span>
+            <span class="filter-count">156</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="vision">
+            <span class="filter-label">
+              <span class="filter-icon" aria-hidden="true">👁️</span>
+              Vision
+            </span>
+            <span class="filter-count">98</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="sensory">
+            <span class="filter-label">
+              <span class="filter-icon" aria-hidden="true">🧠</span>
+              Sensory-Friendly
+            </span>
+            <span class="filter-count">73</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="parking">
+            <span class="filter-label">
+              <span class="filter-icon" aria-hidden="true">🅿️</span>
+              Accessible Parking
+            </span>
+            <span class="filter-count">312</span>
+          </label>
+        </div>
+
+        <!-- Specific Features -->
+        <div class="filter-group">
+          <h3 class="filter-group-title">Specific Features</h3>
+          
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="ramp">
+            <span class="filter-label">Step-free entrance</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="elevator">
+            <span class="filter-label">Elevator available</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="restroom">
+            <span class="filter-label">Accessible restroom</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="service-animal">
+            <span class="filter-label">Service animal friendly</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="quiet">
+            <span class="filter-label">Quiet space available</span>
+          </label>
+        </div>
+
+        <!-- Venue Type -->
+        <div class="filter-group">
+          <h3 class="filter-group-title">Venue Type</h3>
+          
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="restaurant">
+            <span class="filter-label">Restaurants</span>
+            <span class="filter-count">189</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="cafe">
+            <span class="filter-label">Cafes</span>
+            <span class="filter-count">124</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="retail">
+            <span class="filter-label">Retail Stores</span>
+            <span class="filter-count">267</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="entertainment">
+            <span class="filter-label">Entertainment</span>
+            <span class="filter-count">78</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="checkbox" class="filter-checkbox" name="healthcare">
+            <span class="filter-label">Healthcare</span>
+            <span class="filter-count">156</span>
+          </label>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="filter-group">
+          <h3 class="filter-group-title">Minimum Rating</h3>
+          
+          <label class="filter-option">
+            <input type="radio" class="filter-checkbox" name="rating" value="4">
+            <span class="filter-label">4+ stars only</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="radio" class="filter-checkbox" name="rating" value="3">
+            <span class="filter-label">3+ stars</span>
+          </label>
+
+          <label class="filter-option">
+            <input type="radio" class="filter-checkbox" name="rating" value="any" checked>
+            <span class="filter-label">Any rating</span>
+          </label>
+        </div>
+      </aside>
+
+      <!-- Results Area -->
+      <main class="results-area" id="main-content" role="main">
+        <div class="results-header">
+          <p class="results-count">
+            Showing <strong id="results-count">6</strong> accessible venues near Tampa, FL
+          </p>
+          <div class="view-toggle" role="tablist" aria-label="View mode">
+            <button class="view-btn active" role="tab" aria-selected="true" aria-label="Grid view">
+              <span aria-hidden="true">▦</span>
+            </button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-label="List view">
+              <span aria-hidden="true">☰</span>
+            </button>
+            <button class="view-btn" role="tab" aria-selected="false" aria-label="Map view">
+              <span aria-hidden="true">🗺️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Venue Cards Grid -->
+        <div class="venues-grid" id="venues-grid" role="list" aria-label="Accessible venues">
+          
+          <!-- Venue Card 1 -->
+          <article class="venue-card" role="listitem">
+            <div class="venue-image">
+              <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=300&fit=crop" alt="Oxford Exchange cafe interior with natural lighting" loading="lazy">
+              <div class="venue-badges">
+                <span class="badge badge-verified">✓ Verified</span>
+              </div>
+              <button class="venue-save" aria-label="Save Oxford Exchange to favorites">
+                <span aria-hidden="true">♡</span>
+              </button>
+            </div>
+            <div class="venue-content">
+              <div class="venue-header">
+                <h3 class="venue-name">
+                  <a href="#" aria-label="View details for Oxford Exchange">Oxford Exchange</a>
+                </h3>
+                <div class="venue-rating" aria-label="4.8 out of 5 stars">
+                  <span aria-hidden="true">★</span>
+                  <span>4.8</span>
+                </div>
+              </div>
+              <p class="venue-category">Cafe & Bookstore</p>
+              <p class="venue-address">
+                <span aria-hidden="true">📍</span>
+                <span>420 W Kennedy Blvd, Tampa</span>
+              </p>
+              
+              <div class="accessibility-scores" aria-label="Accessibility ratings">
+                <div class="access-score mobility" title="Mobility: 95%">
+                  <span aria-hidden="true">🦽</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 95%"></div>
+                  </div>
+                  <span class="sr-only">Mobility accessibility: 95%</span>
+                </div>
+                <div class="access-score hearing" title="Hearing: 70%">
+                  <span aria-hidden="true">👂</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 70%"></div>
+                  </div>
+                  <span class="sr-only">Hearing accessibility: 70%</span>
+                </div>
+                <div class="access-score vision" title="Vision: 80%">
+                  <span aria-hidden="true">👁️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 80%"></div>
+                  </div>
+                  <span class="sr-only">Vision accessibility: 80%</span>
+                </div>
+                <div class="access-score sensory" title="Sensory: 60%">
+                  <span aria-hidden="true">🧠</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 60%"></div>
+                  </div>
+                  <span class="sr-only">Sensory accessibility: 60%</span>
+                </div>
+                <div class="access-score parking" title="Parking: 85%">
+                  <span aria-hidden="true">🅿️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 85%"></div>
+                  </div>
+                  <span class="sr-only">Parking accessibility: 85%</span>
+                </div>
+              </div>
+
+              <div class="venue-reviews">
+                <span class="reviews-count">
+                  <span aria-hidden="true">💬</span>
+                  <span>47 reviews</span>
+                </span>
+                <span class="photos-count">
+                  <span aria-hidden="true">📷</span>
+                  <span>23 photos</span>
+                </span>
+                <span class="last-updated">Updated 2 days ago</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Venue Card 2 -->
+          <article class="venue-card" role="listitem">
+            <div class="venue-image">
+              <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop" alt="Bern's Steak House elegant dining room" loading="lazy">
+              <div class="venue-badges">
+                <span class="badge badge-verified">✓ Verified</span>
+              </div>
+              <button class="venue-save saved" aria-label="Remove Bern's Steak House from favorites">
+                <span aria-hidden="true">♥</span>
+              </button>
+            </div>
+            <div class="venue-content">
+              <div class="venue-header">
+                <h3 class="venue-name">
+                  <a href="#">Bern's Steak House</a>
+                </h3>
+                <div class="venue-rating">
+                  <span aria-hidden="true">★</span>
+                  <span>4.6</span>
+                </div>
+              </div>
+              <p class="venue-category">Fine Dining</p>
+              <p class="venue-address">
+                <span aria-hidden="true">📍</span>
+                <span>1208 S Howard Ave, Tampa</span>
+              </p>
+              
+              <div class="accessibility-scores">
+                <div class="access-score mobility" title="Mobility: 75%">
+                  <span aria-hidden="true">🦽</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 75%"></div>
+                  </div>
+                </div>
+                <div class="access-score hearing" title="Hearing: 65%">
+                  <span aria-hidden="true">👂</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 65%"></div>
+                  </div>
+                </div>
+                <div class="access-score parking" title="Parking: 90%">
+                  <span aria-hidden="true">🅿️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 90%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="venue-reviews">
+                <span class="reviews-count">
+                  <span aria-hidden="true">💬</span>
+                  <span>32 reviews</span>
+                </span>
+                <span class="photos-count">
+                  <span aria-hidden="true">📷</span>
+                  <span>18 photos</span>
+                </span>
+                <span class="last-updated">Updated 5 days ago</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Venue Card 3 -->
+          <article class="venue-card" role="listitem">
+            <div class="venue-image">
+              <img src="https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=400&h=300&fit=crop" alt="Tampa Museum of Art modern building" loading="lazy">
+              <div class="venue-badges">
+                <span class="badge badge-verified">✓ Verified</span>
+                <span class="badge badge-event">🎫 Event</span>
+              </div>
+              <button class="venue-save" aria-label="Save Tampa Museum of Art to favorites">
+                <span aria-hidden="true">♡</span>
+              </button>
+            </div>
+            <div class="venue-content">
+              <div class="venue-header">
+                <h3 class="venue-name">
+                  <a href="#">Tampa Museum of Art</a>
+                </h3>
+                <div class="venue-rating">
+                  <span aria-hidden="true">★</span>
+                  <span>4.9</span>
+                </div>
+              </div>
+              <p class="venue-category">Museum</p>
+              <p class="venue-address">
+                <span aria-hidden="true">📍</span>
+                <span>120 W Gasparilla Plaza, Tampa</span>
+              </p>
+              
+              <div class="accessibility-scores">
+                <div class="access-score mobility" title="Mobility: 98%">
+                  <span aria-hidden="true">🦽</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 98%"></div>
+                  </div>
+                </div>
+                <div class="access-score hearing" title="Hearing: 85%">
+                  <span aria-hidden="true">👂</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 85%"></div>
+                  </div>
+                </div>
+                <div class="access-score vision" title="Vision: 90%">
+                  <span aria-hidden="true">👁️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 90%"></div>
+                  </div>
+                </div>
+                <div class="access-score sensory" title="Sensory: 75%">
+                  <span aria-hidden="true">🧠</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 75%"></div>
+                  </div>
+                </div>
+                <div class="access-score parking" title="Parking: 95%">
+                  <span aria-hidden="true">🅿️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 95%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="venue-reviews">
+                <span class="reviews-count">
+                  <span aria-hidden="true">💬</span>
+                  <span>89 reviews</span>
+                </span>
+                <span class="photos-count">
+                  <span aria-hidden="true">📷</span>
+                  <span>54 photos</span>
+                </span>
+                <span class="last-updated">Updated today</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Venue Card 4 -->
+          <article class="venue-card" role="listitem">
+            <div class="venue-image">
+              <img src="https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=400&h=300&fit=crop" alt="Armature Works food hall interior" loading="lazy">
+              <div class="venue-badges">
+              </div>
+              <button class="venue-save" aria-label="Save Armature Works to favorites">
+                <span aria-hidden="true">♡</span>
+              </button>
+            </div>
+            <div class="venue-content">
+              <div class="venue-header">
+                <h3 class="venue-name">
+                  <a href="#">Armature Works</a>
+                </h3>
+                <div class="venue-rating">
+                  <span aria-hidden="true">★</span>
+                  <span>4.3</span>
+                </div>
+              </div>
+              <p class="venue-category">Food Hall & Market</p>
+              <p class="venue-address">
+                <span aria-hidden="true">📍</span>
+                <span>1910 N Ola Ave, Tampa</span>
+              </p>
+              
+              <div class="accessibility-scores">
+                <div class="access-score mobility" title="Mobility: 82%">
+                  <span aria-hidden="true">🦽</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 82%"></div>
+                  </div>
+                </div>
+                <div class="access-score sensory" title="Sensory: 40%">
+                  <span aria-hidden="true">🧠</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 40%"></div>
+                  </div>
+                </div>
+                <div class="access-score parking" title="Parking: 70%">
+                  <span aria-hidden="true">🅿️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 70%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="venue-reviews">
+                <span class="reviews-count">
+                  <span aria-hidden="true">💬</span>
+                  <span>28 reviews</span>
+                </span>
+                <span class="photos-count">
+                  <span aria-hidden="true">📷</span>
+                  <span>15 photos</span>
+                </span>
+                <span class="last-updated">Updated 1 week ago</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Venue Card 5 -->
+          <article class="venue-card" role="listitem">
+            <div class="venue-image">
+              <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop" alt="Florida Aquarium exterior" loading="lazy">
+              <div class="venue-badges">
+                <span class="badge badge-verified">✓ Verified</span>
+              </div>
+              <button class="venue-save" aria-label="Save Florida Aquarium to favorites">
+                <span aria-hidden="true">♡</span>
+              </button>
+            </div>
+            <div class="venue-content">
+              <div class="venue-header">
+                <h3 class="venue-name">
+                  <a href="#">Florida Aquarium</a>
+                </h3>
+                <div class="venue-rating">
+                  <span aria-hidden="true">★</span>
+                  <span>4.7</span>
+                </div>
+              </div>
+              <p class="venue-category">Aquarium & Attraction</p>
+              <p class="venue-address">
+                <span aria-hidden="true">📍</span>
+                <span>701 Channelside Dr, Tampa</span>
+              </p>
+              
+              <div class="accessibility-scores">
+                <div class="access-score mobility" title="Mobility: 95%">
+                  <span aria-hidden="true">🦽</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 95%"></div>
+                  </div>
+                </div>
+                <div class="access-score hearing" title="Hearing: 80%">
+                  <span aria-hidden="true">👂</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 80%"></div>
+                  </div>
+                </div>
+                <div class="access-score vision" title="Vision: 75%">
+                  <span aria-hidden="true">👁️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 75%"></div>
+                  </div>
+                </div>
+                <div class="access-score sensory" title="Sensory: 55%">
+                  <span aria-hidden="true">🧠</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 55%"></div>
+                  </div>
+                </div>
+                <div class="access-score parking" title="Parking: 88%">
+                  <span aria-hidden="true">🅿️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 88%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="venue-reviews">
+                <span class="reviews-count">
+                  <span aria-hidden="true">💬</span>
+                  <span>112 reviews</span>
+                </span>
+                <span class="photos-count">
+                  <span aria-hidden="true">📷</span>
+                  <span>67 photos</span>
+                </span>
+                <span class="last-updated">Updated 3 days ago</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Venue Card 6 -->
+          <article class="venue-card" role="listitem">
+            <div class="venue-image">
+              <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop" alt="Buddy Brew Coffee interior" loading="lazy">
+              <div class="venue-badges">
+              </div>
+              <button class="venue-save" aria-label="Save Buddy Brew Coffee to favorites">
+                <span aria-hidden="true">♡</span>
+              </button>
+            </div>
+            <div class="venue-content">
+              <div class="venue-header">
+                <h3 class="venue-name">
+                  <a href="#">Buddy Brew Coffee</a>
+                </h3>
+                <div class="venue-rating">
+                  <span aria-hidden="true">★</span>
+                  <span>4.5</span>
+                </div>
+              </div>
+              <p class="venue-category">Coffee Shop</p>
+              <p class="venue-address">
+                <span aria-hidden="true">📍</span>
+                <span>2020 W Kennedy Blvd, Tampa</span>
+              </p>
+              
+              <div class="accessibility-scores">
+                <div class="access-score mobility" title="Mobility: 88%">
+                  <span aria-hidden="true">🦽</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 88%"></div>
+                  </div>
+                </div>
+                <div class="access-score sensory" title="Sensory: 50%">
+                  <span aria-hidden="true">🧠</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 50%"></div>
+                  </div>
+                </div>
+                <div class="access-score parking" title="Parking: 65%">
+                  <span aria-hidden="true">🅿️</span>
+                  <div class="score-bar">
+                    <div class="score-fill" style="width: 65%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="venue-reviews">
+                <span class="reviews-count">
+                  <span aria-hidden="true">💬</span>
+                  <span>19 reviews</span>
+                </span>
+                <span class="photos-count">
+                  <span aria-hidden="true">📷</span>
+                  <span>8 photos</span>
+                </span>
+                <span class="last-updated">Updated 2 weeks ago</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- CTA Banner -->
+        <div class="cta-banner" role="region" aria-label="Contribute to AccessHub">
+          <div class="cta-content">
+            <h3>Know a place? Share the access details!</h3>
+            <p>Help your community by reporting accessibility info at your favorite spots.</p>
+          </div>
+          <button class="btn btn-cta">
+            <span aria-hidden="true">📝</span>
+            Submit a Review
+          </button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="alert" aria-live="polite">
+    <span class="toast-icon" aria-hidden="true">✓</span>
+    <span class="toast-message">Venue saved to favorites!</span>
+  </div>
+
+  <!-- Add Venue Modal -->
+  <div class="modal-overlay" id="add-venue-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Add a New Venue</h2>
+        <button class="modal-close" aria-label="Close dialog">
+          <span aria-hidden="true">✕</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--color-neutral-600); margin-bottom: var(--space-4);">
+          Help the community by adding a venue you know. We'll guide you through rating its accessibility.
+        </p>
+        <form id="add-venue-form">
+          <div style="margin-bottom: var(--space-4);">
+            <label for="venue-name-input" style="display: block; font-weight: var(--font-medium); margin-bottom: var(--space-2);">Venue Name</label>
+            <input type="text" id="venue-name-input" class="search-input" style="padding-left: var(--space-4);" placeholder="e.g., Joe's Coffee Shop">
+          </div>
+          <div style="margin-bottom: var(--space-4);">
+            <label for="venue-address-input" style="display: block; font-weight: var(--font-medium); margin-bottom: var(--space-2);">Address</label>
+            <input type="text" id="venue-address-input" class="search-input" style="padding-left: var(--space-4);" placeholder="123 Main St, Tampa, FL">
+          </div>
+          <div style="margin-bottom: var(--space-4);">
+            <label for="venue-type-input" style="display: block; font-weight: var(--font-medium); margin-bottom: var(--space-2);">Venue Type</label>
+            <select id="venue-type-input" class="search-input" style="padding-left: var(--space-4);">
+              <option value="">Select a type...</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="cafe">Cafe</option>
+              <option value="retail">Retail Store</option>
+              <option value="entertainment">Entertainment</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-submit">Continue to Accessibility Review</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
