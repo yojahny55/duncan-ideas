@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-10 | [BotBustr](ideas/2026-02-10-botbustr-follower-audit/) | AI-powered follower audit tool — detects bot accounts in your followers using behavioral signals, account patterns, and network analysis | X/Twitter | ✅ [Demo](ideas/2026-02-10-botbustr-follower-audit/prototype/index.html) |
 | 2026-02-09 | [AccessHub](ideas/2026-02-09-accesshub-venue-mapper/) | Crowdsourced venue accessibility mapper — real ratings from the disability community, granular category scores, photo verification, "know before you go" | Web/DEV.to | ✅ [Demo](ideas/2026-02-09-accesshub-venue-mapper/prototype/index.html) |
 | 2026-02-09 | [PillCheck](ideas/2026-02-09-pillcheck-med-interactions/) | Medication interaction checker — enter your meds, instantly see dangerous interactions with severity levels and plain-English explanations | Reddit | ✅ [Demo](ideas/2026-02-09-pillcheck-med-interactions/prototype/index.html) |
 | 2026-02-09 | [BrickForge](ideas/2026-02-09-brickforge-lego-designer/) | AI-powered custom LEGO designer — describe anything, get a buildable brick model with step-by-step instructions and a complete parts list | X/Twitter | ✅ [Demo](ideas/2026-02-09-brickforge-lego-designer/prototype/index.html) |
