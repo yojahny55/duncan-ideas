@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>WakeStop - GPS Proximity Alarm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-bar-time">9:41</span>
+      <div class="status-bar-icons">
+        <span>&#x1F4F6;</span>
+        <span>&#x1F50B;</span>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <div class="header-logo">&#x23F0;</div>
+        <h1>WakeStop</h1>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" aria-label="Notifications">
+          &#x1F514;
+        </button>
+        <button class="icon-btn" aria-label="Settings" onclick="showToast('Settings coming soon!')">
+          &#x2699;&#xFE0F;
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Active Alarm Card -->
+      <div class="alarm-card active" id="alarmCard">
+        <div class="alarm-header">
+          <div class="alarm-status">
+            <div class="status-indicator active" id="statusIndicator"></div>
+            <span class="status-text active" id="statusText">Alarm Active</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="alarmToggle" checked aria-label="Toggle alarm">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="destination-display">
+          <div class="destination-icon">&#x1F3E0;</div>
+          <h2 class="destination-name" id="destinationName">Home</h2>
+          <p class="destination-address" id="destinationAddress">1234 Oak Street, Tampa, FL</p>
+        </div>
+
+        <div class="distance-info">
+          <div class="distance-item">
+            <div class="distance-value highlight" id="distanceValue">2.4</div>
+            <div class="distance-label">km away</div>
+          </div>
+          <div class="distance-item">
+            <div class="distance-value" id="etaValue">~8</div>
+            <div class="distance-label">min ETA</div>
+          </div>
+          <div class="distance-item">
+            <div class="distance-value">500m</div>
+            <div class="distance-label">Alert at</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="quick-action-btn" onclick="openSearchModal()">
+          <div class="quick-action-icon">&#x1F50D;</div>
+          <span class="quick-action-text">Set Destination</span>
+        </button>
+        <button class="quick-action-btn" onclick="showToast('Radius options: 500m, 1km, 2km')">
+          <div class="quick-action-icon">&#x1F4CD;</div>
+          <span class="quick-action-text">Alert Radius</span>
+        </button>
+        <button class="quick-action-btn" onclick="showToast('Sound: Gentle Wake')">
+          <div class="quick-action-icon">&#x1F50A;</div>
+          <span class="quick-action-text">Alert Sound</span>
+        </button>
+        <button class="quick-action-btn" onclick="showToast('Vibration: Escalating')">
+          <div class="quick-action-icon">&#x1F4F3;</div>
+          <span class="quick-action-text">Vibration</span>
+        </button>
+      </div>
+
+      <!-- Saved Locations -->
+      <section>
+        <div class="section-header">
+          <h3 class="section-title">Saved Locations</h3>
+          <a href="#" class="section-link" onclick="showToast('Edit locations')">Edit</a>
+        </div>
+        <div class="saved-locations">
+          <div class="location-item" onclick="selectLocation('Home', '1234 Oak Street, Tampa, FL', '&#x1F3E0;')">
+            <div class="location-icon">&#x1F3E0;</div>
+            <div class="location-details">
+              <p class="location-name">Home</p>
+              <p class="location-address">1234 Oak Street, Tampa, FL</p>
+            </div>
+            <span class="location-arrow">&#x203A;</span>
+          </div>
+          <div class="location-item" onclick="selectLocation('Work', '555 Business Blvd, Tampa, FL', '&#x1F3E2;')">
+            <div class="location-icon">&#x1F3E2;</div>
+            <div class="location-details">
+              <p class="location-name">Work</p>
+              <p class="location-address">555 Business Blvd, Tampa, FL</p>
+            </div>
+            <span class="location-arrow">&#x203A;</span>
+          </div>
+          <div class="location-item" onclick="selectLocation('USF Campus', '4202 E Fowler Ave, Tampa, FL', '&#x1F393;')">
+            <div class="location-icon">&#x1F393;</div>
+            <div class="location-details">
+              <p class="location-name">USF Campus</p>
+              <p class="location-address">4202 E Fowler Ave, Tampa, FL</p>
+            </div>
+            <span class="location-arrow">&#x203A;</span>
+          </div>
+          <div class="location-item" onclick="selectLocation('Gym', '789 Fitness Way, Tampa, FL', '&#x1F3CB;')">
+            <div class="location-icon">&#x1F3CB;&#xFE0F;</div>
+            <div class="location-details">
+              <p class="location-name">Gym</p>
+              <p class="location-address">789 Fitness Way, Tampa, FL</p>
+            </div>
+            <span class="location-arrow">&#x203A;</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" aria-label="Home">
+        <span class="nav-icon">&#x1F3E0;</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" aria-label="Map" onclick="showToast('Map view coming soon')">
+        <span class="nav-icon">&#x1F5FA;&#xFE0F;</span>
+        <span class="nav-label">Map</span>
+      </button>
+      <button class="nav-item" aria-label="History" onclick="showToast('Alarm history coming soon')">
+        <span class="nav-icon">&#x1F4CB;</span>
+        <span class="nav-label">History</span>
+      </button>
+      <button class="nav-item" aria-label="Settings" onclick="showToast('Settings coming soon')">
+        <span class="nav-icon">&#x2699;&#xFE0F;</span>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+
+    <!-- Search Modal -->
+    <div class="modal-overlay" id="searchModal" onclick="closeSearchModal(event)">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#x1F50D;</span>
+          <input 
+            type="text" 
+            class="search-input" 
+            id="searchInput"
+            placeholder="Search for a destination..."
+            autocomplete="off"
+          >
+        </div>
+        <div class="search-results saved-locations">
+          <div class="location-item" onclick="selectLocation('Home', '1234 Oak Street, Tampa, FL', '&#x1F3E0;'); closeSearchModal();">
+            <div class="location-icon">&#x1F3E0;</div>
+            <div class="location-details">
+              <p class="location-name">Home</p>
+              <p class="location-address">1234 Oak Street, Tampa, FL</p>
+            </div>
+          </div>
+          <div class="location-item" onclick="selectLocation('Work', '555 Business Blvd, Tampa, FL', '&#x1F3E2;'); closeSearchModal();">
+            <div class="location-icon">&#x1F3E2;</div>
+            <div class="location-details">
+              <p class="location-name">Work</p>
+              <p class="location-address">555 Business Blvd, Tampa, FL</p>
+            </div>
+          </div>
+          <div class="location-item" onclick="selectLocation('Tampa International Airport', 'TPA, Tampa, FL', '&#x2708;'); closeSearchModal();">
+            <div class="location-icon">&#x2708;&#xFE0F;</div>
+            <div class="location-details">
+              <p class="location-name">Tampa International Airport</p>
+              <p class="location-address">TPA, Tampa, FL</p>
+            </div>
+          </div>
+          <div class="location-item" onclick="selectLocation('Downtown Tampa', 'Downtown, Tampa, FL', '&#x1F3D9;'); closeSearchModal();">
+            <div class="location-icon">&#x1F3D9;&#xFE0F;</div>
+            <div class="location-details">
+              <p class="location-name">Downtown Tampa</p>
+              <p class="location-address">Downtown, Tampa, FL</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
