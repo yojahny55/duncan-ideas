@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TidyLens - AI Space Organization Assistant</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">🔍</span>
+          <span class="logo-text">TidyLens</span>
+        </div>
+        <nav class="nav">
+          <button class="nav-btn active" data-view="home">Home</button>
+          <button class="nav-btn" data-view="projects">My Projects</button>
+          <button class="nav-btn" data-view="progress">Progress</button>
+        </nav>
+        <button class="btn btn-primary btn-sm" id="upgrade-btn">Upgrade to Pro</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Home View -->
+      <section id="home-view" class="view active">
+        <div class="hero">
+          <h1 class="hero-title">Transform any space in minutes</h1>
+          <p class="hero-subtitle">Take a photo. Get a personalized organization plan. Start decluttering.</p>
+          
+          <div class="upload-zone" id="upload-zone">
+            <div class="upload-content">
+              <div class="upload-icon">📸</div>
+              <h3>Drop a photo here or click to upload</h3>
+              <p class="upload-hint">Supports: Rooms, closets, desks, garages, any space!</p>
+              <input type="file" id="file-input" accept="image/*" hidden>
+              <button class="btn btn-primary btn-lg" id="upload-btn">
+                <span class="btn-icon">📷</span>
+                Choose Photo
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- How It Works -->
+        <section class="how-it-works">
+          <h2 class="section-title">How It Works</h2>
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-number">1</div>
+              <div class="step-icon">📸</div>
+              <h3>Snap</h3>
+              <p>Take a photo of any messy space - closet, room, desk, or garage</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">2</div>
+              <div class="step-icon">🤖</div>
+              <h3>Analyze</h3>
+              <p>AI identifies items, categories, and problem areas instantly</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">3</div>
+              <div class="step-icon">📋</div>
+              <h3>Plan</h3>
+              <p>Get a customized step-by-step action plan broken into easy tasks</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">4</div>
+              <div class="step-icon">✨</div>
+              <h3>Transform</h3>
+              <p>Follow the plan, check off tasks, and watch your space transform</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Analyses -->
+        <section class="recent-section">
+          <div class="section-header">
+            <h2 class="section-title">Recent Analyses</h2>
+            <button class="btn btn-ghost btn-sm">View All</button>
+          </div>
+          <div class="empty-state" id="empty-recent">
+            <div class="empty-icon">📭</div>
+            <h3>No spaces analyzed yet</h3>
+            <p>Upload your first photo to get started!</p>
+          </div>
+          <div class="analyses-grid" id="analyses-grid" style="display: none;"></div>
+        </section>
+      </section>
+
+      <!-- Analysis View (shown after upload) -->
+      <section id="analysis-view" class="view">
+        <div class="analysis-container">
+          <!-- Loading State -->
+          <div class="analysis-loading" id="analysis-loading">
+            <div class="loader">
+              <div class="loader-ring"></div>
+              <div class="loader-icon">🔍</div>
+            </div>
+            <h2>Analyzing your space...</h2>
+            <p class="loading-text">Identifying items and problem areas</p>
+            <div class="loading-steps">
+              <div class="loading-step active" data-step="1">
+                <span class="step-check">✓</span>
+                <span>Processing image</span>
+              </div>
+              <div class="loading-step" data-step="2">
+                <span class="step-check">○</span>
+                <span>Identifying categories</span>
+              </div>
+              <div class="loading-step" data-step="3">
+                <span class="step-check">○</span>
+                <span>Generating action plan</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div class="analysis-results" id="analysis-results" style="display: none;">
+            <div class="results-header">
+              <button class="btn btn-ghost back-btn" id="back-btn">
+                ← Back
+              </button>
+              <h1>Your Organization Plan</h1>
+              <button class="btn btn-primary" id="start-session-btn">
+                <span class="btn-icon">▶️</span>
+                Start Session
+              </button>
+            </div>
+
+            <div class="results-grid">
+              <!-- Image Preview -->
+              <div class="image-preview-card">
+                <div class="card-header">
+                  <h3>Before</h3>
+                  <span class="badge badge-warning">Needs Work</span>
+                </div>
+                <div class="image-container">
+                  <img id="preview-image" src="" alt="Uploaded space">
+                </div>
+                <div class="space-stats">
+                  <div class="stat">
+                    <span class="stat-value" id="stat-items">24</span>
+                    <span class="stat-label">Items Detected</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-value" id="stat-categories">5</span>
+                    <span class="stat-label">Categories</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-value" id="stat-time">45 min</span>
+                    <span class="stat-label">Est. Time</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Analysis Summary -->
+              <div class="analysis-summary-card">
+                <h3>Space Analysis</h3>
+                <div class="categories-list" id="categories-list">
+                  <div class="category-item">
+                    <span class="category-icon">👕</span>
+                    <span class="category-name">Clothing</span>
+                    <span class="category-count">12 items</span>
+                    <span class="category-action">Sort & fold</span>
+                  </div>
+                  <div class="category-item">
+                    <span class="category-icon">📚</span>
+                    <span class="category-name">Books & Papers</span>
+                    <span class="category-count">6 items</span>
+                    <span class="category-action">Stack & shelve</span>
+                  </div>
+                  <div class="category-item">
+                    <span class="category-icon">🎮</span>
+                    <span class="category-name">Electronics</span>
+                    <span class="category-count">3 items</span>
+                    <span class="category-action">Organize cables</span>
+                  </div>
+                  <div class="category-item">
+                    <span class="category-icon">🗑️</span>
+                    <span class="category-name">Trash/Recycle</span>
+                    <span class="category-count">2 items</span>
+                    <span class="category-action">Dispose</span>
+                  </div>
+                  <div class="category-item">
+                    <span class="category-icon">❓</span>
+                    <span class="category-name">Miscellaneous</span>
+                    <span class="category-count">1 item</span>
+                    <span class="category-action">Review</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Plan -->
+            <div class="action-plan">
+              <div class="plan-header">
+                <h2>📋 Step-by-Step Action Plan</h2>
+                <div class="plan-progress">
+                  <span class="progress-text">0 of 6 completed</span>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tasks-list" id="tasks-list">
+                <div class="task-item" data-task="1">
+                  <button class="task-check" aria-label="Mark as complete">
+                    <span class="check-icon"></span>
+                  </button>
+                  <div class="task-content">
+                    <h4>Clear the surface area</h4>
+                    <p>Start by removing everything from the desk/floor. Place items in a temporary pile on your bed or a clear area.</p>
+                    <div class="task-meta">
+                      <span class="task-time">⏱️ 5 min</span>
+                      <span class="task-difficulty easy">Easy</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="task-item" data-task="2">
+                  <button class="task-check" aria-label="Mark as complete">
+                    <span class="check-icon"></span>
+                  </button>
+                  <div class="task-content">
+                    <h4>Sort clothing items</h4>
+                    <p>Go through the 12 clothing items. Create three piles: Keep, Donate, Trash. Be honest - if you haven't worn it in 6 months, it goes.</p>
+                    <div class="task-meta">
+                      <span class="task-time">⏱️ 10 min</span>
+                      <span class="task-difficulty medium">Medium</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="task-item" data-task="3">
+                  <button class="task-check" aria-label="Mark as complete">
+                    <span class="check-icon"></span>
+                  </button>
+                  <div class="task-content">
+                    <h4>Organize books & papers</h4>
+                    <p>Stack books by size or category. Papers: action needed vs. file vs. recycle. Shred anything with personal info.</p>
+                    <div class="task-meta">
+                      <span class="task-time">⏱️ 8 min</span>
+                      <span class="task-difficulty easy">Easy</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="task-item" data-task="4">
+                  <button class="task-check" aria-label="Mark as complete">
+                    <span class="check-icon"></span>
+                  </button>
+                  <div class="task-content">
+                    <h4>Tackle electronics & cables</h4>
+                    <p>Untangle cables, use twist ties or cable organizers. Place electronics in designated spots. Remove any broken items.</p>
+                    <div class="task-meta">
+                      <span class="task-time">⏱️ 7 min</span>
+                      <span class="task-difficulty medium">Medium</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="task-item" data-task="5">
+                  <button class="task-check" aria-label="Mark as complete">
+                    <span class="check-icon"></span>
+                  </button>
+                  <div class="task-content">
+                    <h4>Remove trash & recycling</h4>
+                    <p>Bag up all trash and recyclables. Take them out immediately - don't let the bags sit around.</p>
+                    <div class="task-meta">
+                      <span class="task-time">⏱️ 3 min</span>
+                      <span class="task-difficulty easy">Easy</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="task-item" data-task="6">
+                  <button class="task-check" aria-label="Mark as complete">
+                    <span class="check-icon"></span>
+                  </button>
+                  <div class="task-content">
+                    <h4>Final placement & wipe down</h4>
+                    <p>Return "Keep" items to their proper homes. Wipe surfaces. Take your "After" photo!</p>
+                    <div class="task-meta">
+                      <span class="task-time">⏱️ 12 min</span>
+                      <span class="task-difficulty easy">Easy</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="tips-section">
+              <h3>💡 Pro Tips</h3>
+              <div class="tips-grid">
+                <div class="tip-card">
+                  <span class="tip-icon">🎵</span>
+                  <p>Put on upbeat music - it makes organizing feel less like a chore</p>
+                </div>
+                <div class="tip-card">
+                  <span class="tip-icon">📦</span>
+                  <p>Keep a donate box near your closet for ongoing decluttering</p>
+                </div>
+                <div class="tip-card">
+                  <span class="tip-icon">📸</span>
+                  <p>Take before/after photos - the visual progress is motivating!</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Donation CTA -->
+            <div class="donation-cta">
+              <div class="cta-content">
+                <h3>🎁 Found items to donate?</h3>
+                <p>We found 3 donation centers within 2 miles of you</p>
+              </div>
+              <button class="btn btn-secondary">Find Donation Centers</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects View -->
+      <section id="projects-view" class="view">
+        <div class="projects-container">
+          <div class="page-header">
+            <h1>My Projects</h1>
+            <button class="btn btn-primary" id="new-project-btn">
+              <span class="btn-icon">+</span>
+              New Project
+            </button>
+          </div>
+          
+          <div class="empty-state">
+            <div class="empty-icon">📁</div>
+            <h3>No active projects</h3>
+            <p>Start a multi-room organization project</p>
+            <button class="btn btn-primary">Create Project</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Progress View -->
+      <section id="progress-view" class="view">
+        <div class="progress-container">
+          <div class="page-header">
+            <h1>Your Progress</h1>
+          </div>
+
+          <div class="stats-overview">
+            <div class="stat-card">
+              <div class="stat-icon">📸</div>
+              <div class="stat-value">0</div>
+              <div class="stat-label">Spaces Organized</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">✅</div>
+              <div class="stat-value">0</div>
+              <div class="stat-label">Tasks Completed</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">⏱️</div>
+              <div class="stat-value">0h</div>
+              <div class="stat-label">Time Spent</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🔥</div>
+              <div class="stat-value">0</div>
+              <div class="stat-label">Day Streak</div>
+            </div>
+          </div>
+
+          <div class="empty-state">
+            <div class="empty-icon">📊</div>
+            <h3>Start organizing to track progress</h3>
+            <p>Your before/after transformations will appear here</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Timer Modal -->
+    <div class="modal" id="timer-modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content timer-modal-content">
+        <button class="modal-close" id="close-timer">×</button>
+        <div class="timer-display">
+          <h2>Declutter Session</h2>
+          <div class="timer-time" id="timer-display">15:00</div>
+          <p class="timer-task">Working on: <span id="current-task-name">Clear the surface area</span></p>
+        </div>
+        <div class="timer-controls">
+          <button class="btn btn-lg btn-primary" id="timer-start">Start</button>
+          <button class="btn btn-lg btn-ghost" id="timer-pause" style="display: none;">Pause</button>
+          <button class="btn btn-lg btn-secondary" id="timer-skip">Skip Task</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div class="modal" id="upgrade-modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content upgrade-modal-content">
+        <button class="modal-close" id="close-upgrade">×</button>
+        <div class="upgrade-header">
+          <span class="upgrade-badge">PRO</span>
+          <h2>Unlock TidyLens Pro</h2>
+        </div>
+        <ul class="upgrade-features">
+          <li>✓ Unlimited space analyses</li>
+          <li>✓ Timed declutter sessions</li>
+          <li>✓ Donation center finder</li>
+          <li>✓ Progress analytics</li>
+          <li>✓ Ad-free experience</li>
+        </ul>
+        <div class="pricing-options">
+          <div class="price-card">
+            <span class="price-label">Monthly</span>
+            <span class="price-value">$7.99</span>
+            <span class="price-period">/month</span>
+          </div>
+          <div class="price-card popular">
+            <span class="popular-badge">Best Value</span>
+            <span class="price-label">Yearly</span>
+            <span class="price-value">$59.99</span>
+            <span class="price-period">/year</span>
+            <span class="price-savings">Save 37%</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg btn-full">Start 7-Day Free Trial</button>
+        <p class="upgrade-note">Cancel anytime. No credit card required to start.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-11 | [TidyLens](ideas/2026-02-11-tidylens-space-organizer/) | AI space organization assistant — snap a photo of any messy space, get step-by-step decluttering instructions. Removes the cognitive load of "where do I even start?" | Reddit | ✅ [Demo](ideas/2026-02-11-tidylens-space-organizer/prototype/index.html) |
 | 2026-02-11 | [SnapContext](ideas/2026-02-11-snapcontext-save-why/) | Remember WHY you saved it — capture context when you save screenshots/links/images. Never forget the reason you saved something again | X/Twitter | ✅ [Demo](ideas/2026-02-11-snapcontext-save-why/prototype/index.html) |
 | 2026-02-10 | [ScopeGuard](ideas/2026-02-10-scopeguard-creep-detector/) | AI scope creep detector for freelancers — track client requests, detect out-of-scope work, generate change requests, bill what you deserve | Web/Indie Hackers | ✅ [Demo](ideas/2026-02-10-scopeguard-creep-detector/prototype/index.html) |
 | 2026-02-10 | [WakeStop](ideas/2026-02-10-wakestop-gps-alarm/) | GPS proximity alarm for commuters — set your destination, we'll wake you up when you're close. Never miss your stop again | Reddit | ✅ [Demo](ideas/2026-02-10-wakestop-gps-alarm/prototype/index.html) |
