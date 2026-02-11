@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScopeGuard - AI Scope Creep Detector</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+          <span class="logo-text">ScopeGuard</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          Projects
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          Requests
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Timeline
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Billing
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar">SC</div>
+          <div class="user-details">
+            <span class="user-name">Sarah Chen</span>
+            <span class="user-plan">Pro Plan</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="main-header">
+        <div class="header-left">
+          <h1 class="page-title">Dashboard</h1>
+          <span class="header-date">Tuesday, February 10, 2026</span>
+        </div>
+        <div class="header-right">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notification-badge">2</span>
+          </button>
+          <button class="btn btn-primary" id="newRequestBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Log Request
+          </button>
+        </div>
+      </header>
+      
+      <!-- Stats Cards -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">4</span>
+            <span class="stat-label">Active Projects</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">23</span>
+            <span class="stat-label">In-Scope Requests</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">7</span>
+            <span class="stat-label">Gray Area</span>
+          </div>
+        </div>
+        
+        <div class="stat-card stat-card-alert">
+          <div class="stat-icon stat-icon-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">5</span>
+            <span class="stat-label">Scope Creep Alerts</span>
+          </div>
+          <span class="stat-badge">$2,400 unbilled</span>
+        </div>
+      </section>
+      
+      <!-- Active Project -->
+      <section class="project-section">
+        <div class="section-header">
+          <h2 class="section-title">Acme Corp Website Redesign</h2>
+          <div class="project-meta">
+            <span class="project-budget">Budget: $8,500</span>
+            <span class="scope-meter">
+              <span class="scope-meter-fill" style="width: 127%"></span>
+            </span>
+            <span class="scope-percent danger">127% of scope</span>
+          </div>
+        </div>
+        
+        <!-- Scope Overview -->
+        <div class="scope-overview">
+          <div class="scope-card original-scope">
+            <h3 class="scope-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Original Scope
+            </h3>
+            <ul class="scope-list">
+              <li>Homepage redesign</li>
+              <li>5 inner pages (About, Services, Team, Contact, Blog)</li>
+              <li>Mobile responsive</li>
+              <li>Contact form integration</li>
+              <li>2 revision rounds</li>
+            </ul>
+          </div>
+          
+          <div class="scope-card additions">
+            <h3 class="scope-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Additions (Out of Scope)
+            </h3>
+            <ul class="scope-list additions-list">
+              <li class="out-of-scope">
+                <span>E-commerce shop (15 products)</span>
+                <span class="addition-value">+$1,200</span>
+              </li>
+              <li class="out-of-scope">
+                <span>Custom animations</span>
+                <span class="addition-value">+$600</span>
+              </li>
+              <li class="gray-area">
+                <span>Extra revision round (#4)</span>
+                <span class="addition-value">+$300</span>
+              </li>
+              <li class="gray-area">
+                <span>Newsletter popup</span>
+                <span class="addition-value">+$200</span>
+              </li>
+              <li class="out-of-scope">
+                <span>Blog category filters</span>
+                <span class="addition-value">+$100</span>
+              </li>
+            </ul>
+            <div class="additions-total">
+              <span>Total Unbilled:</span>
+              <span class="total-value">$2,400</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Requests -->
+        <div class="requests-section">
+          <div class="requests-header">
+            <h3 class="requests-title">Recent Requests</h3>
+            <a href="#" class="view-all">View all</a>
+          </div>
+          
+          <div class="requests-list">
+            <div class="request-item out-of-scope">
+              <div class="request-status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+              </div>
+              <div class="request-content">
+                <p class="request-text">"Can we add a quick shop section? Just 15 products, nothing fancy."</p>
+                <span class="request-meta">Today at 2:34 PM via Email</span>
+              </div>
+              <div class="request-analysis">
+                <span class="analysis-badge danger">Out of Scope</span>
+                <span class="analysis-reason">E-commerce not in original proposal</span>
+              </div>
+              <div class="request-actions">
+                <button class="btn btn-sm btn-outline" data-action="change-request">Generate Change Request</button>
+              </div>
+            </div>
+            
+            <div class="request-item gray-area">
+              <div class="request-status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <div class="request-content">
+                <p class="request-text">"One more round of revisions on the homepage hero section?"</p>
+                <span class="request-meta">Yesterday at 11:20 AM via Slack</span>
+              </div>
+              <div class="request-analysis">
+                <span class="analysis-badge warning">Gray Area</span>
+                <span class="analysis-reason">4th revision, scope allows 2 rounds</span>
+              </div>
+              <div class="request-actions">
+                <button class="btn btn-sm btn-outline" data-action="change-request">Generate Change Request</button>
+              </div>
+            </div>
+            
+            <div class="request-item in-scope">
+              <div class="request-status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <div class="request-content">
+                <p class="request-text">"Can you update the team page with new headshots?"</p>
+                <span class="request-meta">Feb 8 at 3:45 PM via Email</span>
+              </div>
+              <div class="request-analysis">
+                <span class="analysis-badge success">In Scope</span>
+                <span class="analysis-reason">Team page updates included</span>
+              </div>
+              <div class="request-actions">
+                <button class="btn btn-sm btn-ghost">Mark Complete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <!-- New Request Modal -->
+    <div class="modal-overlay" id="requestModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 class="modal-title">Log New Request</h2>
+          <button class="modal-close" id="closeModal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <form class="modal-form" id="requestForm">
+          <div class="form-group">
+            <label for="project">Project</label>
+            <select id="project" required>
+              <option value="acme">Acme Corp Website Redesign</option>
+              <option value="bloom">Bloom App UI</option>
+              <option value="nexus">Nexus Dashboard</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="requestText">Client Request</label>
+            <textarea id="requestText" placeholder="Paste the client's message or describe the request..." rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="source">Source</label>
+            <select id="source">
+              <option value="email">Email</option>
+              <option value="slack">Slack</option>
+              <option value="call">Phone/Video Call</option>
+              <option value="meeting">In-Person Meeting</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelModal">Cancel</button>
+            <button type="submit" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Analyze Request
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Analysis Result Modal -->
+    <div class="modal-overlay" id="analysisModal">
+      <div class="modal modal-analysis">
+        <div class="modal-header">
+          <h2 class="modal-title">Scope Analysis</h2>
+          <button class="modal-close" id="closeAnalysis">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="analysis-result">
+          <div class="analysis-loading" id="analysisLoading">
+            <div class="spinner"></div>
+            <p>Analyzing request against project scope...</p>
+          </div>
+          <div class="analysis-content" id="analysisContent" style="display: none;">
+            <div class="analysis-verdict out-of-scope">
+              <div class="verdict-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+              </div>
+              <div class="verdict-text">
+                <h3>Out of Scope</h3>
+                <p>This request is not covered by the original project agreement.</p>
+              </div>
+            </div>
+            <div class="analysis-details">
+              <h4>AI Analysis</h4>
+              <p id="analysisExplanation">The client is requesting an e-commerce shop with 15 products. Your original scope includes only informational pages (Homepage, About, Services, Team, Contact, Blog) with no mention of e-commerce, product management, or shopping cart functionality.</p>
+              <div class="suggested-value">
+                <span>Suggested Additional Fee:</span>
+                <strong>$1,200 - $1,800</strong>
+              </div>
+            </div>
+            <div class="analysis-actions">
+              <button class="btn btn-primary btn-lg">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                Generate Change Request
+              </button>
+              <button class="btn btn-secondary">Draft Client Message</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
