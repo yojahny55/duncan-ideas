@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapContext - Remember WHY You Saved It</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📌</text></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="header-title">
+        <span class="logo">📌</span>
+        SnapContext
+      </h1>
+      <div class="header-actions">
+        <button class="icon-btn" aria-label="Notifications" title="Notifications">
+          🔔
+        </button>
+        <button class="icon-btn" aria-label="Settings" title="Settings">
+          ⚙️
+        </button>
+      </div>
+    </header>
+
+    <!-- Search -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="search" 
+          class="search-input" 
+          placeholder="Search by context... 'that meme for bad takes'"
+          aria-label="Search saved content by context"
+        >
+      </div>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="filter-container" role="tablist" aria-label="Content filters">
+      <button class="filter-pill active" role="tab" aria-selected="true">All</button>
+      <button class="filter-pill" role="tab" aria-selected="false">📸 Screenshots</button>
+      <button class="filter-pill" role="tab" aria-selected="false">🔗 Links</button>
+      <button class="filter-pill" role="tab" aria-selected="false">💬 Reply Fodder</button>
+      <button class="filter-pill" role="tab" aria-selected="false">🎁 Gift Ideas</button>
+      <button class="filter-pill" role="tab" aria-selected="false">📚 Research</button>
+    </div>
+
+    <!-- Content List -->
+    <main class="content-list" aria-label="Saved content">
+      
+      <!-- Orphaned Section -->
+      <section aria-labelledby="orphan-heading">
+        <div class="section-header">
+          <h2 id="orphan-heading" class="section-title">⚠️ Needs Attention (3)</h2>
+          <a href="#" class="section-action">Review All</a>
+        </div>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <img src="https://picsum.photos/seed/chart1/128/128" alt="Chart thumbnail">
+          </div>
+          <div class="save-content">
+            <p class="save-context">
+              <span class="orphan-badge">⏰ 45 days</span>
+              Productivity chart for Twitter thread
+            </p>
+            <div class="save-meta">
+              <span>Screenshot</span>
+              <span class="dot"></span>
+              <span>Dec 28</span>
+            </div>
+            <div class="save-tags">
+              <span class="save-tag">📱 Twitter</span>
+              <span class="save-tag">📊 Data</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Recent Section -->
+      <section aria-labelledby="recent-heading">
+        <div class="section-header">
+          <h2 id="recent-heading" class="section-title">🕐 Recent</h2>
+          <a href="#" class="section-action">See All</a>
+        </div>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <img src="https://picsum.photos/seed/meme1/128/128" alt="Meme thumbnail">
+          </div>
+          <div class="save-content">
+            <p class="save-context">
+              <span class="context-badge">🎯 WHY</span>
+              Perfect reply when someone says AI will replace devs
+            </p>
+            <div class="save-meta">
+              <span>Screenshot</span>
+              <span class="dot"></span>
+              <span>2 hours ago</span>
+            </div>
+            <div class="save-tags">
+              <span class="save-tag">💬 Reply Fodder</span>
+              <span class="save-tag">🤖 AI</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <div class="placeholder">🔗</div>
+          </div>
+          <div class="save-content">
+            <p class="save-context">
+              <span class="context-badge">🎯 WHY</span>
+              Reference for NASA streaming architecture article
+            </p>
+            <div class="save-meta">
+              <span>Link</span>
+              <span class="dot"></span>
+              <span>5 hours ago</span>
+            </div>
+            <div class="save-tags">
+              <span class="save-tag">📚 Research</span>
+              <span class="save-tag">💼 Work</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <img src="https://picsum.photos/seed/product1/128/128" alt="Product thumbnail">
+          </div>
+          <div class="save-content">
+            <p class="save-context">
+              <span class="context-badge">🎯 WHY</span>
+              Birthday gift idea for Mom - she mentioned liking this
+            </p>
+            <div class="save-meta">
+              <span>Screenshot</span>
+              <span class="dot"></span>
+              <span>Yesterday</span>
+            </div>
+            <div class="save-tags">
+              <span class="save-tag">🎁 Gift Ideas</span>
+              <span class="save-tag">👨‍👩‍👧 Family</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <img src="https://picsum.photos/seed/code1/128/128" alt="Code screenshot thumbnail">
+          </div>
+          <div class="save-content">
+            <p class="save-context">
+              <span class="context-badge">🎯 WHY</span>
+              Clever React pattern for handling loading states
+            </p>
+            <div class="save-meta">
+              <span>Screenshot</span>
+              <span class="dot"></span>
+              <span>2 days ago</span>
+            </div>
+            <div class="save-tags">
+              <span class="save-tag">💻 Code</span>
+              <span class="save-tag">⚛️ React</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <img src="https://picsum.photos/seed/tweet1/128/128" alt="Tweet screenshot thumbnail">
+          </div>
+          <div class="save-content">
+            <p class="save-context">
+              <span class="context-badge">🎯 WHY</span>
+              Great thread on cold email - save for when I launch
+            </p>
+            <div class="save-meta">
+              <span>Screenshot</span>
+              <span class="dot"></span>
+              <span>3 days ago</span>
+            </div>
+            <div class="save-tags">
+              <span class="save-tag">📈 Marketing</span>
+              <span class="save-tag">🚀 Launch</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Collections Section -->
+      <section aria-labelledby="collections-heading">
+        <div class="section-header">
+          <h2 id="collections-heading" class="section-title">📁 Collections</h2>
+          <a href="#" class="section-action">Manage</a>
+        </div>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <div class="placeholder" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);">💬</div>
+          </div>
+          <div class="save-content">
+            <p class="save-context" style="font-weight: 600;">Reply Fodder</p>
+            <div class="save-meta">
+              <span>23 saves</span>
+              <span class="dot"></span>
+              <span>Updated today</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="save-card" tabindex="0">
+          <div class="save-thumbnail">
+            <div class="placeholder" style="background: linear-gradient(135deg, #10b981, #14b8a6);">💼</div>
+          </div>
+          <div class="save-content">
+            <p class="save-context" style="font-weight: 600;">Work References</p>
+            <div class="save-meta">
+              <span>47 saves</span>
+              <span class="dot"></span>
+              <span>Updated yesterday</span>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <!-- FAB -->
+    <div class="fab-container">
+      <button class="fab fab-secondary" aria-label="Voice save" title="Quick voice note" id="voiceFab">
+        🎤
+      </button>
+      <button class="fab" aria-label="Add new save" title="Save with context" id="addFab">
+        ➕
+      </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button class="nav-item active" aria-current="page">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">Search</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">Collections</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profile</span>
+      </button>
+    </nav>
+
+    <!-- Save Modal -->
+    <div class="modal-overlay" id="saveModal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+      <div class="modal-content">
+        <div class="modal-handle"></div>
+        <header class="modal-header">
+          <h2 class="modal-title" id="modal-title">Add Context</h2>
+          <p class="modal-subtitle">Why are you saving this?</p>
+        </header>
+
+        <!-- Preview of content being saved -->
+        <div class="save-card" style="pointer-events: none; margin-bottom: 1rem;">
+          <div class="save-thumbnail">
+            <img src="https://picsum.photos/seed/new1/128/128" alt="Content being saved">
+          </div>
+          <div class="save-content">
+            <p class="save-context" style="color: var(--text-tertiary);">Screenshot from Twitter</p>
+            <div class="save-meta">
+              <span>Just now</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Voice Recorder -->
+        <div class="voice-recorder" id="voiceRecorder">
+          <button class="voice-btn" id="recordBtn" aria-label="Start recording">
+            🎤
+          </button>
+          <span class="voice-timer" id="voiceTimer">0:00</span>
+          <span class="voice-label">Tap to record why you're saving this</span>
+        </div>
+
+        <div style="text-align: center; margin: 1rem 0; color: var(--text-tertiary);">or</div>
+
+        <!-- Text Input -->
+        <div class="context-input-group">
+          <textarea 
+            class="context-input" 
+            placeholder="Type your context... e.g., 'Reply to use when someone says X'"
+            aria-label="Context note"
+            id="contextInput"
+          ></textarea>
+        </div>
+
+        <!-- Quick Tags -->
+        <div class="quick-tags" role="group" aria-label="Quick tags">
+          <button class="quick-tag" data-tag="reply">💬 Reply Fodder</button>
+          <button class="quick-tag" data-tag="research">📚 Research</button>
+          <button class="quick-tag" data-tag="gift">🎁 Gift Idea</button>
+          <button class="quick-tag" data-tag="work">💼 Work</button>
+          <button class="quick-tag" data-tag="code">💻 Code</button>
+          <button class="quick-tag" data-tag="later">⏰ For Later</button>
+        </div>
+
+        <!-- AI Suggestion -->
+        <div class="ai-suggestion" id="aiSuggestion">
+          <div class="ai-icon">✨</div>
+          <div class="ai-content">
+            <span class="ai-label">AI Suggestion</span>
+            <p class="ai-text">Based on your clipboard: "This looks like a chart about developer productivity. Saving for a Twitter thread?"</p>
+            <div class="ai-actions">
+              <button class="ai-action-btn primary" id="acceptAI">Use This</button>
+              <button class="ai-action-btn secondary" id="dismissAI">Dismiss</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <button class="save-btn" id="saveBtn">
+          Save with Context
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="alert" aria-live="polite">
+      Saved with context! 📌
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
