@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProgressPulse - Order Progress Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-view="dashboard">My Orders</button>
+      <button class="nav-tab" data-view="customer">Customer View</button>
+    </nav>
+
+    <!-- ====================================
+         FREELANCER DASHBOARD VIEW
+         ==================================== -->
+    <div id="dashboard" class="view active">
+      
+      <header class="header">
+        <div class="logo">
+          <div class="logo-icon">📦</div>
+          <span class="logo-text">ProgressPulse</span>
+        </div>
+        <p class="header-subtitle">Keep customers updated without the stress</p>
+      </header>
+
+      <!-- Order List -->
+      <section id="order-list">
+        
+        <div class="order-card" data-order="1">
+          <div class="order-avatar">👗</div>
+          <div class="order-info">
+            <div class="order-name">Custom Wedding Dress</div>
+            <div class="order-customer">Sarah Johnson</div>
+          </div>
+          <div class="order-meta">
+            <div class="order-progress-mini">75%</div>
+            <div class="order-due">Due Feb 20</div>
+          </div>
+        </div>
+
+        <div class="order-card" data-order="2">
+          <div class="order-avatar">👔</div>
+          <div class="order-info">
+            <div class="order-name">3-Piece Suit Alteration</div>
+            <div class="order-customer">Michael Chen</div>
+          </div>
+          <div class="order-meta">
+            <div class="order-progress-mini">40%</div>
+            <div class="order-due urgent">Due Feb 14</div>
+          </div>
+        </div>
+
+        <div class="order-card" data-order="3">
+          <div class="order-avatar">🎀</div>
+          <div class="order-info">
+            <div class="order-name">Prom Dress - Purple</div>
+            <div class="order-customer">Emma Williams</div>
+          </div>
+          <div class="order-meta">
+            <div class="order-progress-mini">20%</div>
+            <div class="order-due">Due Mar 1</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Empty State (hidden by default) -->
+      <div id="empty-state" class="empty-state hidden">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No orders yet</div>
+        <p class="empty-text">Create your first order to start tracking progress</p>
+        <button class="btn btn-primary btn-lg">+ Create Order</button>
+      </div>
+
+      <!-- Order Detail Modal (appears when clicking an order) -->
+      <div id="order-detail" class="hidden">
+        <button class="btn btn-secondary mb-4" id="back-btn">← Back to Orders</button>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title" id="detail-title">Custom Wedding Dress</h2>
+              <p class="card-subtitle" id="detail-customer">For Sarah Johnson</p>
+            </div>
+            <span class="badge badge-progress">In Progress</span>
+          </div>
+
+          <div class="progress-container">
+            <div class="progress-header">
+              <span class="progress-label">Overall Progress</span>
+              <span class="progress-percent" id="detail-percent">75%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="detail-bar" style="width: 75%"></div>
+            </div>
+          </div>
+
+          <div class="stages" id="detail-stages">
+            <div class="stage completed" data-stage="1">
+              <div class="stage-check">✓</div>
+              <div class="stage-info">
+                <div class="stage-name">Consultation & Measurements</div>
+                <div class="stage-date">Completed Feb 5</div>
+              </div>
+            </div>
+            <div class="stage completed" data-stage="2">
+              <div class="stage-check">✓</div>
+              <div class="stage-info">
+                <div class="stage-name">Pattern Making</div>
+                <div class="stage-date">Completed Feb 8</div>
+              </div>
+            </div>
+            <div class="stage completed" data-stage="3">
+              <div class="stage-check">✓</div>
+              <div class="stage-info">
+                <div class="stage-name">Fabric Cutting</div>
+                <div class="stage-date">Completed Feb 10</div>
+              </div>
+            </div>
+            <div class="stage current" data-stage="4">
+              <div class="stage-check"></div>
+              <div class="stage-info">
+                <div class="stage-name">Sewing & Assembly</div>
+                <div class="stage-date">In progress...</div>
+              </div>
+            </div>
+            <div class="stage" data-stage="5">
+              <div class="stage-check"></div>
+              <div class="stage-info">
+                <div class="stage-name">Final Fitting</div>
+                <div class="stage-date"></div>
+              </div>
+            </div>
+            <div class="stage" data-stage="6">
+              <div class="stage-check"></div>
+              <div class="stage-info">
+                <div class="stage-name">Finishing Touches</div>
+                <div class="stage-date"></div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-muted text-center mt-4" style="font-size: var(--text-sm);">
+            Tap a stage to mark it complete
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="font-size: var(--text-base); margin-bottom: var(--space-3);">Share with Customer</h3>
+          <p class="text-muted" style="font-size: var(--text-sm); margin-bottom: var(--space-3);">
+            Send this link so they can check progress anytime
+          </p>
+          <div class="share-link">
+            <input type="text" class="share-input" value="progresspulse.app/t/a8f2k9x" readonly id="share-url">
+            <button class="share-btn" id="copy-btn">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Action Button -->
+      <button class="fab" id="fab-add" title="Create new order">+</button>
+    </div>
+
+    <!-- ====================================
+         CUSTOMER TRACKING VIEW
+         ==================================== -->
+    <div id="customer" class="view">
+      
+      <div class="customer-header">
+        <div class="customer-order-name">Custom Wedding Dress</div>
+        <div class="customer-maker">by Maria's Tailoring</div>
+        <div class="customer-eta">
+          <span class="eta-icon">📅</span>
+          <span class="eta-text">Expected: February 20, 2026</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="progress-container">
+          <div class="progress-header">
+            <span class="progress-label">Your Order Progress</span>
+            <span class="progress-percent">75%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 75%"></div>
+          </div>
+        </div>
+
+        <div class="stages">
+          <div class="stage completed">
+            <div class="stage-check">✓</div>
+            <div class="stage-info">
+              <div class="stage-name">Consultation & Measurements</div>
+              <div class="stage-date">Completed Feb 5</div>
+            </div>
+          </div>
+          <div class="stage completed">
+            <div class="stage-check">✓</div>
+            <div class="stage-info">
+              <div class="stage-name">Pattern Making</div>
+              <div class="stage-date">Completed Feb 8</div>
+            </div>
+          </div>
+          <div class="stage completed">
+            <div class="stage-check">✓</div>
+            <div class="stage-info">
+              <div class="stage-name">Fabric Cutting</div>
+              <div class="stage-date">Completed Feb 10</div>
+            </div>
+          </div>
+          <div class="stage current">
+            <div class="stage-check"></div>
+            <div class="stage-info">
+              <div class="stage-name">Sewing & Assembly</div>
+              <div class="stage-date">In progress...</div>
+            </div>
+          </div>
+          <div class="stage">
+            <div class="stage-check"></div>
+            <div class="stage-info">
+              <div class="stage-name">Final Fitting</div>
+              <div class="stage-date"></div>
+            </div>
+          </div>
+          <div class="stage">
+            <div class="stage-check"></div>
+            <div class="stage-info">
+              <div class="stage-name">Finishing Touches</div>
+              <div class="stage-date"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card text-center" style="margin-top: var(--space-4);">
+        <div style="font-size: 3rem; margin-bottom: var(--space-3);">✨</div>
+        <p style="color: var(--color-neutral-600); font-size: var(--text-sm);">
+          Your dress is coming along beautifully! We'll notify you when there's an update.
+        </p>
+      </div>
+
+      <footer class="footer">
+        Powered by <a href="#">ProgressPulse</a> — Stop asking "How far?"
+      </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
