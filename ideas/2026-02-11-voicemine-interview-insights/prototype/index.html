@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoiceMine - AI Customer Interview Intelligence</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+          </svg>
+          <span class="logo-text">VoiceMine</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          </svg>
+          <span>Interviews</span>
+          <span class="nav-badge">12</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4"/>
+            <path d="M12 8h.01"/>
+          </svg>
+          <span>Insights</span>
+          <span class="nav-badge accent">47</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Quotes</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span>Trends</span>
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="usage-meter">
+          <div class="usage-header">
+            <span>Monthly Usage</span>
+            <span class="usage-count">8 / 30 interviews</span>
+          </div>
+          <div class="usage-bar">
+            <div class="usage-fill" style="width: 27%"></div>
+          </div>
+        </div>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Settings</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Your customer intelligence overview</p>
+        </div>
+        <div class="header-right">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Import
+          </button>
+          <button class="btn btn-primary" id="uploadBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Interview
+          </button>
+        </div>
+      </header>
+
+      <!-- Stats Grid -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">12</span>
+            <span class="stat-label">Total Interviews</span>
+          </div>
+          <span class="stat-trend up">+3 this week</span>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4"/>
+              <path d="M12 8h.01"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">47</span>
+            <span class="stat-label">Insights Extracted</span>
+          </div>
+          <span class="stat-trend up">+12 this week</span>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">8</span>
+            <span class="stat-label">Themes Identified</span>
+          </div>
+          <span class="stat-trend neutral">Same as last week</span>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">6.2h</span>
+            <span class="stat-label">Time Saved</span>
+          </div>
+          <span class="stat-trend up">vs manual analysis</span>
+        </div>
+      </section>
+
+      <!-- Main Content Grid -->
+      <div class="content-grid">
+        <!-- Top Insights -->
+        <section class="card insights-card">
+          <div class="card-header">
+            <h2 class="card-title">Top Insights</h2>
+            <span class="card-badge">This Month</span>
+          </div>
+          <div class="insights-list">
+            <div class="insight-item pain">
+              <div class="insight-type">
+                <span class="type-badge pain">Pain Point</span>
+                <span class="insight-frequency">Mentioned 8x</span>
+              </div>
+              <p class="insight-text">"Onboarding takes too long - I gave up after 10 minutes"</p>
+              <div class="insight-meta">
+                <span class="insight-source">5 interviews</span>
+                <span class="insight-confidence">92% confidence</span>
+              </div>
+            </div>
+            
+            <div class="insight-item request">
+              <div class="insight-type">
+                <span class="type-badge request">Feature Request</span>
+                <span class="insight-frequency">Mentioned 6x</span>
+              </div>
+              <p class="insight-text">"Would love to integrate with Slack for notifications"</p>
+              <div class="insight-meta">
+                <span class="insight-source">4 interviews</span>
+                <span class="insight-confidence">87% confidence</span>
+              </div>
+            </div>
+            
+            <div class="insight-item praise">
+              <div class="insight-type">
+                <span class="type-badge praise">Praise</span>
+                <span class="insight-frequency">Mentioned 5x</span>
+              </div>
+              <p class="insight-text">"The dashboard is really intuitive - best I've used"</p>
+              <div class="insight-meta">
+                <span class="insight-source">3 interviews</span>
+                <span class="insight-confidence">95% confidence</span>
+              </div>
+            </div>
+            
+            <div class="insight-item objection">
+              <div class="insight-type">
+                <span class="type-badge objection">Objection</span>
+                <span class="insight-frequency">Mentioned 4x</span>
+              </div>
+              <p class="insight-text">"Price seems high compared to competitors"</p>
+              <div class="insight-meta">
+                <span class="insight-source">3 interviews</span>
+                <span class="insight-confidence">78% confidence</span>
+              </div>
+            </div>
+          </div>
+          <a href="#" class="card-link">View all 47 insights →</a>
+        </section>
+
+        <!-- Recent Interviews -->
+        <section class="card interviews-card">
+          <div class="card-header">
+            <h2 class="card-title">Recent Interviews</h2>
+            <button class="btn btn-ghost btn-sm">View All</button>
+          </div>
+          <div class="interviews-list">
+            <div class="interview-item">
+              <div class="interview-avatar">
+                <span>SM</span>
+              </div>
+              <div class="interview-content">
+                <h3 class="interview-name">Sarah Mitchell</h3>
+                <p class="interview-role">Product Lead @ TechCorp</p>
+                <div class="interview-tags">
+                  <span class="tag">Onboarding</span>
+                  <span class="tag">Pricing</span>
+                </div>
+              </div>
+              <div class="interview-meta">
+                <span class="interview-date">Today</span>
+                <span class="interview-duration">32 min</span>
+                <span class="interview-insights">6 insights</span>
+              </div>
+            </div>
+            
+            <div class="interview-item">
+              <div class="interview-avatar blue">
+                <span>JC</span>
+              </div>
+              <div class="interview-content">
+                <h3 class="interview-name">James Chen</h3>
+                <p class="interview-role">CTO @ StartupXYZ</p>
+                <div class="interview-tags">
+                  <span class="tag">Integration</span>
+                  <span class="tag">API</span>
+                </div>
+              </div>
+              <div class="interview-meta">
+                <span class="interview-date">Yesterday</span>
+                <span class="interview-duration">45 min</span>
+                <span class="interview-insights">8 insights</span>
+              </div>
+            </div>
+            
+            <div class="interview-item">
+              <div class="interview-avatar green">
+                <span>AR</span>
+              </div>
+              <div class="interview-content">
+                <h3 class="interview-name">Amanda Rodriguez</h3>
+                <p class="interview-role">UX Manager @ DesignCo</p>
+                <div class="interview-tags">
+                  <span class="tag">Dashboard</span>
+                  <span class="tag">Export</span>
+                </div>
+              </div>
+              <div class="interview-meta">
+                <span class="interview-date">Feb 9</span>
+                <span class="interview-duration">28 min</span>
+                <span class="interview-insights">5 insights</span>
+              </div>
+            </div>
+            
+            <div class="interview-item processing">
+              <div class="interview-avatar orange">
+                <span>MK</span>
+              </div>
+              <div class="interview-content">
+                <h3 class="interview-name">Michael Kim</h3>
+                <p class="interview-role">Director @ Enterprise Inc</p>
+                <div class="processing-indicator">
+                  <div class="spinner"></div>
+                  <span>Processing transcript...</span>
+                </div>
+              </div>
+              <div class="interview-meta">
+                <span class="interview-date">Feb 9</span>
+                <span class="interview-duration">51 min</span>
+                <span class="interview-insights">-</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Theme Breakdown -->
+        <section class="card themes-card">
+          <div class="card-header">
+            <h2 class="card-title">Theme Breakdown</h2>
+          </div>
+          <div class="themes-chart">
+            <div class="theme-bar">
+              <div class="theme-label">
+                <span class="theme-name">Onboarding</span>
+                <span class="theme-count">23 mentions</span>
+              </div>
+              <div class="theme-progress">
+                <div class="theme-fill" style="width: 100%; background: var(--purple-500)"></div>
+              </div>
+            </div>
+            <div class="theme-bar">
+              <div class="theme-label">
+                <span class="theme-name">Pricing</span>
+                <span class="theme-count">18 mentions</span>
+              </div>
+              <div class="theme-progress">
+                <div class="theme-fill" style="width: 78%; background: var(--blue-500)"></div>
+              </div>
+            </div>
+            <div class="theme-bar">
+              <div class="theme-label">
+                <span class="theme-name">Integrations</span>
+                <span class="theme-count">15 mentions</span>
+              </div>
+              <div class="theme-progress">
+                <div class="theme-fill" style="width: 65%; background: var(--orange-500)"></div>
+              </div>
+            </div>
+            <div class="theme-bar">
+              <div class="theme-label">
+                <span class="theme-name">Performance</span>
+                <span class="theme-count">12 mentions</span>
+              </div>
+              <div class="theme-progress">
+                <div class="theme-fill" style="width: 52%; background: var(--green-500)"></div>
+              </div>
+            </div>
+            <div class="theme-bar">
+              <div class="theme-label">
+                <span class="theme-name">Mobile App</span>
+                <span class="theme-count">8 mentions</span>
+              </div>
+              <div class="theme-progress">
+                <div class="theme-fill" style="width: 35%; background: var(--red-500)"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="card actions-card">
+          <div class="card-header">
+            <h2 class="card-title">Quick Actions</h2>
+          </div>
+          <div class="actions-grid">
+            <button class="action-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              <span>Generate PRD</span>
+            </button>
+            <button class="action-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <span>Exec Summary</span>
+            </button>
+            <button class="action-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+              </svg>
+              <span>Export to Notion</span>
+            </button>
+            <button class="action-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              <span>Share Report</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Upload New Interview</h2>
+        <button class="modal-close" id="closeModal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="upload-text">Drag and drop your recording here</p>
+          <p class="upload-subtext">or click to browse</p>
+          <p class="upload-formats">Supports MP3, MP4, WAV, M4A, WebM</p>
+        </div>
+        
+        <div class="upload-divider">
+          <span>or paste a link</span>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Meeting URL</label>
+          <input type="url" class="form-input" placeholder="https://zoom.us/rec/..." />
+          <p class="form-hint">Supports Zoom, Google Meet, and Loom recordings</p>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Interviewee Name</label>
+          <input type="text" class="form-input" placeholder="Sarah Mitchell" />
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <input type="text" class="form-input" placeholder="Product Manager" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company</label>
+            <input type="text" class="form-input" placeholder="TechCorp" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelUpload">Cancel</button>
+        <button class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Start Processing
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
