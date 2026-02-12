@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-12 | [ScreenSnap](ideas/2026-02-12-screensnap-screenshot-manager/) | Smart screenshot manager — catch-at-capture workflow with keep/delete timers, AI categorization, OCR search, cleanup assistant. End screenshot chaos | Reddit | ✅ [Demo](ideas/2026-02-12-screensnap-screenshot-manager/prototype/index.html) |
 | 2026-02-12 | [ProgressPulse](ideas/2026-02-12-progresspulse-order-tracker/) | Order progress tracker for freelancers — let customers check their order status with a shareable link instead of constantly asking "how far?" | X/Twitter | ✅ [Demo](ideas/2026-02-12-progresspulse-order-tracker/prototype/index.html) |
 | 2026-02-11 | [VoiceMine](ideas/2026-02-11-voicemine-interview-insights/) | AI customer interview intelligence — upload calls, extract pain points/requests/praise, cluster themes, generate PRDs. Product discovery at scale | Web/YC RFS 2026 | ✅ [Demo](ideas/2026-02-11-voicemine-interview-insights/prototype/index.html) |
 | 2026-02-11 | [TidyLens](ideas/2026-02-11-tidylens-space-organizer/) | AI space organization assistant — snap a photo of any messy space, get step-by-step decluttering instructions. Removes the cognitive load of "where do I even start?" | Reddit | ✅ [Demo](ideas/2026-02-11-tidylens-space-organizer/prototype/index.html) |
