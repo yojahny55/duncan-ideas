@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckFirst - Purchase Coordination</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="app-container">
+            <!-- Home Screen -->
+            <div class="screen active" id="home-screen">
+                <header class="app-header">
+                    <div class="header-left">
+                        <h1 class="app-title">CheckFirst</h1>
+                        <p class="household-name">Smith Household</p>
+                    </div>
+                    <button class="icon-btn settings-btn" onclick="showScreen('settings-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                </header>
+
+                <!-- Monthly Summary -->
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-title">February 2026</span>
+                        <span class="summary-badge">3 conflicts avoided!</span>
+                    </div>
+                    <div class="summary-stats">
+                        <div class="stat">
+                            <span class="stat-value">$1,247</span>
+                            <span class="stat-label">Coordinated</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">12</span>
+                            <span class="stat-label">Approved</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">2</span>
+                            <span class="stat-label">Discussed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Requests -->
+                <div class="section">
+                    <h2 class="section-title">Pending Approval</h2>
+                    <div class="request-card pending" onclick="showScreen('approval-screen')">
+                        <div class="request-icon">🎮</div>
+                        <div class="request-details">
+                            <span class="request-item">PS5 Controller</span>
+                            <span class="request-meta">From Alex • $69.99</span>
+                        </div>
+                        <div class="request-badge new">NEW</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="section">
+                    <h2 class="section-title">Recent Activity</h2>
+                    <div class="activity-list">
+                        <div class="activity-item approved">
+                            <div class="activity-icon">✓</div>
+                            <div class="activity-details">
+                                <span class="activity-title">Winter Jacket</span>
+                                <span class="activity-meta">$129.00 • Approved by Alex</span>
+                            </div>
+                            <span class="activity-time">2h ago</span>
+                        </div>
+                        <div class="activity-item approved">
+                            <div class="activity-icon">✓</div>
+                            <div class="activity-details">
+                                <span class="activity-title">Grocery Run</span>
+                                <span class="activity-meta">$87.43 • Auto-approved</span>
+                            </div>
+                            <span class="activity-time">Yesterday</span>
+                        </div>
+                        <div class="activity-item discussed">
+                            <div class="activity-icon">💬</div>
+                            <div class="activity-details">
+                                <span class="activity-title">New TV Stand</span>
+                                <span class="activity-meta">$299.00 • Discussed, postponed</span>
+                            </div>
+                            <span class="activity-time">3 days</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAB -->
+                <button class="fab" onclick="showScreen('request-screen')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span>New Request</span>
+                </button>
+            </div>
+
+            <!-- New Request Screen -->
+            <div class="screen" id="request-screen">
+                <header class="app-header">
+                    <button class="icon-btn back-btn" onclick="showScreen('home-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </button>
+                    <h1 class="page-title">New Request</h1>
+                    <div style="width: 40px;"></div>
+                </header>
+
+                <div class="request-form">
+                    <!-- Quick Add Options -->
+                    <div class="quick-add">
+                        <button class="quick-add-btn active">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Manual
+                        </button>
+                        <button class="quick-add-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            Photo
+                        </button>
+                        <button class="quick-add-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            Link
+                        </button>
+                    </div>
+
+                    <!-- Item Input -->
+                    <div class="form-group">
+                        <label class="form-label">What do you want to buy?</label>
+                        <input type="text" class="form-input" id="item-name" placeholder="e.g., New running shoes" value="">
+                    </div>
+
+                    <!-- Price Input -->
+                    <div class="form-group">
+                        <label class="form-label">Price</label>
+                        <div class="price-input-wrapper">
+                            <span class="currency">$</span>
+                            <input type="number" class="form-input price-input" id="item-price" placeholder="0.00" value="">
+                        </div>
+                    </div>
+
+                    <!-- Category Select -->
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <div class="category-chips">
+                            <button class="category-chip" onclick="selectCategory(this)">🛒 Groceries</button>
+                            <button class="category-chip" onclick="selectCategory(this)">👕 Clothing</button>
+                            <button class="category-chip selected" onclick="selectCategory(this)">🎮 Electronics</button>
+                            <button class="category-chip" onclick="selectCategory(this)">🏠 Home</button>
+                            <button class="category-chip" onclick="selectCategory(this)">🎁 Gift</button>
+                            <button class="category-chip" onclick="selectCategory(this)">✨ Other</button>
+                        </div>
+                    </div>
+
+                    <!-- Note -->
+                    <div class="form-group">
+                        <label class="form-label">Quick Note (optional)</label>
+                        <textarea class="form-input form-textarea" id="item-note" placeholder="Add context..."></textarea>
+                    </div>
+
+                    <!-- Submit -->
+                    <button class="submit-btn" onclick="submitRequest()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        Send to Alex
+                    </button>
+
+                    <p class="threshold-hint">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        Electronics over $50 require approval
+                    </p>
+                </div>
+            </div>
+
+            <!-- Approval Screen (Partner View) -->
+            <div class="screen" id="approval-screen">
+                <header class="app-header">
+                    <button class="icon-btn back-btn" onclick="showScreen('home-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </button>
+                    <h1 class="page-title">Approval Request</h1>
+                    <div style="width: 40px;"></div>
+                </header>
+
+                <div class="approval-content">
+                    <div class="requester-info">
+                        <div class="requester-avatar">A</div>
+                        <div class="requester-details">
+                            <span class="requester-name">Alex</span>
+                            <span class="requester-time">wants to buy • Just now</span>
+                        </div>
+                    </div>
+
+                    <div class="purchase-card">
+                        <div class="purchase-image">🎮</div>
+                        <h2 class="purchase-name">PS5 DualSense Controller</h2>
+                        <p class="purchase-price">$69.99</p>
+                        <span class="purchase-category">Electronics</span>
+                    </div>
+
+                    <div class="purchase-note">
+                        <p class="note-label">Alex's note:</p>
+                        <p class="note-text">"My current controller drift is getting really bad. Found this on sale!"</p>
+                    </div>
+
+                    <div class="budget-context">
+                        <div class="budget-item">
+                            <span class="budget-label">Electronics this month</span>
+                            <span class="budget-value">$45 / $150</span>
+                        </div>
+                        <div class="budget-bar">
+                            <div class="budget-fill" style="width: 30%"></div>
+                            <div class="budget-projected" style="width: 47%"></div>
+                        </div>
+                        <p class="budget-note">+$70 would put you at $115 (77%)</p>
+                    </div>
+
+                    <div class="approval-actions">
+                        <button class="action-btn approve" onclick="handleApproval('approved')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Approve
+                        </button>
+                        <button class="action-btn discuss" onclick="handleApproval('discuss')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            Discuss
+                        </button>
+                        <button class="action-btn hold" onclick="handleApproval('hold')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="10" y1="15" x2="10" y2="9"></line><line x1="14" y1="15" x2="14" y2="9"></line></svg>
+                            Hold
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Screen -->
+            <div class="screen" id="settings-screen">
+                <header class="app-header">
+                    <button class="icon-btn back-btn" onclick="showScreen('home-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    </button>
+                    <h1 class="page-title">Settings</h1>
+                    <div style="width: 40px;"></div>
+                </header>
+
+                <div class="settings-content">
+                    <div class="settings-section">
+                        <h3 class="settings-section-title">Spending Thresholds</h3>
+                        <p class="settings-section-desc">Auto-approve purchases below these amounts</p>
+                        
+                        <div class="threshold-list">
+                            <div class="threshold-item">
+                                <div class="threshold-icon">🛒</div>
+                                <div class="threshold-details">
+                                    <span class="threshold-name">Groceries</span>
+                                    <span class="threshold-value">$100</span>
+                                </div>
+                                <input type="range" class="threshold-slider" min="0" max="200" value="100">
+                            </div>
+                            <div class="threshold-item">
+                                <div class="threshold-icon">👕</div>
+                                <div class="threshold-details">
+                                    <span class="threshold-name">Clothing</span>
+                                    <span class="threshold-value">$75</span>
+                                </div>
+                                <input type="range" class="threshold-slider" min="0" max="200" value="75">
+                            </div>
+                            <div class="threshold-item">
+                                <div class="threshold-icon">🎮</div>
+                                <div class="threshold-details">
+                                    <span class="threshold-name">Electronics</span>
+                                    <span class="threshold-value">$50</span>
+                                </div>
+                                <input type="range" class="threshold-slider" min="0" max="200" value="50">
+                            </div>
+                            <div class="threshold-item">
+                                <div class="threshold-icon">🏠</div>
+                                <div class="threshold-details">
+                                    <span class="threshold-name">Home</span>
+                                    <span class="threshold-value">$100</span>
+                                </div>
+                                <input type="range" class="threshold-slider" min="0" max="200" value="100">
+                            </div>
+                            <div class="threshold-item">
+                                <div class="threshold-icon">✨</div>
+                                <div class="threshold-details">
+                                    <span class="threshold-name">Everything else</span>
+                                    <span class="threshold-value">$50</span>
+                                </div>
+                                <input type="range" class="threshold-slider" min="0" max="200" value="50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="settings-section-title">Household Members</h3>
+                        <div class="member-list">
+                            <div class="member-item">
+                                <div class="member-avatar you">J</div>
+                                <div class="member-details">
+                                    <span class="member-name">Jordan (You)</span>
+                                    <span class="member-role">Admin</span>
+                                </div>
+                            </div>
+                            <div class="member-item">
+                                <div class="member-avatar">A</div>
+                                <div class="member-details">
+                                    <span class="member-name">Alex</span>
+                                    <span class="member-role">Member</span>
+                                </div>
+                            </div>
+                            <button class="add-member-btn">+ Invite Member</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="settings-section-title">Notifications</h3>
+                        <div class="toggle-item">
+                            <span>Push notifications</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-item">
+                            <span>Quiet hours (10pm - 7am)</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Modal -->
+            <div class="modal" id="success-modal">
+                <div class="modal-content">
+                    <div class="modal-icon success">✓</div>
+                    <h3 class="modal-title">Request Sent!</h3>
+                    <p class="modal-text">Alex will be notified. We'll let you know when they respond.</p>
+                    <button class="modal-btn" onclick="closeModal()">Got it</button>
+                </div>
+            </div>
+
+            <!-- Approval Modal -->
+            <div class="modal" id="approval-modal">
+                <div class="modal-content">
+                    <div class="modal-icon" id="approval-icon">✓</div>
+                    <h3 class="modal-title" id="approval-title">Approved!</h3>
+                    <p class="modal-text" id="approval-text">Alex has been notified.</p>
+                    <button class="modal-btn" onclick="closeApprovalModal()">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
