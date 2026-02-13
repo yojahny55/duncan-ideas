@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecisionLog — Decision Journal App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <span class="logo">📔</span>
+                <h1>DecisionLog</h1>
+            </div>
+            <div class="header-right">
+                <span class="streak">🔥 12 day streak</span>
+                <button class="icon-btn" title="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="capture">+ Capture</button>
+            <button class="tab-btn" data-tab="pending">Pending</button>
+            <button class="tab-btn" data-tab="insights">Insights</button>
+        </nav>
+
+        <!-- Tab Content -->
+        <main class="tab-content">
+            <!-- Capture Tab -->
+            <section id="capture" class="tab-panel active">
+                <div class="capture-form">
+                    <h2>Log a Decision</h2>
+                    <p class="subtitle">Capture your reasoning before you know the outcome</p>
+
+                    <div class="form-group">
+                        <label>What decision are you making?</label>
+                        <input type="text" id="decision-title" placeholder="e.g., Accept job offer from TechCorp">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <div class="category-pills">
+                            <button class="pill active" data-category="career">💼 Career</button>
+                            <button class="pill" data-category="finance">💰 Finance</button>
+                            <button class="pill" data-category="health">🏃 Health</button>
+                            <button class="pill" data-category="relationship">❤️ Relationship</button>
+                            <button class="pill" data-category="other">📦 Other</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>What options did you consider?</label>
+                        <textarea id="options" placeholder="Option A: Accept the offer&#10;Option B: Stay at current job&#10;Option C: Negotiate for better terms"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Why are you choosing this option?</label>
+                        <textarea id="reasoning" placeholder="The salary is 30% higher, the team seems strong, and it aligns with my 5-year goal of..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confidence Level: <span id="confidence-value">7</span>/10</label>
+                        <input type="range" id="confidence" min="1" max="10" value="7">
+                        <div class="confidence-labels">
+                            <span>Uncertain</span>
+                            <span>Very Confident</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>What could go wrong? (Pre-mortem)</label>
+                        <textarea id="risks" placeholder="The company culture might not be as good as it seemed. The role might be different than described..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>What would change your mind?</label>
+                        <input type="text" id="reversal" placeholder="If I learned the team has high turnover...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current state (affects judgment)</label>
+                        <div class="state-pills">
+                            <button class="state-pill" data-state="tired">😴 Tired</button>
+                            <button class="state-pill" data-state="stressed">😰 Stressed</button>
+                            <button class="state-pill" data-state="excited">🤩 Excited</button>
+                            <button class="state-pill" data-state="calm">😌 Calm</button>
+                            <button class="state-pill active" data-state="neutral">😐 Neutral</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>When should we review the outcome?</label>
+                        <select id="review-time">
+                            <option value="1w">1 week</option>
+                            <option value="1m" selected>1 month</option>
+                            <option value="3m">3 months</option>
+                            <option value="6m">6 months</option>
+                            <option value="1y">1 year</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" id="save-decision">
+                        📝 Save Decision
+                    </button>
+                </div>
+            </section>
+
+            <!-- Pending Tab -->
+            <section id="pending" class="tab-panel">
+                <h2>Pending Reviews</h2>
+                <p class="subtitle">Decisions waiting for outcome assessment</p>
+
+                <div class="decision-list">
+                    <div class="decision-card overdue" onclick="openReview(this)">
+                        <div class="card-header">
+                            <span class="category-badge finance">💰 Finance</span>
+                            <span class="due-badge overdue">⚠️ 3 days overdue</span>
+                        </div>
+                        <h3>Invest $5K in NVIDIA stock</h3>
+                        <p class="decision-date">Decided: Jan 15, 2026</p>
+                        <div class="confidence-bar">
+                            <span>Confidence: 8/10</span>
+                            <div class="bar"><div class="fill" style="width: 80%"></div></div>
+                        </div>
+                        <p class="reasoning-preview">AI will continue to drive data center demand...</p>
+                    </div>
+
+                    <div class="decision-card due-soon" onclick="openReview(this)">
+                        <div class="card-header">
+                            <span class="category-badge career">💼 Career</span>
+                            <span class="due-badge soon">📅 Due in 2 days</span>
+                        </div>
+                        <h3>Take on extra project at work</h3>
+                        <p class="decision-date">Decided: Feb 1, 2026</p>
+                        <div class="confidence-bar">
+                            <span>Confidence: 6/10</span>
+                            <div class="bar"><div class="fill" style="width: 60%"></div></div>
+                        </div>
+                        <p class="reasoning-preview">Good visibility, but might stretch too thin...</p>
+                    </div>
+
+                    <div class="decision-card" onclick="openReview(this)">
+                        <div class="card-header">
+                            <span class="category-badge health">🏃 Health</span>
+                            <span class="due-badge">📅 Due Mar 12</span>
+                        </div>
+                        <h3>Start intermittent fasting (16:8)</h3>
+                        <p class="decision-date">Decided: Feb 12, 2026</p>
+                        <div class="confidence-bar">
+                            <span>Confidence: 5/10</span>
+                            <div class="bar"><div class="fill" style="width: 50%"></div></div>
+                        </div>
+                        <p class="reasoning-preview">Energy and focus benefits, but sustainability unclear...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Insights Tab -->
+            <section id="insights" class="tab-panel">
+                <h2>Your Decision Intelligence</h2>
+                <p class="subtitle">Patterns and insights from your decision history</p>
+
+                <!-- Calibration Score -->
+                <div class="insight-card calibration">
+                    <div class="insight-header">
+                        <h3>🎯 Calibration Score</h3>
+                        <span class="score good">72%</span>
+                    </div>
+                    <p>Your confidence predictions match outcomes 72% of the time. That's better than average!</p>
+                    <div class="calibration-chart">
+                        <div class="chart-row">
+                            <span class="conf-label">Conf 9-10:</span>
+                            <div class="chart-bar">
+                                <div class="expected" style="width: 95%"></div>
+                                <div class="actual" style="width: 78%"></div>
+                            </div>
+                            <span class="chart-note">⚠️ Overconfident</span>
+                        </div>
+                        <div class="chart-row">
+                            <span class="conf-label">Conf 7-8:</span>
+                            <div class="chart-bar">
+                                <div class="expected" style="width: 75%"></div>
+                                <div class="actual" style="width: 71%"></div>
+                            </div>
+                            <span class="chart-note">✓ Well calibrated</span>
+                        </div>
+                        <div class="chart-row">
+                            <span class="conf-label">Conf 5-6:</span>
+                            <div class="chart-bar">
+                                <div class="expected" style="width: 55%"></div>
+                                <div class="actual" style="width: 63%"></div>
+                            </div>
+                            <span class="chart-note">✓ Slightly underconfident</span>
+                        </div>
+                    </div>
+                    <p class="insight-tip">💡 <strong>Tip:</strong> Lower your confidence by 1-2 points on high-stakes decisions</p>
+                </div>
+
+                <!-- Pattern Detection -->
+                <div class="insight-card patterns">
+                    <div class="insight-header">
+                        <h3>🔍 Detected Patterns</h3>
+                    </div>
+                    <ul class="pattern-list">
+                        <li class="pattern warning">
+                            <span class="pattern-icon">⚠️</span>
+                            <div class="pattern-content">
+                                <strong>Stress Decisions</strong>
+                                <p>4 of your last 6 negative outcomes were made while "Stressed" — consider a 24h waiting period</p>
+                            </div>
+                        </li>
+                        <li class="pattern good">
+                            <span class="pattern-icon">✅</span>
+                            <div class="pattern-content">
+                                <strong>Career Strength</strong>
+                                <p>Your career decisions have 85% positive outcomes — trust yourself here</p>
+                            </div>
+                        </li>
+                        <li class="pattern neutral">
+                            <span class="pattern-icon">📊</span>
+                            <div class="pattern-content">
+                                <strong>Finance Variance</strong>
+                                <p>High confidence + finance = 50/50 outcomes. Consider more research on financial decisions</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">47</span>
+                        <span class="stat-label">Total Decisions</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">31</span>
+                        <span class="stat-label">Reviewed</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">68%</span>
+                        <span class="stat-label">Positive Outcomes</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">6.8</span>
+                        <span class="stat-label">Avg Confidence</span>
+                    </div>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div class="insight-card categories">
+                    <h3>📊 By Category</h3>
+                    <div class="category-stats">
+                        <div class="cat-row">
+                            <span class="cat-name">💼 Career</span>
+                            <div class="cat-bar"><div class="cat-fill" style="width: 85%; background: #22c55e"></div></div>
+                            <span class="cat-pct">85%</span>
+                        </div>
+                        <div class="cat-row">
+                            <span class="cat-name">💰 Finance</span>
+                            <div class="cat-bar"><div class="cat-fill" style="width: 52%; background: #f59e0b"></div></div>
+                            <span class="cat-pct">52%</span>
+                        </div>
+                        <div class="cat-row">
+                            <span class="cat-name">🏃 Health</span>
+                            <div class="cat-bar"><div class="cat-fill" style="width: 71%; background: #22c55e"></div></div>
+                            <span class="cat-pct">71%</span>
+                        </div>
+                        <div class="cat-row">
+                            <span class="cat-name">❤️ Relationship</span>
+                            <div class="cat-bar"><div class="cat-fill" style="width: 78%; background: #22c55e"></div></div>
+                            <span class="cat-pct">78%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Review Modal -->
+        <div class="modal" id="review-modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeReview()">×</button>
+                <h2>📔 Review Outcome</h2>
+                
+                <div class="review-comparison">
+                    <div class="review-then">
+                        <h4>What You Thought (Jan 15)</h4>
+                        <p class="review-decision"><strong>Decision:</strong> Invest $5K in NVIDIA stock</p>
+                        <p><strong>Reasoning:</strong> AI will continue to drive data center demand. The stock has momentum and the valuation seems reasonable for growth.</p>
+                        <p><strong>Confidence:</strong> 8/10</p>
+                        <p><strong>Risks identified:</strong> Tech sector correction, AI hype cycle deflation, regulatory concerns</p>
+                        <p><strong>State:</strong> 😌 Calm</p>
+                    </div>
+                    <div class="review-now">
+                        <h4>What Actually Happened</h4>
+                        <div class="form-group">
+                            <label>Outcome</label>
+                            <div class="outcome-pills">
+                                <button class="outcome-pill" data-outcome="positive">✅ Positive</button>
+                                <button class="outcome-pill" data-outcome="neutral">➖ Neutral</button>
+                                <button class="outcome-pill" data-outcome="negative">❌ Negative</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>What happened?</label>
+                            <textarea placeholder="The stock is up 12% since purchase. The AI narrative held up..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Was your confidence appropriate?</label>
+                            <div class="outcome-pills">
+                                <button class="outcome-pill">Too Low</button>
+                                <button class="outcome-pill">Just Right</button>
+                                <button class="outcome-pill">Too High</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Key lesson learned</label>
+                            <input type="text" placeholder="What will you remember from this decision?">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="closeReview()">Complete Review</button>
+            </div>
+        </div>
+
+        <!-- Success Toast -->
+        <div class="toast" id="toast">
+            <span class="toast-icon">✅</span>
+            <span class="toast-message">Decision saved! We'll remind you to review on Mar 12.</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
