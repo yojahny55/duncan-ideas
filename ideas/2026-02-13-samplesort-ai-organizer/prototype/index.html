@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SampleSort - AI Sample Library Organizer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🎵</span>
+                <span class="logo-text">SampleSort</span>
+            </div>
+            
+            <nav class="nav-section">
+                <h3>Library</h3>
+                <ul>
+                    <li class="nav-item active" data-view="all">
+                        <span class="icon">📁</span>
+                        <span>All Samples</span>
+                        <span class="count">12,847</span>
+                    </li>
+                    <li class="nav-item" data-view="recent">
+                        <span class="icon">🕐</span>
+                        <span>Recently Added</span>
+                        <span class="count">234</span>
+                    </li>
+                    <li class="nav-item" data-view="favorites">
+                        <span class="icon">⭐</span>
+                        <span>Favorites</span>
+                        <span class="count">89</span>
+                    </li>
+                    <li class="nav-item" data-view="duplicates">
+                        <span class="icon">📋</span>
+                        <span>Duplicates</span>
+                        <span class="count badge-warning">147</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <nav class="nav-section">
+                <h3>Categories</h3>
+                <ul>
+                    <li class="nav-item" data-category="kicks">
+                        <span class="icon">🔴</span>
+                        <span>Kicks</span>
+                        <span class="count">2,341</span>
+                    </li>
+                    <li class="nav-item" data-category="snares">
+                        <span class="icon">🟡</span>
+                        <span>Snares</span>
+                        <span class="count">1,892</span>
+                    </li>
+                    <li class="nav-item" data-category="hihats">
+                        <span class="icon">🔵</span>
+                        <span>Hi-Hats</span>
+                        <span class="count">3,124</span>
+                    </li>
+                    <li class="nav-item" data-category="claps">
+                        <span class="icon">🟣</span>
+                        <span>Claps</span>
+                        <span class="count">856</span>
+                    </li>
+                    <li class="nav-item" data-category="808s">
+                        <span class="icon">🟠</span>
+                        <span>808s</span>
+                        <span class="count">1,456</span>
+                    </li>
+                    <li class="nav-item" data-category="fx">
+                        <span class="icon">🟢</span>
+                        <span>FX & Risers</span>
+                        <span class="count">1,234</span>
+                    </li>
+                    <li class="nav-item" data-category="vocals">
+                        <span class="icon">🎤</span>
+                        <span>Vocals</span>
+                        <span class="count">892</span>
+                    </li>
+                    <li class="nav-item" data-category="loops">
+                        <span class="icon">🔁</span>
+                        <span>Loops</span>
+                        <span class="count">1,052</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <nav class="nav-section">
+                <h3>Collections</h3>
+                <ul>
+                    <li class="nav-item" data-collection="bangers">
+                        <span class="icon">🔥</span>
+                        <span>Bangers</span>
+                        <span class="count">45</span>
+                    </li>
+                    <li class="nav-item" data-collection="chill">
+                        <span class="icon">🌙</span>
+                        <span>Chill Vibes</span>
+                        <span class="count">67</span>
+                    </li>
+                    <li class="nav-item add-collection">
+                        <span class="icon">+</span>
+                        <span>New Collection</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="storage-info">
+                    <div class="storage-bar">
+                        <div class="storage-fill" style="width: 68%"></div>
+                    </div>
+                    <span class="storage-text">45.2 GB / 67 GB indexed</span>
+                </div>
+                <button class="btn-scan" id="scanBtn">
+                    <span class="icon">🔍</span>
+                    Scan Library
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search samples or describe what you need...">
+                    <kbd class="search-shortcut">⌘K</kbd>
+                </div>
+                <div class="header-actions">
+                    <div class="filter-chips">
+                        <button class="chip active">All</button>
+                        <button class="chip">Trap</button>
+                        <button class="chip">House</button>
+                        <button class="chip">Lo-Fi</button>
+                        <button class="chip">Cinematic</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Scan Progress Banner (hidden by default) -->
+                <div class="scan-banner" id="scanBanner">
+                    <div class="scan-progress">
+                        <div class="scan-icon spinning">⚡</div>
+                        <div class="scan-info">
+                            <span class="scan-title">Analyzing samples with AI...</span>
+                            <span class="scan-detail" id="scanDetail">Processing: Cymatics - Savage 808s/808_01.wav</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <span class="scan-percent" id="scanPercent">0%</span>
+                </div>
+
+                <!-- Grid Header -->
+                <div class="grid-header">
+                    <div class="grid-title">
+                        <h2>All Samples</h2>
+                        <span class="result-count">12,847 samples</span>
+                    </div>
+                    <div class="view-controls">
+                        <button class="view-btn active" title="Grid View">
+                            <span>⊞</span>
+                        </button>
+                        <button class="view-btn" title="List View">
+                            <span>☰</span>
+                        </button>
+                        <select class="sort-select">
+                            <option>Sort by: Recently Added</option>
+                            <option>Sort by: Name A-Z</option>
+                            <option>Sort by: BPM</option>
+                            <option>Sort by: Duration</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sample Grid -->
+                <div class="sample-grid" id="sampleGrid">
+                    <!-- Samples will be generated by JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Preview Panel -->
+        <aside class="preview-panel" id="previewPanel">
+            <div class="preview-header">
+                <h3>Sample Preview</h3>
+                <button class="close-preview" id="closePreview">×</button>
+            </div>
+            <div class="preview-content">
+                <div class="preview-waveform">
+                    <canvas id="waveformCanvas" width="280" height="80"></canvas>
+                </div>
+                <div class="preview-controls">
+                    <button class="play-btn" id="playBtn">▶</button>
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+                    </div>
+                </div>
+                <div class="preview-info">
+                    <h4 id="sampleName">808_Heavy_C.wav</h4>
+                    <p class="sample-path" id="samplePath">Cymatics/Savage 808s/</p>
+                </div>
+                <div class="preview-tags">
+                    <span class="tag tag-type">808</span>
+                    <span class="tag tag-genre">Trap</span>
+                    <span class="tag tag-key">C</span>
+                    <span class="tag tag-bpm">145 BPM</span>
+                </div>
+                <div class="preview-meta">
+                    <div class="meta-row">
+                        <span class="meta-label">Duration</span>
+                        <span class="meta-value" id="duration">2.4s</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Sample Rate</span>
+                        <span class="meta-value">44.1 kHz</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Bit Depth</span>
+                        <span class="meta-value">24-bit</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Size</span>
+                        <span class="meta-value">245 KB</span>
+                    </div>
+                </div>
+                <div class="preview-actions">
+                    <button class="action-btn favorite" id="favoriteBtn">
+                        <span>☆</span> Favorite
+                    </button>
+                    <button class="action-btn">
+                        <span>📁</span> Add to Collection
+                    </button>
+                    <button class="action-btn">
+                        <span>🔍</span> Find Similar
+                    </button>
+                    <button class="action-btn">
+                        <span>📍</span> Show in Finder
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scan Modal -->
+    <div class="modal-overlay" id="scanModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🎵 Scan Sample Library</h2>
+                <button class="modal-close" id="closeScanModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="folder-select">
+                    <div class="folder-icon">📁</div>
+                    <div class="folder-info">
+                        <p>Select folders containing your sample packs</p>
+                        <p class="folder-hint">SampleSort will analyze and categorize all audio files</p>
+                    </div>
+                </div>
+                <div class="selected-folders">
+                    <div class="folder-item">
+                        <span class="icon">📁</span>
+                        <span class="path">~/Music/Sample Packs</span>
+                        <span class="remove">×</span>
+                    </div>
+                    <div class="folder-item">
+                        <span class="icon">📁</span>
+                        <span class="path">~/Downloads/Cymatics</span>
+                        <span class="remove">×</span>
+                    </div>
+                    <button class="add-folder-btn">+ Add Folder</button>
+                </div>
+                <div class="scan-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked>
+                        <span>Auto-detect duplicates</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked>
+                        <span>Extract BPM and key</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked>
+                        <span>Generate genre tags</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelScan">Cancel</button>
+                <button class="btn-primary" id="startScan">Start Scan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
