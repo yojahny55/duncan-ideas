@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RenewRadar - Document Expiry Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <h1>📋 RenewRadar</h1>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" id="btn-family">
+          <span class="icon">👥</span>
+        </button>
+        <button class="btn-icon" id="btn-settings">
+          <span class="icon">⚙️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat critical">
+        <span class="stat-num" id="stat-critical">0</span>
+        <span class="stat-label">Critical</span>
+      </div>
+      <div class="stat warning">
+        <span class="stat-num" id="stat-warning">0</span>
+        <span class="stat-label">Soon</span>
+      </div>
+      <div class="stat ok">
+        <span class="stat-num" id="stat-ok">0</span>
+        <span class="stat-label">OK</span>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="critical">🔴 Critical</button>
+      <button class="tab" data-filter="warning">🟠 Soon</button>
+      <button class="tab" data-filter="ok">🟢 OK</button>
+    </div>
+
+    <!-- Documents List -->
+    <main class="documents-list" id="documents-list">
+      <!-- Documents will be rendered here -->
+    </main>
+
+    <!-- FAB Add Button -->
+    <button class="fab" id="btn-add">
+      <span>+</span>
+    </button>
+
+    <!-- Add Document Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal" id="modal-add">
+        <div class="modal-header">
+          <h2 id="modal-title">Add Document</h2>
+          <button class="btn-close" id="btn-close-modal">&times;</button>
+        </div>
+        <form id="form-add-document">
+          <div class="form-group">
+            <label for="doc-type">Document Type</label>
+            <select id="doc-type" required>
+              <option value="">Select type...</option>
+              <option value="passport">🛂 Passport</option>
+              <option value="license">🪪 Driver's License</option>
+              <option value="visa">✈️ Visa</option>
+              <option value="registration">🚗 Car Registration</option>
+              <option value="insurance">🛡️ Insurance Policy</option>
+              <option value="certification">📜 Professional Certification</option>
+              <option value="other">📄 Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="doc-name">Document Name</label>
+            <input type="text" id="doc-name" placeholder="e.g., US Passport, State License" required>
+          </div>
+
+          <div class="form-group">
+            <label for="doc-person">For</label>
+            <select id="doc-person">
+              <option value="self">Myself</option>
+              <option value="spouse">Spouse/Partner</option>
+              <option value="child">Child</option>
+              <option value="parent">Parent</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="doc-expiry">Expiry Date</label>
+            <input type="date" id="doc-expiry" required>
+          </div>
+
+          <div class="form-group">
+            <label for="doc-notes">Notes (optional)</label>
+            <textarea id="doc-notes" placeholder="Renewal portal, document number, etc."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btn-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Document</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Document Detail Modal -->
+    <div class="modal-overlay" id="detail-modal-overlay">
+      <div class="modal" id="modal-detail">
+        <div class="modal-header">
+          <h2 id="detail-title">Document Details</h2>
+          <button class="btn-close" id="btn-close-detail">&times;</button>
+        </div>
+        <div class="detail-content" id="detail-content">
+          <!-- Detail content rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
