@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DidISend - Share Memory Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1>📤 DidISend</h1>
+        <button class="icon-btn" id="settingsBtn">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Check URL Section -->
+      <section class="check-section">
+        <div class="input-group">
+          <input 
+            type="url" 
+            id="urlInput" 
+            placeholder="Paste a link to check..."
+            autocomplete="off"
+          >
+          <button class="check-btn" id="checkBtn">Check</button>
+        </div>
+        <p class="helper-text">See if you've already shared this link</p>
+      </section>
+
+      <!-- Results Section -->
+      <section class="results-section" id="resultsSection">
+        <!-- Results will be injected here -->
+      </section>
+
+      <!-- Share Action -->
+      <section class="share-action" id="shareAction">
+        <button class="primary-btn" id="newShareBtn">
+          <span class="btn-icon">➕</span>
+          Log New Share
+        </button>
+      </section>
+
+      <!-- Recent Shares -->
+      <section class="recent-section">
+        <h2>Recent Shares</h2>
+        <div class="recent-list" id="recentList">
+          <!-- Recent shares will be injected here -->
+        </div>
+      </section>
+
+      <!-- Stats Card -->
+      <section class="stats-section">
+        <div class="stats-card">
+          <div class="stat">
+            <span class="stat-value" id="totalShares">0</span>
+            <span class="stat-label">Total Shares</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="duplicatesSaved">0</span>
+            <span class="stat-label">Duplicates Caught</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="contactsCount">0</span>
+            <span class="stat-label">Contacts</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Log Share Modal -->
+    <div class="modal" id="shareModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Log a Share</h2>
+          <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="shareUrl">Link</label>
+            <input type="url" id="shareUrl" placeholder="https://example.com/article">
+          </div>
+          <div class="form-group">
+            <label>Shared with</label>
+            <div class="contact-chips" id="contactChips">
+              <!-- Contact chips will be injected here -->
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="shareNote">Note (optional)</label>
+            <input type="text" id="shareNote" placeholder="Why you shared this...">
+          </div>
+          <button class="primary-btn full-width" id="saveShareBtn">Save Share</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Already Sent Alert -->
+    <div class="alert" id="alreadySentAlert">
+      <div class="alert-content">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text">
+          <strong>Already sent!</strong>
+          <p id="alertDetails"></p>
+        </div>
+        <button class="alert-close" id="closeAlert">&times;</button>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" data-tab="history">
+        <span class="nav-icon">📜</span>
+        <span class="nav-label">History</span>
+      </button>
+      <button class="nav-item" data-tab="contacts">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Contacts</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

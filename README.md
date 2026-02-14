@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-14 | [DidISend](ideas/2026-02-14-didisend-share-tracker/) | Share memory tracker — never send the same link twice. Track what you've shared with whom, catch duplicates before embarrassing yourself | X/Twitter | ✅ [Demo](ideas/2026-02-14-didisend-share-tracker/prototype/index.html) |
 | 2026-02-13 | [TalkReady](ideas/2026-02-13-talkready-conversation-practice/) | AI conversation practice coach — rehearse difficult conversations (raises, boundaries, feedback, breakups) with realistic AI roleplay and real-time coaching | Web/Reddit | ✅ [Demo](ideas/2026-02-13-talkready-conversation-practice/prototype/index.html) |
 | 2026-02-13 | [CheckFirst](ideas/2026-02-13-checkfirst-purchase-approval/) | Household purchase coordination — ask before you buy. Set spending thresholds, get quick approval from partner/family, avoid money arguments | Reddit | ✅ [Demo](ideas/2026-02-13-checkfirst-purchase-approval/prototype/index.html) |
 | 2026-02-13 | [SampleSort](ideas/2026-02-13-samplesort-ai-organizer/) | AI-powered sample library organizer for music producers — auto-tag, categorize, deduplicate, and search thousands of samples. Works 100% offline | X/Twitter | ✅ [Demo](ideas/2026-02-13-samplesort-ai-organizer/prototype/index.html) |
