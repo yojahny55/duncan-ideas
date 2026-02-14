@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalkReady — Practice Difficult Conversations</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">💬</span>
+        <span class="logo-text">TalkReady</span>
+      </div>
+      <div class="header-stats">
+        <span class="stat">🔥 3 day streak</span>
+        <span class="stat">⭐ 12 sessions</span>
+      </div>
+    </header>
+
+    <!-- View: Home -->
+    <div id="view-home" class="view active">
+      <div class="hero">
+        <h1>Practice before you speak</h1>
+        <p>Rehearse difficult conversations with AI coaching. Build confidence before the real thing.</p>
+      </div>
+
+      <div class="quick-start">
+        <h2>Quick Practice</h2>
+        <div class="scenario-grid">
+          <button class="scenario-card" data-scenario="raise">
+            <span class="scenario-icon">💰</span>
+            <span class="scenario-title">Ask for a Raise</span>
+            <span class="scenario-time">~8 min</span>
+          </button>
+          <button class="scenario-card" data-scenario="boundaries">
+            <span class="scenario-icon">🛑</span>
+            <span class="scenario-title">Set Boundaries</span>
+            <span class="scenario-time">~6 min</span>
+          </button>
+          <button class="scenario-card" data-scenario="feedback">
+            <span class="scenario-icon">📋</span>
+            <span class="scenario-title">Give Tough Feedback</span>
+            <span class="scenario-time">~7 min</span>
+          </button>
+          <button class="scenario-card" data-scenario="decline">
+            <span class="scenario-icon">🙅</span>
+            <span class="scenario-title">Say No Gracefully</span>
+            <span class="scenario-time">~5 min</span>
+          </button>
+          <button class="scenario-card" data-scenario="confront">
+            <span class="scenario-icon">😤</span>
+            <span class="scenario-title">Address a Problem</span>
+            <span class="scenario-time">~8 min</span>
+          </button>
+          <button class="scenario-card" data-scenario="custom">
+            <span class="scenario-icon">✏️</span>
+            <span class="scenario-title">Custom Scenario</span>
+            <span class="scenario-time">You decide</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="categories">
+        <h2>All Scenarios</h2>
+        <div class="category-tabs">
+          <button class="category-tab active">Work</button>
+          <button class="category-tab">Relationships</button>
+          <button class="category-tab">Family</button>
+          <button class="category-tab">Social</button>
+        </div>
+        <div class="category-list">
+          <div class="category-item">
+            <span>💼 Negotiate salary</span>
+            <span class="difficulty easy">Moderate</span>
+          </div>
+          <div class="category-item">
+            <span>📈 Ask for promotion</span>
+            <span class="difficulty moderate">Challenging</span>
+          </div>
+          <div class="category-item">
+            <span>🚪 Resign gracefully</span>
+            <span class="difficulty easy">Moderate</span>
+          </div>
+          <div class="category-item">
+            <span>🙅 Decline extra work</span>
+            <span class="difficulty easy">Easy</span>
+          </div>
+          <div class="category-item">
+            <span>⚠️ Report a concern</span>
+            <span class="difficulty hard">Difficult</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View: Briefing -->
+    <div id="view-briefing" class="view">
+      <button class="back-btn" data-target="home">← Back</button>
+      
+      <div class="briefing-header">
+        <span class="scenario-badge">💰 Ask for a Raise</span>
+        <h1>Tell me about the situation</h1>
+        <p>The more details you share, the better I can prepare you.</p>
+      </div>
+
+      <form class="briefing-form" id="briefing-form">
+        <div class="form-group">
+          <label>Who are you talking to?</label>
+          <input type="text" id="person" placeholder="e.g., My manager Sarah, direct but fair, been there 5 years" required>
+          <span class="hint">Relationship, personality, their communication style</span>
+        </div>
+
+        <div class="form-group">
+          <label>What's the situation?</label>
+          <textarea id="situation" placeholder="e.g., I've been in this role for 2 years, consistently exceeded targets, but haven't had a raise. The company just had a strong quarter." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>What outcome do you want?</label>
+          <textarea id="outcome" placeholder="e.g., A 15% raise, or if not, a clear timeline and what I need to do to get there." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>What worries you most?</label>
+          <textarea id="fears" placeholder="e.g., I'm worried I'll back down when she brings up budget constraints. I tend to accept the first no."></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary btn-large">Get My Strategy →</button>
+      </form>
+    </div>
+
+    <!-- View: Strategy -->
+    <div id="view-strategy" class="view">
+      <button class="back-btn" data-target="briefing">← Back</button>
+      
+      <div class="strategy-header">
+        <span class="label-tag">Pre-Practice Coaching</span>
+        <h1>Your Strategy</h1>
+      </div>
+
+      <div class="strategy-content">
+        <div class="strategy-section opening">
+          <h3>🎯 Opening Line</h3>
+          <div class="quote-block">
+            <p>"Sarah, I'd like to discuss my compensation. I've been reflecting on my contributions over the past two years, and I believe it's time to revisit my salary."</p>
+          </div>
+          <p class="why"><strong>Why this works:</strong> Direct, professional, signals confidence. You're not asking permission to have the conversation.</p>
+        </div>
+
+        <div class="strategy-section avoid">
+          <h3>🚫 Phrases to Avoid</h3>
+          <ul class="avoid-list">
+            <li>
+              <span class="bad">"I was wondering if maybe..."</span>
+              <span class="reason">Too tentative — undermines your position</span>
+            </li>
+            <li>
+              <span class="bad">"I know budgets are tight, but..."</span>
+              <span class="reason">You're making their objection for them</span>
+            </li>
+            <li>
+              <span class="bad">"I feel like I deserve..."</span>
+              <span class="reason">Focus on value delivered, not feelings</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="strategy-section predict">
+          <h3>🎭 Likely Reactions</h3>
+          <div class="reaction-cards">
+            <div class="reaction-card">
+              <span class="reaction-label">60% chance</span>
+              <p>"Let me check with leadership and get back to you"</p>
+              <span class="reaction-tip">Ask for a specific timeline</span>
+            </div>
+            <div class="reaction-card">
+              <span class="reaction-label">30% chance</span>
+              <p>"Budget constraints are challenging right now"</p>
+              <span class="reaction-tip">Pivot to timeline or non-monetary asks</span>
+            </div>
+            <div class="reaction-card">
+              <span class="reaction-label">10% chance</span>
+              <p>"What number did you have in mind?"</p>
+              <span class="reaction-tip">Be ready with your researched range</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="strategy-section structure">
+          <h3>📝 Conversation Structure</h3>
+          <ol class="structure-list">
+            <li><strong>Open:</strong> State your purpose clearly (30 seconds)</li>
+            <li><strong>Evidence:</strong> 2-3 specific achievements with impact (2 minutes)</li>
+            <li><strong>Ask:</strong> Your specific request with market data (30 seconds)</li>
+            <li><strong>Listen:</strong> Pause. Let them respond fully. (as long as needed)</li>
+            <li><strong>Navigate:</strong> Handle objections without caving (varies)</li>
+            <li><strong>Close:</strong> Agree on next steps with dates (30 seconds)</li>
+          </ol>
+        </div>
+
+        <button class="btn-primary btn-large" id="start-practice">Start Practice Session →</button>
+      </div>
+    </div>
+
+    <!-- View: Practice -->
+    <div id="view-practice" class="view">
+      <div class="practice-header">
+        <div class="practice-meta">
+          <span class="exchange-count">Exchange 1 of 5</span>
+          <button class="end-session-btn">End Session</button>
+        </div>
+        <div class="practice-persona">
+          <div class="persona-avatar">👩‍💼</div>
+          <div class="persona-info">
+            <span class="persona-name">Sarah (Your Manager)</span>
+            <span class="persona-desc">Direct but fair • 5 years experience</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-container" id="chat-container">
+        <div class="chat-bubble ai">
+          <p>*Sarah looks up from her laptop as you enter her office*</p>
+          <p>Hey, you wanted to chat? Come in, have a seat. What's on your mind?</p>
+        </div>
+      </div>
+
+      <div class="coaching-panel" id="coaching-panel" style="display: none;">
+        <div class="coaching-header">
+          <span class="coaching-label">💡 Coaching</span>
+          <button class="coaching-close">×</button>
+        </div>
+        <div class="coaching-content">
+          <div class="scores">
+            <div class="score">
+              <span class="score-label">Clarity</span>
+              <div class="score-bar"><div class="score-fill" style="width: 80%"></div></div>
+              <span class="score-value">8/10</span>
+            </div>
+            <div class="score">
+              <span class="score-label">Assertiveness</span>
+              <div class="score-bar"><div class="score-fill" style="width: 70%"></div></div>
+              <span class="score-value">7/10</span>
+            </div>
+            <div class="score">
+              <span class="score-label">Empathy</span>
+              <div class="score-bar"><div class="score-fill" style="width: 90%"></div></div>
+              <span class="score-value">9/10</span>
+            </div>
+          </div>
+          <div class="coaching-note">
+            <span class="note-icon">✓</span>
+            <p>Good opening! You stated your purpose clearly without apologizing.</p>
+          </div>
+          <div class="coaching-alternative">
+            <span class="alt-label">Stronger alternative:</span>
+            <p>"I'd like to discuss my compensation based on the value I've delivered this year."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-suggestions">
+          <button class="suggestion">State your purpose directly</button>
+          <button class="suggestion">Reference a specific achievement</button>
+          <button class="suggestion">Ask about their perspective</button>
+        </div>
+        <div class="input-row">
+          <textarea id="user-input" placeholder="Type your response... or tap a suggestion above"></textarea>
+          <button class="send-btn" id="send-btn">
+            <span>Send</span>
+          </button>
+        </div>
+        <div class="input-tools">
+          <button class="tool-btn" title="Voice input">🎤</button>
+          <button class="tool-btn" title="Get a hint">💡 Hint</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View: Debrief -->
+    <div id="view-debrief" class="view">
+      <div class="debrief-header">
+        <span class="completion-badge">✅ Session Complete</span>
+        <h1>Your Debrief</h1>
+      </div>
+
+      <div class="debrief-content">
+        <div class="confidence-card">
+          <h3>Confidence Rating</h3>
+          <div class="confidence-meter">
+            <div class="confidence-fill" style="width: 75%"></div>
+          </div>
+          <div class="confidence-label">
+            <span class="confidence-score">75%</span>
+            <span class="confidence-text">Ready with some refinement needed</span>
+          </div>
+          <p class="confidence-note">You showed strong composure but wavered when budget constraints came up. One more practice round on objection handling would help.</p>
+        </div>
+
+        <div class="debrief-section strengths">
+          <h3>✨ What You Did Well</h3>
+          <ul>
+            <li>Clear opening that set the professional tone</li>
+            <li>Strong use of specific achievements with numbers</li>
+            <li>Maintained composure when challenged</li>
+          </ul>
+        </div>
+
+        <div class="debrief-section improvements">
+          <h3>📈 Areas to Improve</h3>
+          <ul>
+            <li>Backed down too quickly on the timeline ask</li>
+            <li>Used "I feel" instead of focusing on delivered value</li>
+            <li>Didn't push back on the vague "I'll look into it"</li>
+          </ul>
+        </div>
+
+        <div class="debrief-section script">
+          <h3>📝 Your Best Version Script</h3>
+          <div class="script-block">
+            <p><strong>Opening:</strong> "Sarah, I'd like to discuss my compensation. Over the past two years, I've consistently exceeded my targets — the client retention project alone saved us $120K."</p>
+            <p><strong>The Ask:</strong> "Based on market data and my contributions, I'm looking for a 15% adjustment. I believe that reflects the value I'm bringing."</p>
+            <p><strong>If Pushed Back:</strong> "I understand budget considerations. If not now, can we set a specific review date? I'd like to know what milestones would get us there."</p>
+            <p><strong>Closing:</strong> "Can we put a date on the calendar to revisit this? I'd like to have clarity on the path forward."</p>
+          </div>
+        </div>
+
+        <div class="debrief-actions">
+          <button class="btn-secondary">Practice Again</button>
+          <button class="btn-primary">Try Curveball Training</button>
+          <button class="btn-outline" id="back-home">Done for Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
