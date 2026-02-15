@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WakeMate — Social Accountability Alarm</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time">6:00 AM</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    
+    <div class="app-container">
+      <!-- Screen 1: Home/Dashboard -->
+      <div id="screen-home" class="screen active">
+        <header class="app-header">
+          <h1>⏰ WakeMate</h1>
+          <p class="tagline">Wake up for someone</p>
+        </header>
+        
+        <div class="streak-card">
+          <div class="streak-flame">🔥</div>
+          <div class="streak-info">
+            <span class="streak-number">12</span>
+            <span class="streak-label">Day Streak</span>
+          </div>
+          <div class="streak-badge">
+            <span class="badge reliable">Reliable Riser</span>
+          </div>
+        </div>
+        
+        <div class="tomorrow-alarm">
+          <h3>Tomorrow's Alarm</h3>
+          <div class="alarm-time-display">
+            <span class="alarm-time">6:00 AM</span>
+            <span class="alarm-status">Matching in progress...</span>
+          </div>
+          <div class="matching-animation">
+            <div class="pulse-ring"></div>
+            <div class="user-icon">👤</div>
+          </div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">98%</span>
+            <span class="stat-label">Success Rate</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">47</span>
+            <span class="stat-label">Check-ins</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">23</span>
+            <span class="stat-label">Best Streak</span>
+          </div>
+        </div>
+        
+        <button class="btn-primary" onclick="showScreen('screen-setup')">
+          Edit Alarm
+        </button>
+        
+        <button class="btn-secondary" onclick="showScreen('screen-calling')">
+          Demo: Incoming Call
+        </button>
+      </div>
+      
+      <!-- Screen 2: Alarm Setup -->
+      <div id="screen-setup" class="screen">
+        <header class="screen-header">
+          <button class="back-btn" onclick="showScreen('screen-home')">←</button>
+          <h2>Set Alarm</h2>
+          <button class="save-btn" onclick="saveAlarm()">Save</button>
+        </header>
+        
+        <div class="time-picker">
+          <div class="time-scroll">
+            <div class="scroll-column" id="hour-picker">
+              <div class="scroll-item">4</div>
+              <div class="scroll-item">5</div>
+              <div class="scroll-item selected">6</div>
+              <div class="scroll-item">7</div>
+              <div class="scroll-item">8</div>
+            </div>
+            <span class="time-separator">:</span>
+            <div class="scroll-column" id="minute-picker">
+              <div class="scroll-item">45</div>
+              <div class="scroll-item">50</div>
+              <div class="scroll-item selected">00</div>
+              <div class="scroll-item">05</div>
+              <div class="scroll-item">10</div>
+            </div>
+            <div class="scroll-column" id="ampm-picker">
+              <div class="scroll-item selected">AM</div>
+              <div class="scroll-item">PM</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="days-picker">
+          <h3>Repeat</h3>
+          <div class="days-row">
+            <button class="day-btn">S</button>
+            <button class="day-btn active">M</button>
+            <button class="day-btn active">T</button>
+            <button class="day-btn active">W</button>
+            <button class="day-btn active">T</button>
+            <button class="day-btn active">F</button>
+            <button class="day-btn">S</button>
+          </div>
+        </div>
+        
+        <div class="preferences">
+          <div class="pref-item">
+            <span>Matching flexibility</span>
+            <select>
+              <option>Exact time only</option>
+              <option selected>±5 minutes</option>
+              <option>±15 minutes</option>
+            </select>
+          </div>
+          <div class="pref-item">
+            <span>Buddy reliability</span>
+            <select>
+              <option>Any reliability</option>
+              <option selected>80%+ success rate</option>
+              <option>95%+ (Reliable Risers only)</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="info-box">
+          <span class="info-icon">ℹ️</span>
+          <p>You'll be matched with someone in your timezone who needs to wake at the same time. No personal info is shared.</p>
+        </div>
+      </div>
+      
+      <!-- Screen 3: Incoming Call -->
+      <div id="screen-calling" class="screen screen-dark">
+        <div class="call-incoming">
+          <div class="alarm-ringing">
+            <div class="ring-animation">
+              <div class="ring-circle"></div>
+              <div class="ring-circle delay-1"></div>
+              <div class="ring-circle delay-2"></div>
+            </div>
+            <div class="alarm-icon">⏰</div>
+          </div>
+          
+          <h2 class="call-title">Good Morning!</h2>
+          <p class="call-subtitle">Your WakeMate is calling</p>
+          
+          <div class="buddy-info">
+            <div class="buddy-avatar">
+              <span>👤</span>
+            </div>
+            <div class="buddy-stats">
+              <span class="buddy-streak">🔥 34 day streak</span>
+              <span class="buddy-rate">98% reliability</span>
+            </div>
+          </div>
+          
+          <div class="call-actions">
+            <button class="call-btn decline" onclick="showScreen('screen-missed')">
+              <span>✕</span>
+              <span class="btn-label">Snooze</span>
+            </button>
+            <button class="call-btn answer" onclick="showScreen('screen-connected')">
+              <span>📞</span>
+              <span class="btn-label">Answer</span>
+            </button>
+          </div>
+          
+          <p class="call-warning">⚠️ Declining will break your streak!</p>
+        </div>
+      </div>
+      
+      <!-- Screen 4: Connected Call -->
+      <div id="screen-connected" class="screen screen-dark">
+        <div class="call-connected">
+          <div class="call-timer">0:47</div>
+          
+          <div class="sound-wave">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
+          
+          <div class="buddy-speaking">
+            <div class="buddy-avatar large">
+              <span>👤</span>
+            </div>
+            <p class="speech-bubble">"Good morning! I'm up, are you out of bed?"</p>
+          </div>
+          
+          <div class="your-response">
+            <button class="response-btn" onclick="confirmAwake()">
+              ✓ I'm up!
+            </button>
+          </div>
+          
+          <div class="call-controls">
+            <button class="control-btn mute">
+              <span>🔇</span>
+            </button>
+            <button class="control-btn end" onclick="showScreen('screen-success')">
+              <span>📵</span>
+            </button>
+            <button class="control-btn report">
+              <span>⚠️</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Screen 5: Success -->
+      <div id="screen-success" class="screen">
+        <div class="success-content">
+          <div class="success-icon">
+            <span>☀️</span>
+          </div>
+          
+          <h2>You did it!</h2>
+          <p class="success-message">Check-in complete at 6:01 AM</p>
+          
+          <div class="streak-update">
+            <div class="streak-before">
+              <span class="streak-num">12</span>
+              <span>days</span>
+            </div>
+            <div class="streak-arrow">→</div>
+            <div class="streak-after">
+              <span class="streak-num highlight">13</span>
+              <span>days</span>
+            </div>
+          </div>
+          
+          <div class="motivation-quote">
+            <p>"The early morning has gold in its mouth."</p>
+            <span>— Benjamin Franklin</span>
+          </div>
+          
+          <div class="buddy-feedback">
+            <p>Rate this check-in:</p>
+            <div class="rating-btns">
+              <button class="rate-btn" onclick="this.classList.add('selected')">👍</button>
+              <button class="rate-btn" onclick="this.classList.add('selected')">👎</button>
+            </div>
+          </div>
+          
+          <button class="btn-primary" onclick="showScreen('screen-home')">
+            Done
+          </button>
+        </div>
+      </div>
+      
+      <!-- Screen 6: Missed/Failed -->
+      <div id="screen-missed" class="screen">
+        <div class="missed-content">
+          <div class="missed-icon">
+            <span>💔</span>
+          </div>
+          
+          <h2>Streak Broken</h2>
+          <p class="missed-message">You declined the wake-up call</p>
+          
+          <div class="streak-reset">
+            <div class="old-streak">
+              <span class="streak-num crossed">12</span>
+              <span>was your streak</span>
+            </div>
+            <div class="new-streak">
+              <span class="streak-num zero">0</span>
+              <span>starting over</span>
+            </div>
+          </div>
+          
+          <div class="consequence-box">
+            <p>⚠️ Your reliability score dropped to <strong>92%</strong></p>
+            <p class="small">Reliable Risers may not be available for matching</p>
+          </div>
+          
+          <button class="btn-primary" onclick="showScreen('screen-home')">
+            Try Again Tomorrow
+          </button>
+          
+          <button class="btn-text" onclick="showScreen('screen-setup')">
+            Change alarm time
+          </button>
+        </div>
+      </div>
+      
+      <!-- Screen 7: Onboarding -->
+      <div id="screen-onboarding" class="screen">
+        <div class="onboarding-content">
+          <div class="onboarding-slide">
+            <div class="slide-icon">🤝</div>
+            <h2>Wake up for someone</h2>
+            <p>It's easy to ignore an alarm. It's hard to ignore a person counting on you.</p>
+          </div>
+          
+          <div class="onboarding-features">
+            <div class="feature">
+              <span class="feature-icon">🎭</span>
+              <span>Completely anonymous</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">🔒</span>
+              <span>Voice-only, no video</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">🔥</span>
+              <span>Streak motivation</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">⚡</span>
+              <span>2-minute check-ins</span>
+            </div>
+          </div>
+          
+          <button class="btn-primary" onclick="showScreen('screen-setup')">
+            Set Your First Alarm
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="showScreen('screen-home')">
+        <span>🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-onboarding')">
+        <span>ℹ️</span>
+        <span>How It Works</span>
+      </button>
+      <button class="nav-item">
+        <span>⚙️</span>
+        <span>Settings</span>
+      </button>
+    </nav>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>

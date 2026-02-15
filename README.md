@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-15 | [WakeMate](ideas/2026-02-15-wakemate-social-alarm/) | Social accountability alarm — get paired with another person for brief morning check-in calls. Human connection kills the snooze habit. Privacy-first, streak gamification | Reddit | ✅ [Demo](ideas/2026-02-15-wakemate-social-alarm/prototype/index.html) |
 | 2026-02-15 | [ContextPort](ideas/2026-02-15-contextport-ai-migration/) | AI memory migration tool — seamlessly transfer your conversation history, preferences, and context between AI assistants (ChatGPT → Claude, etc.). Own your AI relationship | X/Twitter | ✅ [Demo](ideas/2026-02-15-contextport-ai-migration/prototype/index.html) |
 | 2026-02-14 | [AssetGuard](ideas/2026-02-14-assetguard-license-tracker/) | Creative license compliance tracker — track font, stock photo, and music licenses. Expiration alerts, project linking, attribution generation. Never face a licensing lawsuit | Web | ✅ [Demo](ideas/2026-02-14-assetguard-license-tracker/prototype/index.html) |
 | 2026-02-14 | [RenewRadar](ideas/2026-02-14-renewradar-document-expiry/) | Document expiry tracker — track passports, licenses, visas, registrations, certifications. Smart alerts with processing time awareness. Never let a critical document expire | Reddit | ✅ [Demo](ideas/2026-02-14-renewradar-document-expiry/prototype/index.html) |
