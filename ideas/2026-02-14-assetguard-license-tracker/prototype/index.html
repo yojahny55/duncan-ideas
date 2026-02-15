@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssetGuard - Creative License Compliance Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <span class="logo-text">AssetGuard</span>
+            </div>
+            
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-view="assets">
+                    <span class="nav-icon">📁</span>
+                    Assets
+                </a>
+                <a href="#" class="nav-item" data-view="projects">
+                    <span class="nav-icon">🎯</span>
+                    Projects
+                </a>
+                <a href="#" class="nav-item" data-view="alerts">
+                    <span class="nav-icon">🔔</span>
+                    Alerts
+                    <span class="badge">3</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-primary btn-full" id="addAssetBtn">
+                    <span>+</span> Add Asset
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">Your creative license compliance at a glance</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search assets..." class="search-input">
+                    </div>
+                    <div class="user-avatar">JD</div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div class="content" id="dashboard-view">
+                <!-- Compliance Score -->
+                <div class="compliance-banner">
+                    <div class="compliance-score">
+                        <div class="score-ring" data-score="94">
+                            <svg viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" class="score-bg"/>
+                                <circle cx="50" cy="50" r="45" class="score-fill" style="stroke-dasharray: 265; stroke-dashoffset: 16;"/>
+                            </svg>
+                            <div class="score-value">94%</div>
+                        </div>
+                        <div class="score-label">Compliance Score</div>
+                    </div>
+                    <div class="compliance-details">
+                        <h3>You're doing great! 🎉</h3>
+                        <p>3 items need attention to reach 100% compliance</p>
+                        <a href="#" class="link">View issues →</a>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon fonts">Aa</div>
+                        <div class="stat-info">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">Fonts</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon images">🖼️</div>
+                        <div class="stat-info">
+                            <div class="stat-value">156</div>
+                            <div class="stat-label">Images</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon audio">🎵</div>
+                        <div class="stat-info">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">Audio</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon video">🎬</div>
+                        <div class="stat-info">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Video</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two Column Layout -->
+                <div class="dashboard-grid">
+                    <!-- Expiring Soon -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">⚠️ Expiring Soon</h3>
+                            <a href="#" class="link-small">View all</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="expiring-list">
+                                <div class="expiring-item warning">
+                                    <div class="expiring-icon">🎵</div>
+                                    <div class="expiring-info">
+                                        <div class="expiring-name">Upbeat Corporate - AudioJungle</div>
+                                        <div class="expiring-project">Used in: Product Demo Video</div>
+                                    </div>
+                                    <div class="expiring-days">
+                                        <span class="days-badge warning">7 days</span>
+                                    </div>
+                                </div>
+                                <div class="expiring-item caution">
+                                    <div class="expiring-icon">Aa</div>
+                                    <div class="expiring-info">
+                                        <div class="expiring-name">Proxima Nova - Desktop License</div>
+                                        <div class="expiring-project">Used in: 3 projects</div>
+                                    </div>
+                                    <div class="expiring-days">
+                                        <span class="days-badge caution">21 days</span>
+                                    </div>
+                                </div>
+                                <div class="expiring-item">
+                                    <div class="expiring-icon">🖼️</div>
+                                    <div class="expiring-info">
+                                        <div class="expiring-name">Business Team Photo - Shutterstock</div>
+                                        <div class="expiring-project">Used in: Website Header</div>
+                                    </div>
+                                    <div class="expiring-days">
+                                        <span class="days-badge">45 days</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📋 Recent Activity</h3>
+                            <a href="#" class="link-small">View all</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon add">+</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text">Added <strong>Montserrat Font</strong> to library</div>
+                                        <div class="activity-time">2 hours ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon link">🔗</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text">Linked <strong>Ocean Waves SFX</strong> to Client Podcast</div>
+                                        <div class="activity-time">Yesterday</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon check">✓</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text">Renewed license for <strong>Hero Image Pack</strong></div>
+                                        <div class="activity-time">3 days ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon verify">🛡️</div>
+                                    <div class="activity-info">
+                                        <div class="activity-text">Verified compliance for <strong>Q1 Campaign</strong></div>
+                                        <div class="activity-time">1 week ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Needing Attention -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🎯 Projects Needing Attention</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="projects-table">
+                            <div class="table-header">
+                                <div class="col-project">Project</div>
+                                <div class="col-assets">Assets</div>
+                                <div class="col-issues">Issues</div>
+                                <div class="col-status">Status</div>
+                                <div class="col-actions">Actions</div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col-project">
+                                    <span class="project-name">YouTube Channel Rebrand</span>
+                                </div>
+                                <div class="col-assets">18</div>
+                                <div class="col-issues">
+                                    <span class="issue-badge warning">1 expiring</span>
+                                </div>
+                                <div class="col-status">
+                                    <span class="status-badge caution">Needs Review</span>
+                                </div>
+                                <div class="col-actions">
+                                    <button class="btn btn-small">Review</button>
+                                </div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col-project">
+                                    <span class="project-name">Client: TechCorp Website</span>
+                                </div>
+                                <div class="col-assets">42</div>
+                                <div class="col-issues">
+                                    <span class="issue-badge danger">2 missing</span>
+                                </div>
+                                <div class="col-status">
+                                    <span class="status-badge danger">Action Required</span>
+                                </div>
+                                <div class="col-actions">
+                                    <button class="btn btn-small btn-danger">Fix Now</button>
+                                </div>
+                            </div>
+                            <div class="table-row">
+                                <div class="col-project">
+                                    <span class="project-name">Podcast: Creative Hour</span>
+                                </div>
+                                <div class="col-assets">8</div>
+                                <div class="col-issues">—</div>
+                                <div class="col-status">
+                                    <span class="status-badge success">Compliant</span>
+                                </div>
+                                <div class="col-actions">
+                                    <button class="btn btn-small btn-outline">View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assets View (Hidden by default) -->
+            <div class="content hidden" id="assets-view">
+                <div class="assets-toolbar">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">All</button>
+                        <button class="filter-tab" data-filter="fonts">Fonts</button>
+                        <button class="filter-tab" data-filter="images">Images</button>
+                        <button class="filter-tab" data-filter="audio">Audio</button>
+                        <button class="filter-tab" data-filter="video">Video</button>
+                    </div>
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid">⊞</button>
+                        <button class="view-btn" data-view="list">☰</button>
+                    </div>
+                </div>
+
+                <div class="assets-grid">
+                    <div class="asset-card" data-type="font">
+                        <div class="asset-preview font-preview">
+                            <span class="font-sample">Aa</span>
+                        </div>
+                        <div class="asset-info">
+                            <h4 class="asset-name">Montserrat</h4>
+                            <p class="asset-meta">Google Fonts • OFL License</p>
+                            <div class="asset-status">
+                                <span class="status-dot success"></span>
+                                <span>Perpetual</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="asset-card" data-type="font">
+                        <div class="asset-preview font-preview warning">
+                            <span class="font-sample">Aa</span>
+                        </div>
+                        <div class="asset-info">
+                            <h4 class="asset-name">Proxima Nova</h4>
+                            <p class="asset-meta">Mark Simonson • Desktop License</p>
+                            <div class="asset-status">
+                                <span class="status-dot warning"></span>
+                                <span>Expires in 21 days</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="asset-card" data-type="image">
+                        <div class="asset-preview image-preview">
+                            <div class="image-placeholder">📸</div>
+                        </div>
+                        <div class="asset-info">
+                            <h4 class="asset-name">Business Team Photo</h4>
+                            <p class="asset-meta">Shutterstock • Standard License</p>
+                            <div class="asset-status">
+                                <span class="status-dot success"></span>
+                                <span>Valid until Dec 2026</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="asset-card" data-type="audio">
+                        <div class="asset-preview audio-preview">
+                            <span class="audio-icon">🎵</span>
+                        </div>
+                        <div class="asset-info">
+                            <h4 class="asset-name">Upbeat Corporate</h4>
+                            <p class="asset-meta">AudioJungle • Music Standard</p>
+                            <div class="asset-status">
+                                <span class="status-dot danger"></span>
+                                <span>Expires in 7 days!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="asset-card" data-type="image">
+                        <div class="asset-preview image-preview">
+                            <div class="image-placeholder">🏔️</div>
+                        </div>
+                        <div class="asset-info">
+                            <h4 class="asset-name">Mountain Landscape</h4>
+                            <p class="asset-meta">Unsplash • Free for commercial</p>
+                            <div class="asset-status">
+                                <span class="status-dot success"></span>
+                                <span>No attribution required</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="asset-card" data-type="video">
+                        <div class="asset-preview video-preview">
+                            <span class="video-icon">🎬</span>
+                        </div>
+                        <div class="asset-info">
+                            <h4 class="asset-name">City Timelapse</h4>
+                            <p class="asset-meta">Envato Elements • Subscription</p>
+                            <div class="asset-status">
+                                <span class="status-dot success"></span>
+                                <span>Covered by subscription</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Asset Modal -->
+    <div class="modal-overlay hidden" id="addAssetModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Add New Asset</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Asset Type</label>
+                    <div class="type-selector">
+                        <label class="type-option">
+                            <input type="radio" name="assetType" value="font" checked>
+                            <span class="type-icon">Aa</span>
+                            <span class="type-label">Font</span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="assetType" value="image">
+                            <span class="type-icon">🖼️</span>
+                            <span class="type-label">Image</span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="assetType" value="audio">
+                            <span class="type-icon">🎵</span>
+                            <span class="type-label">Audio</span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="assetType" value="video">
+                            <span class="type-icon">🎬</span>
+                            <span class="type-label">Video</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="assetName">Asset Name</label>
+                    <input type="text" id="assetName" class="input" placeholder="e.g., Proxima Nova Bold">
+                </div>
+
+                <div class="form-group">
+                    <label for="assetSource">Source</label>
+                    <input type="text" id="assetSource" class="input" placeholder="e.g., Adobe Fonts, Envato, Shutterstock">
+                </div>
+
+                <div class="form-group">
+                    <label>Upload License Document</label>
+                    <div class="upload-zone">
+                        <div class="upload-icon">📄</div>
+                        <p>Drop license PDF, receipt, or email here</p>
+                        <span class="upload-hint">or click to browse</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="licenseType">License Type</label>
+                        <select id="licenseType" class="select">
+                            <option value="">Auto-detect from document</option>
+                            <option value="perpetual">Perpetual</option>
+                            <option value="subscription">Subscription</option>
+                            <option value="time-limited">Time-Limited</option>
+                            <option value="royalty-free">Royalty-Free</option>
+                            <option value="creative-commons">Creative Commons</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="expirationDate">Expiration Date</label>
+                        <input type="date" id="expirationDate" class="input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectLink">Link to Project (optional)</label>
+                    <select id="projectLink" class="select">
+                        <option value="">No project</option>
+                        <option value="1">YouTube Channel Rebrand</option>
+                        <option value="2">Client: TechCorp Website</option>
+                        <option value="3">Podcast: Creative Hour</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelModal">Cancel</button>
+                <button class="btn btn-primary">
+                    <span>🛡️</span> Add to Vault
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
