@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContextPort - AI Memory Migration</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+        <span class="logo-text">ContextPort</span>
+      </div>
+      <nav class="nav">
+        <a href="#" class="nav-link">How it Works</a>
+        <a href="#" class="nav-link">Pricing</a>
+        <button class="btn btn-outline">Sign In</button>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Step Indicator -->
+      <div class="steps">
+        <div class="step active" data-step="1">
+          <div class="step-number">1</div>
+          <span class="step-label">Import</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="2">
+          <div class="step-number">2</div>
+          <span class="step-label">Analyze</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="3">
+          <div class="step-number">3</div>
+          <span class="step-label">Export</span>
+        </div>
+      </div>
+
+      <!-- Step 1: Import -->
+      <section class="panel step-panel" id="step1">
+        <h1 class="panel-title">Migrate Your AI Memory</h1>
+        <p class="panel-subtitle">Import your conversation history and let us extract everything that matters.</p>
+
+        <div class="source-grid">
+          <button class="source-card" data-source="chatgpt">
+            <div class="source-icon chatgpt">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.8956zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.4066-.6818zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/>
+              </svg>
+            </div>
+            <span class="source-name">ChatGPT</span>
+            <span class="source-status">Export JSON</span>
+          </button>
+
+          <button class="source-card" data-source="claude">
+            <div class="source-icon claude">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <span class="source-name">Claude</span>
+            <span class="source-status">Connect API</span>
+          </button>
+
+          <button class="source-card" data-source="gemini">
+            <div class="source-icon gemini">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L4 6v6c0 5.5 3.4 10.6 8 12 4.6-1.4 8-6.5 8-12V6l-8-4z"/>
+              </svg>
+            </div>
+            <span class="source-name">Gemini</span>
+            <span class="source-status">Export JSON</span>
+          </button>
+
+          <button class="source-card" data-source="copilot">
+            <div class="source-icon copilot">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>
+              </svg>
+            </div>
+            <span class="source-name">Copilot</span>
+            <span class="source-status">Export JSON</span>
+          </button>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17,8 12,3 7,8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <p class="upload-text">Drop your export file here or <span class="upload-link">browse</span></p>
+          <p class="upload-hint">Supports: conversations.json, export.zip</p>
+          <input type="file" id="fileInput" accept=".json,.zip" hidden>
+        </div>
+      </section>
+
+      <!-- Step 2: Analyze -->
+      <section class="panel step-panel hidden" id="step2">
+        <h1 class="panel-title">Analyzing Your AI History</h1>
+        <p class="panel-subtitle">We're extracting your preferences, facts, and communication style.</p>
+
+        <div class="analysis-container">
+          <div class="analysis-progress">
+            <div class="progress-ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="progress-bg" cx="50" cy="50" r="45"/>
+                <circle class="progress-bar" cx="50" cy="50" r="45" id="progressBar"/>
+              </svg>
+              <span class="progress-text" id="progressText">0%</span>
+            </div>
+            <p class="progress-label" id="progressLabel">Parsing conversations...</p>
+          </div>
+
+          <div class="extracted-items" id="extractedItems">
+            <!-- Items will be added dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3: Export -->
+      <section class="panel step-panel hidden" id="step3">
+        <h1 class="panel-title">Your Portable AI Profile</h1>
+        <p class="panel-subtitle">Review what we extracted and export to your new AI assistant.</p>
+
+        <div class="profile-container">
+          <div class="profile-section">
+            <h3 class="section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              About You
+            </h3>
+            <div class="profile-card">
+              <div class="profile-item">
+                <span class="item-label">Name</span>
+                <span class="item-value" id="userName">Alex Chen</span>
+              </div>
+              <div class="profile-item">
+                <span class="item-label">Role</span>
+                <span class="item-value" id="userRole">Senior Software Engineer</span>
+              </div>
+              <div class="profile-item">
+                <span class="item-label">Location</span>
+                <span class="item-value" id="userLocation">San Francisco, CA</span>
+              </div>
+              <div class="profile-item">
+                <span class="item-label">Timezone</span>
+                <span class="item-value" id="userTimezone">America/Los_Angeles</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <h3 class="section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+              </svg>
+              Preferences
+            </h3>
+            <div class="profile-card">
+              <div class="tag-list" id="preferences">
+                <span class="tag">Concise responses</span>
+                <span class="tag">Code examples preferred</span>
+                <span class="tag">No emojis</span>
+                <span class="tag">Technical depth</span>
+                <span class="tag">Step-by-step explanations</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <h3 class="section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+              </svg>
+              Tech Stack
+            </h3>
+            <div class="profile-card">
+              <div class="tag-list" id="techStack">
+                <span class="tag tech">TypeScript</span>
+                <span class="tag tech">React</span>
+                <span class="tag tech">Node.js</span>
+                <span class="tag tech">PostgreSQL</span>
+                <span class="tag tech">AWS</span>
+                <span class="tag tech">Docker</span>
+                <span class="tag tech">GraphQL</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-section">
+            <h3 class="section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+              Topics Discussed (847 conversations)
+            </h3>
+            <div class="profile-card">
+              <div class="topic-bars">
+                <div class="topic-bar">
+                  <span class="topic-name">Code Review</span>
+                  <div class="topic-progress">
+                    <div class="topic-fill" style="width: 78%"></div>
+                  </div>
+                  <span class="topic-count">234</span>
+                </div>
+                <div class="topic-bar">
+                  <span class="topic-name">Architecture Design</span>
+                  <div class="topic-progress">
+                    <div class="topic-fill" style="width: 62%"></div>
+                  </div>
+                  <span class="topic-count">186</span>
+                </div>
+                <div class="topic-bar">
+                  <span class="topic-name">Debugging</span>
+                  <div class="topic-progress">
+                    <div class="topic-fill" style="width: 51%"></div>
+                  </div>
+                  <span class="topic-count">153</span>
+                </div>
+                <div class="topic-bar">
+                  <span class="topic-name">Writing</span>
+                  <div class="topic-progress">
+                    <div class="topic-fill" style="width: 38%"></div>
+                  </div>
+                  <span class="topic-count">114</span>
+                </div>
+                <div class="topic-bar">
+                  <span class="topic-name">Learning</span>
+                  <div class="topic-progress">
+                    <div class="topic-fill" style="width: 27%"></div>
+                  </div>
+                  <span class="topic-count">81</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="export-section">
+          <h3 class="section-title">Export To</h3>
+          <div class="export-grid">
+            <button class="export-card" data-target="claude">
+              <div class="export-icon claude">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </div>
+              <span class="export-name">Claude</span>
+              <span class="export-format">Project + Memory</span>
+            </button>
+
+            <button class="export-card" data-target="chatgpt">
+              <div class="export-icon chatgpt">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z"/>
+                </svg>
+              </div>
+              <span class="export-name">ChatGPT</span>
+              <span class="export-format">Custom Instructions</span>
+            </button>
+
+            <button class="export-card" data-target="markdown">
+              <div class="export-icon markdown">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14,2 14,8 20,8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10,9 9,9 8,9"/>
+                </svg>
+              </div>
+              <span class="export-name">Markdown</span>
+              <span class="export-format">Universal File</span>
+            </button>
+
+            <button class="export-card" data-target="json">
+              <div class="export-icon json">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16,18 22,12 16,6"/>
+                  <polyline points="8,6 2,12 8,18"/>
+                </svg>
+              </div>
+              <span class="export-name">JSON</span>
+              <span class="export-format">Structured Data</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Success Modal -->
+      <div class="modal hidden" id="successModal">
+        <div class="modal-content">
+          <div class="modal-icon success">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22,4 12,14.01 9,11.01"/>
+            </svg>
+          </div>
+          <h2 class="modal-title">Export Complete!</h2>
+          <p class="modal-text">Your AI profile has been exported to Claude. Start a new conversation and paste the generated prompt to onboard your new AI.</p>
+          <div class="modal-code" id="onboardingPrompt">
+I'm Alex, a Senior Software Engineer in San Francisco. I prefer concise, technical responses with code examples. My stack: TypeScript, React, Node.js, PostgreSQL, AWS. I value step-by-step explanations and direct answers without fluff.
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            <button class="btn btn-primary" onclick="copyPrompt()">Copy Prompt</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Your data is processed locally. Nothing is stored on our servers.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
