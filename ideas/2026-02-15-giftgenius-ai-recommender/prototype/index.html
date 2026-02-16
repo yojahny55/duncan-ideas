@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GiftGenius — AI Gift Intelligence</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🎁</span>
+        <span class="logo-text">GiftGenius</span>
+      </div>
+      
+      <nav class="nav">
+        <a href="#" class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item" data-view="recipients">
+          <span class="nav-icon">👥</span>
+          Recipients
+        </a>
+        <a href="#" class="nav-item" data-view="gifts">
+          <span class="nav-icon">🎀</span>
+          Gift History
+        </a>
+        <a href="#" class="nav-item" data-view="calendar">
+          <span class="nav-icon">📅</span>
+          Occasions
+        </a>
+        <a href="#" class="nav-item" data-view="suggestions">
+          <span class="nav-icon">✨</span>
+          AI Suggestions
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="budget-tracker">
+          <div class="budget-label">2026 Gift Budget</div>
+          <div class="budget-bar">
+            <div class="budget-fill" style="width: 35%"></div>
+          </div>
+          <div class="budget-stats">$420 / $1,200</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Dashboard View -->
+      <section id="dashboard" class="view active">
+        <header class="view-header">
+          <h1>Welcome back! 👋</h1>
+          <button class="btn btn-primary" id="add-gift-btn">
+            <span>+</span> Log a Gift
+          </button>
+        </header>
+
+        <!-- Upcoming Occasions -->
+        <div class="card upcoming-card">
+          <h2 class="card-title">🗓️ Upcoming Occasions</h2>
+          <div class="occasion-list">
+            <div class="occasion-item urgent">
+              <div class="occasion-date">
+                <span class="day">18</span>
+                <span class="month">Feb</span>
+              </div>
+              <div class="occasion-details">
+                <strong>Mom's Birthday</strong>
+                <span class="days-left">3 days away</span>
+              </div>
+              <button class="btn btn-small btn-outline">Get Ideas</button>
+            </div>
+            <div class="occasion-item">
+              <div class="occasion-date">
+                <span class="day">14</span>
+                <span class="month">Mar</span>
+              </div>
+              <div class="occasion-details">
+                <strong>Jake's Wedding Anniversary</strong>
+                <span class="days-left">27 days away</span>
+              </div>
+              <button class="btn btn-small btn-outline">Get Ideas</button>
+            </div>
+            <div class="occasion-item">
+              <div class="occasion-date">
+                <span class="day">22</span>
+                <span class="month">Mar</span>
+              </div>
+              <div class="occasion-details">
+                <strong>Emma's Graduation</strong>
+                <span class="days-left">35 days away</span>
+              </div>
+              <button class="btn btn-small btn-outline">Get Ideas</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🎁</div>
+            <div class="stat-value">47</div>
+            <div class="stat-label">Gifts Logged</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">12</div>
+            <div class="stat-label">Recipients</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value">78%</div>
+            <div class="stat-label">Hit Rate</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💡</div>
+            <div class="stat-value">8</div>
+            <div class="stat-label">AI Suggestions</div>
+          </div>
+        </div>
+
+        <!-- Recent Gifts -->
+        <div class="card">
+          <h2 class="card-title">📝 Recent Gift History</h2>
+          <div class="gift-list">
+            <div class="gift-item">
+              <div class="gift-reaction hit">✅</div>
+              <div class="gift-info">
+                <strong>Cooking Class Experience</strong>
+                <span class="gift-meta">Sarah • Feb 2 • Birthday • $85</span>
+              </div>
+              <span class="gift-category">Experience</span>
+            </div>
+            <div class="gift-item">
+              <div class="gift-reaction okay">😐</div>
+              <div class="gift-info">
+                <strong>Wireless Earbuds</strong>
+                <span class="gift-meta">Dad • Jan 15 • Birthday • $120</span>
+              </div>
+              <span class="gift-category">Tech</span>
+            </div>
+            <div class="gift-item">
+              <div class="gift-reaction hit">✅</div>
+              <div class="gift-info">
+                <strong>Personalized Photo Book</strong>
+                <span class="gift-meta">Mom • Dec 25 • Christmas • $45</span>
+              </div>
+              <span class="gift-category">Personalized</span>
+            </div>
+            <div class="gift-item">
+              <div class="gift-reaction miss">❌</div>
+              <div class="gift-info">
+                <strong>Novelty Socks Set</strong>
+                <span class="gift-meta">Jake • Dec 25 • Christmas • $25</span>
+              </div>
+              <span class="gift-category">Novelty</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recipients View -->
+      <section id="recipients" class="view">
+        <header class="view-header">
+          <h1>Recipients</h1>
+          <button class="btn btn-primary">
+            <span>+</span> Add Recipient
+          </button>
+        </header>
+
+        <div class="recipient-grid">
+          <div class="recipient-card" data-recipient="mom">
+            <div class="recipient-avatar">👩</div>
+            <div class="recipient-name">Mom</div>
+            <div class="recipient-relation">Parent</div>
+            <div class="recipient-stats">
+              <span>12 gifts</span>
+              <span class="hit-rate">92% hits</span>
+            </div>
+            <div class="recipient-tags">
+              <span class="tag tag-hit">Handmade</span>
+              <span class="tag tag-hit">Personalized</span>
+              <span class="tag tag-miss">Tech</span>
+            </div>
+          </div>
+
+          <div class="recipient-card" data-recipient="dad">
+            <div class="recipient-avatar">👨</div>
+            <div class="recipient-name">Dad</div>
+            <div class="recipient-relation">Parent</div>
+            <div class="recipient-stats">
+              <span>10 gifts</span>
+              <span class="hit-rate">70% hits</span>
+            </div>
+            <div class="recipient-tags">
+              <span class="tag tag-hit">Tools</span>
+              <span class="tag tag-hit">Books</span>
+              <span class="tag tag-miss">Clothing</span>
+            </div>
+          </div>
+
+          <div class="recipient-card" data-recipient="sarah">
+            <div class="recipient-avatar">👱‍♀️</div>
+            <div class="recipient-name">Sarah</div>
+            <div class="recipient-relation">Best Friend</div>
+            <div class="recipient-stats">
+              <span>8 gifts</span>
+              <span class="hit-rate">88% hits</span>
+            </div>
+            <div class="recipient-tags">
+              <span class="tag tag-hit">Experiences</span>
+              <span class="tag tag-hit">Spa</span>
+              <span class="tag tag-miss">Home Decor</span>
+            </div>
+          </div>
+
+          <div class="recipient-card" data-recipient="jake">
+            <div class="recipient-avatar">👦</div>
+            <div class="recipient-name">Jake</div>
+            <div class="recipient-relation">Brother</div>
+            <div class="recipient-stats">
+              <span>9 gifts</span>
+              <span class="hit-rate">56% hits</span>
+            </div>
+            <div class="recipient-tags">
+              <span class="tag tag-hit">Gaming</span>
+              <span class="tag tag-hit">Tech</span>
+              <span class="tag tag-miss">Novelty</span>
+            </div>
+          </div>
+
+          <div class="recipient-card" data-recipient="emma">
+            <div class="recipient-avatar">👧</div>
+            <div class="recipient-name">Emma</div>
+            <div class="recipient-relation">Niece</div>
+            <div class="recipient-stats">
+              <span>5 gifts</span>
+              <span class="hit-rate">80% hits</span>
+            </div>
+            <div class="recipient-tags">
+              <span class="tag tag-hit">Art</span>
+              <span class="tag tag-hit">Books</span>
+              <span class="tag tag-okay">Toys</span>
+            </div>
+          </div>
+
+          <div class="recipient-card add-new">
+            <div class="add-icon">+</div>
+            <div class="add-text">Add Recipient</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI Suggestions View -->
+      <section id="suggestions" class="view">
+        <header class="view-header">
+          <h1>✨ AI Gift Suggestions</h1>
+        </header>
+
+        <div class="ai-suggestion-panel">
+          <div class="ai-header">
+            <div class="ai-icon">🤖</div>
+            <div class="ai-title">
+              <h2>Gift Ideas for Mom's Birthday</h2>
+              <span class="ai-subtitle">February 18 • Based on 12 past gifts</span>
+            </div>
+          </div>
+
+          <div class="ai-insight">
+            <strong>🧠 What I've learned about Mom:</strong>
+            <p>She loves handmade and personalized items (92% hit rate). She appreciates thoughtful experiences over material things. Avoid tech gifts — they tend to overwhelm her. Sweet spot: $40-$80.</p>
+          </div>
+
+          <div class="suggestion-list">
+            <div class="suggestion-card recommended">
+              <div class="suggestion-badge">🏆 Top Pick</div>
+              <div class="suggestion-content">
+                <h3>Custom Illustrated Family Portrait</h3>
+                <p>Commission a digital artist to create a stylized family portrait. She loved the photo book you gave her in December.</p>
+                <div class="suggestion-meta">
+                  <span class="price">$60-80</span>
+                  <span class="category">Personalized</span>
+                  <span class="match">94% match</span>
+                </div>
+              </div>
+              <div class="suggestion-actions">
+                <button class="btn btn-primary">Find Options</button>
+                <button class="btn btn-ghost">Save</button>
+              </div>
+            </div>
+
+            <div class="suggestion-card">
+              <div class="suggestion-content">
+                <h3>Pottery Class for Two</h3>
+                <p>An experience she can share with you or Dad. Experiences have an 85% hit rate with her.</p>
+                <div class="suggestion-meta">
+                  <span class="price">$70-90</span>
+                  <span class="category">Experience</span>
+                  <span class="match">89% match</span>
+                </div>
+              </div>
+              <div class="suggestion-actions">
+                <button class="btn btn-outline">Find Options</button>
+                <button class="btn btn-ghost">Save</button>
+              </div>
+            </div>
+
+            <div class="suggestion-card">
+              <div class="suggestion-content">
+                <h3>Handwritten Recipe Book Kit</h3>
+                <p>She loves cooking and sentimental items. This kit lets her preserve family recipes in a beautiful journal.</p>
+                <div class="suggestion-meta">
+                  <span class="price">$35-45</span>
+                  <span class="category">Handmade</span>
+                  <span class="match">87% match</span>
+                </div>
+              </div>
+              <div class="suggestion-actions">
+                <button class="btn btn-outline">Find Options</button>
+                <button class="btn btn-ghost">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-warning">
+            <strong>⚠️ Avoid These Categories:</strong>
+            <div class="avoid-tags">
+              <span class="avoid-tag">❌ Tech gadgets (2 misses)</span>
+              <span class="avoid-tag">❌ Generic gift cards</span>
+              <span class="avoid-tag">❌ Perfume (she's picky)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gifts History View -->
+      <section id="gifts" class="view">
+        <header class="view-header">
+          <h1>Gift History</h1>
+          <div class="view-filters">
+            <select class="filter-select">
+              <option>All Recipients</option>
+              <option>Mom</option>
+              <option>Dad</option>
+              <option>Sarah</option>
+              <option>Jake</option>
+            </select>
+            <select class="filter-select">
+              <option>All Reactions</option>
+              <option>✅ Hits</option>
+              <option>😐 Okay</option>
+              <option>❌ Misses</option>
+            </select>
+          </div>
+        </header>
+
+        <div class="gift-history-list">
+          <div class="gift-history-item">
+            <div class="gift-reaction hit">✅</div>
+            <div class="gift-history-content">
+              <div class="gift-history-main">
+                <strong>Cooking Class Experience</strong>
+                <span class="gift-history-meta">Sarah • Birthday • Feb 2, 2026</span>
+              </div>
+              <div class="gift-history-details">
+                <span class="price">$85</span>
+                <span class="category">Experience</span>
+              </div>
+            </div>
+            <div class="gift-history-note">
+              "She loved it! Went with her sister and they had a blast."
+            </div>
+          </div>
+
+          <div class="gift-history-item">
+            <div class="gift-reaction okay">😐</div>
+            <div class="gift-history-content">
+              <div class="gift-history-main">
+                <strong>Wireless Earbuds</strong>
+                <span class="gift-history-meta">Dad • Birthday • Jan 15, 2026</span>
+              </div>
+              <div class="gift-history-details">
+                <span class="price">$120</span>
+                <span class="category">Tech</span>
+              </div>
+            </div>
+            <div class="gift-history-note">
+              "He said thanks but I haven't seen him use them."
+            </div>
+          </div>
+
+          <div class="gift-history-item">
+            <div class="gift-reaction hit">✅</div>
+            <div class="gift-history-content">
+              <div class="gift-history-main">
+                <strong>Personalized Photo Book</strong>
+                <span class="gift-history-meta">Mom • Christmas • Dec 25, 2025</span>
+              </div>
+              <div class="gift-history-details">
+                <span class="price">$45</span>
+                <span class="category">Personalized</span>
+              </div>
+            </div>
+            <div class="gift-history-note">
+              "She cried happy tears! Shows it to everyone who visits."
+            </div>
+          </div>
+
+          <div class="gift-history-item">
+            <div class="gift-reaction miss">❌</div>
+            <div class="gift-history-content">
+              <div class="gift-history-main">
+                <strong>Novelty Socks Set</strong>
+                <span class="gift-history-meta">Jake • Christmas • Dec 25, 2025</span>
+              </div>
+              <div class="gift-history-details">
+                <span class="price">$25</span>
+                <span class="category">Novelty</span>
+              </div>
+            </div>
+            <div class="gift-history-note">
+              "Polite smile. Pretty sure they're still in the packaging."
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Calendar View -->
+      <section id="calendar" class="view">
+        <header class="view-header">
+          <h1>Occasion Calendar</h1>
+          <button class="btn btn-primary">
+            <span>+</span> Add Occasion
+          </button>
+        </header>
+
+        <div class="calendar-grid">
+          <div class="calendar-month">
+            <h3>February 2026</h3>
+            <div class="calendar-events">
+              <div class="calendar-event urgent">
+                <div class="event-date">18</div>
+                <div class="event-details">
+                  <strong>Mom's Birthday</strong>
+                  <span>In 3 days</span>
+                </div>
+                <span class="event-status needs-gift">Needs Gift</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="calendar-month">
+            <h3>March 2026</h3>
+            <div class="calendar-events">
+              <div class="calendar-event">
+                <div class="event-date">14</div>
+                <div class="event-details">
+                  <strong>Jake & Lisa's Anniversary</strong>
+                  <span>Wedding Anniversary</span>
+                </div>
+                <span class="event-status">Planning</span>
+              </div>
+              <div class="calendar-event">
+                <div class="event-date">22</div>
+                <div class="event-details">
+                  <strong>Emma's Graduation</strong>
+                  <span>College Graduation</span>
+                </div>
+                <span class="event-status">Planning</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="calendar-month">
+            <h3>April 2026</h3>
+            <div class="calendar-events">
+              <div class="calendar-event">
+                <div class="event-date">8</div>
+                <div class="event-details">
+                  <strong>Dad's Birthday</strong>
+                  <span>Birthday</span>
+                </div>
+                <span class="event-status">Upcoming</span>
+              </div>
+              <div class="calendar-event">
+                <div class="event-date">20</div>
+                <div class="event-details">
+                  <strong>Sarah's Birthday</strong>
+                  <span>Birthday</span>
+                </div>
+                <span class="event-status">Upcoming</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Add Gift Modal -->
+    <div class="modal" id="add-gift-modal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Log a Gift</h2>
+          <button class="modal-close">&times;</button>
+        </div>
+        <form class="gift-form">
+          <div class="form-group">
+            <label>Recipient</label>
+            <select required>
+              <option value="">Select recipient...</option>
+              <option>Mom</option>
+              <option>Dad</option>
+              <option>Sarah</option>
+              <option>Jake</option>
+              <option>Emma</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Gift Description</label>
+            <input type="text" placeholder="e.g., Cooking Class Experience" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Occasion</label>
+              <select>
+                <option>Birthday</option>
+                <option>Christmas</option>
+                <option>Anniversary</option>
+                <option>Thank You</option>
+                <option>Just Because</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" placeholder="$0" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <div class="category-pills">
+              <label class="pill"><input type="radio" name="category" value="experience"> Experience</label>
+              <label class="pill"><input type="radio" name="category" value="tech"> Tech</label>
+              <label class="pill"><input type="radio" name="category" value="books"> Books</label>
+              <label class="pill"><input type="radio" name="category" value="clothing"> Clothing</label>
+              <label class="pill"><input type="radio" name="category" value="personalized"> Personalized</label>
+              <label class="pill"><input type="radio" name="category" value="handmade"> Handmade</label>
+              <label class="pill"><input type="radio" name="category" value="food"> Food/Drink</label>
+              <label class="pill"><input type="radio" name="category" value="other"> Other</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>How did it go?</label>
+            <div class="reaction-selector">
+              <label class="reaction-option">
+                <input type="radio" name="reaction" value="hit">
+                <span class="reaction-emoji">✅</span>
+                <span>Hit!</span>
+              </label>
+              <label class="reaction-option">
+                <input type="radio" name="reaction" value="okay">
+                <span class="reaction-emoji">😐</span>
+                <span>Okay</span>
+              </label>
+              <label class="reaction-option">
+                <input type="radio" name="reaction" value="miss">
+                <span class="reaction-emoji">❌</span>
+                <span>Miss</span>
+              </label>
+              <label class="reaction-option">
+                <input type="radio" name="reaction" value="pending">
+                <span class="reaction-emoji">⏳</span>
+                <span>Not yet given</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Notes (optional)</label>
+            <textarea placeholder="How did they react? Any context?"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-ghost modal-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Gift</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
