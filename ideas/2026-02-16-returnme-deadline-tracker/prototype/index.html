@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReturnMe - Never Miss a Return Deadline</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1>📦 ReturnMe</h1>
+                <button class="add-btn" id="addBtn">+ Add Return</button>
+            </div>
+            <p class="tagline">Track returns. Beat deadlines. Save money.</p>
+        </header>
+
+        <!-- Stats Summary -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value" id="activeCount">3</span>
+                <span class="stat-label">Active</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="urgentCount">1</span>
+                <span class="stat-label">Urgent</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="savedAmount">$127</span>
+                <span class="stat-label">Saved</span>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="tab active" data-filter="all">All</button>
+            <button class="tab" data-filter="urgent">⚠️ Urgent</button>
+            <button class="tab" data-filter="returned">Returned</button>
+        </div>
+
+        <!-- Returns List -->
+        <div class="returns-list" id="returnsList">
+            <!-- Items will be populated by JS -->
+        </div>
+
+        <!-- Add Return Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Add Return</h2>
+                    <button class="close-btn" id="closeModal">&times;</button>
+                </div>
+                <form id="addReturnForm">
+                    <div class="form-group">
+                        <label for="storeName">Store</label>
+                        <select id="storeName" required>
+                            <option value="">Select store...</option>
+                            <option value="Amazon" data-days="30">Amazon (30 days)</option>
+                            <option value="Target" data-days="90">Target (90 days)</option>
+                            <option value="Walmart" data-days="90">Walmart (90 days)</option>
+                            <option value="Best Buy" data-days="15">Best Buy (15 days)</option>
+                            <option value="Costco" data-days="90">Costco (90 days)</option>
+                            <option value="Nordstrom" data-days="0">Nordstrom (No limit)</option>
+                            <option value="Apple" data-days="14">Apple (14 days)</option>
+                            <option value="Nike" data-days="60">Nike (60 days)</option>
+                            <option value="Zara" data-days="30">Zara (30 days)</option>
+                            <option value="Other" data-days="30">Other (Custom)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemDesc">Item Description</label>
+                        <input type="text" id="itemDesc" placeholder="e.g., Bluetooth headphones" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="purchaseDate">Purchase Date</label>
+                            <input type="date" id="purchaseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount ($)</label>
+                            <input type="number" id="amount" placeholder="49.99" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group" id="customDaysGroup" style="display: none;">
+                        <label for="customDays">Return Window (days)</label>
+                        <input type="number" id="customDays" placeholder="30" value="30">
+                    </div>
+                    <button type="submit" class="submit-btn">Track This Return</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Return Action Modal -->
+        <div class="modal-overlay" id="actionModalOverlay">
+            <div class="modal action-modal">
+                <div class="modal-header">
+                    <h2 id="actionItemName">Item Name</h2>
+                    <button class="close-btn" id="closeActionModal">&times;</button>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn returned" id="markReturned">
+                        <span class="action-icon">✅</span>
+                        <span>Marked as Returned</span>
+                    </button>
+                    <button class="action-btn kept" id="markKept">
+                        <span class="action-icon">🏠</span>
+                        <span>Decided to Keep</span>
+                    </button>
+                    <button class="action-btn delete" id="deleteItem">
+                        <span class="action-icon">🗑️</span>
+                        <span>Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
