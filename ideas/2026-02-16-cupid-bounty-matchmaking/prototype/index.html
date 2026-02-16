@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CupidBounty — Find Love, Reward Matchmakers</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-brand">
+        <span class="brand-icon">💘</span>
+        <span class="brand-name">CupidBounty</span>
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-view="seeker">Find Love</button>
+        <button class="nav-tab" data-view="matchmaker">Matchmake</button>
+        <button class="nav-tab" data-view="dashboard">Dashboard</button>
+      </div>
+      <div class="nav-user">
+        <div class="user-avatar">SC</div>
+        <span class="user-name">Sarah C.</span>
+      </div>
+    </nav>
+
+    <!-- Seeker View -->
+    <main class="view active" id="seeker-view">
+      <div class="hero">
+        <div class="hero-content">
+          <h1>Set Your <span class="highlight">Love Bounty</span></h1>
+          <p>Let your network find your soulmate. Set a reward, and watch the magic happen.</p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">2,847</span>
+            <span class="stat-label">Active Bounties</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">847</span>
+            <span class="stat-label">Matches Made</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">124</span>
+            <span class="stat-label">Engagements</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bounty-creator">
+        <div class="creator-header">
+          <h2>Create Your Bounty</h2>
+          <span class="creator-step">Step 1 of 3</span>
+        </div>
+        
+        <div class="creator-form">
+          <div class="form-section">
+            <label class="form-label">Bounty Amount</label>
+            <div class="bounty-slider">
+              <input type="range" min="100" max="10000" value="1000" id="bounty-amount" class="slider">
+              <div class="bounty-display">
+                <span class="currency">$</span>
+                <span class="amount" id="bounty-value">1,000</span>
+              </div>
+            </div>
+            <div class="bounty-breakdown">
+              <div class="breakdown-item">
+                <span class="milestone">First date</span>
+                <span class="payout">$200</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="milestone">3 months dating</span>
+                <span class="payout">$300</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="milestone">Engaged</span>
+                <span class="payout">$500</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Who are you looking for?</label>
+            <div class="preference-grid">
+              <div class="pref-card selected" data-pref="relationship">
+                <span class="pref-icon">💍</span>
+                <span class="pref-label">Long-term</span>
+              </div>
+              <div class="pref-card" data-pref="casual">
+                <span class="pref-icon">☕</span>
+                <span class="pref-label">Casual</span>
+              </div>
+              <div class="pref-card" data-pref="marriage">
+                <span class="pref-icon">👰</span>
+                <span class="pref-label">Marriage</span>
+              </div>
+              <div class="pref-card" data-pref="open">
+                <span class="pref-icon">🌈</span>
+                <span class="pref-label">Open</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Dealbreakers</label>
+            <div class="dealbreaker-tags">
+              <span class="tag active">🚬 No Smoking</span>
+              <span class="tag">🐶 Must love dogs</span>
+              <span class="tag active">📍 Within 50mi</span>
+              <span class="tag">👶 Wants kids</span>
+              <span class="tag">🏋️ Active lifestyle</span>
+              <span class="tag">+ Add custom</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-large">
+            <span>Post Bounty for $1,000</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Matchmaker View -->
+    <main class="view" id="matchmaker-view">
+      <div class="matchmaker-header">
+        <h1>Active Bounties</h1>
+        <div class="filter-bar">
+          <button class="filter-chip active">All</button>
+          <button class="filter-chip">$500+</button>
+          <button class="filter-chip">$1,000+</button>
+          <button class="filter-chip">Near me</button>
+        </div>
+      </div>
+
+      <div class="bounty-grid">
+        <!-- Bounty Card 1 -->
+        <div class="bounty-card">
+          <div class="bounty-header">
+            <div class="bounty-amount-badge">$2,500</div>
+            <span class="bounty-time">Posted 2h ago</span>
+          </div>
+          <div class="bounty-profile">
+            <div class="profile-avatar">MK</div>
+            <div class="profile-info">
+              <h3>Michael K., 34</h3>
+              <p>Software Engineer • Austin, TX</p>
+            </div>
+          </div>
+          <div class="bounty-details">
+            <p>"Looking for someone who loves hiking, can debate philosophy, and doesn't mind my three cats."</p>
+          </div>
+          <div class="bounty-tags">
+            <span class="mini-tag">💍 Long-term</span>
+            <span class="mini-tag">🚫 No smoking</span>
+            <span class="mini-tag">📍 Austin area</span>
+          </div>
+          <div class="bounty-actions">
+            <button class="btn btn-secondary">View Full Profile</button>
+            <button class="btn btn-primary">Suggest Match</button>
+          </div>
+        </div>
+
+        <!-- Bounty Card 2 -->
+        <div class="bounty-card featured">
+          <div class="featured-badge">🔥 High Bounty</div>
+          <div class="bounty-header">
+            <div class="bounty-amount-badge">$5,000</div>
+            <span class="bounty-time">Posted 1d ago</span>
+          </div>
+          <div class="bounty-profile">
+            <div class="profile-avatar">JL</div>
+            <div class="profile-info">
+              <h3>Jennifer L., 29</h3>
+              <p>ER Physician • Nashville, TN</p>
+            </div>
+          </div>
+          <div class="bounty-details">
+            <p>"Crazy schedule but big heart. Need someone patient, funny, and who won't be intimidated by my career."</p>
+          </div>
+          <div class="bounty-tags">
+            <span class="mini-tag">👰 Marriage-minded</span>
+            <span class="mini-tag">👶 Wants kids</span>
+            <span class="mini-tag">📚 Educated</span>
+          </div>
+          <div class="bounty-actions">
+            <button class="btn btn-secondary">View Full Profile</button>
+            <button class="btn btn-primary">Suggest Match</button>
+          </div>
+        </div>
+
+        <!-- Bounty Card 3 -->
+        <div class="bounty-card">
+          <div class="bounty-header">
+            <div class="bounty-amount-badge">$750</div>
+            <span class="bounty-time">Posted 3d ago</span>
+          </div>
+          <div class="bounty-profile">
+            <div class="profile-avatar">DR</div>
+            <div class="profile-info">
+              <h3>David R., 41</h3>
+              <p>Architect • Charleston, SC</p>
+            </div>
+          </div>
+          <div class="bounty-details">
+            <p>"Divorced, two kids (shared custody). Looking for someone who understands that life gets messy and beautiful."</p>
+          </div>
+          <div class="bounty-tags">
+            <span class="mini-tag">💍 Long-term</span>
+            <span class="mini-tag">✈️ Loves travel</span>
+            <span class="mini-tag">🍷 Wine enthusiast</span>
+          </div>
+          <div class="bounty-actions">
+            <button class="btn btn-secondary">View Full Profile</button>
+            <button class="btn btn-primary">Suggest Match</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match Suggestion Modal -->
+      <div class="modal" id="suggest-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Suggest a Match for Jennifer L.</h2>
+            <button class="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="contact-search">
+              <input type="text" placeholder="Search your contacts or paste profile link..." class="search-input">
+              <button class="btn btn-primary">Import Contacts</button>
+            </div>
+            <div class="ai-suggestions">
+              <h4>✨ AI Suggestions from Your Network</h4>
+              <div class="suggestion-list">
+                <div class="suggestion-item">
+                  <div class="suggestion-avatar">TC</div>
+                  <div class="suggestion-info">
+                    <strong>Tom Chen</strong>
+                    <span>Lawyer, 31 • Your LinkedIn contact</span>
+                  </div>
+                  <div class="compatibility">92% match</div>
+                  <button class="btn btn-small">Select</button>
+                </div>
+                <div class="suggestion-item">
+                  <div class="suggestion-avatar">AM</div>
+                  <div class="suggestion-info">
+                    <strong>Alex Martinez</strong>
+                    <span>Professor, 33 • Friend of friend</span>
+                  </div>
+                  <div class="compatibility">87% match</div>
+                  <button class="btn btn-small">Select</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Dashboard View -->
+    <main class="view" id="dashboard-view">
+      <div class="dashboard-header">
+        <h1>Your Dashboard</h1>
+        <div class="role-toggle">
+          <button class="role-btn active" data-role="matchmaker">Matchmaker</button>
+          <button class="role-btn" data-role="seeker">Seeker</button>
+        </div>
+      </div>
+
+      <!-- Matchmaker Dashboard -->
+      <div class="dashboard-content" id="matchmaker-dashboard">
+        <div class="earnings-overview">
+          <div class="earnings-card total">
+            <span class="earnings-label">Total Earned</span>
+            <span class="earnings-value">$4,750</span>
+            <span class="earnings-detail">12 successful matches</span>
+          </div>
+          <div class="earnings-card pending">
+            <span class="earnings-label">Pending</span>
+            <span class="earnings-value">$2,100</span>
+            <span class="earnings-detail">3 in progress</span>
+          </div>
+          <div class="earnings-card available">
+            <span class="earnings-label">Available</span>
+            <span class="earnings-value">$1,850</span>
+            <button class="btn btn-small">Withdraw</button>
+          </div>
+        </div>
+
+        <div class="active-matches">
+          <h2>Active Matches</h2>
+          <div class="matches-list">
+            <div class="match-card">
+              <div class="match-people">
+                <div class="match-avatar">JL</div>
+                <div class="match-connector">💕</div>
+                <div class="match-avatar">TC</div>
+              </div>
+              <div class="match-info">
+                <h4>Jennifer L. & Tom C.</h4>
+                <p>You introduced them on Jan 28</p>
+              </div>
+              <div class="match-milestone">
+                <div class="milestone-progress">
+                  <div class="milestone-dot completed"></div>
+                  <div class="milestone-line completed"></div>
+                  <div class="milestone-dot completed"></div>
+                  <div class="milestone-line"></div>
+                  <div class="milestone-dot"></div>
+                  <div class="milestone-line"></div>
+                  <div class="milestone-dot"></div>
+                </div>
+                <div class="milestone-labels">
+                  <span>Intro ✓</span>
+                  <span>Date ✓</span>
+                  <span>3 months</span>
+                  <span>Engaged</span>
+                </div>
+              </div>
+              <div class="match-payout">
+                <span class="earned">$1,500 earned</span>
+                <span class="remaining">$3,500 remaining</span>
+              </div>
+            </div>
+
+            <div class="match-card">
+              <div class="match-people">
+                <div class="match-avatar">MK</div>
+                <div class="match-connector">💕</div>
+                <div class="match-avatar">SR</div>
+              </div>
+              <div class="match-info">
+                <h4>Michael K. & Sarah R.</h4>
+                <p>You introduced them on Feb 10</p>
+              </div>
+              <div class="match-milestone">
+                <div class="milestone-progress">
+                  <div class="milestone-dot completed"></div>
+                  <div class="milestone-line"></div>
+                  <div class="milestone-dot"></div>
+                  <div class="milestone-line"></div>
+                  <div class="milestone-dot"></div>
+                  <div class="milestone-line"></div>
+                  <div class="milestone-dot"></div>
+                </div>
+                <div class="milestone-labels">
+                  <span>Intro ✓</span>
+                  <span>Date</span>
+                  <span>3 months</span>
+                  <span>Engaged</span>
+                </div>
+              </div>
+              <div class="match-payout">
+                <span class="earned">$250 earned</span>
+                <span class="remaining">$2,250 remaining</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reputation-section">
+          <h2>Your Reputation</h2>
+          <div class="reputation-card">
+            <div class="rep-score">
+              <span class="score-value">4.8</span>
+              <span class="score-label">Cupid Score</span>
+              <div class="stars">★★★★★</div>
+            </div>
+            <div class="rep-stats">
+              <div class="rep-stat">
+                <span class="stat-num">47</span>
+                <span class="stat-desc">Introductions</span>
+              </div>
+              <div class="rep-stat">
+                <span class="stat-num">12</span>
+                <span class="stat-desc">First Dates</span>
+              </div>
+              <div class="rep-stat">
+                <span class="stat-num">3</span>
+                <span class="stat-desc">Relationships</span>
+              </div>
+              <div class="rep-stat">
+                <span class="stat-num">1</span>
+                <span class="stat-desc">Engagement!</span>
+              </div>
+            </div>
+            <div class="rep-badge">
+              <span class="badge">🏆 Top 5% Matchmaker</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

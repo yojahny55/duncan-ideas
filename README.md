@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-16 | [CupidBounty](ideas/2026-02-16-cupid-bounty-matchmaking/) | Matchmaking bounty marketplace — set a reward for finding your soulmate. Friends, family, or skilled matchmakers earn money when their introductions lead to real relationships | X/Twitter | ✅ [Demo](ideas/2026-02-16-cupid-bounty-matchmaking/prototype/index.html) |
 | 2026-02-15 | [GiftGenius](ideas/2026-02-15-giftgenius-ai-recommender/) | AI gift intelligence — track your gift-giving history, learn from hits and misses, get personalized AI recommendations for each person in your life. Never stress about what to buy again | Web | ✅ [Demo](ideas/2026-02-15-giftgenius-ai-recommender/prototype/index.html) |
 | 2026-02-15 | [WakeMate](ideas/2026-02-15-wakemate-social-alarm/) | Social accountability alarm — get paired with another person for brief morning check-in calls. Human connection kills the snooze habit. Privacy-first, streak gamification | Reddit | ✅ [Demo](ideas/2026-02-15-wakemate-social-alarm/prototype/index.html) |
 | 2026-02-15 | [ContextPort](ideas/2026-02-15-contextport-ai-migration/) | AI memory migration tool — seamlessly transfer your conversation history, preferences, and context between AI assistants (ChatGPT → Claude, etc.). Own your AI relationship | X/Twitter | ✅ [Demo](ideas/2026-02-15-contextport-ai-migration/prototype/index.html) |
