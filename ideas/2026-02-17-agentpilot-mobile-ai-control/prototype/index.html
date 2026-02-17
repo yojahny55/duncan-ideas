@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AgentPilot - Mobile AI Agent Control</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span class="time">9:41</span>
+            <div class="status-icons">
+                <span class="signal">●●●●○</span>
+                <span class="wifi">📶</span>
+                <span class="battery">🔋</span>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <!-- Header -->
+            <header class="app-header">
+                <h1>AgentPilot</h1>
+                <div class="connection-status connected">
+                    <span class="status-dot"></span>
+                    <span>Connected</span>
+                </div>
+            </header>
+
+            <!-- Tab Navigation -->
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="sessions">Sessions</button>
+                <button class="tab-btn" data-tab="approvals">Approvals <span class="badge">2</span></button>
+                <button class="tab-btn" data-tab="history">History</button>
+            </nav>
+
+            <!-- Sessions Tab -->
+            <div id="sessions" class="tab-content active">
+                <div class="session-card active-session" data-session="1">
+                    <div class="session-header">
+                        <div class="agent-icon cursor">
+                            <span>⚡</span>
+                        </div>
+                        <div class="session-info">
+                            <h3>Cursor Agent</h3>
+                            <p class="session-project">~/projects/webapp</p>
+                        </div>
+                        <div class="session-status running">
+                            <span class="pulse"></span>
+                            Running
+                        </div>
+                    </div>
+                    <div class="session-preview">
+                        <p class="current-task">Refactoring auth middleware to use JWT...</p>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 65%"></div>
+                        </div>
+                        <div class="session-meta">
+                            <span>🪙 2.4K tokens</span>
+                            <span>⏱️ ~3 min left</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="session-card" data-session="2">
+                    <div class="session-header">
+                        <div class="agent-icon claude">
+                            <span>🧠</span>
+                        </div>
+                        <div class="session-info">
+                            <h3>Claude Code</h3>
+                            <p class="session-project">~/clawd</p>
+                        </div>
+                        <div class="session-status idle">
+                            Idle
+                        </div>
+                    </div>
+                    <div class="session-preview">
+                        <p class="current-task">Waiting for input...</p>
+                    </div>
+                </div>
+
+                <div class="session-card" data-session="3">
+                    <div class="session-header">
+                        <div class="agent-icon codex">
+                            <span>🔮</span>
+                        </div>
+                        <div class="session-info">
+                            <h3>Codex CLI</h3>
+                            <p class="session-project">~/api-server</p>
+                        </div>
+                        <div class="session-status waiting">
+                            ⚠️ Needs Input
+                        </div>
+                    </div>
+                    <div class="session-preview">
+                        <p class="current-task">Agent asked: "Should I update dependencies?"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approvals Tab -->
+            <div id="approvals" class="tab-content">
+                <div class="approval-card urgent">
+                    <div class="approval-header">
+                        <span class="approval-icon">🗑️</span>
+                        <div class="approval-info">
+                            <h4>Delete Files</h4>
+                            <p>Cursor Agent • ~/projects/webapp</p>
+                        </div>
+                        <span class="approval-time">2m ago</span>
+                    </div>
+                    <div class="approval-details">
+                        <p>Agent wants to delete 3 files:</p>
+                        <ul class="file-list">
+                            <li><code>src/old-auth.js</code></li>
+                            <li><code>src/legacy-middleware.js</code></li>
+                            <li><code>tests/old-auth.test.js</code></li>
+                        </ul>
+                    </div>
+                    <div class="approval-actions">
+                        <button class="btn-deny">Deny</button>
+                        <button class="btn-approve">Approve</button>
+                    </div>
+                </div>
+
+                <div class="approval-card">
+                    <div class="approval-header">
+                        <span class="approval-icon">📦</span>
+                        <div class="approval-info">
+                            <h4>Install Package</h4>
+                            <p>Claude Code • ~/clawd</p>
+                        </div>
+                        <span class="approval-time">15m ago</span>
+                    </div>
+                    <div class="approval-details">
+                        <p>Agent wants to install:</p>
+                        <code class="package-name">npm install jsonwebtoken@9.0.2</code>
+                    </div>
+                    <div class="approval-actions">
+                        <button class="btn-deny">Deny</button>
+                        <button class="btn-approve">Approve</button>
+                    </div>
+                </div>
+
+                <div class="empty-state hidden">
+                    <span class="empty-icon">✅</span>
+                    <h3>All Clear!</h3>
+                    <p>No pending approvals</p>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content">
+                <div class="history-item">
+                    <div class="history-icon success">✓</div>
+                    <div class="history-info">
+                        <h4>API endpoint migration</h4>
+                        <p>Cursor Agent • Completed 2h ago</p>
+                        <span class="history-stats">8.2K tokens • 12 min</span>
+                    </div>
+                </div>
+                <div class="history-item">
+                    <div class="history-icon success">✓</div>
+                    <div class="history-info">
+                        <h4>Fix CSS layout bug</h4>
+                        <p>Claude Code • Completed 4h ago</p>
+                        <span class="history-stats">1.1K tokens • 2 min</span>
+                    </div>
+                </div>
+                <div class="history-item">
+                    <div class="history-icon cancelled">✗</div>
+                    <div class="history-info">
+                        <h4>Database schema update</h4>
+                        <p>Codex CLI • Cancelled 6h ago</p>
+                        <span class="history-stats">3.4K tokens • 5 min</span>
+                    </div>
+                </div>
+                <div class="history-item">
+                    <div class="history-icon success">✓</div>
+                    <div class="history-info">
+                        <h4>Add unit tests</h4>
+                        <p>Cursor Agent • Completed yesterday</p>
+                        <span class="history-stats">15.6K tokens • 28 min</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session Detail Modal -->
+            <div id="session-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="back-btn">← Back</button>
+                        <h2>Cursor Agent</h2>
+                        <div class="session-status running">
+                            <span class="pulse"></span>
+                            Running
+                        </div>
+                    </div>
+
+                    <div class="live-output">
+                        <div class="output-line">
+                            <span class="timestamp">09:38:12</span>
+                            <span class="content">Starting refactor of auth middleware...</span>
+                        </div>
+                        <div class="output-line">
+                            <span class="timestamp">09:38:15</span>
+                            <span class="content">Reading src/middleware/auth.js</span>
+                        </div>
+                        <div class="output-line">
+                            <span class="timestamp">09:38:18</span>
+                            <span class="content">Analyzing current implementation...</span>
+                        </div>
+                        <div class="output-line">
+                            <span class="timestamp">09:38:25</span>
+                            <span class="content">Converting to JWT-based authentication</span>
+                        </div>
+                        <div class="output-line">
+                            <span class="timestamp">09:39:02</span>
+                            <span class="content">Writing new auth.js with JWT support</span>
+                        </div>
+                        <div class="output-line thinking">
+                            <span class="timestamp">09:41:03</span>
+                            <span class="content">Updating related route handlers...</span>
+                            <span class="typing-indicator">
+                                <span></span><span></span><span></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="quick-btn" data-action="continue">👍 Continue</button>
+                        <button class="quick-btn" data-action="pause">⏸️ Pause</button>
+                        <button class="quick-btn" data-action="stop">⏹️ Stop</button>
+                    </div>
+
+                    <div class="prompt-input">
+                        <div class="input-wrapper">
+                            <input type="text" placeholder="Send a follow-up prompt..." id="prompt-text">
+                            <button class="voice-btn" id="voice-btn">🎤</button>
+                        </div>
+                        <button class="send-btn" id="send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast Notification -->
+            <div id="toast" class="toast hidden">
+                <span class="toast-icon">✓</span>
+                <span class="toast-message">Message sent!</span>
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-view="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-btn" data-view="agents">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-label">Agents</span>
+            </button>
+            <button class="nav-btn" data-view="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
