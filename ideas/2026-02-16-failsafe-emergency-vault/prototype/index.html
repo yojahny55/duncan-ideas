@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FailSafe — Emergency Access Vault</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">FailSafe</span>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </li>
+        <li class="nav-item" data-view="vault">
+          <span class="nav-icon">🔐</span>
+          <span>My Vault</span>
+        </li>
+        <li class="nav-item" data-view="contacts">
+          <span class="nav-icon">👥</span>
+          <span>Trusted Contacts</span>
+        </li>
+        <li class="nav-item" data-view="messages">
+          <span class="nav-icon">💌</span>
+          <span>Time Capsules</span>
+        </li>
+        <li class="nav-item" data-view="settings">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar">YC</div>
+          <div class="user-details">
+            <span class="user-name">Yojahny</span>
+            <span class="user-plan">Premium</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard View -->
+      <section class="view active" id="dashboard-view">
+        <header class="view-header">
+          <h1>Welcome back, Yojahny</h1>
+          <p class="subtitle">Your digital legacy is secure</p>
+        </header>
+
+        <!-- Check-in Banner -->
+        <div class="checkin-banner">
+          <div class="checkin-status">
+            <div class="status-icon success">✓</div>
+            <div class="status-info">
+              <h3>You're all checked in!</h3>
+              <p>Next check-in due in <strong>6 days</strong></p>
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="checkin-now">Check In Now</button>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🔐</div>
+            <div class="stat-value">12</div>
+            <div class="stat-label">Vault Items</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">3</div>
+            <div class="stat-label">Trusted Contacts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💌</div>
+            <div class="stat-value">2</div>
+            <div class="stat-label">Time Capsules</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">47</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+        </div>
+
+        <!-- Vault Health -->
+        <div class="health-section">
+          <h2>Vault Health</h2>
+          <div class="health-grid">
+            <div class="health-item good">
+              <span class="health-icon">✓</span>
+              <span>Passwords stored</span>
+            </div>
+            <div class="health-item good">
+              <span class="health-icon">✓</span>
+              <span>Emergency contacts set</span>
+            </div>
+            <div class="health-item warning">
+              <span class="health-icon">!</span>
+              <span>Add recovery phrases</span>
+            </div>
+            <div class="health-item good">
+              <span class="health-icon">✓</span>
+              <span>Documents uploaded</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+          <h2>Recent Activity</h2>
+          <ul class="activity-list">
+            <li class="activity-item">
+              <span class="activity-icon">✓</span>
+              <span class="activity-text">Checked in successfully</span>
+              <span class="activity-time">2 hours ago</span>
+            </li>
+            <li class="activity-item">
+              <span class="activity-icon">+</span>
+              <span class="activity-text">Added "Netflix" to vault</span>
+              <span class="activity-time">Yesterday</span>
+            </li>
+            <li class="activity-item">
+              <span class="activity-icon">👤</span>
+              <span class="activity-text">Sarah accepted trusted contact invite</span>
+              <span class="activity-time">3 days ago</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Vault View -->
+      <section class="view" id="vault-view">
+        <header class="view-header">
+          <h1>My Vault</h1>
+          <p class="subtitle">Your encrypted digital assets</p>
+        </header>
+
+        <div class="vault-actions">
+          <button class="btn btn-primary" id="add-item-btn">+ Add Item</button>
+          <div class="search-box">
+            <input type="text" placeholder="Search vault..." id="vault-search">
+          </div>
+        </div>
+
+        <div class="vault-categories">
+          <button class="category-btn active" data-category="all">All</button>
+          <button class="category-btn" data-category="passwords">Passwords</button>
+          <button class="category-btn" data-category="documents">Documents</button>
+          <button class="category-btn" data-category="crypto">Crypto</button>
+          <button class="category-btn" data-category="instructions">Instructions</button>
+        </div>
+
+        <div class="vault-grid" id="vault-grid">
+          <!-- Items populated by JS -->
+        </div>
+      </section>
+
+      <!-- Contacts View -->
+      <section class="view" id="contacts-view">
+        <header class="view-header">
+          <h1>Trusted Contacts</h1>
+          <p class="subtitle">People who can access your vault in an emergency</p>
+        </header>
+
+        <div class="contacts-info">
+          <div class="info-card">
+            <h3>How it works</h3>
+            <p>If you miss multiple check-ins, your trusted contacts will be notified. After the grace period, they can request access to your vault with proper verification.</p>
+          </div>
+        </div>
+
+        <div class="contacts-actions">
+          <button class="btn btn-primary" id="add-contact-btn">+ Invite Contact</button>
+        </div>
+
+        <div class="contacts-grid" id="contacts-grid">
+          <!-- Contacts populated by JS -->
+        </div>
+
+        <div class="access-tiers">
+          <h2>Access Tiers</h2>
+          <div class="tier-grid">
+            <div class="tier-card">
+              <div class="tier-header emergency">
+                <span class="tier-icon">🚨</span>
+                <h3>Emergency</h3>
+              </div>
+              <p>Critical info only: bank accounts, utilities, essential passwords</p>
+            </div>
+            <div class="tier-card">
+              <div class="tier-header inner">
+                <span class="tier-icon">💜</span>
+                <h3>Inner Circle</h3>
+              </div>
+              <p>Full access including personal messages and time capsules</p>
+            </div>
+            <div class="tier-card">
+              <div class="tier-header executor">
+                <span class="tier-icon">⚖️</span>
+                <h3>Executor</h3>
+              </div>
+              <p>Legal documents, all passwords, complete vault access</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Messages View -->
+      <section class="view" id="messages-view">
+        <header class="view-header">
+          <h1>Time Capsules</h1>
+          <p class="subtitle">Messages for your loved ones, delivered when the time is right</p>
+        </header>
+
+        <div class="messages-intro">
+          <div class="info-card warm">
+            <h3>💝 Share what matters</h3>
+            <p>Write letters, record videos, or leave instructions for the people you love. These will only be delivered if something happens to you.</p>
+          </div>
+        </div>
+
+        <div class="messages-actions">
+          <button class="btn btn-primary" id="add-message-btn">+ New Time Capsule</button>
+        </div>
+
+        <div class="messages-grid" id="messages-grid">
+          <!-- Messages populated by JS -->
+        </div>
+      </section>
+
+      <!-- Settings View -->
+      <section class="view" id="settings-view">
+        <header class="view-header">
+          <h1>Settings</h1>
+          <p class="subtitle">Customize your FailSafe experience</p>
+        </header>
+
+        <div class="settings-section">
+          <h2>Check-In Schedule</h2>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Check-in frequency</h3>
+              <p>How often you need to confirm you're okay</p>
+            </div>
+            <select class="setting-select" id="checkin-frequency">
+              <option value="daily">Daily</option>
+              <option value="weekly" selected>Weekly</option>
+              <option value="biweekly">Every 2 weeks</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Grace period</h3>
+              <p>Time before trusted contacts are notified</p>
+            </div>
+            <select class="setting-select" id="grace-period">
+              <option value="24">24 hours</option>
+              <option value="48" selected>48 hours</option>
+              <option value="72">72 hours</option>
+              <option value="168">1 week</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h2>Notifications</h2>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Check-in reminders</h3>
+              <p>Get reminded when a check-in is due</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>SMS backup</h3>
+              <p>Send check-in links via SMS if you miss email</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h2>Security</h2>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Two-factor authentication</h3>
+              <p>Extra security for your vault</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Require multiple contacts</h3>
+              <p>Require 2+ trusted contacts to agree before unlocking</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section danger-zone">
+          <h2>Danger Zone</h2>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Travel Mode</h3>
+              <p>Reduce check-in frequency while traveling</p>
+            </div>
+            <button class="btn btn-outline">Enable</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <h3>Export vault</h3>
+              <p>Download encrypted backup of your data</p>
+            </div>
+            <button class="btn btn-outline">Export</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal" id="modal">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <div class="modal-content" id="modal-content">
+          <!-- Modal content populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-in Success Toast -->
+    <div class="toast" id="toast">
+      <span class="toast-icon">✓</span>
+      <span class="toast-message">Checked in successfully!</span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

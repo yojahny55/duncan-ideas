@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-16 | [FailSafe](ideas/2026-02-16-failsafe-emergency-vault/) | Emergency access vault with dead man's switch — check in periodically, trusted contacts get access if something happens. Reframes morbid estate planning as practical emergency access | Web | ✅ [Demo](ideas/2026-02-16-failsafe-emergency-vault/prototype/index.html) |
 | 2026-02-16 | [ReturnMe](ideas/2026-02-16-returnme-deadline-tracker/) | Return deadline tracker — never miss a return window again. Track purchases, get escalating alerts, save money on items you forgot to return | Reddit | ✅ [Demo](ideas/2026-02-16-returnme-deadline-tracker/prototype/index.html) |
 | 2026-02-16 | [CupidBounty](ideas/2026-02-16-cupid-bounty-matchmaking/) | Matchmaking bounty marketplace — set a reward for finding your soulmate. Friends, family, or skilled matchmakers earn money when their introductions lead to real relationships | X/Twitter | ✅ [Demo](ideas/2026-02-16-cupid-bounty-matchmaking/prototype/index.html) |
 | 2026-02-15 | [GiftGenius](ideas/2026-02-15-giftgenius-ai-recommender/) | AI gift intelligence — track your gift-giving history, learn from hits and misses, get personalized AI recommendations for each person in your life. Never stress about what to buy again | Web | ✅ [Demo](ideas/2026-02-15-giftgenius-ai-recommender/prototype/index.html) |
