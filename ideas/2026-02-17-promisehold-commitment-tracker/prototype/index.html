@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromiseHold — Track What People Promised You</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🤝</span>
+                <h1>PromiseHold</h1>
+            </div>
+            <p class="tagline">Never let anyone forget what they said they'd do</p>
+        </header>
+
+        <main class="main">
+            <!-- Stats Overview -->
+            <section class="stats">
+                <div class="stat-card">
+                    <span class="stat-number" id="activeCount">0</span>
+                    <span class="stat-label">Active</span>
+                </div>
+                <div class="stat-card overdue">
+                    <span class="stat-number" id="overdueCount">0</span>
+                    <span class="stat-label">Overdue</span>
+                </div>
+                <div class="stat-card fulfilled">
+                    <span class="stat-number" id="fulfilledCount">0</span>
+                    <span class="stat-label">Fulfilled</span>
+                </div>
+            </section>
+
+            <!-- Add Promise Form -->
+            <section class="add-section">
+                <button class="add-btn" id="showAddForm">
+                    <span class="add-icon">+</span>
+                    Log a Promise
+                </button>
+                
+                <form class="add-form hidden" id="addForm">
+                    <div class="form-header">
+                        <h3>New Promise</h3>
+                        <button type="button" class="close-btn" id="closeForm">&times;</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="person">Who promised?</label>
+                        <input type="text" id="person" placeholder="e.g., Sarah, My manager, John from marketing" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="promise">What did they promise?</label>
+                        <textarea id="promise" placeholder="e.g., Send the quarterly report, Pay back the $50, Schedule our 1:1" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category">
+                                <option value="work">💼 Work</option>
+                                <option value="money">💵 Money</option>
+                                <option value="social">☕ Social</option>
+                                <option value="favor">🤝 Favor</option>
+                                <option value="other">📝 Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dueDate">Due by</label>
+                            <input type="date" id="dueDate">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="context">Context (optional)</label>
+                        <input type="text" id="context" placeholder="e.g., Mentioned in Slack, Said at lunch, Email thread">
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Save Promise</button>
+                </form>
+            </section>
+
+            <!-- Filter Tabs -->
+            <section class="tabs">
+                <button class="tab active" data-filter="all">All</button>
+                <button class="tab" data-filter="overdue">Overdue</button>
+                <button class="tab" data-filter="upcoming">Upcoming</button>
+                <button class="tab" data-filter="fulfilled">Fulfilled</button>
+            </section>
+
+            <!-- Promises List -->
+            <section class="promises-list" id="promisesList">
+                <!-- Promises will be rendered here -->
+            </section>
+
+            <!-- Empty State -->
+            <section class="empty-state hidden" id="emptyState">
+                <div class="empty-icon">📭</div>
+                <h3>No promises logged yet</h3>
+                <p>Start tracking what people owe you — money, favors, deliverables, or just their word.</p>
+            </section>
+        </main>
+
+        <!-- Promise Detail Modal -->
+        <div class="modal hidden" id="detailModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Promise Details</h3>
+                    <button class="close-btn" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Details will be rendered here -->
+                </div>
+                <div class="modal-actions" id="modalActions">
+                    <!-- Actions will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>PromiseHold — Hold them to it 🤝</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

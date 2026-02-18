@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-17 | [PromiseHold](ideas/2026-02-17-promisehold-commitment-tracker/) | Track what people promised you — log commitments others make, get follow-up reminders, never let anyone forget what they said they'd do. Money loans, work deliverables, social plans | Web | ✅ [Demo](ideas/2026-02-17-promisehold-commitment-tracker/prototype/index.html) |
 | 2026-02-17 | [CEUKeeper](ideas/2026-02-17-ceukeeper-ce-tracker/) | Professional continuing education credit tracker — manage multiple licenses across states, track CE requirements by category, smart pacing alerts, never scramble before renewal | Reddit | ✅ [Demo](ideas/2026-02-17-ceukeeper-ce-tracker/prototype/index.html) |
 | 2026-02-17 | [AgentPilot](ideas/2026-02-17-agentpilot-mobile-ai-control/) | Mobile command center for AI coding agents — monitor Cursor/Claude Code/Codex from your phone, send follow-up prompts, approve actions, never be tethered to your desk | X/Twitter | ✅ [Demo](ideas/2026-02-17-agentpilot-mobile-ai-control/prototype/index.html) |
 | 2026-02-16 | [FailSafe](ideas/2026-02-16-failsafe-emergency-vault/) | Emergency access vault with dead man's switch — check in periodically, trusted contacts get access if something happens. Reframes morbid estate planning as practical emergency access | Web | ✅ [Demo](ideas/2026-02-16-failsafe-emergency-vault/prototype/index.html) |
