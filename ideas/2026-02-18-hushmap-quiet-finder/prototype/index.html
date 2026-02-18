@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HushMap - Find Quiet Workspaces</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <span class="logo">🔇</span>
+                <h1>HushMap</h1>
+            </div>
+            <button class="btn-report" id="reportBtn">
+                <span class="plus">+</span> Report Noise
+            </button>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="M21 21l-4.35-4.35"></path>
+                </svg>
+                <input type="text" placeholder="Search for quiet places..." id="searchInput">
+            </div>
+            <div class="filter-chips">
+                <button class="chip active" data-filter="all">All</button>
+                <button class="chip" data-filter="quiet">🔇 Quiet</button>
+                <button class="chip" data-filter="cafe">☕ Cafes</button>
+                <button class="chip" data-filter="library">📚 Libraries</button>
+                <button class="chip" data-filter="cowork">💼 Coworking</button>
+            </div>
+        </div>
+
+        <!-- Map View -->
+        <div class="map-container" id="mapContainer">
+            <div class="map-overlay">
+                <div class="map-legend">
+                    <span class="legend-item"><span class="dot quiet"></span> Quiet</span>
+                    <span class="legend-item"><span class="dot moderate"></span> Moderate</span>
+                    <span class="legend-item"><span class="dot loud"></span> Loud</span>
+                </div>
+            </div>
+            <!-- Map pins will be injected here -->
+            <div class="map-pins" id="mapPins"></div>
+        </div>
+
+        <!-- Location Cards -->
+        <div class="cards-section">
+            <div class="section-header">
+                <h2>Nearby Quiet Spots</h2>
+                <span class="live-badge">● LIVE</span>
+            </div>
+            <div class="cards-scroll" id="cardsContainer">
+                <!-- Cards injected by JS -->
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <button class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>Map</span>
+            </button>
+            <button class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="M21 21l-4.35-4.35"></path>
+                </svg>
+                <span>Search</span>
+            </button>
+            <button class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Saved</span>
+            </button>
+            <button class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Settings</span>
+            </button>
+        </nav>
+
+        <!-- Report Modal -->
+        <div class="modal-overlay" id="reportModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Report Noise Level</h3>
+                    <button class="modal-close" id="modalClose">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="current-location">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span id="currentLocation">Detecting location...</span>
+                    </div>
+                    <div class="noise-levels">
+                        <button class="noise-btn" data-level="1">
+                            <span class="noise-emoji">🔇</span>
+                            <span class="noise-label">Silent</span>
+                        </button>
+                        <button class="noise-btn" data-level="2">
+                            <span class="noise-emoji">🔈</span>
+                            <span class="noise-label">Quiet</span>
+                        </button>
+                        <button class="noise-btn" data-level="3">
+                            <span class="noise-emoji">🔉</span>
+                            <span class="noise-label">Moderate</span>
+                        </button>
+                        <button class="noise-btn" data-level="4">
+                            <span class="noise-emoji">🔊</span>
+                            <span class="noise-label">Loud</span>
+                        </button>
+                        <button class="noise-btn" data-level="5">
+                            <span class="noise-emoji">📢</span>
+                            <span class="noise-label">Very Loud</span>
+                        </button>
+                    </div>
+                    <div class="report-extras">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="goodForCalls">
+                            <span>Good for video calls</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="hasOutlets">
+                            <span>Power outlets available</span>
+                        </label>
+                    </div>
+                    <button class="btn-submit" id="submitReport" disabled>
+                        Submit Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Detail Modal -->
+        <div class="modal-overlay" id="detailModal">
+            <div class="modal modal-large">
+                <div class="modal-header">
+                    <h3 id="detailName">Location Name</h3>
+                    <button class="modal-close" id="detailClose">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-noise-current">
+                        <div class="current-noise-display" id="detailNoiseDisplay">
+                            <span class="noise-emoji-large">🔈</span>
+                            <div class="noise-info">
+                                <span class="noise-level-text">Quiet</span>
+                                <span class="noise-updated">Updated 5 min ago</span>
+                            </div>
+                        </div>
+                        <div class="detail-stats">
+                            <div class="stat">
+                                <span class="stat-value" id="detailReports">24</span>
+                                <span class="stat-label">Reports today</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="detailAccuracy">92%</span>
+                                <span class="stat-label">Accuracy</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="noise-chart">
+                        <h4>Noise Throughout the Day</h4>
+                        <div class="chart-container" id="noiseChart"></div>
+                        <div class="chart-labels">
+                            <span>6am</span>
+                            <span>9am</span>
+                            <span>12pm</span>
+                            <span>3pm</span>
+                            <span>6pm</span>
+                            <span>9pm</span>
+                        </div>
+                    </div>
+                    <div class="detail-amenities">
+                        <h4>Amenities</h4>
+                        <div class="amenities-grid" id="detailAmenities">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+                    <button class="btn-navigate">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                        </svg>
+                        Navigate Here
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span class="toast-icon">✓</span>
+            <span class="toast-message">Report submitted! Thanks for helping the community.</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

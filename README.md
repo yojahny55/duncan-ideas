@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-18 | [HushMap](ideas/2026-02-18-hushmap-quiet-finder/) | Crowdsourced noise level tracker for remote workers — find quiet cafes, libraries, and coworking spaces. Real-time noise reports, historical patterns, never waste time at a loud spot again | Reddit | ✅ [Demo](ideas/2026-02-18-hushmap-quiet-finder/prototype/index.html) |
 | 2026-02-18 | [Yapper](ideas/2026-02-18-yapper-voice-social/) | Asynchronous voice social network — post voice clips instead of text, listen to audio feeds, reply with voice. Like Twitter but everything is short audio. No video, no camera, just tap and talk | X/Twitter | ✅ [Demo](ideas/2026-02-18-yapper-voice-social/prototype/index.html) |
 | 2026-02-17 | [PromiseHold](ideas/2026-02-17-promisehold-commitment-tracker/) | Track what people promised you — log commitments others make, get follow-up reminders, never let anyone forget what they said they'd do. Money loans, work deliverables, social plans | Web | ✅ [Demo](ideas/2026-02-17-promisehold-commitment-tracker/prototype/index.html) |
 | 2026-02-17 | [CEUKeeper](ideas/2026-02-17-ceukeeper-ce-tracker/) | Professional continuing education credit tracker — manage multiple licenses across states, track CE requirements by category, smart pacing alerts, never scramble before renewal | Reddit | ✅ [Demo](ideas/2026-02-17-ceukeeper-ce-tracker/prototype/index.html) |
