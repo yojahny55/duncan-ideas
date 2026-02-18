@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Yapper — Voice Social Network</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="time">1:00</span>
+      <div class="status-icons">
+        <span class="signal">●●●●○</span>
+        <span class="wifi">📶</span>
+        <span class="battery">🔋</span>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-icon">🎙️</span>
+          <span class="logo-text">Yapper</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" title="Search">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+        </button>
+        <button class="icon-btn" title="Notifications">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+          </svg>
+          <span class="notification-dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Tab Navigation -->
+      <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="feed">For You</button>
+        <button class="tab-btn" data-tab="following">Following</button>
+        <button class="tab-btn" data-tab="trending">Trending</button>
+      </nav>
+
+      <!-- Voice Feed -->
+      <div class="feed" id="feed">
+        <!-- Yaps will be injected here -->
+      </div>
+
+      <!-- Now Playing Bar (hidden by default) -->
+      <div class="now-playing" id="nowPlaying">
+        <div class="now-playing-waveform">
+          <canvas id="miniWaveform" width="60" height="32"></canvas>
+        </div>
+        <div class="now-playing-info">
+          <span class="now-playing-user">@techie_maya</span>
+          <span class="now-playing-duration">0:23 / 0:45</span>
+        </div>
+        <div class="now-playing-controls">
+          <button class="speed-btn" id="speedBtn">1x</button>
+          <button class="play-pause-mini" id="playPauseMini">
+            <svg class="pause-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+          <button class="close-player" id="closePlayer">✕</button>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Record Button (FAB) -->
+    <button class="record-fab" id="recordFab" title="Tap to Yap">
+      <svg class="mic-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"></path>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="currentColor" stroke-width="2" fill="none"></path>
+        <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" stroke-width="2"></line>
+        <line x1="8" y1="23" x2="16" y2="23" stroke="currentColor" stroke-width="2"></line>
+      </svg>
+      <span class="record-text">Yap</span>
+    </button>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-view="home">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        </svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" data-view="discover">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+        </svg>
+        <span>Discover</span>
+      </button>
+      <button class="nav-btn" data-view="activity">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+        </svg>
+        <span>Activity</span>
+      </button>
+      <button class="nav-btn" data-view="profile">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <!-- Recording Modal -->
+    <div class="modal" id="recordModal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content recording-modal">
+        <div class="recording-header">
+          <h2>New Yap</h2>
+          <button class="close-modal" id="closeRecordModal">✕</button>
+        </div>
+        
+        <div class="recording-body">
+          <div class="recording-visualizer">
+            <canvas id="recordingCanvas" width="280" height="100"></canvas>
+          </div>
+          <div class="recording-timer" id="recordingTimer">0:00</div>
+          <div class="recording-limit">90 sec max</div>
+        </div>
+
+        <div class="recording-actions">
+          <button class="recording-btn cancel" id="cancelRecording">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <button class="recording-btn record" id="startRecording">
+            <div class="record-circle"></div>
+          </button>
+          <button class="recording-btn send" id="sendRecording" disabled>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="m22 2-7 20-4-9-9-4 20-7z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="topic-selector">
+          <span class="topic-label">Topic:</span>
+          <div class="topic-chips">
+            <button class="topic-chip active">#random</button>
+            <button class="topic-chip">#tech</button>
+            <button class="topic-chip">#music</button>
+            <button class="topic-chip">#hot-takes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Yap Detail Modal -->
+    <div class="modal" id="yapDetailModal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content yap-detail">
+        <div class="yap-detail-header">
+          <button class="back-btn" id="closeYapDetail">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m15 18-6-6 6-6"></path>
+            </svg>
+          </button>
+          <span>Yap</span>
+          <button class="more-btn">⋮</button>
+        </div>
+        
+        <div class="yap-detail-content" id="yapDetailContent">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="yap-replies" id="yapReplies">
+          <h3>Replies</h3>
+          <!-- Reply yaps -->
+        </div>
+
+        <div class="reply-input">
+          <button class="voice-reply-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"></path>
+            </svg>
+            Reply with voice
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
