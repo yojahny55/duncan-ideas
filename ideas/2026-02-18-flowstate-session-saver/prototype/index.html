@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowState — Work Session Saver</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🧠</span>
+        <span class="logo-text">FlowState</span>
+      </div>
+      
+      <nav class="nav">
+        <a href="#" class="nav-item active">
+          <span class="nav-icon">📋</span>
+          Sessions
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">📊</span>
+          Insights
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          Settings
+        </a>
+      </nav>
+
+      <div class="capture-btn-container">
+        <button class="capture-btn" id="captureBtn">
+          <span class="capture-icon">⚡</span>
+          Quick Capture
+          <span class="shortcut">⌘⇧S</span>
+        </button>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-value">12</span>
+          <span class="stat-label">Sessions Today</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">47m</span>
+          <span class="stat-label">Context Saved</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="header">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search sessions..." id="searchInput">
+        </div>
+        <div class="header-actions">
+          <select class="filter-select" id="filterSelect">
+            <option value="all">All Projects</option>
+            <option value="auth-api">auth-api</option>
+            <option value="dashboard">dashboard-redesign</option>
+            <option value="research">research</option>
+          </select>
+        </div>
+      </header>
+
+      <div class="timeline">
+        <h2 class="timeline-title">Today</h2>
+        
+        <div class="session-list" id="sessionList">
+          <!-- Sessions will be rendered here -->
+        </div>
+
+        <h2 class="timeline-title">Yesterday</h2>
+        <div class="session-list" id="yesterdayList">
+          <!-- Yesterday's sessions -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Session Detail Panel -->
+    <aside class="detail-panel" id="detailPanel">
+      <div class="detail-header">
+        <h3>Session Details</h3>
+        <button class="close-btn" id="closeDetail">✕</button>
+      </div>
+      <div class="detail-content" id="detailContent">
+        <p class="empty-state">Select a session to view details</p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Capture Modal -->
+  <div class="modal-overlay" id="captureModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>⚡ Quick Capture</h3>
+        <button class="close-btn" id="closeModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="capture-preview">
+          <h4>Capturing your context...</h4>
+          <div class="preview-items">
+            <div class="preview-item">
+              <span class="preview-icon">🌐</span>
+              <span class="preview-text" id="tabCount">8 browser tabs</span>
+              <span class="preview-check">✓</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-icon">📁</span>
+              <span class="preview-text">3 open files</span>
+              <span class="preview-check">✓</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-icon">🖥️</span>
+              <span class="preview-text">VS Code, Chrome, Slack</span>
+              <span class="preview-check">✓</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="voice-capture">
+          <label>🎤 Voice note (optional)</label>
+          <button class="voice-btn" id="voiceBtn">
+            <span class="voice-icon">🎙️</span>
+            <span class="voice-text">Hold to record</span>
+          </button>
+          <p class="voice-transcript" id="voiceTranscript"></p>
+        </div>
+
+        <div class="text-capture">
+          <label>✏️ Or type a quick note</label>
+          <textarea id="noteInput" placeholder="What were you working on? What's your next step?"></textarea>
+        </div>
+
+        <div class="tag-capture">
+          <label>🏷️ Project tag</label>
+          <div class="tag-list">
+            <button class="tag active" data-tag="auth-api">auth-api</button>
+            <button class="tag" data-tag="dashboard">dashboard</button>
+            <button class="tag" data-tag="research">research</button>
+            <button class="tag add-tag">+ Add</button>
+          </div>
+        </div>
+
+        <div class="interruption-capture">
+          <label>🚨 What interrupted you?</label>
+          <div class="interruption-options">
+            <button class="interruption-btn" data-type="meeting">📅 Meeting</button>
+            <button class="interruption-btn" data-type="slack">💬 Slack</button>
+            <button class="interruption-btn" data-type="email">📧 Email</button>
+            <button class="interruption-btn" data-type="other">🔔 Other</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelCapture">Cancel</button>
+        <button class="btn btn-primary" id="saveCapture">Save Session</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Restore Toast -->
+  <div class="toast" id="restoreToast">
+    <span class="toast-icon">✅</span>
+    <span class="toast-text">Session restored! 8 tabs, 3 files reopened.</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
