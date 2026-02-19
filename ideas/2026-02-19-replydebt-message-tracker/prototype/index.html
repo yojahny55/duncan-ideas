@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReplyDebt - Track Your Response Debt</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">💬 ReplyDebt</h1>
+            </div>
+            <div class="header-center">
+                <div class="debt-score">
+                    <span class="debt-label">Total Debt</span>
+                    <span class="debt-value" id="totalDebt">4d 7h</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-ghost" id="settingsBtn">⚙️</button>
+                <div class="avatar">YC</div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="nav">
+                    <a href="#" class="nav-item active" data-filter="all">
+                        <span class="nav-icon">📥</span>
+                        <span class="nav-label">All Pending</span>
+                        <span class="nav-badge" id="allCount">8</span>
+                    </a>
+                    <a href="#" class="nav-item" data-filter="urgent">
+                        <span class="nav-icon">🔥</span>
+                        <span class="nav-label">Urgent (3d+)</span>
+                        <span class="nav-badge urgent" id="urgentCount">3</span>
+                    </a>
+                    <a href="#" class="nav-item" data-filter="vip">
+                        <span class="nav-icon">⭐</span>
+                        <span class="nav-label">VIPs</span>
+                        <span class="nav-badge" id="vipCount">2</span>
+                    </a>
+                    <a href="#" class="nav-item" data-filter="snoozed">
+                        <span class="nav-icon">💤</span>
+                        <span class="nav-label">Snoozed</span>
+                        <span class="nav-badge" id="snoozedCount">1</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">Platforms</h3>
+                    <div class="platform-filters">
+                        <label class="platform-filter">
+                            <input type="checkbox" checked data-platform="gmail">
+                            <span class="platform-icon">📧</span> Gmail
+                            <span class="platform-count">4</span>
+                        </label>
+                        <label class="platform-filter">
+                            <input type="checkbox" checked data-platform="slack">
+                            <span class="platform-icon">💼</span> Slack
+                            <span class="platform-count">2</span>
+                        </label>
+                        <label class="platform-filter">
+                            <input type="checkbox" checked data-platform="whatsapp">
+                            <span class="platform-icon">📱</span> WhatsApp
+                            <span class="platform-count">1</span>
+                        </label>
+                        <label class="platform-filter">
+                            <input type="checkbox" checked data-platform="linkedin">
+                            <span class="platform-icon">🔗</span> LinkedIn
+                            <span class="platform-count">1</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">This Week</h3>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-value">23</span>
+                            <span class="stat-label">Cleared</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">4.2h</span>
+                            <span class="stat-label">Avg Time</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Message List -->
+            <section class="content">
+                <div class="content-header">
+                    <h2 class="content-title">Waiting for your reply</h2>
+                    <div class="sort-controls">
+                        <select id="sortSelect" class="sort-select">
+                            <option value="wait-time">Longest waiting</option>
+                            <option value="recent">Most recent</option>
+                            <option value="platform">By platform</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="message-list" id="messageList">
+                    <!-- Messages will be rendered here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Quick Reply Modal -->
+        <div class="modal" id="replyModal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Quick Actions</h3>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-message-info" id="modalMessageInfo">
+                        <!-- Message info will be populated -->
+                    </div>
+                    <div class="modal-actions">
+                        <button class="action-btn primary" id="openAppBtn">
+                            <span class="action-icon">↗️</span>
+                            Open & Reply
+                        </button>
+                        <button class="action-btn" id="snoozeBtn">
+                            <span class="action-icon">💤</span>
+                            Snooze (Tomorrow)
+                        </button>
+                        <button class="action-btn" id="markRepliedBtn">
+                            <span class="action-icon">✅</span>
+                            Mark as Replied
+                        </button>
+                        <button class="action-btn danger" id="archiveBtn">
+                            <span class="action-icon">🗑️</span>
+                            No Reply Needed
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <span class="toast-message"></span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

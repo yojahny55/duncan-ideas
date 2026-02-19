@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TunePort — Seamless Music Library Migration</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18V5l12-2v13"/>
+                    <circle cx="6" cy="18" r="3"/>
+                    <circle cx="18" cy="16" r="3"/>
+                </svg>
+                <span class="logo-text">TunePort</span>
+            </div>
+            <div class="header-tagline">One-time migration. No subscription.</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Step Indicator -->
+            <div class="steps">
+                <div class="step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Connect Source</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Scan Library</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Choose Destination</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="4">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Preview & Migrate</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Connect Source -->
+            <section class="panel panel-source active" id="panel-1">
+                <h2 class="panel-title">Where are your playlists now?</h2>
+                <p class="panel-subtitle">Select your current music streaming service</p>
+                
+                <div class="service-grid">
+                    <button class="service-card" data-service="spotify">
+                        <div class="service-icon spotify">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Spotify</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="apple">
+                        <div class="service-icon apple">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.997 6.124c0-.738-.065-1.47-.24-2.19a4.83 4.83 0 00-.74-1.74 3.6 3.6 0 00-1.3-1.23 5.1 5.1 0 00-1.72-.65c-.73-.14-1.47-.2-2.21-.2H6.213c-.74 0-1.48.06-2.21.2a5.1 5.1 0 00-1.72.65 3.6 3.6 0 00-1.3 1.23c-.35.53-.6 1.11-.74 1.74-.18.72-.24 1.45-.24 2.19v11.75c0 .74.06 1.47.24 2.19.14.63.39 1.21.74 1.74a3.6 3.6 0 001.3 1.23c.53.31 1.11.52 1.72.65.73.14 1.47.2 2.21.2h11.57c.74 0 1.48-.06 2.21-.2a5.1 5.1 0 001.72-.65 3.6 3.6 0 001.3-1.23c.35-.53.6-1.11.74-1.74.18-.72.24-1.45.24-2.19V6.124zm-3.7 9.56c-.06.17-.14.33-.25.48-.21.28-.5.48-.83.58-.35.11-.72.11-1.07 0a1.76 1.76 0 01-.83-.58l-1.89-2.52-.46-.61v4.04c0 .35-.14.69-.38.94-.24.25-.57.39-.91.39-.34 0-.67-.14-.91-.39-.24-.25-.38-.59-.38-.94V9.76c0-.35.14-.69.38-.94.24-.25.57-.39.91-.39.34 0 .67.14.91.39l2.78 3.7v-3.7c0-.35.14-.69.38-.94.24-.25.57-.39.91-.39.34 0 .67.14.91.39.24.25.38.59.38.94v5.94c0 .14-.02.28-.06.41zm-6.86-5.95c0-.35.14-.69.38-.94.24-.25.57-.39.91-.39.34 0 .67.14.91.39.24.25.38.59.38.94v5.94c0 .35-.14.69-.38.94-.24.25-.57.39-.91.39-.34 0-.67-.14-.91-.39-.24-.25-.38-.59-.38-.94V9.74zm-2.75 3.07l-.42.91a4.34 4.34 0 01-.42.73c-.16.22-.35.41-.56.58-.21.17-.44.3-.69.41-.25.1-.51.18-.78.22-.27.04-.54.04-.81 0a3.45 3.45 0 01-.78-.22 2.87 2.87 0 01-.69-.41 3.15 3.15 0 01-.56-.58 4.34 4.34 0 01-.42-.73l-.42-.91c-.14-.3-.24-.61-.32-.93-.07-.32-.11-.64-.11-.97s.04-.65.11-.97c.08-.32.18-.63.32-.93l.42-.91c.12-.26.27-.5.42-.73.16-.22.35-.41.56-.58.21-.17.44-.3.69-.41.25-.1.51-.18.78-.22.27-.04.54-.04.81 0 .27.04.53.12.78.22.25.11.48.24.69.41.21.17.4.36.56.58.16.23.3.47.42.73l.42.91c.14.3.24.61.32.93.07.32.11.64.11.97s-.04.65-.11.97c-.08.32-.18.63-.32.93z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Apple Music</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="youtube">
+                        <div class="service-icon youtube">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm0 19.104c-3.924 0-7.104-3.18-7.104-7.104S8.076 4.896 12 4.896s7.104 3.18 7.104 7.104-3.18 7.104-7.104 7.104zm0-13.332c-3.432 0-6.228 2.796-6.228 6.228S8.568 18.228 12 18.228 18.228 15.432 18.228 12 15.432 5.772 12 5.772zM9.684 15.54V8.46L15.816 12l-6.132 3.54z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">YouTube Music</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="tidal">
+                        <div class="service-icon tidal">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004L8.008 8l4.004 4-4.004 4.004L12.012 20l4.004-4.004L12.012 12l4.004-4.004-4.004-4.004zm4.004 4.004l4.004-4.004L24.024 8l-4.004 4.004-4.004-4.008z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Tidal</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="deezer">
+                        <div class="service-icon deezer">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="0" y="18" width="4" height="3"/>
+                                <rect x="0" y="14" width="4" height="3"/>
+                                <rect x="5" y="18" width="4" height="3"/>
+                                <rect x="5" y="14" width="4" height="3"/>
+                                <rect x="5" y="10" width="4" height="3"/>
+                                <rect x="10" y="18" width="4" height="3"/>
+                                <rect x="10" y="14" width="4" height="3"/>
+                                <rect x="10" y="10" width="4" height="3"/>
+                                <rect x="10" y="6" width="4" height="3"/>
+                                <rect x="10" y="2" width="4" height="3"/>
+                                <rect x="15" y="18" width="4" height="3"/>
+                                <rect x="15" y="14" width="4" height="3"/>
+                                <rect x="15" y="10" width="4" height="3"/>
+                                <rect x="20" y="18" width="4" height="3"/>
+                                <rect x="20" y="14" width="4" height="3"/>
+                                <rect x="20" y="10" width="4" height="3"/>
+                                <rect x="20" y="6" width="4" height="3"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Deezer</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="amazon">
+                        <div class="service-icon amazon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Amazon Music</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Step 2: Scanning -->
+            <section class="panel panel-scan" id="panel-2">
+                <h2 class="panel-title">Scanning your library...</h2>
+                <p class="panel-subtitle">We're finding all your playlists, liked songs, and saved albums</p>
+                
+                <div class="scan-container">
+                    <div class="scan-service">
+                        <div class="scan-service-icon spotify">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                        </div>
+                        <span class="scan-service-name">Connected to Spotify</span>
+                    </div>
+                    
+                    <div class="scan-items">
+                        <div class="scan-item">
+                            <div class="scan-item-icon">📁</div>
+                            <div class="scan-item-info">
+                                <div class="scan-item-label">Playlists</div>
+                                <div class="scan-item-count" id="playlist-count">0</div>
+                            </div>
+                            <div class="scan-item-progress">
+                                <div class="progress-bar" id="playlist-progress"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="scan-item">
+                            <div class="scan-item-icon">❤️</div>
+                            <div class="scan-item-info">
+                                <div class="scan-item-label">Liked Songs</div>
+                                <div class="scan-item-count" id="liked-count">0</div>
+                            </div>
+                            <div class="scan-item-progress">
+                                <div class="progress-bar" id="liked-progress"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="scan-item">
+                            <div class="scan-item-icon">💿</div>
+                            <div class="scan-item-info">
+                                <div class="scan-item-label">Saved Albums</div>
+                                <div class="scan-item-count" id="album-count">0</div>
+                            </div>
+                            <div class="scan-item-progress">
+                                <div class="progress-bar" id="album-progress"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="scan-item">
+                            <div class="scan-item-icon">👤</div>
+                            <div class="scan-item-info">
+                                <div class="scan-item-label">Followed Artists</div>
+                                <div class="scan-item-count" id="artist-count">0</div>
+                            </div>
+                            <div class="scan-item-progress">
+                                <div class="progress-bar" id="artist-progress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="scan-status" id="scan-status">Scanning playlists...</div>
+                </div>
+            </section>
+
+            <!-- Step 3: Choose Destination -->
+            <section class="panel panel-destination" id="panel-3">
+                <h2 class="panel-title">Where do you want your music?</h2>
+                <p class="panel-subtitle">Select your new music streaming service</p>
+                
+                <div class="library-summary">
+                    <div class="summary-header">Your Library</div>
+                    <div class="summary-stats">
+                        <div class="summary-stat">
+                            <span class="stat-value">47</span>
+                            <span class="stat-label">Playlists</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-value">1,247</span>
+                            <span class="stat-label">Songs</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-value">89</span>
+                            <span class="stat-label">Albums</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-value">156</span>
+                            <span class="stat-label">Artists</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-grid destination-grid">
+                    <button class="service-card" data-service="apple">
+                        <div class="service-icon apple">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.997 6.124c0-.738-.065-1.47-.24-2.19a4.83 4.83 0 00-.74-1.74 3.6 3.6 0 00-1.3-1.23 5.1 5.1 0 00-1.72-.65c-.73-.14-1.47-.2-2.21-.2H6.213c-.74 0-1.48.06-2.21.2a5.1 5.1 0 00-1.72.65 3.6 3.6 0 00-1.3 1.23c-.35.53-.6 1.11-.74 1.74-.18.72-.24 1.45-.24 2.19v11.75c0 .74.06 1.47.24 2.19.14.63.39 1.21.74 1.74a3.6 3.6 0 001.3 1.23c.53.31 1.11.52 1.72.65.73.14 1.47.2 2.21.2h11.57c.74 0 1.48-.06 2.21-.2a5.1 5.1 0 001.72-.65 3.6 3.6 0 001.3-1.23c.35-.53.6-1.11.74-1.74.18-.72.24-1.45.24-2.19V6.124z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Apple Music</span>
+                        <span class="match-estimate">~95% match rate</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="youtube">
+                        <div class="service-icon youtube">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm0 19.104c-3.924 0-7.104-3.18-7.104-7.104S8.076 4.896 12 4.896s7.104 3.18 7.104 7.104-3.18 7.104-7.104 7.104zm0-13.332c-3.432 0-6.228 2.796-6.228 6.228S8.568 18.228 12 18.228 18.228 15.432 18.228 12 15.432 5.772 12 5.772zM9.684 15.54V8.46L15.816 12l-6.132 3.54z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">YouTube Music</span>
+                        <span class="match-estimate">~92% match rate</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="tidal">
+                        <div class="service-icon tidal">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004L8.008 8l4.004 4-4.004 4.004L12.012 20l4.004-4.004L12.012 12l4.004-4.004-4.004-4.004zm4.004 4.004l4.004-4.004L24.024 8l-4.004 4.004-4.004-4.008z"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Tidal</span>
+                        <span class="match-estimate">~89% match rate</span>
+                    </button>
+                    
+                    <button class="service-card" data-service="deezer">
+                        <div class="service-icon deezer">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="0" y="18" width="4" height="3"/>
+                                <rect x="0" y="14" width="4" height="3"/>
+                                <rect x="5" y="18" width="4" height="3"/>
+                                <rect x="5" y="14" width="4" height="3"/>
+                                <rect x="5" y="10" width="4" height="3"/>
+                                <rect x="10" y="18" width="4" height="3"/>
+                                <rect x="10" y="14" width="4" height="3"/>
+                                <rect x="10" y="10" width="4" height="3"/>
+                                <rect x="10" y="6" width="4" height="3"/>
+                            </svg>
+                        </div>
+                        <span class="service-name">Deezer</span>
+                        <span class="match-estimate">~88% match rate</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Step 4: Preview & Migrate -->
+            <section class="panel panel-preview" id="panel-4">
+                <h2 class="panel-title">Review your migration</h2>
+                <p class="panel-subtitle">We found matches for most of your library</p>
+                
+                <div class="match-summary">
+                    <div class="match-card match-exact">
+                        <div class="match-icon">✅</div>
+                        <div class="match-info">
+                            <div class="match-count">1,187</div>
+                            <div class="match-label">Exact matches</div>
+                        </div>
+                    </div>
+                    <div class="match-card match-similar">
+                        <div class="match-icon">🟡</div>
+                        <div class="match-info">
+                            <div class="match-count">43</div>
+                            <div class="match-label">Similar matches</div>
+                        </div>
+                    </div>
+                    <div class="match-card match-missing">
+                        <div class="match-icon">🔴</div>
+                        <div class="match-info">
+                            <div class="match-count">17</div>
+                            <div class="match-label">Not found</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-list">
+                    <div class="preview-header">
+                        <span>Preview (showing similar matches)</span>
+                        <button class="btn-text">View all</button>
+                    </div>
+                    
+                    <div class="preview-item similar">
+                        <div class="preview-status">🟡</div>
+                        <div class="preview-info">
+                            <div class="preview-track">
+                                <span class="track-title">Bohemian Rhapsody</span>
+                                <span class="track-artist">Queen</span>
+                            </div>
+                            <div class="preview-match">
+                                <span class="match-arrow">→</span>
+                                <span class="match-text">Bohemian Rhapsody (Remastered 2011)</span>
+                            </div>
+                        </div>
+                        <button class="btn-change">Change</button>
+                    </div>
+                    
+                    <div class="preview-item similar">
+                        <div class="preview-status">🟡</div>
+                        <div class="preview-info">
+                            <div class="preview-track">
+                                <span class="track-title">Stairway to Heaven</span>
+                                <span class="track-artist">Led Zeppelin</span>
+                            </div>
+                            <div class="preview-match">
+                                <span class="match-arrow">→</span>
+                                <span class="match-text">Stairway to Heaven (Remaster)</span>
+                            </div>
+                        </div>
+                        <button class="btn-change">Change</button>
+                    </div>
+                    
+                    <div class="preview-item missing">
+                        <div class="preview-status">🔴</div>
+                        <div class="preview-info">
+                            <div class="preview-track">
+                                <span class="track-title">Local File - Demo Track</span>
+                                <span class="track-artist">Unknown Artist</span>
+                            </div>
+                            <div class="preview-match">
+                                <span class="match-text unavailable">Not available on Apple Music</span>
+                            </div>
+                        </div>
+                        <button class="btn-search">Search</button>
+                    </div>
+                </div>
+                
+                <div class="pricing-section">
+                    <div class="pricing-header">Select your plan</div>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <div class="pricing-name">Basic</div>
+                            <div class="pricing-price">$4.99</div>
+                            <div class="pricing-features">
+                                <div>Up to 1,000 songs</div>
+                                <div>10 playlists</div>
+                            </div>
+                        </div>
+                        <div class="pricing-card recommended">
+                            <div class="pricing-badge">Recommended</div>
+                            <div class="pricing-name">Standard</div>
+                            <div class="pricing-price">$9.99</div>
+                            <div class="pricing-features">
+                                <div>Up to 5,000 songs</div>
+                                <div>Unlimited playlists</div>
+                            </div>
+                        </div>
+                        <div class="pricing-card">
+                            <div class="pricing-name">Unlimited</div>
+                            <div class="pricing-price">$14.99</div>
+                            <div class="pricing-features">
+                                <div>Unlimited songs</div>
+                                <div>Backup export</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-migrate" id="btn-migrate">
+                    <span>Migrate to Apple Music</span>
+                    <span class="btn-price">$9.99</span>
+                </button>
+            </section>
+
+            <!-- Step 5: Migration Progress -->
+            <section class="panel panel-progress" id="panel-5">
+                <h2 class="panel-title">Migrating your library...</h2>
+                <p class="panel-subtitle">This may take a few minutes. Don't close this page.</p>
+                
+                <div class="migration-progress">
+                    <div class="progress-circle">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="progress-bg" cx="50" cy="50" r="45"/>
+                            <circle class="progress-fill" cx="50" cy="50" r="45" id="progress-circle"/>
+                        </svg>
+                        <div class="progress-text" id="progress-percent">0%</div>
+                    </div>
+                    
+                    <div class="migration-status">
+                        <div class="status-current" id="status-current">Starting migration...</div>
+                        <div class="status-eta" id="status-eta">Estimated time: calculating...</div>
+                    </div>
+                    
+                    <div class="migration-log" id="migration-log">
+                        <div class="log-entry">✓ Connected to Apple Music</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 6: Complete -->
+            <section class="panel panel-complete" id="panel-6">
+                <div class="complete-icon">🎉</div>
+                <h2 class="panel-title">Migration complete!</h2>
+                <p class="panel-subtitle">Your music library is now on Apple Music</p>
+                
+                <div class="complete-stats">
+                    <div class="complete-stat">
+                        <span class="stat-value">1,230</span>
+                        <span class="stat-label">Songs migrated</span>
+                    </div>
+                    <div class="complete-stat">
+                        <span class="stat-value">47</span>
+                        <span class="stat-label">Playlists created</span>
+                    </div>
+                    <div class="complete-stat">
+                        <span class="stat-value">89</span>
+                        <span class="stat-label">Albums saved</span>
+                    </div>
+                </div>
+                
+                <div class="complete-actions">
+                    <a href="#" class="btn-open">Open Apple Music</a>
+                    <button class="btn-download">Download Backup (JSON)</button>
+                </div>
+                
+                <div class="complete-share">
+                    <span>Loved TunePort? Share it!</span>
+                    <div class="share-buttons">
+                        <button class="btn-share twitter">𝕏</button>
+                        <button class="btn-share copy">📋</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-text">
+                One-time fee. No subscription. Your music, your choice.
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
