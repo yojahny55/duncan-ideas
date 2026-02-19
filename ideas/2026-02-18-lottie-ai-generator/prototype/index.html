@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LottieForge — AI Lottie Animation Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">✨</span>
+        <span class="logo-text">LottieForge</span>
+      </div>
+      <nav class="nav">
+        <a href="#" class="nav-link active">Generate</a>
+        <a href="#" class="nav-link">My Animations</a>
+        <a href="#" class="nav-link">Pricing</a>
+      </nav>
+      <div class="credits-display">
+        <span class="credits-icon">🎫</span>
+        <span class="credits-count" id="creditsCount">7</span>
+        <span class="credits-label">credits</span>
+        <button class="buy-credits-btn">+ Buy More</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Input Section -->
+      <section class="input-section">
+        <h1 class="hero-title">Generate Lottie Animations with AI</h1>
+        <p class="hero-subtitle">From text prompts or static images — pay only for what you create</p>
+
+        <!-- Tab Switcher -->
+        <div class="input-tabs">
+          <button class="tab-btn active" data-tab="prompt">
+            <span class="tab-icon">✏️</span>
+            Text Prompt
+          </button>
+          <button class="tab-btn" data-tab="upload">
+            <span class="tab-icon">📤</span>
+            Upload Image
+          </button>
+        </div>
+
+        <!-- Text Prompt Tab -->
+        <div class="tab-content active" id="promptTab">
+          <div class="prompt-input-container">
+            <textarea 
+              id="promptInput" 
+              class="prompt-input" 
+              placeholder="Describe your animation...&#10;&#10;Examples:&#10;• Bouncing loading dots, 3 blue circles&#10;• Heart icon that pulses and fills with red&#10;• Checkmark that draws itself with a swoosh&#10;• Spinning gear with smooth rotation"
+            ></textarea>
+            <div class="prompt-suggestions">
+              <span class="suggestion-label">Try:</span>
+              <button class="suggestion-chip" data-prompt="bouncing loading spinner with 3 dots">Loading dots</button>
+              <button class="suggestion-chip" data-prompt="heart icon that pulses and fills">Heart pulse</button>
+              <button class="suggestion-chip" data-prompt="success checkmark with confetti">Checkmark</button>
+              <button class="suggestion-chip" data-prompt="smooth rotating gear icon">Spinning gear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload Tab -->
+        <div class="tab-content" id="uploadTab">
+          <div class="upload-zone" id="uploadZone">
+            <div class="upload-content">
+              <span class="upload-icon">📁</span>
+              <p class="upload-text">Drop SVG, PNG, or JPG here</p>
+              <p class="upload-subtext">or click to browse</p>
+              <input type="file" id="fileInput" accept=".svg,.png,.jpg,.jpeg" hidden>
+            </div>
+            <div class="upload-preview" id="uploadPreview">
+              <img id="previewImage" src="" alt="Preview">
+              <button class="remove-upload" id="removeUpload">✕</button>
+            </div>
+          </div>
+          <div class="animation-suggestions" id="animationSuggestions">
+            <p class="suggestions-label">Suggested animations for this icon:</p>
+            <div class="suggestion-buttons">
+              <button class="anim-suggestion" data-anim="pulse">💓 Pulse</button>
+              <button class="anim-suggestion" data-anim="rotate">🔄 Rotate</button>
+              <button class="anim-suggestion" data-anim="bounce">⬆️ Bounce</button>
+              <button class="anim-suggestion" data-anim="scale">📐 Scale</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Style Options -->
+        <div class="style-options">
+          <div class="option-group">
+            <label>Animation Style</label>
+            <div class="style-buttons">
+              <button class="style-btn active" data-style="minimal">Minimal</button>
+              <button class="style-btn" data-style="playful">Playful</button>
+              <button class="style-btn" data-style="professional">Professional</button>
+              <button class="style-btn" data-style="handdrawn">Hand-drawn</button>
+            </div>
+          </div>
+          <div class="option-group">
+            <label>Duration</label>
+            <div class="duration-slider">
+              <input type="range" id="durationSlider" min="0.5" max="3" step="0.1" value="1">
+              <span class="duration-value" id="durationValue">1.0s</span>
+            </div>
+          </div>
+          <div class="option-group">
+            <label>Loop</label>
+            <button class="toggle-btn active" id="loopToggle">
+              <span class="toggle-indicator"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button class="generate-btn" id="generateBtn">
+          <span class="btn-icon">⚡</span>
+          Generate Animation
+          <span class="btn-cost">1 credit</span>
+        </button>
+      </section>
+
+      <!-- Preview Section -->
+      <section class="preview-section" id="previewSection">
+        <div class="preview-header">
+          <h2>Preview</h2>
+          <div class="preview-controls">
+            <button class="preview-control" id="playPauseBtn">⏸️</button>
+            <button class="preview-control" id="restartBtn">🔄</button>
+          </div>
+        </div>
+        
+        <div class="preview-container">
+          <div class="preview-canvas" id="previewCanvas">
+            <div class="empty-preview">
+              <span class="empty-icon">🎬</span>
+              <p>Your animation will appear here</p>
+            </div>
+            <div class="lottie-player" id="lottiePlayer"></div>
+          </div>
+          
+          <!-- Generation Progress -->
+          <div class="generation-progress" id="generationProgress">
+            <div class="progress-spinner"></div>
+            <p class="progress-text">Generating your animation...</p>
+            <div class="progress-steps">
+              <div class="progress-step active">
+                <span class="step-check">✓</span>
+                Analyzing prompt
+              </div>
+              <div class="progress-step">
+                <span class="step-check">○</span>
+                Creating vectors
+              </div>
+              <div class="progress-step">
+                <span class="step-check">○</span>
+                Applying motion
+              </div>
+              <div class="progress-step">
+                <span class="step-check">○</span>
+                Optimizing output
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customization Panel -->
+        <div class="customization-panel" id="customizationPanel">
+          <h3>Customize</h3>
+          <div class="custom-option">
+            <label>Primary Color</label>
+            <input type="color" id="primaryColor" value="#3B82F6">
+          </div>
+          <div class="custom-option">
+            <label>Secondary Color</label>
+            <input type="color" id="secondaryColor" value="#60A5FA">
+          </div>
+          <div class="custom-option">
+            <label>Speed</label>
+            <input type="range" id="speedSlider" min="0.5" max="2" step="0.1" value="1">
+          </div>
+          <div class="custom-option">
+            <label>Easing</label>
+            <select id="easingSelect">
+              <option value="ease-out">Ease Out (Natural)</option>
+              <option value="ease-in-out">Ease In-Out (Smooth)</option>
+              <option value="bounce">Bounce</option>
+              <option value="elastic">Elastic</option>
+              <option value="linear">Linear</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Export Options -->
+        <div class="export-options" id="exportOptions">
+          <button class="export-btn primary" id="downloadLottie">
+            <span class="export-icon">📥</span>
+            Download Lottie JSON
+          </button>
+          <button class="export-btn secondary" id="downloadGif">
+            <span class="export-icon">🖼️</span>
+            Export as GIF
+          </button>
+          <button class="export-btn secondary" id="copyCode">
+            <span class="export-icon">📋</span>
+            Copy Embed Code
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Pricing Modal -->
+    <div class="modal-overlay" id="pricingModal">
+      <div class="modal pricing-modal">
+        <button class="modal-close" id="closePricing">✕</button>
+        <h2>Get More Credits</h2>
+        <p class="pricing-subtitle">Pay only for what you create — no subscriptions required</p>
+        
+        <div class="pricing-cards">
+          <div class="pricing-card">
+            <h3>Starter Pack</h3>
+            <div class="price">$5</div>
+            <div class="credits-amount">10 credits</div>
+            <p class="price-per">$0.50 per animation</p>
+            <button class="pricing-btn">Buy Now</button>
+          </div>
+          <div class="pricing-card popular">
+            <span class="popular-badge">Most Popular</span>
+            <h3>Creator Pack</h3>
+            <div class="price">$15</div>
+            <div class="credits-amount">40 credits</div>
+            <p class="price-per">$0.38 per animation</p>
+            <button class="pricing-btn primary">Buy Now</button>
+          </div>
+          <div class="pricing-card">
+            <h3>Pro Monthly</h3>
+            <div class="price">$9<span>/mo</span></div>
+            <div class="credits-amount">50 credits/month</div>
+            <p class="price-per">$0.18 per animation</p>
+            <button class="pricing-btn">Subscribe</button>
+          </div>
+        </div>
+        
+        <p class="pricing-note">💡 Credits never expire. Use them whenever you need.</p>
+      </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast" id="successToast">
+      <span class="toast-icon">✅</span>
+      <span class="toast-text">Animation generated! 1 credit used.</span>
+    </div>
+
+    <!-- Download Toast -->
+    <div class="toast" id="downloadToast">
+      <span class="toast-icon">📥</span>
+      <span class="toast-text">animation.json downloaded!</span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
