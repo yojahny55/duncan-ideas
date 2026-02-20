@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeyCoach - Learn Keyboard Shortcuts While You Work</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🎹</span>
+        <span class="logo-text">KeyCoach</span>
+      </div>
+      <p class="tagline">Learn keyboard shortcuts while you work</p>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Mock Email App (Gmail-like) -->
+      <div class="mock-app">
+        <div class="mock-app-header">
+          <span class="mock-app-icon">📧</span>
+          <span>Mail Demo - Try clicking the buttons!</span>
+        </div>
+        
+        <div class="mock-toolbar">
+          <button class="mock-btn primary" data-shortcut="C" data-action="compose">
+            <span class="btn-icon">✏️</span> Compose
+          </button>
+          <button class="mock-btn" data-shortcut="R" data-action="reply">
+            <span class="btn-icon">↩️</span> Reply
+          </button>
+          <button class="mock-btn" data-shortcut="A" data-action="reply all">
+            <span class="btn-icon">↩️↩️</span> Reply All
+          </button>
+          <button class="mock-btn" data-shortcut="F" data-action="forward">
+            <span class="btn-icon">➡️</span> Forward
+          </button>
+          <button class="mock-btn danger" data-shortcut="#" data-action="delete">
+            <span class="btn-icon">🗑️</span> Delete
+          </button>
+          <button class="mock-btn" data-shortcut="E" data-action="archive">
+            <span class="btn-icon">📦</span> Archive
+          </button>
+        </div>
+
+        <div class="mock-email-list">
+          <div class="mock-email selected">
+            <input type="checkbox" checked>
+            <span class="email-star">⭐</span>
+            <span class="email-sender">GitHub</span>
+            <span class="email-subject">Your PR was merged! 🎉</span>
+            <span class="email-time">10:42 AM</span>
+          </div>
+          <div class="mock-email">
+            <input type="checkbox">
+            <span class="email-star">☆</span>
+            <span class="email-sender">Slack</span>
+            <span class="email-subject">New message in #general</span>
+            <span class="email-time">9:30 AM</span>
+          </div>
+          <div class="mock-email">
+            <input type="checkbox">
+            <span class="email-star">☆</span>
+            <span class="email-sender">Calendar</span>
+            <span class="email-subject">Meeting reminder: Standup @ 2pm</span>
+            <span class="email-time">8:15 AM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Dashboard -->
+      <div class="dashboard">
+        <h2>📊 Your Progress</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="shortcuts-learned">0</div>
+            <div class="stat-label">Shortcuts Learned</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="time-saved">0s</div>
+            <div class="stat-label">Time Saved Today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="tips-shown">0</div>
+            <div class="stat-label">Tips Shown</div>
+          </div>
+          <div class="stat-card streak">
+            <div class="stat-value" id="streak">3</div>
+            <div class="stat-label">Day Streak 🔥</div>
+          </div>
+        </div>
+
+        <div class="fluency-section">
+          <h3>Fluency by App</h3>
+          <div class="fluency-bar">
+            <div class="fluency-app">
+              <span class="app-name">📧 Gmail</span>
+              <div class="progress-bar">
+                <div class="progress-fill" id="gmail-progress" style="width: 25%"></div>
+              </div>
+              <span class="fluency-pct" id="gmail-pct">25%</span>
+            </div>
+            <div class="fluency-app">
+              <span class="app-name">📄 Docs</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 60%"></div>
+              </div>
+              <span class="fluency-pct">60%</span>
+            </div>
+            <div class="fluency-app">
+              <span class="app-name">📊 Sheets</span>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 40%"></div>
+              </div>
+              <span class="fluency-pct">40%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="recent-learned">
+          <h3>Recently Learned</h3>
+          <div class="learned-list" id="learned-list">
+            <div class="learned-item empty">Click buttons above to start learning!</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Settings Panel (Extension Popup Style) -->
+    <aside class="extension-popup">
+      <div class="popup-header">
+        <span class="logo-icon">🎹</span>
+        <span>KeyCoach</span>
+        <span class="popup-badge">Active</span>
+      </div>
+      
+      <div class="popup-section">
+        <label class="setting-label">Coaching Intensity</label>
+        <div class="intensity-selector">
+          <button class="intensity-btn" data-level="gentle">🌱 Gentle</button>
+          <button class="intensity-btn active" data-level="normal">⚡ Normal</button>
+          <button class="intensity-btn" data-level="aggressive">🔥 Aggressive</button>
+        </div>
+      </div>
+
+      <div class="popup-section">
+        <label class="setting-label">Active Sites</label>
+        <div class="site-toggles">
+          <label class="site-toggle">
+            <input type="checkbox" checked> Gmail
+          </label>
+          <label class="site-toggle">
+            <input type="checkbox" checked> Google Docs
+          </label>
+          <label class="site-toggle">
+            <input type="checkbox" checked> GitHub
+          </label>
+          <label class="site-toggle">
+            <input type="checkbox"> Notion
+          </label>
+        </div>
+      </div>
+
+      <div class="popup-section">
+        <label class="setting-label">Quick Stats</label>
+        <div class="quick-stats">
+          <div class="quick-stat">
+            <span class="qs-value" id="qs-today">0</span>
+            <span class="qs-label">Tips Today</span>
+          </div>
+          <div class="quick-stat">
+            <span class="qs-value" id="qs-week">47</span>
+            <span class="qs-label">This Week</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="popup-btn">📊 Open Dashboard</button>
+      <button class="popup-btn secondary">⏸️ Pause for 1 hour</button>
+    </aside>
+
+    <!-- Shortcut Notification (appears when clicking) -->
+    <div class="notification" id="notification">
+      <div class="notif-icon">⌨️</div>
+      <div class="notif-content">
+        <div class="notif-title">Shortcut Tip!</div>
+        <div class="notif-text">Press <kbd id="shortcut-key">C</kbd> to <span id="shortcut-action">compose</span></div>
+      </div>
+      <button class="notif-close" onclick="hideNotification()">×</button>
+      <div class="notif-progress"></div>
+    </div>
+
+    <!-- Success Animation -->
+    <div class="success-popup" id="success-popup">
+      <div class="success-icon">✨</div>
+      <div class="success-text">Nice! You used the shortcut!</div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
