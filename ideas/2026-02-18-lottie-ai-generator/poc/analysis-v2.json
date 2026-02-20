@@ -1,0 +1,252 @@
+{
+  "elements": [
+    {
+      "id": "plant-left",
+      "type": "path",
+      "colors": [
+        "#8B4513",
+        "#498f59"
+      ],
+      "hasTransformOrigin": true,
+      "origin": [
+        120,
+        520
+      ]
+    },
+    {
+      "id": "plant-right",
+      "type": "path",
+      "colors": [
+        "#8B4513",
+        "#498f59"
+      ],
+      "hasTransformOrigin": true,
+      "origin": [
+        680,
+        520
+      ]
+    },
+    {
+      "id": "person-standing",
+      "type": "path",
+      "colors": [
+        "#5a5aff",
+        "#2e9e6a",
+        "#e8c4a0",
+        "#333",
+        "#4a3728",
+        "#c5e8f7",
+        "#666"
+      ],
+      "hasTransformOrigin": true,
+      "origin": [
+        310,
+        280
+      ]
+    },
+    {
+      "id": "person-sitting",
+      "type": "path",
+      "colors": [
+        "#6366f1",
+        "#e6883a",
+        "#e8c4a0",
+        "#2a1810",
+        "#333"
+      ],
+      "hasTransformOrigin": false,
+      "origin": null
+    },
+    {
+      "id": "laptop",
+      "type": "rect",
+      "colors": [
+        "#333",
+        "#1a1a2e",
+        "#6366f1",
+        "#444",
+        "#555"
+      ],
+      "hasTransformOrigin": false,
+      "origin": null
+    },
+    {
+      "id": "speech-bubble",
+      "type": "path",
+      "colors": [
+        "#5a5a8a",
+        "#7c3aed",
+        "#f0c040",
+        "#22c55e"
+      ],
+      "hasTransformOrigin": true,
+      "origin": [
+        580,
+        200
+      ]
+    },
+    {
+      "id": "bg-shape",
+      "type": "ellipse",
+      "position": {
+        "x": 400,
+        "y": 330
+      },
+      "color": "#f5ebe0",
+      "isStandalone": true
+    },
+    {
+      "id": "desk",
+      "type": "rect",
+      "position": {
+        "x": 350,
+        "y": 420
+      },
+      "color": "#a67c52",
+      "isStandalone": true
+    },
+    {
+      "id": "leg-left",
+      "type": "rect",
+      "position": {
+        "x": 255,
+        "y": 350
+      },
+      "color": "#5a5aff",
+      "isStandalone": true
+    },
+    {
+      "id": "leg-right",
+      "type": "rect",
+      "position": {
+        "x": 290,
+        "y": 350
+      },
+      "color": "#5a5aff",
+      "isStandalone": true
+    },
+    {
+      "id": "torso",
+      "type": "rect",
+      "position": {
+        "x": 245,
+        "y": 250
+      },
+      "color": "#2e9e6a",
+      "isStandalone": true
+    },
+    {
+      "id": "head-standing",
+      "type": "circle",
+      "position": {
+        "x": 285,
+        "y": 210
+      },
+      "color": "#e8c4a0",
+      "isStandalone": true
+    },
+    {
+      "id": "arm",
+      "type": "rect",
+      "position": {
+        "x": 310,
+        "y": 270
+      },
+      "color": "#e8c4a0",
+      "isStandalone": true
+    },
+    {
+      "id": "torso-sitting",
+      "type": "rect",
+      "position": {
+        "x": 435,
+        "y": 320
+      },
+      "color": "#e6883a",
+      "isStandalone": true
+    },
+    {
+      "id": "head-sitting",
+      "type": "circle",
+      "position": {
+        "x": 460,
+        "y": 285
+      },
+      "color": "#e8c4a0",
+      "isStandalone": true
+    },
+    {
+      "id": "laptop-screen",
+      "type": "rect",
+      "position": {
+        "x": 420,
+        "y": 340
+      },
+      "color": "#333",
+      "isStandalone": true
+    },
+    {
+      "id": "laptop-base",
+      "type": "rect",
+      "position": {
+        "x": 415,
+        "y": 390
+      },
+      "color": "#555",
+      "isStandalone": true
+    },
+    {
+      "id": "dot-1",
+      "type": "circle",
+      "position": {
+        "x": 700,
+        "y": 150
+      },
+      "color": "#e8c4a0",
+      "isStandalone": true
+    },
+    {
+      "id": "dot-2",
+      "type": "circle",
+      "position": {
+        "x": 100,
+        "y": 200
+      },
+      "color": "#6366f1",
+      "isStandalone": true
+    },
+    {
+      "id": "gear",
+      "type": "path",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "color": "#ccc",
+      "isStandalone": true
+    }
+  ],
+  "animations": {
+    "plant-left": "sway",
+    "plant-right": "sway",
+    "person-standing": "bob",
+    "person-sitting": "bob",
+    "laptop": "none",
+    "speech-bubble": "pulse",
+    "bg-shape": "none",
+    "desk": "none",
+    "leg-left": "none",
+    "leg-right": "none",
+    "torso": "none",
+    "head-standing": "bob",
+    "arm": "wave",
+    "torso-sitting": "none",
+    "head-sitting": "bob",
+    "laptop-screen": "none",
+    "laptop-base": "none",
+    "dot-1": "none",
+    "dot-2": "none",
+    "gear": "none"
+  },
+  "svgPath": "sample-illustration.svg"
+}
