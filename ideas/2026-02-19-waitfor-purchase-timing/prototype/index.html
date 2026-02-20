@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaitFor - Know When to Buy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">⏳</span>
+                    <span class="logo-text">WaitFor</span>
+                </div>
+                <p class="tagline">Know when to buy. Stop leaving money on the table.</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-value">$847</span>
+                    <span class="stat-label">Potential Savings</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">4</span>
+                    <span class="stat-label">Items Tracked</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">2</span>
+                    <span class="stat-label">Deals Coming</span>
+                </div>
+            </div>
+
+            <!-- Add Item Section -->
+            <div class="add-section">
+                <h2>What do you want to buy?</h2>
+                <div class="add-form">
+                    <input type="text" id="itemInput" class="item-input" placeholder="e.g., New mattress, 65&quot; TV, Patio furniture...">
+                    <select id="categorySelect" class="category-select">
+                        <option value="">Select category...</option>
+                        <option value="mattresses">Mattresses</option>
+                        <option value="tvs">TVs & Electronics</option>
+                        <option value="appliances">Major Appliances</option>
+                        <option value="outdoor">Outdoor/Patio</option>
+                        <option value="furniture">Indoor Furniture</option>
+                        <option value="winter-gear">Winter Gear</option>
+                        <option value="gym">Gym Equipment</option>
+                        <option value="school">School Supplies</option>
+                        <option value="tools">Tools & Hardware</option>
+                        <option value="luggage">Luggage</option>
+                    </select>
+                    <button id="addBtn" class="add-btn">+ Add to Wishlist</button>
+                </div>
+            </div>
+
+            <!-- This Week Section -->
+            <div class="timing-alert">
+                <div class="timing-alert-icon">🎯</div>
+                <div class="timing-alert-content">
+                    <strong>Good news!</strong> President's Day sales start next week. Great time for mattresses and major appliances.
+                </div>
+            </div>
+
+            <!-- Wishlist -->
+            <div class="wishlist">
+                <h2>Your Wishlist</h2>
+                <div id="wishlistItems" class="wishlist-items">
+                    <!-- Items populated by JS -->
+                </div>
+            </div>
+
+            <!-- Upcoming Windows -->
+            <div class="upcoming-section">
+                <h2>Upcoming Deal Windows</h2>
+                <div class="upcoming-grid">
+                    <div class="upcoming-card">
+                        <div class="upcoming-date">Feb 17</div>
+                        <div class="upcoming-event">President's Day</div>
+                        <div class="upcoming-categories">Mattresses, Appliances, Furniture</div>
+                    </div>
+                    <div class="upcoming-card">
+                        <div class="upcoming-date">May 26</div>
+                        <div class="upcoming-event">Memorial Day</div>
+                        <div class="upcoming-categories">Mattresses, Outdoor, Appliances, Grills</div>
+                    </div>
+                    <div class="upcoming-card">
+                        <div class="upcoming-date">Jul 15-16</div>
+                        <div class="upcoming-event">Prime Day (Est.)</div>
+                        <div class="upcoming-categories">Electronics, TVs, Smart Home</div>
+                    </div>
+                    <div class="upcoming-card">
+                        <div class="upcoming-date">Aug-Sep</div>
+                        <div class="upcoming-event">End of Season</div>
+                        <div class="upcoming-categories">Outdoor Furniture, Patio, Grills</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Item Detail Modal -->
+        <div id="itemModal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeModal">&times;</button>
+                <div id="modalBody">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

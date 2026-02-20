@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-19 | [WaitFor](ideas/2026-02-19-waitfor-purchase-timing/) | Purchase timing optimizer — add items to your wishlist, see when they historically go on sale, get alerts when the optimal buying window approaches. Never overpay by buying at the wrong time again | Web | ✅ [Demo](ideas/2026-02-19-waitfor-purchase-timing/prototype/index.html) |
 | 2026-02-19 | [ReplyDebt](ideas/2026-02-19-replydebt-message-tracker/) | Track unanswered messages across platforms — see who's been waiting longest, never forget to respond. Unified response debt dashboard for email, Slack, WhatsApp, LinkedIn | Reddit | ✅ [Demo](ideas/2026-02-19-replydebt-message-tracker/prototype/index.html) |
 | 2026-02-18 | [FlowState](ideas/2026-02-18-flowstate-session-saver/) | Work session saver — capture your entire work context (tabs, files, mental notes) when switching tasks. Restore exactly where you were with one click. "Hibernate mode" for your brain + computer | Web | ✅ [Demo](ideas/2026-02-18-flowstate-session-saver/prototype/index.html) |
 | 2026-02-18 | [HushMap](ideas/2026-02-18-hushmap-quiet-finder/) | Crowdsourced noise level tracker for remote workers — find quiet cafes, libraries, and coworking spaces. Real-time noise reports, historical patterns, never waste time at a loud spot again | Reddit | ✅ [Demo](ideas/2026-02-18-hushmap-quiet-finder/prototype/index.html) |
