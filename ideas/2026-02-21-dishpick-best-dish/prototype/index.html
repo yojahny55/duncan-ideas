@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DishPick — Know What to Order</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span class="time">9:41</span>
+            <div class="status-icons">
+                <span>📶</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
+        <!-- Search Screen -->
+        <div class="screen active" id="screen-search">
+            <div class="header">
+                <h1 class="logo">🍽️ DishPick</h1>
+                <p class="tagline">Know what to order</p>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Search restaurant or cuisine...">
+                    <button class="scan-btn" title="Scan menu">📷</button>
+                </div>
+            </div>
+
+            <div class="location-bar">
+                <span class="location-icon">📍</span>
+                <span>Tampa, FL</span>
+                <button class="change-btn">Change</button>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🔥 Trending Near You</h2>
+                <div class="restaurant-cards" id="trending-restaurants">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">⭐ Based on Your Taste</h2>
+                <div class="horizontal-scroll" id="for-you">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Restaurant Screen -->
+        <div class="screen" id="screen-restaurant">
+            <div class="restaurant-header">
+                <button class="back-btn" onclick="showScreen('search')">←</button>
+                <div class="restaurant-info">
+                    <h1 id="restaurant-name">Restaurant Name</h1>
+                    <div class="restaurant-meta">
+                        <span class="rating">⭐ 4.5</span>
+                        <span class="cuisine">Italian</span>
+                        <span class="price">$$</span>
+                    </div>
+                </div>
+                <button class="share-btn">↗️</button>
+            </div>
+
+            <div class="top-picks-banner">
+                <span class="fire">🏆</span>
+                <span>Top 3 Dishes Here</span>
+            </div>
+
+            <div class="top-dishes" id="top-dishes">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="menu-section">
+                <div class="menu-header">
+                    <h2>Full Menu</h2>
+                    <div class="filter-pills">
+                        <button class="pill active">All</button>
+                        <button class="pill">🌱 Veg</button>
+                        <button class="pill">🔥 Spicy</button>
+                        <button class="pill">👑 Popular</button>
+                    </div>
+                </div>
+
+                <div class="menu-items" id="menu-items">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Dish Detail Screen -->
+        <div class="screen" id="screen-dish">
+            <div class="dish-header">
+                <button class="back-btn" onclick="showScreen('restaurant')">←</button>
+                <h1 id="dish-name">Dish Name</h1>
+            </div>
+
+            <div class="dish-gallery" id="dish-gallery">
+                <!-- Photos populated by JS -->
+            </div>
+
+            <div class="dish-stats">
+                <div class="stat-box">
+                    <span class="stat-value" id="dish-score">9.2</span>
+                    <span class="stat-label">Score</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="dish-ratings">847</span>
+                    <span class="stat-label">Ratings</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="dish-reorder">92%</span>
+                    <span class="stat-label">Would Reorder</span>
+                </div>
+            </div>
+
+            <div class="dish-description" id="dish-description">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="review-highlights">
+                <h3>What People Say</h3>
+                <div class="highlight-tags" id="highlight-tags">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="recent-reviews" id="recent-reviews">
+                <!-- Populated by JS -->
+            </div>
+
+            <button class="rate-cta" onclick="showRatingModal()">
+                <span>📸</span> Rate This Dish
+            </button>
+        </div>
+
+        <!-- Rating Modal -->
+        <div class="modal" id="rating-modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="hideRatingModal()">×</button>
+                <h2>Rate Your Dish</h2>
+                
+                <div class="rating-stars">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+
+                <div class="photo-upload">
+                    <div class="upload-box">
+                        <span>📸</span>
+                        <p>Tap to add photo</p>
+                    </div>
+                </div>
+
+                <div class="quick-tags">
+                    <button class="tag-btn">🔥 Flavorful</button>
+                    <button class="tag-btn">📏 Good portion</button>
+                    <button class="tag-btn">💰 Worth it</button>
+                    <button class="tag-btn">🔄 Would reorder</button>
+                </div>
+
+                <button class="submit-rating">Submit Rating</button>
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <button class="nav-item active">
+                <span>🔍</span>
+                <small>Discover</small>
+            </button>
+            <button class="nav-item">
+                <span>📋</span>
+                <small>My Lists</small>
+            </button>
+            <button class="nav-item">
+                <span>👤</span>
+                <small>Profile</small>
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

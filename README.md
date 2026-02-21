@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-21 | [DishPick](ideas/2026-02-21-dishpick-best-dish/) | Crowdsourced dish-level restaurant recommendations — Yelp tells you WHERE to eat, DishPick tells you WHAT to order. See top dishes, scores, and photos from real diners before you sit down | Reddit | ✅ [Demo](ideas/2026-02-21-dishpick-best-dish/prototype/index.html) |
 | 2026-02-21 | [TabEverywhere](ideas/2026-02-21-tabeverywhere-ai-autocomplete/) | System-wide AI autocomplete — Cursor's Tab completion, but for your entire OS. Ghost text suggestions in any text field across all apps, accept with Tab. Write faster everywhere | X/Twitter | ✅ [Demo](ideas/2026-02-21-tabeverywhere-ai-autocomplete/prototype/index.html) |
 | 2026-02-20 | [QuoteCheck](ideas/2026-02-20-quotecheck-service-analyzer/) | AI service quote analyzer — upload repair/service quotes (plumber, mechanic, HVAC, etc.) and get instant fairness analysis, red flag detection, and questions to ask. Never get ripped off again | Web | ✅ [Demo](ideas/2026-02-20-quotecheck-service-analyzer/prototype/index.html) |
 | 2026-02-20 | [KeyCoach](ideas/2026-02-20-keycoach-shortcut-trainer/) | Keyboard shortcut trainer — browser extension that coaches you in real-time when you click things that have keyboard shortcuts. Learn shortcuts naturally through spaced repetition while you work | Reddit | ✅ [Demo](ideas/2026-02-20-keycoach-shortcut-trainer/prototype/index.html) |
