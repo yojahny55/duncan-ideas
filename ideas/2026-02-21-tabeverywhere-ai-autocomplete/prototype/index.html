@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabEverywhere — AI Autocomplete for Your Entire OS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">⇥</span>
+        <span class="logo-text">TabEverywhere</span>
+      </div>
+      <nav class="nav">
+        <a href="#features">Features</a>
+        <a href="#demo">Try It</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <a href="#" class="download-btn">Download for macOS</a>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">Cursor's Tab, but everywhere</div>
+      <h1>AI autocomplete for <span class="gradient-text">your entire OS</span></h1>
+      <p class="hero-subtitle">
+        Start typing anywhere — emails, Slack, browsers, docs — and get intelligent completions you accept with a single Tab.
+      </p>
+      <div class="hero-cta">
+        <a href="#" class="btn-primary">Download Free</a>
+        <a href="#demo" class="btn-secondary">Try the Demo</a>
+      </div>
+      <p class="hero-note">macOS 12+ • Windows coming soon</p>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo-section">
+      <h2>Try it yourself</h2>
+      <p class="demo-subtitle">Type in any field below. AI suggestions appear as ghost text — press <kbd>Tab</kbd> to accept.</p>
+      
+      <div class="demo-container">
+        <div class="demo-window">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="window-title">Mail — New Message</span>
+          </div>
+          <div class="window-content email-demo">
+            <div class="email-field">
+              <label>To:</label>
+              <input type="text" value="john@acme.com" readonly>
+            </div>
+            <div class="email-field">
+              <label>Subject:</label>
+              <input type="text" value="Re: Project timeline" readonly>
+            </div>
+            <div class="email-body">
+              <div class="input-wrapper">
+                <textarea id="email-input" placeholder="Start typing your email..." rows="5"></textarea>
+                <span class="ghost-text" id="email-ghost"></span>
+              </div>
+            </div>
+            <div class="demo-hint">
+              <span class="hint-key">Tab</span> to accept • <span class="hint-key">Esc</span> to dismiss
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-window">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="window-title">Slack — #general</span>
+          </div>
+          <div class="window-content slack-demo">
+            <div class="slack-messages">
+              <div class="slack-message">
+                <div class="slack-avatar">JD</div>
+                <div class="slack-content">
+                  <span class="slack-name">Jane Doe</span>
+                  <p>Hey team, quick sync at 3pm today?</p>
+                </div>
+              </div>
+              <div class="slack-message">
+                <div class="slack-avatar">MK</div>
+                <div class="slack-content">
+                  <span class="slack-name">Mike K</span>
+                  <p>Works for me!</p>
+                </div>
+              </div>
+            </div>
+            <div class="slack-input-container">
+              <div class="input-wrapper">
+                <input type="text" id="slack-input" placeholder="Message #general">
+                <span class="ghost-text" id="slack-ghost"></span>
+              </div>
+            </div>
+            <div class="demo-hint">
+              <span class="hint-key">Tab</span> to accept • <span class="hint-key">Esc</span> to dismiss
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="features-section">
+      <h2>Works everywhere you type</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📧</div>
+          <h3>Emails</h3>
+          <p>Professional completions that match your tone and context</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Chat Apps</h3>
+          <p>Casual suggestions for Slack, Teams, Discord</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Browsers</h3>
+          <p>Forms, search boxes, social media — all supported</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>Documents</h3>
+          <p>Notion, Google Docs, Word — write faster everywhere</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Privacy First</h3>
+          <p>Local AI option — nothing leaves your machine</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Zero Latency</h3>
+          <p>Suggestions appear instantly as you type</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+      <h2>Just like Cursor, but for everything</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Start typing</h3>
+          <p>TabEverywhere watches for active text fields across all apps</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>See suggestions</h3>
+          <p>Ghost text appears inline, right where your cursor is</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Tab to accept</h3>
+          <p>One keystroke and you're done. Keep typing to dismiss.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing-section">
+      <h2>Simple pricing</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price">$0</div>
+          <ul>
+            <li>✓ 50 completions/day</li>
+            <li>✓ Basic suggestions</li>
+            <li>✓ Cloud AI</li>
+            <li class="disabled">✗ Local AI</li>
+            <li class="disabled">✗ Custom style</li>
+          </ul>
+          <a href="#" class="btn-outline">Get Started</a>
+        </div>
+        <div class="pricing-card featured">
+          <div class="featured-badge">Popular</div>
+          <h3>Pro</h3>
+          <div class="price">$8<span>/mo</span></div>
+          <ul>
+            <li>✓ Unlimited completions</li>
+            <li>✓ Local AI (privacy)</li>
+            <li>✓ Custom prompts</li>
+            <li>✓ Learning mode</li>
+            <li>✓ Priority models</li>
+          </ul>
+          <a href="#" class="btn-primary">Start Free Trial</a>
+        </div>
+        <div class="pricing-card">
+          <h3>Team</h3>
+          <div class="price">$15<span>/user/mo</span></div>
+          <ul>
+            <li>✓ Everything in Pro</li>
+            <li>✓ Shared snippets</li>
+            <li>✓ Brand voice</li>
+            <li>✓ Admin controls</li>
+            <li>✓ SSO</li>
+          </ul>
+          <a href="#" class="btn-outline">Contact Sales</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <h2>Type faster, everywhere</h2>
+      <p>Join thousands of power users who Tab their way through every text field.</p>
+      <a href="#" class="btn-primary btn-large">Download for macOS</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="logo-icon">⇥</span>
+          <span>TabEverywhere</span>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Support</a>
+          <a href="#">Twitter</a>
+        </div>
+      </div>
+      <p class="footer-note">© 2026 TabEverywhere. Inspired by developers who love Tab.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
