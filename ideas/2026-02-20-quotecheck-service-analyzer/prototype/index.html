@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuoteCheck — AI Service Quote Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">✓</span>
+                <span class="logo-text">QuoteCheck</span>
+            </div>
+            <p class="tagline">Know if you're getting a fair deal</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section id="upload-section" class="section active">
+                <h2>Analyze Your Quote</h2>
+                <p class="section-desc">Upload a photo or PDF of your service quote, or enter the details manually.</p>
+                
+                <div class="upload-zone" id="upload-zone">
+                    <div class="upload-icon">📄</div>
+                    <p>Drop your quote here or <span class="upload-link">browse</span></p>
+                    <p class="upload-formats">Supports: JPG, PNG, PDF</p>
+                    <input type="file" id="file-input" accept="image/*,.pdf" hidden>
+                </div>
+
+                <div class="divider">
+                    <span>or enter manually</span>
+                </div>
+
+                <div class="manual-entry">
+                    <div class="form-group">
+                        <label for="service-type">Service Type</label>
+                        <select id="service-type">
+                            <option value="">Select a category...</option>
+                            <option value="auto">🚗 Auto Repair</option>
+                            <option value="plumbing">🔧 Plumbing</option>
+                            <option value="electrical">⚡ Electrical</option>
+                            <option value="hvac">❄️ HVAC</option>
+                            <option value="contractor">🏠 General Contractor</option>
+                            <option value="appliance">📺 Appliance Repair</option>
+                            <option value="landscaping">🌳 Landscaping</option>
+                            <option value="other">📋 Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Your Location</label>
+                        <input type="text" id="location" placeholder="City, State (e.g., Tampa, FL)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quote-description">Quote Description</label>
+                        <textarea id="quote-description" rows="4" placeholder="Paste or describe the quote details...&#10;&#10;Example:&#10;Labor: $450&#10;Parts: Brake pads $120, Rotors $280&#10;Diagnostic fee: $100"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total-amount">Total Quote Amount</label>
+                        <div class="input-with-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="total-amount" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="analyze-btn">
+                        <span class="btn-icon">🔍</span>
+                        Analyze Quote
+                    </button>
+                </div>
+            </section>
+
+            <!-- Analysis Section -->
+            <section id="analysis-section" class="section">
+                <div class="analysis-header">
+                    <button class="btn-back" id="back-btn">← Back</button>
+                    <h2>Quote Analysis</h2>
+                </div>
+
+                <!-- Quote Summary -->
+                <div class="quote-summary">
+                    <div class="quote-meta">
+                        <span class="quote-type" id="result-type">Auto Repair</span>
+                        <span class="quote-location" id="result-location">Tampa, FL</span>
+                    </div>
+                    <div class="quote-total">
+                        <span class="label">Quoted Amount</span>
+                        <span class="amount" id="result-amount">$950.00</span>
+                    </div>
+                </div>
+
+                <!-- Fairness Score -->
+                <div class="fairness-card">
+                    <div class="fairness-header">
+                        <h3>Price Fairness</h3>
+                        <div class="score-badge fair" id="score-badge">
+                            <span class="score-icon">✓</span>
+                            <span class="score-text">Fair</span>
+                        </div>
+                    </div>
+                    <div class="fairness-range">
+                        <div class="range-bar">
+                            <div class="range-fill" id="range-fill"></div>
+                            <div class="range-marker" id="range-marker"></div>
+                        </div>
+                        <div class="range-labels">
+                            <span class="range-low">$<span id="range-low">720</span></span>
+                            <span class="range-avg">Avg: $<span id="range-avg">850</span></span>
+                            <span class="range-high">$<span id="range-high">1,100</span></span>
+                        </div>
+                    </div>
+                    <p class="fairness-explanation" id="fairness-explanation">
+                        This quote is within the typical range for brake pad and rotor replacement in your area. 
+                        The labor rate is competitive for Tampa, FL.
+                    </p>
+                </div>
+
+                <!-- Line Item Analysis -->
+                <div class="analysis-card">
+                    <h3>Line Item Breakdown</h3>
+                    <div class="line-items" id="line-items">
+                        <!-- Items will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Red Flags -->
+                <div class="analysis-card" id="red-flags-card">
+                    <h3>⚠️ Things to Watch</h3>
+                    <ul class="red-flags" id="red-flags">
+                        <!-- Flags will be injected here -->
+                    </ul>
+                </div>
+
+                <!-- Questions to Ask -->
+                <div class="analysis-card">
+                    <h3>💬 Questions to Ask</h3>
+                    <ul class="questions" id="questions">
+                        <!-- Questions will be injected here -->
+                    </ul>
+                </div>
+
+                <!-- Negotiation Tips -->
+                <div class="analysis-card">
+                    <h3>🤝 Negotiation Tips</h3>
+                    <ul class="tips" id="tips">
+                        <!-- Tips will be injected here -->
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions">
+                    <button class="btn-secondary" id="export-btn">
+                        <span class="btn-icon">📤</span>
+                        Export Summary
+                    </button>
+                    <button class="btn-primary" id="new-quote-btn">
+                        Analyze Another Quote
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>QuoteCheck uses AI to help you understand service quotes.</p>
+            <p class="disclaimer">Not financial advice. Always get multiple quotes for major work.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

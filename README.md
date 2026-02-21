@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-20 | [QuoteCheck](ideas/2026-02-20-quotecheck-service-analyzer/) | AI service quote analyzer — upload repair/service quotes (plumber, mechanic, HVAC, etc.) and get instant fairness analysis, red flag detection, and questions to ask. Never get ripped off again | Web | ✅ [Demo](ideas/2026-02-20-quotecheck-service-analyzer/prototype/index.html) |
 | 2026-02-20 | [KeyCoach](ideas/2026-02-20-keycoach-shortcut-trainer/) | Keyboard shortcut trainer — browser extension that coaches you in real-time when you click things that have keyboard shortcuts. Learn shortcuts naturally through spaced repetition while you work | Reddit | ✅ [Demo](ideas/2026-02-20-keycoach-shortcut-trainer/prototype/index.html) |
 | 2026-02-19 | [WaitFor](ideas/2026-02-19-waitfor-purchase-timing/) | Purchase timing optimizer — add items to your wishlist, see when they historically go on sale, get alerts when the optimal buying window approaches. Never overpay by buying at the wrong time again | Web | ✅ [Demo](ideas/2026-02-19-waitfor-purchase-timing/prototype/index.html) |
 | 2026-02-19 | [ReplyDebt](ideas/2026-02-19-replydebt-message-tracker/) | Track unanswered messages across platforms — see who's been waiting longest, never forget to respond. Unified response debt dashboard for email, Slack, WhatsApp, LinkedIn | Reddit | ✅ [Demo](ideas/2026-02-19-replydebt-message-tracker/prototype/index.html) |
