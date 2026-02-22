@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CancelScore — Know Before You Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🚪</span>
+                    <span class="logo-text">CancelScore</span>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link active">Search</a>
+                    <a href="#" class="nav-link">Categories</a>
+                    <a href="#" class="nav-link">Report</a>
+                </nav>
+                <button class="btn btn-primary" onclick="showReportModal()">+ Report Experience</button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Know before you sign up.</h1>
+                <p class="hero-subtitle">See how hard it is to cancel subscriptions and memberships — <strong>before</strong> you're trapped.</p>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search any company, gym, streaming service..." autocomplete="off">
+                        <button class="search-btn" onclick="performSearch()">Search</button>
+                    </div>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </div>
+
+                <div class="quick-categories">
+                    <span class="quick-label">Popular:</span>
+                    <button class="category-chip" onclick="searchCategory('gyms')">🏋️ Gyms</button>
+                    <button class="category-chip" onclick="searchCategory('streaming')">📺 Streaming</button>
+                    <button class="category-chip" onclick="searchCategory('insurance')">🛡️ Insurance</button>
+                    <button class="category-chip" onclick="searchCategory('subscriptions')">📦 Subscriptions</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Bar -->
+        <section class="stats-bar">
+            <div class="stat">
+                <span class="stat-value">$165B</span>
+                <span class="stat-label">Annual "Annoyance Economy" cost</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">14-200%</span>
+                <span class="stat-label">Revenue boost from hard cancellation</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">60%</span>
+                <span class="stat-label">Increase in hold times (20 years)</span>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2 id="resultsTitle">Recently Rated Companies</h2>
+                <div class="results-meta" id="resultsMeta">Based on 47,892 user reports</div>
+            </div>
+
+            <div class="results-grid" id="resultsGrid">
+                <!-- Cards populated by JS -->
+            </div>
+        </section>
+
+        <!-- Company Detail Modal -->
+        <div class="modal-overlay" id="companyModal">
+            <div class="modal-content company-detail">
+                <button class="modal-close" onclick="closeCompanyModal()">×</button>
+                <div id="companyDetailContent"></div>
+            </div>
+        </div>
+
+        <!-- Report Modal -->
+        <div class="modal-overlay" id="reportModal">
+            <div class="modal-content report-form">
+                <button class="modal-close" onclick="closeReportModal()">×</button>
+                <h2>📝 Report Your Cancellation Experience</h2>
+                <p class="modal-subtitle">Help others know what they're getting into.</p>
+                
+                <form id="reportForm" onsubmit="submitReport(event)">
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="reportCompany" placeholder="e.g., Planet Fitness" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>How did you have to cancel?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="method" value="online" required>
+                                <span>Online (self-service)</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="method" value="chat">
+                                <span>Live Chat</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="method" value="phone">
+                                <span>Phone Call</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="method" value="mail">
+                                <span>Mail / Certified Letter</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="method" value="inperson">
+                                <span>In-Person Visit</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Steps Required</label>
+                            <select id="reportSteps" required>
+                                <option value="">Select...</option>
+                                <option value="1">1-2 steps (easy)</option>
+                                <option value="3">3-5 steps</option>
+                                <option value="6">6-10 steps</option>
+                                <option value="10">10+ steps (maze)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Time Spent</label>
+                            <select id="reportTime" required>
+                                <option value="">Select...</option>
+                                <option value="1">Under 5 mins</option>
+                                <option value="5">5-15 mins</option>
+                                <option value="15">15-30 mins</option>
+                                <option value="30">30-60 mins</option>
+                                <option value="60">Over 1 hour</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Retention Pressure Level</label>
+                        <div class="slider-container">
+                            <input type="range" id="reportPressure" min="1" max="5" value="3">
+                            <div class="slider-labels">
+                                <span>None</span>
+                                <span>Mild</span>
+                                <span>Moderate</span>
+                                <span>Heavy</span>
+                                <span>Extreme</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hidden Fees or Penalties?</label>
+                        <textarea id="reportFees" placeholder="Early termination fee? Notice period? Final charges?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Your Experience</label>
+                        <textarea id="reportComments" placeholder="Describe your cancellation journey..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">Submit Report</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span class="logo-icon">🚪</span>
+                    <span>CancelScore</span>
+                    <span class="footer-tagline">— Know before you sign up</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-stat">47,892 reports • 12,456 companies rated</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
