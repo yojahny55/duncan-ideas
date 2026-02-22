@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-22 | [TabDiet](ideas/2026-02-22-tabdiet-tab-limiter/) | Browser tab limiter with progressive penalties — hard limits, tab aging, guilt counter, and Tab Bankruptcy. The only tab manager that actually makes you close tabs. Your browser's personal trainer | X/Twitter | ✅ [Demo](ideas/2026-02-22-tabdiet-tab-limiter/prototype/index.html) |
 | 2026-02-21 | [CancelScore](ideas/2026-02-21-cancelscore-exit-ratings/) | Crowdsourced cancellation difficulty ratings — know how hard it is to cancel subscriptions BEFORE you sign up. Letter grades, step counts, wait times, retention pressure levels. The Annoyance Economy costs $165B/year; CancelScore fights back | Web | ✅ [Demo](ideas/2026-02-21-cancelscore-exit-ratings/prototype/index.html) |
 | 2026-02-21 | [DishPick](ideas/2026-02-21-dishpick-best-dish/) | Crowdsourced dish-level restaurant recommendations — Yelp tells you WHERE to eat, DishPick tells you WHAT to order. See top dishes, scores, and photos from real diners before you sit down | Reddit | ✅ [Demo](ideas/2026-02-21-dishpick-best-dish/prototype/index.html) |
 | 2026-02-21 | [TabEverywhere](ideas/2026-02-21-tabeverywhere-ai-autocomplete/) | System-wide AI autocomplete — Cursor's Tab completion, but for your entire OS. Ghost text suggestions in any text field across all apps, accept with Tab. Write faster everywhere | X/Twitter | ✅ [Demo](ideas/2026-02-21-tabeverywhere-ai-autocomplete/prototype/index.html) |

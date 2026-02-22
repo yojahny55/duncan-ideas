@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabDiet - Browser Tab Limiter</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-badge">
+        <span class="badge-icon">🍽️</span>
+        <span class="badge-text">Browser Extension</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="title-icon">🗂️</span>
+        TabDiet
+      </h1>
+      <p class="hero-subtitle">Your browser's personal trainer — no more tab hoarding.</p>
+      <p class="hero-desc">
+        Hard limits. Progressive pressure. The only tab manager that actually makes you close tabs.
+      </p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="openDemo()">
+          <span>Try Demo</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <button class="btn btn-secondary">
+          <span>Learn More</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Demo Section -->
+    <section id="demo-section" class="demo-section">
+      <h2 class="section-title">Interactive Demo</h2>
+      
+      <!-- Extension Badge Preview -->
+      <div class="demo-row">
+        <div class="demo-card">
+          <h3 class="demo-card-title">Extension Badge</h3>
+          <p class="demo-card-desc">Live tab count with zone indicator</p>
+          
+          <div class="badge-demo">
+            <div class="extension-badge" id="ext-badge">
+              <span class="badge-count" id="badge-count">12</span>
+              <span class="badge-zone" id="badge-zone">🟢</span>
+            </div>
+            <div class="badge-label">Click to change count</div>
+          </div>
+          
+          <div class="zone-legend">
+            <div class="zone-item">
+              <span class="zone-dot green"></span>
+              <span>1-10: Green Zone</span>
+            </div>
+            <div class="zone-item">
+              <span class="zone-dot yellow"></span>
+              <span>11-20: Yellow Zone</span>
+            </div>
+            <div class="zone-item">
+              <span class="zone-dot orange"></span>
+              <span>21-30: Orange Zone</span>
+            </div>
+            <div class="zone-item">
+              <span class="zone-dot red"></span>
+              <span>31+: Red Zone (Tab Jail)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="demo-card">
+          <h3 class="demo-card-title">Quick Stats</h3>
+          <p class="demo-card-desc">Your tab health at a glance</p>
+          
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value" id="stat-tabs">23</span>
+              <span class="stat-label">Open Tabs</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value streak">🔥 4</span>
+              <span class="stat-label">Day Streak</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-calories">187</span>
+              <span class="stat-label">Tab Calories</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-rotten">5</span>
+              <span class="stat-label">Rotten Tabs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab List Demo -->
+      <div class="demo-card full-width">
+        <h3 class="demo-card-title">Tab Breakdown</h3>
+        <p class="demo-card-desc">Your tabs organized by freshness</p>
+        
+        <div class="tab-breakdown">
+          <div class="breakdown-header">
+            <div class="breakdown-stat">
+              <span class="breakdown-dot fresh"></span>
+              <span class="breakdown-count">8</span>
+              <span class="breakdown-label">Fresh (today)</span>
+            </div>
+            <div class="breakdown-stat">
+              <span class="breakdown-dot stale"></span>
+              <span class="breakdown-count">10</span>
+              <span class="breakdown-label">Stale (this week)</span>
+            </div>
+            <div class="breakdown-stat">
+              <span class="breakdown-dot rotten"></span>
+              <span class="breakdown-count">5</span>
+              <span class="breakdown-label">Rotten (7+ days)</span>
+            </div>
+          </div>
+          
+          <div class="tab-list" id="tab-list">
+            <!-- Tabs will be populated by JS -->
+          </div>
+          
+          <div class="tab-actions">
+            <button class="btn btn-danger" onclick="closeRotten()">
+              <span>🗑️ Close All Rotten</span>
+            </button>
+            <button class="btn btn-warning" onclick="declareTabBankruptcy()">
+              <span>💣 Tab Bankruptcy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Limit Modal Demo -->
+      <div class="demo-card full-width">
+        <h3 class="demo-card-title">Tab Limit Modal</h3>
+        <p class="demo-card-desc">What you see when you hit your limit</p>
+        
+        <button class="btn btn-primary" onclick="showLimitModal()">
+          <span>Trigger Limit Modal</span>
+        </button>
+      </div>
+
+      <!-- Top Hoarders -->
+      <div class="demo-card">
+        <h3 class="demo-card-title">Top Tab Hoarders</h3>
+        <p class="demo-card-desc">Your most frequently hoarded domains</p>
+        
+        <div class="hoarder-list">
+          <div class="hoarder-item">
+            <div class="hoarder-icon">🐦</div>
+            <div class="hoarder-info">
+              <span class="hoarder-domain">twitter.com</span>
+              <span class="hoarder-count">6 tabs</span>
+            </div>
+            <div class="hoarder-bar" style="--width: 100%"></div>
+          </div>
+          <div class="hoarder-item">
+            <div class="hoarder-icon">📝</div>
+            <div class="hoarder-info">
+              <span class="hoarder-domain">docs.google.com</span>
+              <span class="hoarder-count">4 tabs</span>
+            </div>
+            <div class="hoarder-bar" style="--width: 67%"></div>
+          </div>
+          <div class="hoarder-item">
+            <div class="hoarder-icon">🐙</div>
+            <div class="hoarder-info">
+              <span class="hoarder-domain">github.com</span>
+              <span class="hoarder-count">3 tabs</span>
+            </div>
+            <div class="hoarder-bar" style="--width: 50%"></div>
+          </div>
+          <div class="hoarder-item">
+            <div class="hoarder-icon">🎬</div>
+            <div class="hoarder-info">
+              <span class="hoarder-domain">youtube.com</span>
+              <span class="hoarder-count">3 tabs</span>
+            </div>
+            <div class="hoarder-bar" style="--width: 50%"></div>
+          </div>
+          <div class="hoarder-item">
+            <div class="hoarder-icon">🛒</div>
+            <div class="hoarder-info">
+              <span class="hoarder-domain">amazon.com</span>
+              <span class="hoarder-count">2 tabs</span>
+            </div>
+            <div class="hoarder-bar" style="--width: 33%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Report Preview -->
+      <div class="demo-card">
+        <h3 class="demo-card-title">Weekly Report</h3>
+        <p class="demo-card-desc">Your tab diet progress this week</p>
+        
+        <div class="weekly-stats">
+          <div class="weekly-stat">
+            <span class="weekly-value">47</span>
+            <span class="weekly-label">Peak Tabs</span>
+          </div>
+          <div class="weekly-stat">
+            <span class="weekly-value">18</span>
+            <span class="weekly-label">Avg Tabs/Day</span>
+          </div>
+          <div class="weekly-stat">
+            <span class="weekly-value">73</span>
+            <span class="weekly-label">Tabs Closed</span>
+          </div>
+          <div class="weekly-stat">
+            <span class="weekly-value good">B+</span>
+            <span class="weekly-label">Tab Score</span>
+          </div>
+        </div>
+        
+        <div class="weekly-chart">
+          <div class="chart-bar" style="--height: 47%"><span>Mon</span></div>
+          <div class="chart-bar" style="--height: 32%"><span>Tue</span></div>
+          <div class="chart-bar" style="--height: 56%"><span>Wed</span></div>
+          <div class="chart-bar" style="--height: 23%"><span>Thu</span></div>
+          <div class="chart-bar" style="--height: 41%"><span>Fri</span></div>
+          <div class="chart-bar" style="--height: 18%"><span>Sat</span></div>
+          <div class="chart-bar today" style="--height: 38%"><span>Sun</span></div>
+        </div>
+        <div class="chart-label">Average tabs per day</div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <h2 class="section-title">Features</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🚫</span>
+          <h3>Hard Tab Limits</h3>
+          <p>Set a maximum. When you hit it, you MUST close a tab to open a new one. No exceptions.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⏰</span>
+          <h3>Tab Aging System</h3>
+          <p>Fresh, Stale, or Rotten. Tabs age based on last visit. Old tabs get highlighted for closure.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">😬</span>
+          <h3>The Guilt Counter</h3>
+          <p>A persistent badge showing your "tab calories" — estimated cognitive load from open tabs.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">💣</span>
+          <h3>Tab Bankruptcy</h3>
+          <p>One-click nuclear option. Close everything. Start fresh. Archived for recovery if needed.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎯</span>
+          <h3>Focus Sessions</h3>
+          <p>Temporarily limit to 5 tabs for deep work. Other tabs saved and restored after session.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3>Weekly Reports</h3>
+          <p>Track your progress. Peak counts, averages, most hoarded domains, and your Tab Diet Score.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+      <h2 class="section-title">Pricing</h2>
+      
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Free</h3>
+            <span class="pricing-price">$0</span>
+          </div>
+          <ul class="pricing-features">
+            <li>✓ Fixed 30-tab limit</li>
+            <li>✓ Basic aging indicators</li>
+            <li>✓ Weekly summary report</li>
+            <li>✓ Tab Bankruptcy</li>
+          </ul>
+          <button class="btn btn-secondary">Get Free</button>
+        </div>
+        
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-header">
+            <h3>Pro</h3>
+            <span class="pricing-price">$4<span>/mo</span></span>
+          </div>
+          <ul class="pricing-features">
+            <li>✓ Custom limits (5-100)</li>
+            <li>✓ Full analytics dashboard</li>
+            <li>✓ AI tab grouping</li>
+            <li>✓ Focus session scheduling</li>
+            <li>✓ Cross-device sync</li>
+            <li>✓ Export & archive</li>
+          </ul>
+          <button class="btn btn-primary">Get Pro</button>
+        </div>
+        
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Team</h3>
+            <span class="pricing-price">$8<span>/user/mo</span></span>
+          </div>
+          <ul class="pricing-features">
+            <li>✓ Everything in Pro</li>
+            <li>✓ Team leaderboards</li>
+            <li>✓ Admin-set limits</li>
+            <li>✓ Productivity analytics</li>
+            <li>✓ Slack integration</li>
+          </ul>
+          <button class="btn btn-secondary">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>TabDiet — A concept by <a href="https://github.com/yojahny55" target="_blank">Duncan Ideas</a></p>
+      <p class="footer-source">Sourced from X/Twitter • Feb 22, 2026</p>
+    </footer>
+  </div>
+
+  <!-- Tab Limit Modal -->
+  <div class="modal-overlay" id="limit-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-icon">⚠️</span>
+        <h2>TAB LIMIT REACHED</h2>
+        <span class="modal-count">25/25</span>
+      </div>
+      
+      <p class="modal-desc">To open a new tab, you must close one first:</p>
+      
+      <div class="modal-tabs">
+        <div class="modal-tab rotten" onclick="closeTab(this)">
+          <span class="tab-status">🔴</span>
+          <div class="tab-info">
+            <span class="tab-title">r/productivity - Reddit</span>
+            <span class="tab-age">14 days old (ROTTEN)</span>
+          </div>
+          <button class="tab-close">×</button>
+        </div>
+        <div class="modal-tab stale" onclick="closeTab(this)">
+          <span class="tab-status">🟡</span>
+          <div class="tab-info">
+            <span class="tab-title">Amazon.com Shopping Cart</span>
+            <span class="tab-age">5 days old</span>
+          </div>
+          <button class="tab-close">×</button>
+        </div>
+        <div class="modal-tab stale" onclick="closeTab(this)">
+          <span class="tab-status">🟡</span>
+          <div class="tab-info">
+            <span class="tab-title">YouTube - Watch Later</span>
+            <span class="tab-age">3 days old</span>
+          </div>
+          <button class="tab-close">×</button>
+        </div>
+        <div class="modal-tab fresh" onclick="closeTab(this)">
+          <span class="tab-status">🟢</span>
+          <div class="tab-info">
+            <span class="tab-title">GitHub Pull Request #127</span>
+            <span class="tab-age">2 hours ago</span>
+          </div>
+          <button class="tab-close">×</button>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeLimitModal()">Cancel</button>
+        <button class="btn btn-danger" onclick="closeOldest()">Close Oldest</button>
+        <button class="btn btn-warning" onclick="declareTabBankruptcy()">💣 Tab Bankruptcy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
