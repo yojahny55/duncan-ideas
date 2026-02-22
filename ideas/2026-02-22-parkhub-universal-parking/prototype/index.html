@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkHub — Universal Parking App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span class="time">9:41</span>
+            <div class="status-icons">
+                <span class="signal">📶</span>
+                <span class="battery">🔋</span>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <header class="app-header">
+                <div class="logo">
+                    <span class="logo-icon">🅿️</span>
+                    <h1>ParkHub</h1>
+                </div>
+                <button class="icon-btn" onclick="showSettings()">⚙️</button>
+            </header>
+
+            <div class="active-session" id="active-session" style="display: none;">
+                <div class="session-card">
+                    <div class="session-header">
+                        <span class="session-status">🟢 Active Parking</span>
+                        <span class="session-provider">via ParkMobile</span>
+                    </div>
+                    <div class="session-location">
+                        <span class="location-icon">📍</span>
+                        <span id="session-location-text">Downtown Tampa - Lot B</span>
+                    </div>
+                    <div class="session-timer">
+                        <div class="timer-display">
+                            <span class="timer-value" id="timer-value">1:45:32</span>
+                            <span class="timer-label">remaining</span>
+                        </div>
+                        <div class="timer-progress">
+                            <div class="timer-bar" id="timer-bar" style="width: 88%"></div>
+                        </div>
+                    </div>
+                    <div class="session-actions">
+                        <button class="btn btn-outline" onclick="extendTime()">+ Extend</button>
+                        <button class="btn btn-outline" onclick="findCar()">🗺️ Find Car</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scan-section">
+                <button class="scan-btn" onclick="showScanner()">
+                    <span class="scan-icon">📷</span>
+                    <span class="scan-text">Scan Parking QR Code</span>
+                </button>
+                <p class="scan-hint">or enter zone number manually</p>
+            </div>
+
+            <div class="quick-actions">
+                <button class="quick-btn" onclick="showZoneInput()">
+                    <span class="quick-icon">🔢</span>
+                    <span>Enter Zone</span>
+                </button>
+                <button class="quick-btn" onclick="showNearby()">
+                    <span class="quick-icon">📍</span>
+                    <span>Find Parking</span>
+                </button>
+                <button class="quick-btn" onclick="showHistory()">
+                    <span class="quick-icon">📋</span>
+                    <span>History</span>
+                </button>
+            </div>
+
+            <div class="vehicles-section">
+                <div class="section-header">
+                    <h2>Your Vehicles</h2>
+                    <button class="text-btn" onclick="addVehicle()">+ Add</button>
+                </div>
+                <div class="vehicle-list">
+                    <div class="vehicle-card selected" onclick="selectVehicle(this)">
+                        <span class="vehicle-icon">🚗</span>
+                        <div class="vehicle-info">
+                            <span class="vehicle-name">Honda Civic</span>
+                            <span class="vehicle-plate">ABC-1234</span>
+                        </div>
+                        <span class="vehicle-check">✓</span>
+                    </div>
+                    <div class="vehicle-card" onclick="selectVehicle(this)">
+                        <span class="vehicle-icon">🛻</span>
+                        <div class="vehicle-info">
+                            <span class="vehicle-name">Ford F-150</span>
+                            <span class="vehicle-plate">XYZ-5678</span>
+                        </div>
+                        <span class="vehicle-check">✓</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-locations">
+                <div class="section-header">
+                    <h2>Recent Spots</h2>
+                </div>
+                <div class="location-list">
+                    <div class="location-item" onclick="quickPark('Downtown Tampa - Lot B', 'ParkMobile')">
+                        <span class="loc-icon">🏢</span>
+                        <div class="loc-info">
+                            <span class="loc-name">Downtown Tampa - Lot B</span>
+                            <span class="loc-provider">ParkMobile • $4/hr</span>
+                        </div>
+                        <span class="loc-arrow">→</span>
+                    </div>
+                    <div class="location-item" onclick="quickPark('Tampa Int Airport - G', 'SpotHero')">
+                        <span class="loc-icon">✈️</span>
+                        <div class="loc-info">
+                            <span class="loc-name">Tampa Int'l Airport - G</span>
+                            <span class="loc-provider">SpotHero • $15/day</span>
+                        </div>
+                        <span class="loc-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scanner Screen -->
+        <div id="scanner-screen" class="screen">
+            <header class="screen-header">
+                <button class="back-btn" onclick="goHome()">←</button>
+                <h2>Scan QR Code</h2>
+                <div></div>
+            </header>
+            <div class="scanner-view">
+                <div class="scanner-frame">
+                    <div class="scanner-corners"></div>
+                    <div class="scanner-line"></div>
+                </div>
+                <p class="scanner-hint">Point camera at parking QR code</p>
+            </div>
+            <div class="scanner-actions">
+                <button class="btn btn-secondary" onclick="showZoneInput()">Enter Zone Manually</button>
+                <button class="btn btn-primary" onclick="simulateScan()">📷 Simulate Scan</button>
+            </div>
+        </div>
+
+        <!-- Payment Screen -->
+        <div id="payment-screen" class="screen">
+            <header class="screen-header">
+                <button class="back-btn" onclick="goHome()">←</button>
+                <h2>Start Parking</h2>
+                <div></div>
+            </header>
+            <div class="payment-content">
+                <div class="detected-zone">
+                    <div class="zone-badge">
+                        <span class="provider-logo">📱</span>
+                        <span class="provider-name" id="detected-provider">ParkMobile</span>
+                    </div>
+                    <div class="zone-info">
+                        <span class="zone-name" id="detected-location">Downtown Tampa - Lot B</span>
+                        <span class="zone-id">Zone #4521</span>
+                    </div>
+                </div>
+
+                <div class="vehicle-select">
+                    <label>Vehicle</label>
+                    <div class="selected-vehicle">
+                        <span>🚗</span>
+                        <span>Honda Civic (ABC-1234)</span>
+                        <button class="change-btn">Change</button>
+                    </div>
+                </div>
+
+                <div class="duration-select">
+                    <label>Duration</label>
+                    <div class="duration-options">
+                        <button class="duration-btn" onclick="selectDuration(1, 4)">1 hr<span>$4</span></button>
+                        <button class="duration-btn active" onclick="selectDuration(2, 8)">2 hr<span>$8</span></button>
+                        <button class="duration-btn" onclick="selectDuration(3, 12)">3 hr<span>$12</span></button>
+                        <button class="duration-btn" onclick="selectDuration(8, 25)">Max<span>$25</span></button>
+                    </div>
+                </div>
+
+                <div class="add-ons">
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked>
+                        <span>📍 Remember parking location</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked>
+                        <span>⏰ Alert 15 min before expiry</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        <span>🔄 Auto-extend if needed</span>
+                    </label>
+                </div>
+
+                <div class="payment-method">
+                    <label>Payment</label>
+                    <div class="card-display">
+                        <span class="card-icon">💳</span>
+                        <span class="card-info">Visa •••• 4242</span>
+                        <button class="change-btn">Change</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-footer">
+                <div class="total-display">
+                    <span>Total</span>
+                    <span class="total-amount" id="total-amount">$8.00</span>
+                </div>
+                <button class="btn btn-primary btn-large" onclick="confirmPayment()">
+                    Pay & Start Parking
+                </button>
+                <p class="payment-note">Payment processed via ParkMobile. You won't need their app.</p>
+            </div>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="success-screen" class="screen">
+            <div class="success-content">
+                <div class="success-icon">✅</div>
+                <h2>Parking Started!</h2>
+                <div class="success-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Location</span>
+                        <span class="detail-value" id="success-location">Downtown Tampa - Lot B</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value" id="success-duration">2 hours</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Expires</span>
+                        <span class="detail-value" id="success-expires">11:41 AM</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Vehicle</span>
+                        <span class="detail-value">Honda Civic (ABC-1234)</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Paid</span>
+                        <span class="detail-value" id="success-paid">$8.00</span>
+                    </div>
+                </div>
+                <div class="reminder-badge">
+                    <span>⏰</span>
+                    <span>You'll get a reminder at 11:26 AM</span>
+                </div>
+            </div>
+            <div class="success-actions">
+                <button class="btn btn-primary btn-large" onclick="goHomeWithSession()">Done</button>
+                <button class="btn btn-secondary" onclick="addParkingPhoto()">📷 Take Photo of Spot</button>
+            </div>
+        </div>
+
+        <!-- History Screen -->
+        <div id="history-screen" class="screen">
+            <header class="screen-header">
+                <button class="back-btn" onclick="goHome()">←</button>
+                <h2>Parking History</h2>
+                <button class="icon-btn">📤</button>
+            </header>
+            <div class="history-filters">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">This Month</button>
+                <button class="filter-btn">Civic</button>
+            </div>
+            <div class="history-stats">
+                <div class="stat-card">
+                    <span class="stat-value">$127.50</span>
+                    <span class="stat-label">This Month</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">23</span>
+                    <span class="stat-label">Sessions</span>
+                </div>
+            </div>
+            <div class="history-list">
+                <div class="history-date">Today</div>
+                <div class="history-item">
+                    <div class="history-icon">🏢</div>
+                    <div class="history-info">
+                        <span class="history-location">Downtown Tampa - Lot B</span>
+                        <span class="history-meta">ParkMobile • 2 hrs • Honda Civic</span>
+                    </div>
+                    <span class="history-amount">$8.00</span>
+                </div>
+                <div class="history-date">Yesterday</div>
+                <div class="history-item">
+                    <div class="history-icon">🏥</div>
+                    <div class="history-info">
+                        <span class="history-location">St Joseph's Hospital</span>
+                        <span class="history-meta">PayByPhone • 1 hr • Honda Civic</span>
+                    </div>
+                    <span class="history-amount">$3.00</span>
+                </div>
+                <div class="history-item">
+                    <div class="history-icon">🛒</div>
+                    <div class="history-info">
+                        <span class="history-location">International Plaza</span>
+                        <span class="history-meta">SpotHero • 3 hrs • Ford F-150</span>
+                    </div>
+                    <span class="history-amount">$12.00</span>
+                </div>
+                <div class="history-date">Feb 20</div>
+                <div class="history-item">
+                    <div class="history-icon">✈️</div>
+                    <div class="history-info">
+                        <span class="history-location">Tampa Int'l Airport - G</span>
+                        <span class="history-meta">SpotHero • 2 days • Honda Civic</span>
+                    </div>
+                    <span class="history-amount">$30.00</span>
+                </div>
+            </div>
+            <button class="btn btn-secondary export-btn">📤 Export for Reimbursement</button>
+        </div>
+
+        <!-- Find Car Screen -->
+        <div id="findcar-screen" class="screen">
+            <header class="screen-header">
+                <button class="back-btn" onclick="goHome()">←</button>
+                <h2>Find Your Car</h2>
+                <div></div>
+            </header>
+            <div class="findcar-content">
+                <div class="car-map">
+                    <div class="map-placeholder">
+                        <div class="map-pin">🚗</div>
+                        <div class="map-label">Your car is here</div>
+                        <div class="map-distance">~150 ft away</div>
+                    </div>
+                </div>
+                <div class="car-details">
+                    <div class="car-photo">
+                        <span class="photo-placeholder">📷</span>
+                        <span>Level 3, Spot B-42</span>
+                    </div>
+                    <div class="car-info">
+                        <div class="detail-row">
+                            <span>🚗</span>
+                            <span>Honda Civic (ABC-1234)</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>📍</span>
+                            <span>Downtown Tampa - Lot B</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>⏰</span>
+                            <span>Parked at 9:41 AM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="findcar-actions">
+                <button class="btn btn-primary btn-large">🧭 Get Directions</button>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="goHome()">
+                <span class="nav-icon">🏠</span>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" onclick="showScanner()">
+                <span class="nav-icon">📷</span>
+                <span>Scan</span>
+            </button>
+            <button class="nav-btn" onclick="showHistory()">
+                <span class="nav-icon">📋</span>
+                <span>History</span>
+            </button>
+            <button class="nav-btn" onclick="showSettings()">
+                <span class="nav-icon">👤</span>
+                <span>Account</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
