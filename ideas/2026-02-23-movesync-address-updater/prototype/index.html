@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoveSync - Address Update Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📦</span>
+                    <h1>MoveSync</h1>
+                </div>
+                <div class="move-info">
+                    <span class="move-date">Moving: March 15, 2026</span>
+                    <span class="days-badge">20 days away</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Bar -->
+        <section class="progress-section">
+            <div class="progress-header">
+                <h2>Your Progress</h2>
+                <span class="progress-text"><span id="completed-count">0</span> of <span id="total-count">0</span> updated</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="stat">
+                    <span class="stat-number" id="pending-count">0</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="done-count">0</span>
+                    <span class="stat-label">Done</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" id="skipped-count">0</span>
+                    <span class="stat-label">Skipped</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="checklist">Checklist</button>
+            <button class="tab" data-tab="timeline">Timeline</button>
+        </nav>
+
+        <!-- Checklist View -->
+        <main class="content" id="checklist-view">
+            <!-- Filter Pills -->
+            <div class="filter-pills">
+                <button class="pill active" data-filter="all">All</button>
+                <button class="pill" data-filter="pending">Pending</button>
+                <button class="pill" data-filter="done">Done</button>
+                <button class="pill" data-filter="skipped">Skipped</button>
+            </div>
+
+            <!-- Categories -->
+            <div class="categories" id="categories-container">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Add Custom -->
+            <button class="add-custom-btn" id="add-custom-btn">
+                <span>+</span> Add Custom Service
+            </button>
+        </main>
+
+        <!-- Timeline View -->
+        <main class="content hidden" id="timeline-view">
+            <div class="timeline" id="timeline-container">
+                <!-- Populated by JS -->
+            </div>
+        </main>
+
+        <!-- Add Custom Modal -->
+        <div class="modal-overlay hidden" id="modal-overlay">
+            <div class="modal">
+                <h3>Add Custom Service</h3>
+                <input type="text" id="custom-name" placeholder="Service name">
+                <select id="custom-category">
+                    <option value="financial">🏦 Financial</option>
+                    <option value="medical">🏥 Medical</option>
+                    <option value="insurance">🛡️ Insurance</option>
+                    <option value="subscriptions">📦 Subscriptions</option>
+                    <option value="shopping">🛒 Shopping</option>
+                    <option value="government">🏛️ Government</option>
+                    <option value="utilities">📡 Utilities</option>
+                    <option value="other">📋 Other</option>
+                </select>
+                <input type="url" id="custom-url" placeholder="Update URL (optional)">
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="modal-cancel">Cancel</button>
+                    <button class="btn-primary" id="modal-save">Add Service</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

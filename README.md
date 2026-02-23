@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-23 | [MoveSync](ideas/2026-02-23-movesync-address-updater/) | Moving address update manager — track every service that needs your new address, one-click update links, progress dashboard, moving timeline. Never forget to update an account again | Reddit | ✅ [Demo](ideas/2026-02-23-movesync-address-updater/prototype/index.html) |
 | 2026-02-23 | [DreamScape](ideas/2026-02-23-dreamscape-dream-journal/) | AI-powered dream journal — log dreams via voice or text, AI extracts themes and emotions, reveals patterns over time. Letterboxd for your dreams with sleep correlation insights | X/Twitter | ✅ [Demo](ideas/2026-02-23-dreamscape-dream-journal/prototype/index.html) |
 | 2026-02-22 | [SteelMe](ideas/2026-02-22-steelme-argument-challenger/) | AI opinion stress-tester — enter your position, get the strongest possible counterargument (steelmanned, not strawmanned). Combat confirmation bias, break echo chambers, strengthen your thinking by wrestling with the best arguments against your beliefs | Web | ✅ [Demo](ideas/2026-02-22-steelme-argument-challenger/prototype/index.html) |
 | 2026-02-22 | [ParkHub](ideas/2026-02-22-parkhub-universal-parking/) | Universal parking app — one app for every parking lot. Scan any QR code, pay through any provider (ParkMobile, PayByPhone, SpotHero), all receipts in one place. No more downloading 10 apps per city | Reddit | ✅ [Demo](ideas/2026-02-22-parkhub-universal-parking/prototype/index.html) |
