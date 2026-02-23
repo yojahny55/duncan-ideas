@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamScape - Your AI Dream Journal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        night: {
+                            50: '#f0f0ff',
+                            100: '#e0e0ff',
+                            200: '#c4c4ff',
+                            300: '#9999ff',
+                            400: '#6666ff',
+                            500: '#4d4dff',
+                            600: '#3333cc',
+                            700: '#1a1a66',
+                            800: '#0d0d33',
+                            900: '#06061a',
+                            950: '#03030d'
+                        },
+                        dream: {
+                            purple: '#8B5CF6',
+                            blue: '#3B82F6',
+                            pink: '#EC4899',
+                            cyan: '#06B6D4'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0d0d33 0%, #1a1a66 50%, #06061a 100%);
+        }
+        
+        .dream-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .glow-purple {
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .theme-tag {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3));
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+        
+        .mobile-frame {
+            max-width: 390px;
+            min-height: 844px;
+            margin: 0 auto;
+        }
+        
+        .bottom-nav {
+            background: rgba(13, 13, 51, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .record-btn {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.5);
+        }
+        
+        .insight-card {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+        
+        .pattern-pill {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen overflow-x-hidden">
+    <!-- Stars Background -->
+    <div id="stars" class="fixed inset-0 pointer-events-none"></div>
+    
+    <!-- Mobile Frame -->
+    <div class="mobile-frame relative pb-24">
+        
+        <!-- Screen: Home/Journal -->
+        <div id="screen-home" class="screen active">
+            <!-- Header -->
+            <header class="pt-12 pb-6 px-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-night-300 text-sm">Good morning</p>
+                        <h1 class="text-white text-2xl font-semibold">Your Dreams</h1>
+                    </div>
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-dream-purple to-dream-pink flex items-center justify-center">
+                            <span class="text-white font-medium">JD</span>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-dream-cyan rounded-full flex items-center justify-center">
+                            <span class="text-[10px] text-white font-bold">3</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Bar -->
+                <div class="flex gap-4 mt-6">
+                    <div class="dream-card rounded-xl px-4 py-3 flex-1">
+                        <p class="text-night-300 text-xs">This Week</p>
+                        <p class="text-white text-lg font-semibold">5 dreams</p>
+                    </div>
+                    <div class="dream-card rounded-xl px-4 py-3 flex-1">
+                        <p class="text-night-300 text-xs">Streak</p>
+                        <p class="text-white text-lg font-semibold">🔥 12 days</p>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Recent Dreams -->
+            <section class="px-6 pb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-white font-medium">Recent Dreams</h2>
+                    <button class="text-dream-purple text-sm">See all</button>
+                </div>
+                
+                <!-- Dream Card 1 -->
+                <div class="dream-card rounded-2xl p-4 mb-4 cursor-pointer" onclick="showScreen('detail')">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="text-white font-medium">The Ocean City</h3>
+                            <p class="text-night-300 text-sm">Feb 22, 2026 • 4:32 AM</p>
+                        </div>
+                        <div class="text-2xl">🌊</div>
+                    </div>
+                    <p class="text-night-200 text-sm mb-3 line-clamp-2">
+                        I was walking through a city that was completely submerged underwater, but I could breathe normally. The buildings had fish swimming through broken windows...
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-purple">water</span>
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-blue">city</span>
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-cyan">peaceful</span>
+                    </div>
+                </div>
+                
+                <!-- Dream Card 2 -->
+                <div class="dream-card rounded-2xl p-4 mb-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="text-white font-medium">Flying Over Mountains</h3>
+                            <p class="text-night-300 text-sm">Feb 21, 2026 • 3:15 AM</p>
+                        </div>
+                        <div class="text-2xl">🦅</div>
+                    </div>
+                    <p class="text-night-200 text-sm mb-3 line-clamp-2">
+                        Soaring over snow-capped mountains, feeling completely free. Could control my altitude by just thinking about it...
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-purple">flying</span>
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-pink">lucid</span>
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-cyan">freedom</span>
+                    </div>
+                </div>
+                
+                <!-- Dream Card 3 -->
+                <div class="dream-card rounded-2xl p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="text-white font-medium">The Unknown Pursuer</h3>
+                            <p class="text-night-300 text-sm">Feb 20, 2026 • 5:47 AM</p>
+                        </div>
+                        <div class="text-2xl">👤</div>
+                    </div>
+                    <p class="text-night-200 text-sm mb-3 line-clamp-2">
+                        Being chased through endless hallways of my old school. Couldn't see who was following but felt their presence...
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-pink">chase</span>
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-dream-purple">school</span>
+                        <span class="theme-tag text-xs px-2 py-1 rounded-full text-night-300">anxiety</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Screen: Record Dream -->
+        <div id="screen-record" class="screen">
+            <header class="pt-12 pb-6 px-6">
+                <div class="flex items-center justify-between">
+                    <button onclick="showScreen('home')" class="text-night-300">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                    <h1 class="text-white text-lg font-medium">New Dream</h1>
+                    <button class="text-dream-purple font-medium">Save</button>
+                </div>
+            </header>
+            
+            <div class="px-6">
+                <!-- Voice Record Button -->
+                <div class="flex flex-col items-center mb-8">
+                    <div class="relative">
+                        <div class="record-btn w-24 h-24 rounded-full flex items-center justify-center floating">
+                            <i class="fas fa-microphone text-white text-3xl"></i>
+                        </div>
+                        <div class="absolute inset-0 record-btn rounded-full pulse-ring opacity-50"></div>
+                    </div>
+                    <p class="text-night-300 text-sm mt-4">Tap to record your dream</p>
+                </div>
+                
+                <!-- Or Divider -->
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="flex-1 h-px bg-night-600"></div>
+                    <span class="text-night-400 text-sm">or type it out</span>
+                    <div class="flex-1 h-px bg-night-600"></div>
+                </div>
+                
+                <!-- Text Input -->
+                <div class="dream-card rounded-2xl p-4 mb-6">
+                    <textarea 
+                        class="w-full bg-transparent text-white placeholder-night-400 resize-none outline-none min-h-[200px]"
+                        placeholder="What did you dream about? Describe everything you remember - places, people, feelings, colors..."
+                    ></textarea>
+                </div>
+                
+                <!-- Prompts -->
+                <div class="mb-6">
+                    <p class="text-night-300 text-sm mb-3">Quick prompts:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="theme-tag px-3 py-2 rounded-full text-sm text-night-200">Where were you?</button>
+                        <button class="theme-tag px-3 py-2 rounded-full text-sm text-night-200">Who was there?</button>
+                        <button class="theme-tag px-3 py-2 rounded-full text-sm text-night-200">How did you feel?</button>
+                        <button class="theme-tag px-3 py-2 rounded-full text-sm text-night-200">What happened?</button>
+                    </div>
+                </div>
+                
+                <!-- Dream Type -->
+                <div class="mb-6">
+                    <p class="text-night-300 text-sm mb-3">Dream type:</p>
+                    <div class="flex gap-3">
+                        <button class="dream-card px-4 py-2 rounded-full text-sm text-white border-dream-purple">Normal</button>
+                        <button class="dream-card px-4 py-2 rounded-full text-sm text-night-300">Lucid</button>
+                        <button class="dream-card px-4 py-2 rounded-full text-sm text-night-300">Nightmare</button>
+                        <button class="dream-card px-4 py-2 rounded-full text-sm text-night-300">Recurring</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen: Insights -->
+        <div id="screen-insights" class="screen">
+            <header class="pt-12 pb-6 px-6">
+                <h1 class="text-white text-2xl font-semibold">Dream Insights</h1>
+                <p class="text-night-300 text-sm mt-1">Based on your last 30 dreams</p>
+            </header>
+            
+            <div class="px-6">
+                <!-- AI Insight Card -->
+                <div class="insight-card rounded-2xl p-5 mb-6">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-dream-cyan/20 flex items-center justify-center">
+                            <i class="fas fa-brain text-dream-cyan"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-medium">AI Pattern Detected</h3>
+                            <p class="text-night-300 text-sm">Updated just now</p>
+                        </div>
+                    </div>
+                    <p class="text-night-100 text-sm leading-relaxed">
+                        You dream about <span class="text-dream-cyan font-medium">water</span> 3x more frequently during weeks with high stress. Your last 4 water dreams occurred right before important meetings or deadlines.
+                    </p>
+                </div>
+                
+                <!-- Theme Breakdown -->
+                <div class="mb-6">
+                    <h3 class="text-white font-medium mb-4">Top Themes</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-full dream-card rounded-lg p-3">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-white text-sm">🌊 Water</span>
+                                    <span class="text-dream-purple text-sm">24%</span>
+                                </div>
+                                <div class="h-2 bg-night-700 rounded-full">
+                                    <div class="h-2 bg-gradient-to-r from-dream-purple to-dream-cyan rounded-full" style="width: 24%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="w-full dream-card rounded-lg p-3">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-white text-sm">🦅 Flying</span>
+                                    <span class="text-dream-purple text-sm">18%</span>
+                                </div>
+                                <div class="h-2 bg-night-700 rounded-full">
+                                    <div class="h-2 bg-gradient-to-r from-dream-purple to-dream-pink rounded-full" style="width: 18%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="w-full dream-card rounded-lg p-3">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-white text-sm">🏃 Being Chased</span>
+                                    <span class="text-dream-purple text-sm">15%</span>
+                                </div>
+                                <div class="h-2 bg-night-700 rounded-full">
+                                    <div class="h-2 bg-gradient-to-r from-dream-pink to-dream-purple rounded-full" style="width: 15%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Correlations -->
+                <div class="mb-6">
+                    <h3 class="text-white font-medium mb-4">Correlations</h3>
+                    
+                    <div class="dream-card rounded-2xl p-4 mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                <i class="fas fa-running text-green-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white text-sm">Exercise days → Flying dreams</p>
+                                <p class="text-green-400 text-xs">+67% correlation</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dream-card rounded-2xl p-4 mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                                <i class="fas fa-moon text-orange-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white text-sm">Full moon → Vivid dreams</p>
+                                <p class="text-orange-400 text-xs">+43% intensity</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dream-card rounded-2xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                                <i class="fas fa-bed text-red-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white text-sm">Poor sleep → Chase dreams</p>
+                                <p class="text-red-400 text-xs">+82% likelihood</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen: Dream Detail -->
+        <div id="screen-detail" class="screen">
+            <header class="pt-12 pb-4 px-6">
+                <div class="flex items-center justify-between">
+                    <button onclick="showScreen('home')" class="text-night-300">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <div class="flex gap-4">
+                        <button class="text-night-300"><i class="fas fa-share text-lg"></i></button>
+                        <button class="text-night-300"><i class="fas fa-ellipsis-v text-lg"></i></button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="px-6">
+                <!-- Dream Header -->
+                <div class="mb-6">
+                    <div class="text-4xl mb-3">🌊</div>
+                    <h1 class="text-white text-2xl font-semibold mb-2">The Ocean City</h1>
+                    <p class="text-night-300 text-sm">February 22, 2026 • 4:32 AM</p>
+                    <p class="text-night-400 text-xs mt-1">Sleep duration: 7h 23m • REM: 1h 45m</p>
+                </div>
+                
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <span class="pattern-pill px-3 py-1 rounded-full text-sm text-dream-purple">water</span>
+                    <span class="pattern-pill px-3 py-1 rounded-full text-sm text-dream-blue">city</span>
+                    <span class="pattern-pill px-3 py-1 rounded-full text-sm text-dream-cyan">peaceful</span>
+                    <span class="pattern-pill px-3 py-1 rounded-full text-sm text-green-400">exploration</span>
+                </div>
+                
+                <!-- Dream Content -->
+                <div class="dream-card rounded-2xl p-5 mb-6">
+                    <p class="text-night-100 leading-relaxed">
+                        I was walking through a city that was completely submerged underwater, but I could breathe normally. The buildings had fish swimming through broken windows, and everything was tinted blue-green.
+                        <br><br>
+                        There were other people walking around too, all just going about their daily business as if nothing was unusual. I remember feeling incredibly peaceful and curious.
+                        <br><br>
+                        At one point, I found an old bookstore and went inside. The books were floating slightly, their pages slowly turning in the current. I picked one up and tried to read it but the words kept shifting...
+                    </p>
+                </div>
+                
+                <!-- AI Analysis -->
+                <div class="insight-card rounded-2xl p-5 mb-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-sparkles text-dream-cyan"></i>
+                        <h3 class="text-white font-medium">AI Analysis</h3>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <span class="text-dream-cyan">Symbols:</span>
+                            <span class="text-night-200"> Water often represents emotions, the unconscious mind, or feeling overwhelmed. Your ability to breathe underwater suggests you're processing emotions successfully.</span>
+                        </div>
+                        <div>
+                            <span class="text-dream-purple">Mood:</span>
+                            <span class="text-night-200"> Peaceful, curious, explorative</span>
+                        </div>
+                        <div>
+                            <span class="text-dream-pink">Similar dreams:</span>
+                            <span class="text-night-200"> Jan 15 "Swimming City", Dec 3 "Underwater Temple"</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Emotions -->
+                <div class="mb-6">
+                    <h3 class="text-white font-medium mb-3">How did this dream feel?</h3>
+                    <div class="flex gap-4">
+                        <button class="flex flex-col items-center opacity-50">
+                            <span class="text-2xl">😰</span>
+                            <span class="text-night-400 text-xs mt-1">Anxious</span>
+                        </button>
+                        <button class="flex flex-col items-center opacity-50">
+                            <span class="text-2xl">😐</span>
+                            <span class="text-night-400 text-xs mt-1">Neutral</span>
+                        </button>
+                        <button class="flex flex-col items-center">
+                            <span class="text-2xl">😊</span>
+                            <span class="text-dream-purple text-xs mt-1">Peaceful</span>
+                        </button>
+                        <button class="flex flex-col items-center opacity-50">
+                            <span class="text-2xl">🤩</span>
+                            <span class="text-night-400 text-xs mt-1">Excited</span>
+                        </button>
+                        <button class="flex flex-col items-center opacity-50">
+                            <span class="text-2xl">😨</span>
+                            <span class="text-night-400 text-xs mt-1">Scared</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screen: Explore (Social) -->
+        <div id="screen-explore" class="screen">
+            <header class="pt-12 pb-6 px-6">
+                <h1 class="text-white text-2xl font-semibold">Explore</h1>
+                <p class="text-night-300 text-sm mt-1">Discover dreams from the community</p>
+            </header>
+            
+            <div class="px-6">
+                <!-- Dream of the Day -->
+                <div class="dream-card rounded-2xl p-5 mb-6 border-dream-purple/40 glow-purple">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <span class="text-dream-purple text-sm font-medium">Dream of the Day</span>
+                    </div>
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-dream-pink to-dream-purple"></div>
+                        <div>
+                            <h3 class="text-white font-medium">The Library of Infinite Doors</h3>
+                            <p class="text-night-300 text-sm">by @dreamwalker • 8h ago</p>
+                        </div>
+                    </div>
+                    <p class="text-night-200 text-sm mb-3">
+                        Found myself in a library where each book was a door to a different world. Opened one about my childhood and literally stepped into my old bedroom...
+                    </p>
+                    <div class="flex items-center gap-4 text-night-400 text-sm">
+                        <span><i class="fas fa-heart text-dream-pink"></i> 234</span>
+                        <span><i class="fas fa-comment"></i> 45</span>
+                        <span><i class="fas fa-bookmark"></i></span>
+                    </div>
+                </div>
+                
+                <!-- Trending Themes -->
+                <div class="mb-6">
+                    <h3 class="text-white font-medium mb-3">Trending Themes</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="pattern-pill px-4 py-2 rounded-full text-sm text-white">#water 🌊</span>
+                        <span class="pattern-pill px-4 py-2 rounded-full text-sm text-white">#flying ✈️</span>
+                        <span class="pattern-pill px-4 py-2 rounded-full text-sm text-white">#lucid ✨</span>
+                        <span class="pattern-pill px-4 py-2 rounded-full text-sm text-white">#childhood 🧒</span>
+                    </div>
+                </div>
+                
+                <!-- Community Dreams -->
+                <h3 class="text-white font-medium mb-4">Recent Dreams</h3>
+                
+                <div class="dream-card rounded-2xl p-4 mb-3">
+                    <div class="flex items-start gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500"></div>
+                        <div class="flex-1">
+                            <p class="text-white text-sm font-medium">Meeting My Future Self</p>
+                            <p class="text-night-400 text-xs">@lucidluna • 2h ago</p>
+                        </div>
+                    </div>
+                    <p class="text-night-200 text-sm mb-2">Had coffee with myself 20 years from now. They gave me advice but I can't remember what they said...</p>
+                    <div class="flex items-center gap-4 text-night-400 text-xs">
+                        <span><i class="fas fa-heart"></i> 89</span>
+                        <span><i class="fas fa-comment"></i> 12</span>
+                    </div>
+                </div>
+                
+                <div class="dream-card rounded-2xl p-4 mb-3">
+                    <div class="flex items-start gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-blue-500"></div>
+                        <div class="flex-1">
+                            <p class="text-white text-sm font-medium">The Endless Staircase</p>
+                            <p class="text-night-400 text-xs">@nightowl • 5h ago</p>
+                        </div>
+                    </div>
+                    <p class="text-night-200 text-sm mb-2">Kept climbing stairs that went nowhere, but it felt meaningful somehow. The view kept changing...</p>
+                    <div class="flex items-center gap-4 text-night-400 text-xs">
+                        <span><i class="fas fa-heart"></i> 67</span>
+                        <span><i class="fas fa-comment"></i> 8</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav fixed bottom-0 left-0 right-0 py-4 px-8 flex justify-around items-center z-50 mobile-frame mx-auto">
+            <button onclick="showScreen('home')" class="nav-btn flex flex-col items-center text-dream-purple" data-screen="home">
+                <i class="fas fa-moon text-xl"></i>
+                <span class="text-xs mt-1">Dreams</span>
+            </button>
+            <button onclick="showScreen('insights')" class="nav-btn flex flex-col items-center text-night-400" data-screen="insights">
+                <i class="fas fa-chart-line text-xl"></i>
+                <span class="text-xs mt-1">Insights</span>
+            </button>
+            <button onclick="showScreen('record')" class="relative -top-4">
+                <div class="record-btn w-16 h-16 rounded-full flex items-center justify-center">
+                    <i class="fas fa-plus text-white text-2xl"></i>
+                </div>
+            </button>
+            <button onclick="showScreen('explore')" class="nav-btn flex flex-col items-center text-night-400" data-screen="explore">
+                <i class="fas fa-compass text-xl"></i>
+                <span class="text-xs mt-1">Explore</span>
+            </button>
+            <button class="nav-btn flex flex-col items-center text-night-400">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-xs mt-1">Profile</span>
+            </button>
+        </nav>
+    </div>
+    
+    <script>
+        // Generate stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+        
+        // Screen navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + screenId).classList.add('active');
+            
+            // Update nav highlight
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-dream-purple');
+                btn.classList.add('text-night-400');
+                if (btn.dataset.screen === screenId) {
+                    btn.classList.add('text-dream-purple');
+                    btn.classList.remove('text-night-400');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
