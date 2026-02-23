@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteelMe — AI Opinion Stress-Tester</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🛡️</span>
+                <span class="logo-text">SteelMe</span>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-view="challenge">Challenge</button>
+                <button class="nav-btn" data-view="journal">Journal</button>
+                <button class="nav-btn" data-view="stats">Stats</button>
+            </nav>
+            <button class="profile-btn">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=thinker" alt="Profile" class="avatar">
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Challenge View -->
+            <div id="challenge-view" class="view active">
+                <!-- Hero Section -->
+                <section class="hero">
+                    <h1>Challenge Your Beliefs</h1>
+                    <p class="subtitle">Enter your opinion. Get the strongest counterargument.</p>
+                </section>
+
+                <!-- Opinion Input Card -->
+                <div class="card input-card" id="input-section">
+                    <div class="card-header">
+                        <span class="card-icon">💭</span>
+                        <h2>Your Position</h2>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="topic-select">Topic Category</label>
+                        <select id="topic-select">
+                            <option value="">Select a category (optional)</option>
+                            <option value="politics">Politics & Policy</option>
+                            <option value="technology">Technology & AI</option>
+                            <option value="ethics">Ethics & Morality</option>
+                            <option value="business">Business & Economics</option>
+                            <option value="personal">Personal Decisions</option>
+                            <option value="science">Science & Environment</option>
+                            <option value="society">Society & Culture</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="opinion-input">State your position</label>
+                        <textarea id="opinion-input" placeholder="I believe that... because...&#10;&#10;Example: &quot;I believe remote work is better than office work because it improves work-life balance and eliminates commute time.&quot;"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Steelman Depth</label>
+                        <div class="depth-options">
+                            <button class="depth-btn" data-depth="quick">
+                                <span class="depth-icon">⚡</span>
+                                <span class="depth-label">Quick</span>
+                                <span class="depth-desc">Key counterpoints</span>
+                            </button>
+                            <button class="depth-btn active" data-depth="strong">
+                                <span class="depth-icon">💪</span>
+                                <span class="depth-label">Strong</span>
+                                <span class="depth-desc">Detailed argument</span>
+                            </button>
+                            <button class="depth-btn" data-depth="philosopher">
+                                <span class="depth-icon">🎓</span>
+                                <span class="depth-label">Philosopher</span>
+                                <span class="depth-desc">Academic depth</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="confidence-input">
+                        <label>How confident are you in this position?</label>
+                        <div class="confidence-slider">
+                            <input type="range" id="confidence-before" min="1" max="10" value="7">
+                            <div class="confidence-labels">
+                                <span>Uncertain</span>
+                                <span class="confidence-value" id="confidence-display">7/10</span>
+                                <span>Certain</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="primary-btn" id="steelman-btn">
+                        <span class="btn-icon">🛡️</span>
+                        Steel My Position
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div class="card loading-card" id="loading-section" style="display: none;">
+                    <div class="loading-animation">
+                        <div class="loading-icon">🛡️</div>
+                        <div class="loading-text">Finding the strongest counterargument...</div>
+                        <div class="loading-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results-section" style="display: none;">
+                    <!-- Your Position Recap -->
+                    <div class="card recap-card">
+                        <div class="card-header">
+                            <span class="card-icon">💬</span>
+                            <h2>Your Position</h2>
+                        </div>
+                        <blockquote id="your-position-recap"></blockquote>
+                    </div>
+
+                    <!-- Steelmanned Counterargument -->
+                    <div class="card steelman-card">
+                        <div class="card-header">
+                            <span class="card-icon">🛡️</span>
+                            <h2>The Strongest Counterargument</h2>
+                            <span class="badge">Steelmanned</span>
+                        </div>
+                        <div class="steelman-content" id="steelman-content">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Common Ground -->
+                    <div class="card common-ground-card">
+                        <div class="card-header">
+                            <span class="card-icon">🤝</span>
+                            <h2>Common Ground</h2>
+                        </div>
+                        <div class="common-ground-content" id="common-ground-content">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Post-Reflection -->
+                    <div class="card reflection-card">
+                        <div class="card-header">
+                            <span class="card-icon">🔄</span>
+                            <h2>Reflect & Update</h2>
+                        </div>
+                        <div class="reflection-content">
+                            <p>After reading the steelmanned counterargument, how has your confidence changed?</p>
+                            <div class="confidence-comparison">
+                                <div class="confidence-before">
+                                    <span class="conf-label">Before</span>
+                                    <span class="conf-value" id="conf-before-display">7/10</span>
+                                </div>
+                                <div class="confidence-arrow">→</div>
+                                <div class="confidence-after">
+                                    <span class="conf-label">After</span>
+                                    <div class="conf-buttons">
+                                        <button class="conf-btn" data-change="-3">−3</button>
+                                        <button class="conf-btn" data-change="-2">−2</button>
+                                        <button class="conf-btn" data-change="-1">−1</button>
+                                        <button class="conf-btn" data-change="0">Same</button>
+                                        <button class="conf-btn" data-change="1">+1</button>
+                                        <button class="conf-btn" data-change="2">+2</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="reflection-message" id="reflection-message" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="actions-row">
+                        <button class="secondary-btn" id="save-btn">
+                            <span class="btn-icon">💾</span>
+                            Save to Journal
+                        </button>
+                        <button class="secondary-btn" id="deeper-btn">
+                            <span class="btn-icon">🔍</span>
+                            Go Deeper
+                        </button>
+                        <button class="primary-btn" id="new-challenge-btn">
+                            <span class="btn-icon">⚔️</span>
+                            New Challenge
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journal View -->
+            <div id="journal-view" class="view">
+                <section class="hero">
+                    <h1>Opinion Journal</h1>
+                    <p class="subtitle">Track how your views evolve over time</p>
+                </section>
+
+                <div class="journal-list">
+                    <div class="journal-entry">
+                        <div class="entry-header">
+                            <span class="entry-topic">Technology</span>
+                            <span class="entry-date">Feb 21, 2026</span>
+                        </div>
+                        <p class="entry-opinion">"AI will not replace most white-collar jobs within 10 years"</p>
+                        <div class="entry-change">
+                            <span class="conf-badge before">8/10</span>
+                            <span>→</span>
+                            <span class="conf-badge after">6/10</span>
+                            <span class="change-label">(-2)</span>
+                        </div>
+                    </div>
+                    <div class="journal-entry">
+                        <div class="entry-header">
+                            <span class="entry-topic">Personal</span>
+                            <span class="entry-date">Feb 19, 2026</span>
+                        </div>
+                        <p class="entry-opinion">"Renting is always throwing money away compared to buying"</p>
+                        <div class="entry-change">
+                            <span class="conf-badge before">9/10</span>
+                            <span>→</span>
+                            <span class="conf-badge after">5/10</span>
+                            <span class="change-label">(-4)</span>
+                        </div>
+                    </div>
+                    <div class="journal-entry">
+                        <div class="entry-header">
+                            <span class="entry-topic">Society</span>
+                            <span class="entry-date">Feb 15, 2026</span>
+                        </div>
+                        <p class="entry-opinion">"Social media is net negative for society"</p>
+                        <div class="entry-change">
+                            <span class="conf-badge before">8/10</span>
+                            <span>→</span>
+                            <span class="conf-badge after">8/10</span>
+                            <span class="change-label">(same)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats View -->
+            <div id="stats-view" class="view">
+                <section class="hero">
+                    <h1>Your Thinking Stats</h1>
+                    <p class="subtitle">How open-minded are you really?</p>
+                </section>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Opinions Challenged</div>
+                    </div>
+                    <div class="stat-card highlight">
+                        <div class="stat-value">62%</div>
+                        <div class="stat-label">Views Updated</div>
+                        <div class="stat-detail">After seeing steelmanns</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">-1.4</div>
+                        <div class="stat-label">Avg. Confidence Change</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">7</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                </div>
+
+                <div class="card insight-card">
+                    <div class="card-header">
+                        <span class="card-icon">💡</span>
+                        <h2>Insight</h2>
+                    </div>
+                    <p>You're most open to updating your views on <strong>Technology</strong> topics, but rarely change your mind on <strong>Ethics</strong> positions. Consider diving deeper into your ethical assumptions.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <span class="toast-icon">✓</span>
+            <span class="toast-message">Saved to journal!</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
