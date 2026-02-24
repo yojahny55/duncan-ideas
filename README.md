@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-24 | [FadeAway](ideas/2026-02-24-fadeaway/) | Photo archive for healing — hide photos of exes and people you need space from without deleting memories. AI face recognition, encrypted vault, time capsule for when you're ready | X/Twitter | ✅ [Demo](ideas/2026-02-24-fadeaway/prototype.html) |
 | 2026-02-23 | [CallTrail](ideas/2026-02-23-calltrail-service-tracker/) | Personal customer service call tracker — log every interaction, track promises made, get follow-up reminders, never re-explain your issue again. A personal CRM for fighting corporate bureaucracy | Web | ✅ [Demo](ideas/2026-02-23-calltrail-service-tracker/prototype/index.html) |
 | 2026-02-23 | [MoveSync](ideas/2026-02-23-movesync-address-updater/) | Moving address update manager — track every service that needs your new address, one-click update links, progress dashboard, moving timeline. Never forget to update an account again | Reddit | ✅ [Demo](ideas/2026-02-23-movesync-address-updater/prototype/index.html) |
 | 2026-02-23 | [DreamScape](ideas/2026-02-23-dreamscape-dream-journal/) | AI-powered dream journal — log dreams via voice or text, AI extracts themes and emotions, reveals patterns over time. Letterboxd for your dreams with sleep correlation insights | X/Twitter | ✅ [Demo](ideas/2026-02-23-dreamscape-dream-journal/prototype/index.html) |
