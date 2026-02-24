@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CallTrail — Personal Customer Service Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📞</span>
+                    <h1>CallTrail</h1>
+                </div>
+                <button class="btn-icon" id="settingsBtn" title="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-value" id="openIssues">3</span>
+                <span class="stat-label">Open Issues</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="pendingPromises">5</span>
+                <span class="stat-label">Pending Promises</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="totalHoldTime">2h 47m</span>
+                <span class="stat-label">Hold Time (Month)</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="issues">Issues</button>
+                <button class="tab" data-tab="calls">All Calls</button>
+                <button class="tab" data-tab="companies">Companies</button>
+            </div>
+
+            <!-- Issues Tab -->
+            <div class="tab-content active" id="issues-tab">
+                <div class="issues-list">
+                    <!-- Issue Card 1 -->
+                    <div class="issue-card priority-high" data-issue="1">
+                        <div class="issue-header">
+                            <div class="issue-company">
+                                <span class="company-icon">📱</span>
+                                <span class="company-name">Verizon</span>
+                            </div>
+                            <span class="issue-status status-escalated">Escalated</span>
+                        </div>
+                        <h3 class="issue-title">Billing overcharge - $127 disputed</h3>
+                        <div class="issue-meta">
+                            <span class="meta-item">📅 Opened Jan 15</span>
+                            <span class="meta-item">📞 4 calls</span>
+                            <span class="meta-item">⏱️ 1h 23m total hold</span>
+                        </div>
+                        <div class="promise-alert">
+                            <span class="alert-icon">⚠️</span>
+                            <span>Supervisor callback promised 3 days ago</span>
+                        </div>
+                        <div class="issue-actions">
+                            <button class="btn btn-outline btn-sm">Add Call</button>
+                            <button class="btn btn-outline btn-sm">View Timeline</button>
+                        </div>
+                    </div>
+
+                    <!-- Issue Card 2 -->
+                    <div class="issue-card priority-medium" data-issue="2">
+                        <div class="issue-header">
+                            <div class="issue-company">
+                                <span class="company-icon">🏠</span>
+                                <span class="company-name">State Farm</span>
+                            </div>
+                            <span class="issue-status status-progress">In Progress</span>
+                        </div>
+                        <h3 class="issue-title">Roof damage claim #CF-2024-8891</h3>
+                        <div class="issue-meta">
+                            <span class="meta-item">📅 Opened Feb 8</span>
+                            <span class="meta-item">📞 2 calls</span>
+                            <span class="meta-item">⏱️ 34m total hold</span>
+                        </div>
+                        <div class="promise-pending">
+                            <span class="alert-icon">⏳</span>
+                            <span>Adjuster visit scheduled for Feb 26</span>
+                        </div>
+                        <div class="issue-actions">
+                            <button class="btn btn-outline btn-sm">Add Call</button>
+                            <button class="btn btn-outline btn-sm">View Timeline</button>
+                        </div>
+                    </div>
+
+                    <!-- Issue Card 3 -->
+                    <div class="issue-card priority-low" data-issue="3">
+                        <div class="issue-header">
+                            <div class="issue-company">
+                                <span class="company-icon">💳</span>
+                                <span class="company-name">Chase Bank</span>
+                            </div>
+                            <span class="issue-status status-open">Open</span>
+                        </div>
+                        <h3 class="issue-title">Fraudulent charge dispute - $42.99</h3>
+                        <div class="issue-meta">
+                            <span class="meta-item">📅 Opened Feb 20</span>
+                            <span class="meta-item">📞 1 call</span>
+                            <span class="meta-item">⏱️ 12m total hold</span>
+                        </div>
+                        <div class="promise-pending">
+                            <span class="alert-icon">⏳</span>
+                            <span>Provisional credit in 3-5 business days</span>
+                        </div>
+                        <div class="issue-actions">
+                            <button class="btn btn-outline btn-sm">Add Call</button>
+                            <button class="btn btn-outline btn-sm">View Timeline</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calls Tab -->
+            <div class="tab-content" id="calls-tab">
+                <div class="calls-list">
+                    <div class="call-item">
+                        <div class="call-date">Today, 2:34 PM</div>
+                        <div class="call-company">📱 Verizon — Billing Dept</div>
+                        <div class="call-summary">Spoke with "Marcus" - escalated to supervisor. Ref: VZN-8847291. Promised callback within 48 hours.</div>
+                        <div class="call-meta">
+                            <span>⏱️ 23 min hold</span>
+                            <span>📞 18 min call</span>
+                        </div>
+                    </div>
+                    <div class="call-item">
+                        <div class="call-date">Feb 20, 11:15 AM</div>
+                        <div class="call-company">💳 Chase Bank — Fraud Dept</div>
+                        <div class="call-summary">Reported fraudulent charge. Case opened. Provisional credit promised 3-5 days.</div>
+                        <div class="call-meta">
+                            <span>⏱️ 12 min hold</span>
+                            <span>📞 8 min call</span>
+                        </div>
+                    </div>
+                    <div class="call-item">
+                        <div class="call-date">Feb 18, 3:45 PM</div>
+                        <div class="call-company">📱 Verizon — Billing Dept</div>
+                        <div class="call-summary">Agent "Jennifer" couldn't help, said supervisor would call within 24h. No callback received.</div>
+                        <div class="call-meta">
+                            <span>⏱️ 31 min hold</span>
+                            <span>📞 14 min call</span>
+                            <span class="promise-broken">❌ Promise broken</span>
+                        </div>
+                    </div>
+                    <div class="call-item">
+                        <div class="call-date">Feb 8, 10:00 AM</div>
+                        <div class="call-company">🏠 State Farm — Claims</div>
+                        <div class="call-summary">Filed roof damage claim. Claim #CF-2024-8891. Adjuster to call within 3 days.</div>
+                        <div class="call-meta">
+                            <span>⏱️ 8 min hold</span>
+                            <span>📞 22 min call</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Companies Tab -->
+            <div class="tab-content" id="companies-tab">
+                <div class="companies-list">
+                    <div class="company-card">
+                        <div class="company-header">
+                            <span class="company-icon-lg">📱</span>
+                            <div class="company-info">
+                                <h3>Verizon</h3>
+                                <span class="company-phone">1-800-922-0204</span>
+                            </div>
+                            <div class="company-score bad">2.1</div>
+                        </div>
+                        <div class="company-stats">
+                            <div class="company-stat">
+                                <span class="stat-num">12</span>
+                                <span class="stat-name">Total Calls</span>
+                            </div>
+                            <div class="company-stat">
+                                <span class="stat-num">3h 12m</span>
+                                <span class="stat-name">Total Hold</span>
+                            </div>
+                            <div class="company-stat">
+                                <span class="stat-num">40%</span>
+                                <span class="stat-name">Promises Kept</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-header">
+                            <span class="company-icon-lg">🏠</span>
+                            <div class="company-info">
+                                <h3>State Farm</h3>
+                                <span class="company-phone">1-800-732-5246</span>
+                            </div>
+                            <div class="company-score good">4.2</div>
+                        </div>
+                        <div class="company-stats">
+                            <div class="company-stat">
+                                <span class="stat-num">5</span>
+                                <span class="stat-name">Total Calls</span>
+                            </div>
+                            <div class="company-stat">
+                                <span class="stat-num">42m</span>
+                                <span class="stat-name">Total Hold</span>
+                            </div>
+                            <div class="company-stat">
+                                <span class="stat-num">80%</span>
+                                <span class="stat-name">Promises Kept</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-header">
+                            <span class="company-icon-lg">💳</span>
+                            <div class="company-info">
+                                <h3>Chase Bank</h3>
+                                <span class="company-phone">1-800-935-9935</span>
+                            </div>
+                            <div class="company-score good">3.8</div>
+                        </div>
+                        <div class="company-stats">
+                            <div class="company-stat">
+                                <span class="stat-num">3</span>
+                                <span class="stat-name">Total Calls</span>
+                            </div>
+                            <div class="company-stat">
+                                <span class="stat-num">28m</span>
+                                <span class="stat-name">Total Hold</span>
+                            </div>
+                            <div class="company-stat">
+                                <span class="stat-num">100%</span>
+                                <span class="stat-name">Promises Kept</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FAB -->
+        <button class="fab" id="addCallBtn">
+            <span>+</span>
+        </button>
+
+        <!-- Add Call Modal -->
+        <div class="modal" id="addCallModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Log Customer Service Call</h2>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <form id="callForm">
+                    <div class="form-group">
+                        <label>Company</label>
+                        <div class="company-select">
+                            <input type="text" id="companyInput" placeholder="Search or add company..." autocomplete="off">
+                            <div class="company-suggestions" id="companySuggestions">
+                                <div class="suggestion" data-company="Verizon">📱 Verizon</div>
+                                <div class="suggestion" data-company="AT&T">📱 AT&T</div>
+                                <div class="suggestion" data-company="State Farm">🏠 State Farm</div>
+                                <div class="suggestion" data-company="Chase Bank">💳 Chase Bank</div>
+                                <div class="suggestion" data-company="Comcast">📺 Comcast</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input type="text" id="departmentInput" placeholder="e.g., Billing, Claims, Support">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hold Time</label>
+                            <input type="text" id="holdTime" placeholder="e.g., 23 min">
+                        </div>
+                        <div class="form-group">
+                            <label>Call Duration</label>
+                            <input type="text" id="callDuration" placeholder="e.g., 15 min">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Agent Name (if given)</label>
+                        <input type="text" id="agentName" placeholder="e.g., Marcus, Jennifer">
+                    </div>
+                    <div class="form-group">
+                        <label>Reference / Ticket Number</label>
+                        <input type="text" id="refNumber" placeholder="e.g., VZN-8847291">
+                    </div>
+                    <div class="form-group">
+                        <label>What happened?</label>
+                        <textarea id="callNotes" rows="3" placeholder="Summarize the call..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Any promises made?</label>
+                        <div class="promise-input">
+                            <input type="text" id="promiseText" placeholder="e.g., Callback within 48 hours">
+                            <input type="date" id="promiseDate" title="Expected by date">
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="addPromiseBtn">+ Add Promise</button>
+                    </div>
+                    <div class="promises-list" id="promisesList"></div>
+                    <div class="form-group">
+                        <label>Link to Issue</label>
+                        <select id="issueSelect">
+                            <option value="">— New Issue —</option>
+                            <option value="1">📱 Verizon: Billing overcharge</option>
+                            <option value="2">🏠 State Farm: Roof damage claim</option>
+                            <option value="3">💳 Chase: Fraudulent charge</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Call</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Issue Timeline Modal -->
+        <div class="modal" id="timelineModal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <div>
+                        <h2>📱 Verizon — Billing Overcharge</h2>
+                        <span class="issue-status status-escalated">Escalated</span>
+                    </div>
+                    <button class="modal-close" id="closeTimeline">&times;</button>
+                </div>
+                <div class="timeline-container">
+                    <div class="timeline-summary">
+                        <div class="summary-stat">
+                            <span class="stat-label">Disputed Amount</span>
+                            <span class="stat-value">$127.00</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Days Open</span>
+                            <span class="stat-value">39</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Total Calls</span>
+                            <span class="stat-value">4</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Total Hold Time</span>
+                            <span class="stat-value">1h 23m</span>
+                        </div>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot current"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">Feb 23, 2026 — Today</div>
+                                <div class="timeline-title">Call #4 — Escalation Follow-up</div>
+                                <div class="timeline-body">
+                                    <p>Spoke with "Marcus". Escalated to supervisor. <strong>Ref: VZN-8847291</strong></p>
+                                    <div class="timeline-promise pending">
+                                        <span>⏳ Promise: Supervisor callback within 48 hours</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-meta">⏱️ 23 min hold • 📞 18 min call</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">Feb 18, 2026</div>
+                                <div class="timeline-title">Call #3 — Escalation Request</div>
+                                <div class="timeline-body">
+                                    <p>Agent "Jennifer" couldn't help. Said supervisor would call within 24h.</p>
+                                    <div class="timeline-promise broken">
+                                        <span>❌ Promise broken: No callback received</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-meta">⏱️ 31 min hold • 📞 14 min call</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">Jan 28, 2026</div>
+                                <div class="timeline-title">Call #2 — Dispute Follow-up</div>
+                                <div class="timeline-body">
+                                    <p>Called to check status. Agent said "still under review." No timeline given.</p>
+                                </div>
+                                <div class="timeline-meta">⏱️ 18 min hold • 📞 7 min call</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-date">Jan 15, 2026</div>
+                                <div class="timeline-title">Call #1 — Issue Reported</div>
+                                <div class="timeline-body">
+                                    <p>Discovered $127 overcharge on bill. Agent "David" filed dispute ticket.</p>
+                                    <div class="timeline-promise kept">
+                                        <span>✅ Promise kept: Credit within 2 billing cycles</span>
+                                    </div>
+                                </div>
+                                <div class="timeline-meta">⏱️ 11 min hold • 📞 19 min call</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-actions">
+                        <button class="btn btn-outline">📝 Generate Complaint Letter</button>
+                        <button class="btn btn-outline">📧 Find Executive Contacts</button>
+                        <button class="btn btn-primary">📞 Log New Call</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span class="toast-icon">✅</span>
+            <span class="toast-message">Call saved successfully!</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
