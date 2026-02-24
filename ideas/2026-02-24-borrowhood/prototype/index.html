@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BorrowHood — Neighborhood Thing Lending</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10B981;
+            --primary-dark: #059669;
+            --primary-light: #D1FAE5;
+            --secondary: #6366F1;
+            --accent: #F59E0B;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --bg: #F9FAFB;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --danger: #EF4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background: var(--white);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            padding: 16px 20px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 10px;
+            height: 10px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+        }
+
+        .location-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--primary-dark);
+        }
+
+        /* Share Score Card */
+        .share-score-card {
+            margin: 16px 20px;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #818CF8 100%);
+            border-radius: 16px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-info h3 {
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .score-value {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .score-number {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .score-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .score-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+        }
+
+        .score-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-stat-value {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            padding: 0 20px;
+            margin-bottom: 16px;
+            gap: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: var(--bg);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Browse Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .see-all {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 70px;
+            cursor: pointer;
+        }
+
+        .category-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--bg);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.2s;
+        }
+
+        .category.active .category-icon {
+            background: var(--primary-light);
+        }
+
+        .category-name {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .category.active .category-name {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 0 20px 100px;
+        }
+
+        .item-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 130px;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .item-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .item-status.available {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .item-status.borrowed {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .item-info {
+            padding: 12px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-owner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .owner-avatar {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #FCD34D, #F59E0B);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .owner-name {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .item-distance {
+            font-size: 12px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 20px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        .add-btn {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            margin-top: -28px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--white);
+            width: 100%;
+            max-width: 430px;
+            border-radius: 24px 24px 0 0;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Item Detail Modal */
+        .detail-image {
+            width: 100%;
+            height: 200px;
+            background: var(--bg);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .detail-name {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .detail-status {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .detail-owner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #FCD34D, #F59E0B);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .detail-owner-info {
+            flex: 1;
+        }
+
+        .detail-owner-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .detail-owner-stats {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .detail-description {
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .borrow-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .borrow-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* Add Item Modal */
+        .add-photo {
+            width: 100%;
+            height: 180px;
+            background: var(--bg);
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .add-photo:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .add-photo-icon {
+            font-size: 40px;
+        }
+
+        .add-photo-text {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toggle-label {
+            font-size: 14px;
+        }
+
+        .toggle {
+            width: 48px;
+            height: 28px;
+            background: var(--border);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle-handle {
+            width: 24px;
+            height: 24px;
+            background: var(--white);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+            box-shadow: var(--shadow);
+        }
+
+        .toggle.active .toggle-handle {
+            transform: translateX(20px);
+        }
+
+        /* Loans Screen */
+        .loan-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .loan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .loan-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .loan-image {
+            width: 56px;
+            height: 56px;
+            background: var(--bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .loan-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .loan-person {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .loan-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .loan-badge.lent {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .loan-badge.borrowed {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .loan-dates {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .loan-date {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loan-overdue {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* Success Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Screen transitions */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Browse Screen -->
+        <div class="screen active" id="browseScreen">
+            <header class="header">
+                <div class="header-top">
+                    <div class="logo">
+                        <div class="logo-icon">🏘️</div>
+                        <span class="logo-text">BorrowHood</span>
+                    </div>
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="showNotifications()">
+                            🔔
+                            <span class="notification-badge"></span>
+                        </button>
+                        <button class="header-btn" onclick="showProfile()">👤</button>
+                    </div>
+                </div>
+                <div class="location-bar">
+                    📍 Maple Street Network · 47 neighbors · 128 items
+                </div>
+            </header>
+
+            <div class="share-score-card">
+                <div class="score-info">
+                    <h3>Your Share Score</h3>
+                    <div class="score-value">
+                        <span class="score-number">78</span>
+                        <span class="score-label">/ 100</span>
+                    </div>
+                </div>
+                <div class="score-stats">
+                    <div class="score-stat">
+                        <span class="score-stat-value">12</span>
+                        <span>Lent</span>
+                    </div>
+                    <div class="score-stat">
+                        <span class="score-stat-value">8</span>
+                        <span>Borrowed</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('browse')">Browse</button>
+                <button class="tab" onclick="switchTab('loans')">My Loans</button>
+                <button class="tab" onclick="switchTab('items')">My Items</button>
+            </div>
+
+            <div id="browseContent">
+                <div class="section-header">
+                    <h2 class="section-title">Categories</h2>
+                </div>
+                <div class="categories">
+                    <div class="category active" onclick="selectCategory(this)">
+                        <div class="category-icon">🔧</div>
+                        <span class="category-name">Tools</span>
+                    </div>
+                    <div class="category" onclick="selectCategory(this)">
+                        <div class="category-icon">🌳</div>
+                        <span class="category-name">Garden</span>
+                    </div>
+                    <div class="category" onclick="selectCategory(this)">
+                        <div class="category-icon">🎉</div>
+                        <span class="category-name">Party</span>
+                    </div>
+                    <div class="category" onclick="selectCategory(this)">
+                        <div class="category-icon">⛺</div>
+                        <span class="category-name">Camping</span>
+                    </div>
+                    <div class="category" onclick="selectCategory(this)">
+                        <div class="category-icon">🏋️</div>
+                        <span class="category-name">Sports</span>
+                    </div>
+                    <div class="category" onclick="selectCategory(this)">
+                        <div class="category-icon">📦</div>
+                        <span class="category-name">Other</span>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Available Nearby</h2>
+                    <a href="#" class="see-all">See All</a>
+                </div>
+
+                <div class="items-grid">
+                    <div class="item-card" onclick="showItemDetail('drill')">
+                        <div class="item-image">
+                            🔌
+                            <span class="item-status available">Available</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">DeWalt Power Drill</div>
+                            <div class="item-owner">
+                                <div class="owner-avatar">M</div>
+                                <span class="owner-name">Mike T.</span>
+                            </div>
+                            <div class="item-distance">📍 0.2 mi away</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card" onclick="showItemDetail('washer')">
+                        <div class="item-image">
+                            💦
+                            <span class="item-status available">Available</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Pressure Washer</div>
+                            <div class="item-owner">
+                                <div class="owner-avatar">S</div>
+                                <span class="owner-name">Sarah K.</span>
+                            </div>
+                            <div class="item-distance">📍 0.3 mi away</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card" onclick="showItemDetail('ladder')">
+                        <div class="item-image">
+                            🪜
+                            <span class="item-status borrowed">Borrowed</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">24ft Extension Ladder</div>
+                            <div class="item-owner">
+                                <div class="owner-avatar">J</div>
+                                <span class="owner-name">John M.</span>
+                            </div>
+                            <div class="item-distance">📍 0.4 mi away</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card" onclick="showItemDetail('tent')">
+                        <div class="item-image">
+                            ⛺
+                            <span class="item-status available">Available</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">6-Person Camping Tent</div>
+                            <div class="item-owner">
+                                <div class="owner-avatar">L</div>
+                                <span class="owner-name">Lisa W.</span>
+                            </div>
+                            <div class="item-distance">📍 0.1 mi away</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card" onclick="showItemDetail('saw')">
+                        <div class="item-image">
+                            🪚
+                            <span class="item-status available">Available</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Circular Saw</div>
+                            <div class="item-owner">
+                                <div class="owner-avatar">D</div>
+                                <span class="owner-name">Dan R.</span>
+                            </div>
+                            <div class="item-distance">📍 0.5 mi away</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card" onclick="showItemDetail('projector')">
+                        <div class="item-image">
+                            📽️
+                            <span class="item-status available">Available</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">HD Projector + Screen</div>
+                            <div class="item-owner">
+                                <div class="owner-avatar">A</div>
+                                <span class="owner-name">Amy C.</span>
+                            </div>
+                            <div class="item-distance">📍 0.3 mi away</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loansContent" style="display: none; padding: 0 20px 100px;">
+                <div class="loan-card">
+                    <div class="loan-header">
+                        <div class="loan-item">
+                            <div class="loan-image">🔌</div>
+                            <div class="loan-info">
+                                <h4>Impact Driver</h4>
+                                <span class="loan-person">Lent to Bob H.</span>
+                            </div>
+                        </div>
+                        <span class="loan-badge lent">Lent</span>
+                    </div>
+                    <div class="loan-dates">
+                        <div class="loan-date">📅 Feb 20</div>
+                        <div class="loan-date loan-overdue">⚠️ Due today</div>
+                    </div>
+                </div>
+
+                <div class="loan-card">
+                    <div class="loan-header">
+                        <div class="loan-item">
+                            <div class="loan-image">🧹</div>
+                            <div class="loan-info">
+                                <h4>Carpet Cleaner</h4>
+                                <span class="loan-person">From Nancy P.</span>
+                            </div>
+                        </div>
+                        <span class="loan-badge borrowed">Borrowed</span>
+                    </div>
+                    <div class="loan-dates">
+                        <div class="loan-date">📅 Feb 22</div>
+                        <div class="loan-date">Due Feb 26</div>
+                    </div>
+                </div>
+
+                <div class="loan-card">
+                    <div class="loan-header">
+                        <div class="loan-item">
+                            <div class="loan-image">🪜</div>
+                            <div class="loan-info">
+                                <h4>Step Ladder</h4>
+                                <span class="loan-person">Lent to Carol S.</span>
+                            </div>
+                        </div>
+                        <span class="loan-badge lent">Lent</span>
+                    </div>
+                    <div class="loan-dates">
+                        <div class="loan-date">📅 Feb 18</div>
+                        <div class="loan-date">Due Feb 25</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="itemsContent" style="display: none; padding: 0 20px 100px;">
+                <div class="items-grid" style="padding: 0;">
+                    <div class="item-card">
+                        <div class="item-image">
+                            🔌
+                            <span class="item-status borrowed">Lent Out</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Impact Driver</div>
+                            <div class="item-owner">
+                                <span class="owner-name">With Bob H.</span>
+                            </div>
+                            <div class="item-distance">Due today</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card">
+                        <div class="item-image">
+                            🪜
+                            <span class="item-status borrowed">Lent Out</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Step Ladder</div>
+                            <div class="item-owner">
+                                <span class="owner-name">With Carol S.</span>
+                            </div>
+                            <div class="item-distance">Due Feb 25</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card">
+                        <div class="item-image">
+                            🔧
+                            <span class="item-status available">Available</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Socket Set</div>
+                            <div class="item-owner">
+                                <span class="owner-name">3 requests</span>
+                            </div>
+                            <div class="item-distance">Most popular!</div>
+                        </div>
+                    </div>
+
+                    <div class="item-card">
+                        <div class="item-image">
+                            ⛺
+                            <span class="item-status available">Available</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Camping Chairs (4)</div>
+                            <div class="item-owner">
+                                <span class="owner-name">No requests</span>
+                            </div>
+                            <div class="item-distance">Listed 2 weeks ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a class="nav-item active" onclick="switchScreen('browse')">
+                <span class="nav-icon">🔍</span>
+                <span>Browse</span>
+            </a>
+            <a class="nav-item" onclick="switchScreen('loans')">
+                <span class="nav-icon">📋</span>
+                <span>Loans</span>
+            </a>
+            <button class="add-btn" onclick="showAddModal()">+</button>
+            <a class="nav-item" onclick="switchScreen('messages')">
+                <span class="nav-icon">💬</span>
+                <span>Messages</span>
+            </a>
+            <a class="nav-item" onclick="switchScreen('profile')">
+                <span class="nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Item Detail Modal -->
+    <div class="modal-overlay" id="itemModal" onclick="closeModal(event, 'itemModal')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Item Details</h2>
+                <button class="modal-close" onclick="hideModal('itemModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-image" id="detailImage">🔌</div>
+                <div class="detail-header">
+                    <h1 class="detail-name" id="detailName">DeWalt Power Drill</h1>
+                    <span class="detail-status">Available</span>
+                </div>
+                
+                <div class="detail-owner">
+                    <div class="detail-avatar" id="detailAvatar">M</div>
+                    <div class="detail-owner-info">
+                        <div class="detail-owner-name" id="detailOwner">Mike Thompson</div>
+                        <div class="detail-owner-stats">⭐ 4.9 · 24 items lent · Share Score: 92</div>
+                    </div>
+                </div>
+
+                <div class="detail-meta">
+                    <div class="meta-item">📍 0.2 miles away</div>
+                    <div class="meta-item">🏷️ Free</div>
+                    <div class="meta-item">💰 $20 deposit</div>
+                </div>
+
+                <p class="detail-description" id="detailDesc">
+                    20V MAX cordless drill/driver with lithium-ion battery. Comes with charger and carrying case. 
+                    Great for basic home projects. Please return with a full charge!
+                </p>
+
+                <button class="borrow-btn" onclick="requestBorrow()">Request to Borrow</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal-overlay" id="addModal" onclick="closeModal(event, 'addModal')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Item</h2>
+                <button class="modal-close" onclick="hideModal('addModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="add-photo">
+                    <span class="add-photo-icon">📸</span>
+                    <span class="add-photo-text">Tap to add photo</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" class="form-input" placeholder="e.g., DeWalt Power Drill">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-select">
+                        <option>Tools</option>
+                        <option>Garden</option>
+                        <option>Party & Events</option>
+                        <option>Camping & Outdoors</option>
+                        <option>Sports & Fitness</option>
+                        <option>Kitchen</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description (optional)</label>
+                    <input type="text" class="form-input" placeholder="Condition, included accessories, etc.">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Rental Fee</label>
+                        <select class="form-select">
+                            <option>Free</option>
+                            <option>$5/day</option>
+                            <option>$10/day</option>
+                            <option>$20/day</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Security Deposit</label>
+                        <select class="form-select">
+                            <option>None</option>
+                            <option>$20</option>
+                            <option>$50</option>
+                            <option>$100</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <span class="toggle-label">Available now</span>
+                    <div class="toggle active" onclick="toggleSwitch(this)">
+                        <div class="toggle-handle"></div>
+                    </div>
+                </div>
+
+                <div class="toggle-group">
+                    <span class="toggle-label">Pickup only (no delivery)</span>
+                    <div class="toggle active" onclick="toggleSwitch(this)">
+                        <div class="toggle-handle"></div>
+                    </div>
+                </div>
+
+                <button class="borrow-btn" style="margin-top: 20px;" onclick="addItem()">Add to My Items</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        ✅ <span id="toastMessage">Item added successfully!</span>
+    </div>
+
+    <script>
+        const items = {
+            drill: {
+                icon: '🔌',
+                name: 'DeWalt Power Drill',
+                avatar: 'M',
+                owner: 'Mike Thompson',
+                desc: '20V MAX cordless drill/driver with lithium-ion battery. Comes with charger and carrying case. Great for basic home projects. Please return with a full charge!'
+            },
+            washer: {
+                icon: '💦',
+                name: 'Pressure Washer',
+                avatar: 'S',
+                owner: 'Sarah Kim',
+                desc: 'Electric pressure washer with multiple nozzles. Perfect for decks, driveways, and siding. Includes 25ft hose. Please drain water after use!'
+            },
+            ladder: {
+                icon: '🪜',
+                name: '24ft Extension Ladder',
+                avatar: 'J',
+                owner: 'John Martinez',
+                desc: 'Heavy-duty aluminum extension ladder. Rated for 250 lbs. Great for gutters, painting, and roof access. Currently lent out - join waitlist!'
+            },
+            tent: {
+                icon: '⛺',
+                name: '6-Person Camping Tent',
+                avatar: 'L',
+                owner: 'Lisa Wong',
+                desc: 'REI Base Camp 6 tent with rainfly. Sets up in 10 minutes. Includes all poles and stakes. Please shake out before returning!'
+            },
+            saw: {
+                icon: '🪚',
+                name: 'Circular Saw',
+                avatar: 'D',
+                owner: 'Dan Roberts',
+                desc: 'Makita 7-1/4" circular saw with guide. Cuts through plywood like butter. Extra blade included. Return cleaned!'
+            },
+            projector: {
+                icon: '📽️',
+                name: 'HD Projector + Screen',
+                avatar: 'A',
+                owner: 'Amy Chen',
+                desc: 'Epson 1080p projector with 100" pull-up screen. Perfect for backyard movie nights! Includes HDMI cable. $50 deposit required.'
+            }
+        };
+
+        function showItemDetail(itemId) {
+            const item = items[itemId];
+            document.getElementById('detailImage').textContent = item.icon;
+            document.getElementById('detailName').textContent = item.name;
+            document.getElementById('detailAvatar').textContent = item.avatar;
+            document.getElementById('detailOwner').textContent = item.owner;
+            document.getElementById('detailDesc').textContent = item.desc;
+            document.getElementById('itemModal').classList.add('active');
+        }
+
+        function showAddModal() {
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function closeModal(event, modalId) {
+            if (event.target.classList.contains('modal-overlay')) {
+                hideModal(modalId);
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('browseContent').style.display = tab === 'browse' ? 'block' : 'none';
+            document.getElementById('loansContent').style.display = tab === 'loans' ? 'block' : 'none';
+            document.getElementById('itemsContent').style.display = tab === 'items' ? 'block' : 'none';
+        }
+
+        function selectCategory(el) {
+            document.querySelectorAll('.category').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function toggleSwitch(el) {
+            el.classList.toggle('active');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function requestBorrow() {
+            hideModal('itemModal');
+            showToast('Borrow request sent! Owner will respond soon.');
+        }
+
+        function addItem() {
+            hideModal('addModal');
+            showToast('Item added to your listings!');
+        }
+
+        function switchScreen(screen) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            if (screen === 'loans') {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('browseContent').style.display = 'none';
+                document.getElementById('loansContent').style.display = 'block';
+                document.getElementById('itemsContent').style.display = 'none';
+            } else {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('browseContent').style.display = 'block';
+                document.getElementById('loansContent').style.display = 'none';
+                document.getElementById('itemsContent').style.display = 'none';
+            }
+        }
+
+        function showNotifications() {
+            showToast('3 new notifications');
+        }
+
+        function showProfile() {
+            showToast('Profile coming soon!');
+        }
+    </script>
+</body>
+</html>
