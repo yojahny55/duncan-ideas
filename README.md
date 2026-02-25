@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-25 | [RefTrack](ideas/2026-02-25-reftrack-reference-manager/) | Professional reference manager — track who's agreed to be a reference, prevent overuse burnout, get reminders to give heads-ups and share outcomes. Never burn a reference again | Reddit | ✅ [Demo](ideas/2026-02-25-reftrack-reference-manager/prototype/index.html) |
 | 2026-02-25 | [ShiftSnap](ideas/2026-02-25-shiftsnap-earnings-tracker/) | Instantly know what you earned after every shift — for hourly/tipped workers who never quite know their true take-home. Track hours, tips, overtime, compare to paychecks, catch payroll errors | X/Twitter | ✅ [Demo](ideas/2026-02-25-shiftsnap-earnings-tracker/prototype/index.html) |
 | 2026-02-24 | [AccountTrail](ideas/2026-02-24-accounttrail/) | Track every account you've created — which email, which login method (Google/Apple/password). Never wonder "how did I sign up for this?" again. Complementary to password managers | Web | ✅ [Demo](ideas/2026-02-24-accounttrail/prototype/index.html) |
 | 2026-02-24 | [BorrowHood](ideas/2026-02-24-borrowhood/) | Peer-to-peer neighborhood lending app — share tools, gear, and things with neighbors. Track loans, reciprocity scoring, security deposits. No more "who has my drill?" or freeloading neighbors | Reddit | ✅ [Demo](ideas/2026-02-24-borrowhood/prototype/index.html) |
