@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-24 | [AccountTrail](ideas/2026-02-24-accounttrail/) | Track every account you've created — which email, which login method (Google/Apple/password). Never wonder "how did I sign up for this?" again. Complementary to password managers | Web | ✅ [Demo](ideas/2026-02-24-accounttrail/prototype/index.html) |
 | 2026-02-24 | [BorrowHood](ideas/2026-02-24-borrowhood/) | Peer-to-peer neighborhood lending app — share tools, gear, and things with neighbors. Track loans, reciprocity scoring, security deposits. No more "who has my drill?" or freeloading neighbors | Reddit | ✅ [Demo](ideas/2026-02-24-borrowhood/prototype/index.html) |
 | 2026-02-24 | [FadeAway](ideas/2026-02-24-fadeaway/) | Photo archive for healing — hide photos of exes and people you need space from without deleting memories. AI face recognition, encrypted vault, time capsule for when you're ready | X/Twitter | ✅ [Demo](ideas/2026-02-24-fadeaway/prototype.html) |
 | 2026-02-23 | [CallTrail](ideas/2026-02-23-calltrail-service-tracker/) | Personal customer service call tracker — log every interaction, track promises made, get follow-up reminders, never re-explain your issue again. A personal CRM for fighting corporate bureaucracy | Web | ✅ [Demo](ideas/2026-02-23-calltrail-service-tracker/prototype/index.html) |

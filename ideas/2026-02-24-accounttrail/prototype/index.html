@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AccountTrail — Track Every Account You've Created</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">🔑</span>
+                    <span class="logo-text">AccountTrail</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="all">
+                    <span class="nav-icon">📋</span>
+                    <span>All Accounts</span>
+                    <span class="nav-badge" id="total-count">0</span>
+                </a>
+                <a href="#" class="nav-item" data-view="google">
+                    <span class="nav-icon">🔷</span>
+                    <span>Google Sign-In</span>
+                </a>
+                <a href="#" class="nav-item" data-view="apple">
+                    <span class="nav-icon">🍎</span>
+                    <span>Sign in with Apple</span>
+                </a>
+                <a href="#" class="nav-item" data-view="email">
+                    <span class="nav-icon">✉️</span>
+                    <span>Email/Password</span>
+                </a>
+                <a href="#" class="nav-item" data-view="sso">
+                    <span class="nav-icon">🏢</span>
+                    <span>SSO/Work</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-section">
+                <h3 class="section-title">By Email</h3>
+                <div id="email-filters" class="email-filters">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3 class="section-title">Security</h3>
+                <a href="#" class="nav-item" data-view="no-2fa">
+                    <span class="nav-icon">⚠️</span>
+                    <span>Missing 2FA</span>
+                    <span class="nav-badge warning" id="no-2fa-count">0</span>
+                </a>
+                <a href="#" class="nav-item" data-view="has-2fa">
+                    <span class="nav-icon">🛡️</span>
+                    <span>2FA Enabled</span>
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search accounts...">
+                </div>
+                <button class="btn btn-primary" id="add-account-btn">
+                    <span>+ Add Account</span>
+                </button>
+            </header>
+            
+            <!-- View Title -->
+            <div class="view-header">
+                <h1 id="view-title">All Accounts</h1>
+                <p id="view-subtitle" class="view-subtitle">Your complete account registry</p>
+            </div>
+            
+            <!-- Accounts Grid -->
+            <div id="accounts-grid" class="accounts-grid">
+                <!-- Populated dynamically -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state hidden">
+                <div class="empty-icon">📭</div>
+                <h2>No accounts found</h2>
+                <p>Start by adding your first account</p>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Add Account Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Add Account</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <form id="account-form" class="account-form">
+                <div class="form-group">
+                    <label for="service-name">Service Name *</label>
+                    <input type="text" id="service-name" required placeholder="e.g., Netflix, Spotify, GitHub">
+                </div>
+                
+                <div class="form-group">
+                    <label for="service-url">Website URL</label>
+                    <input type="url" id="service-url" placeholder="https://example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-method">Login Method *</label>
+                    <select id="login-method" required>
+                        <option value="">Select how you sign in...</option>
+                        <option value="google">Google Sign-In</option>
+                        <option value="apple">Sign in with Apple</option>
+                        <option value="email">Email & Password</option>
+                        <option value="github">GitHub</option>
+                        <option value="microsoft">Microsoft</option>
+                        <option value="sso">SSO / Work Account</option>
+                        <option value="phone">Phone Number</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email-used">Email Address Used *</label>
+                    <input type="email" id="email-used" required placeholder="you@example.com">
+                    <div class="email-suggestions" id="email-suggestions"></div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="has-2fa">2FA Enabled?</label>
+                        <select id="has-2fa">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                            <option value="unknown">Unknown</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="two-fa-type">2FA Type</label>
+                        <select id="two-fa-type">
+                            <option value="">N/A</option>
+                            <option value="authenticator">Authenticator App</option>
+                            <option value="sms">SMS</option>
+                            <option value="email">Email Code</option>
+                            <option value="hardware">Hardware Key</option>
+                            <option value="passkey">Passkey</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category">
+                        <option value="other">Other</option>
+                        <option value="social">Social Media</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="finance">Finance</option>
+                        <option value="work">Work</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="developer">Developer Tools</option>
+                        <option value="travel">Travel</option>
+                        <option value="health">Health</option>
+                        <option value="education">Education</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" placeholder="Recovery codes, special instructions, etc."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Account Detail Modal -->
+    <div id="detail-modal" class="modal-overlay hidden">
+        <div class="modal modal-detail">
+            <div class="modal-header">
+                <h2 id="detail-title">Account Details</h2>
+                <button class="modal-close" id="detail-close">&times;</button>
+            </div>
+            <div id="detail-content" class="detail-content">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
