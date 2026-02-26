@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RenterVault — Protect Your Deposit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="app">
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <span>📶</span>
+          <span>🔋</span>
+        </div>
+      </div>
+
+      <!-- Screens Container -->
+      <div class="screens" id="screens">
+        <!-- Screen 1: Home Dashboard -->
+        <div class="screen active" id="screen-home">
+          <header class="app-header">
+            <div class="header-top">
+              <h1>🔐 RenterVault</h1>
+              <button class="icon-btn" aria-label="Settings">⚙️</button>
+            </div>
+            <p class="tagline">Your deposit protection starts here</p>
+          </header>
+
+          <div class="property-card">
+            <div class="property-header">
+              <div class="property-info">
+                <h2>123 Main St, Apt 4B</h2>
+                <p class="property-meta">Tampa, FL 33602</p>
+              </div>
+              <span class="property-status active">Active</span>
+            </div>
+            <div class="property-stats">
+              <div class="stat">
+                <span class="stat-value">47</span>
+                <span class="stat-label">Photos</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">12</span>
+                <span class="stat-label">Documents</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">8</span>
+                <span class="stat-label">Months</span>
+              </div>
+            </div>
+            <div class="lease-progress">
+              <div class="progress-info">
+                <span>Lease Progress</span>
+                <span>8 of 12 months</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 67%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-grid">
+              <button class="action-btn" onclick="showScreen('screen-capture')">
+                <span class="action-icon">📸</span>
+                <span class="action-label">Capture</span>
+              </button>
+              <button class="action-btn" onclick="showScreen('screen-rooms')">
+                <span class="action-icon">🏠</span>
+                <span class="action-label">Rooms</span>
+              </button>
+              <button class="action-btn" onclick="showScreen('screen-compare')">
+                <span class="action-icon">🔄</span>
+                <span class="action-label">Compare</span>
+              </button>
+              <button class="action-btn" onclick="showScreen('screen-export')">
+                <span class="action-icon">📄</span>
+                <span class="action-label">Export</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="streak-card">
+            <div class="streak-icon">🔥</div>
+            <div class="streak-content">
+              <span class="streak-value">12 Month Streak!</span>
+              <span class="streak-desc">Rent proof uploaded every month</span>
+            </div>
+          </div>
+
+          <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div class="activity-list">
+              <div class="activity-item">
+                <span class="activity-icon">📸</span>
+                <div class="activity-content">
+                  <span class="activity-title">Living Room — 3 photos</span>
+                  <span class="activity-time">Today, 9:15 AM</span>
+                </div>
+                <span class="verified-badge">✓</span>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">💳</span>
+                <div class="activity-content">
+                  <span class="activity-title">Feb rent payment proof</span>
+                  <span class="activity-time">Feb 1, 2026</span>
+                </div>
+                <span class="verified-badge">✓</span>
+              </div>
+              <div class="activity-item">
+                <span class="activity-icon">🔧</span>
+                <div class="activity-content">
+                  <span class="activity-title">Repair request: Faucet leak</span>
+                  <span class="activity-time">Jan 28, 2026</span>
+                </div>
+                <span class="verified-badge">✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-banner warning">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content">
+              <span class="alert-title">4 months until move-out</span>
+              <span class="alert-desc">Start documenting current conditions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 2: Capture -->
+        <div class="screen" id="screen-capture">
+          <header class="screen-header">
+            <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+            <h2>Capture Evidence</h2>
+            <div></div>
+          </header>
+
+          <div class="capture-type-selector">
+            <button class="capture-type active" data-type="photo">📸 Photo</button>
+            <button class="capture-type" data-type="video">🎥 Video</button>
+            <button class="capture-type" data-type="doc">📄 Document</button>
+          </div>
+
+          <div class="category-selector">
+            <h3>What are you documenting?</h3>
+            <div class="category-grid">
+              <button class="category-btn active">
+                <span>🚪</span>
+                <span>Move-in</span>
+              </button>
+              <button class="category-btn">
+                <span>📤</span>
+                <span>Move-out</span>
+              </button>
+              <button class="category-btn">
+                <span>🔧</span>
+                <span>Repair Issue</span>
+              </button>
+              <button class="category-btn">
+                <span>💵</span>
+                <span>Rent Proof</span>
+              </button>
+              <button class="category-btn">
+                <span>📋</span>
+                <span>Lease Doc</span>
+              </button>
+              <button class="category-btn">
+                <span>📦</span>
+                <span>Other</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="room-selector">
+            <h3>Select Room</h3>
+            <select class="room-dropdown">
+              <option>Living Room</option>
+              <option>Kitchen</option>
+              <option>Bedroom</option>
+              <option>Bathroom</option>
+              <option>Hallway</option>
+              <option>Balcony/Patio</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="capture-preview">
+            <div class="camera-placeholder">
+              <span class="camera-icon">📷</span>
+              <p>Tap to capture photo</p>
+              <p class="capture-tip">Take clear, well-lit photos of any existing damage</p>
+            </div>
+          </div>
+
+          <div class="capture-info">
+            <div class="info-item">
+              <span class="info-icon">📍</span>
+              <span>123 Main St, Apt 4B</span>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">🕐</span>
+              <span id="current-time">Feb 26, 2026 • 9:41 AM</span>
+            </div>
+            <div class="info-item verified">
+              <span class="info-icon">🔒</span>
+              <span>Tamper-proof timestamp enabled</span>
+            </div>
+          </div>
+
+          <button class="capture-btn">
+            <span>📸</span>
+            Capture & Save
+          </button>
+        </div>
+
+        <!-- Screen 3: Rooms -->
+        <div class="screen" id="screen-rooms">
+          <header class="screen-header">
+            <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+            <h2>Room Checklist</h2>
+            <div></div>
+          </header>
+
+          <div class="checklist-progress">
+            <div class="progress-circle">
+              <svg viewBox="0 0 36 36">
+                <path class="progress-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="progress-value" stroke-dasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              </svg>
+              <span class="progress-text">75%</span>
+            </div>
+            <div class="progress-info">
+              <span class="progress-title">Move-in Documentation</span>
+              <span class="progress-subtitle">6 of 8 rooms complete</span>
+            </div>
+          </div>
+
+          <div class="room-list">
+            <div class="room-item complete">
+              <div class="room-status">✓</div>
+              <div class="room-info">
+                <span class="room-name">Living Room</span>
+                <span class="room-count">12 photos • 2 notes</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+            <div class="room-item complete">
+              <div class="room-status">✓</div>
+              <div class="room-info">
+                <span class="room-name">Kitchen</span>
+                <span class="room-count">15 photos • 3 notes</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+            <div class="room-item complete">
+              <div class="room-status">✓</div>
+              <div class="room-info">
+                <span class="room-name">Master Bedroom</span>
+                <span class="room-count">8 photos • 1 note</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+            <div class="room-item complete">
+              <div class="room-status">✓</div>
+              <div class="room-info">
+                <span class="room-name">Bathroom</span>
+                <span class="room-count">10 photos • 2 notes</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+            <div class="room-item complete">
+              <div class="room-status">✓</div>
+              <div class="room-info">
+                <span class="room-name">Hallway</span>
+                <span class="room-count">4 photos</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+            <div class="room-item complete">
+              <div class="room-status">✓</div>
+              <div class="room-info">
+                <span class="room-name">Entry/Front Door</span>
+                <span class="room-count">3 photos • 1 note</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+            <div class="room-item incomplete">
+              <div class="room-status">○</div>
+              <div class="room-info">
+                <span class="room-name">Balcony</span>
+                <span class="room-count">Not documented yet</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+            <div class="room-item incomplete">
+              <div class="room-status">○</div>
+              <div class="room-info">
+                <span class="room-name">Storage/Closets</span>
+                <span class="room-count">Not documented yet</span>
+              </div>
+              <span class="room-arrow">→</span>
+            </div>
+          </div>
+
+          <div class="checklist-tips">
+            <h4>📋 Checklist Tips</h4>
+            <ul>
+              <li>Photograph all walls, floors, and ceilings</li>
+              <li>Document existing scratches, stains, and damage</li>
+              <li>Test and photo all appliances working</li>
+              <li>Check windows, locks, and outlets</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Screen 4: Compare -->
+        <div class="screen" id="screen-compare">
+          <header class="screen-header">
+            <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+            <h2>Before & After</h2>
+            <div></div>
+          </header>
+
+          <div class="compare-selector">
+            <select class="compare-dropdown">
+              <option>Living Room — East Wall</option>
+              <option>Kitchen — Counter</option>
+              <option>Bathroom — Tile Floor</option>
+              <option>Bedroom — Carpet</option>
+            </select>
+          </div>
+
+          <div class="compare-view">
+            <div class="compare-panel">
+              <div class="compare-label">Move-In</div>
+              <div class="compare-image before">
+                <div class="image-placeholder">
+                  <span>🏠</span>
+                  <p>Jun 15, 2025</p>
+                </div>
+              </div>
+              <div class="compare-meta">
+                <span>✓ Verified timestamp</span>
+                <span>📍 123 Main St</span>
+              </div>
+            </div>
+            <div class="compare-divider">
+              <span>⟷</span>
+            </div>
+            <div class="compare-panel">
+              <div class="compare-label">Current</div>
+              <div class="compare-image after">
+                <div class="image-placeholder">
+                  <span>🏠</span>
+                  <p>Feb 26, 2026</p>
+                </div>
+              </div>
+              <div class="compare-meta">
+                <span>✓ Verified timestamp</span>
+                <span>📍 123 Main St</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-notes">
+            <h4>Notes</h4>
+            <div class="note-item">
+              <span class="note-badge move-in">Move-in</span>
+              <p>"Small scuff on baseboard near window — pre-existing"</p>
+            </div>
+            <div class="note-item">
+              <span class="note-badge current">Current</span>
+              <p>"Same scuff still present, no new damage"</p>
+            </div>
+          </div>
+
+          <div class="compare-verdict">
+            <span class="verdict-icon">✅</span>
+            <div class="verdict-content">
+              <span class="verdict-title">No New Damage Detected</span>
+              <span class="verdict-desc">Condition unchanged from move-in</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 5: Export -->
+        <div class="screen" id="screen-export">
+          <header class="screen-header">
+            <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+            <h2>Export Evidence</h2>
+            <div></div>
+          </header>
+
+          <div class="export-preview">
+            <div class="pdf-preview">
+              <div class="pdf-header">
+                <span class="pdf-logo">🔐</span>
+                <div class="pdf-title">
+                  <h4>RenterVault Evidence Package</h4>
+                  <p>123 Main St, Apt 4B</p>
+                </div>
+              </div>
+              <div class="pdf-body">
+                <div class="pdf-section">
+                  <span class="section-icon">📸</span>
+                  <span>47 Timestamped Photos</span>
+                </div>
+                <div class="pdf-section">
+                  <span class="section-icon">📝</span>
+                  <span>15 Condition Notes</span>
+                </div>
+                <div class="pdf-section">
+                  <span class="section-icon">💵</span>
+                  <span>12 Rent Payment Proofs</span>
+                </div>
+                <div class="pdf-section">
+                  <span class="section-icon">🔧</span>
+                  <span>3 Repair Requests</span>
+                </div>
+              </div>
+              <div class="pdf-footer">
+                <span>🔒 SHA-256 Verified</span>
+                <span>Generated: Feb 26, 2026</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="export-options">
+            <h3>Export Options</h3>
+            <div class="option-list">
+              <label class="option-item">
+                <input type="checkbox" checked>
+                <span class="option-text">Include all move-in photos</span>
+              </label>
+              <label class="option-item">
+                <input type="checkbox" checked>
+                <span class="option-text">Include all move-out photos</span>
+              </label>
+              <label class="option-item">
+                <input type="checkbox" checked>
+                <span class="option-text">Include rent payment proofs</span>
+              </label>
+              <label class="option-item">
+                <input type="checkbox" checked>
+                <span class="option-text">Include repair request log</span>
+              </label>
+              <label class="option-item">
+                <input type="checkbox">
+                <span class="option-text">Include side-by-side comparisons</span>
+              </label>
+              <label class="option-item">
+                <input type="checkbox" checked>
+                <span class="option-text">Include hash verification page</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="export-format">
+            <h3>Format</h3>
+            <div class="format-options">
+              <button class="format-btn active">📄 PDF Report</button>
+              <button class="format-btn">📦 ZIP Archive</button>
+            </div>
+          </div>
+
+          <button class="export-btn primary">
+            <span>📤</span>
+            Generate Evidence Package
+          </button>
+
+          <div class="export-tip">
+            <span class="tip-icon">💡</span>
+            <p>Your evidence package includes cryptographic verification that proves photos haven't been altered since capture.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" onclick="showScreen('screen-home')">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-item" onclick="showScreen('screen-rooms')">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">Rooms</span>
+        </button>
+        <button class="nav-item" onclick="showScreen('screen-capture')">
+          <span class="nav-icon">📸</span>
+          <span class="nav-label">Capture</span>
+        </button>
+        <button class="nav-item" onclick="showScreen('screen-export')">
+          <span class="nav-icon">📄</span>
+          <span class="nav-label">Export</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

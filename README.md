@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-26 | [RenterVault](ideas/2026-02-26-rentervault-deposit-proof/) | Tenant digital evidence vault — document move-in/out conditions with tamper-proof timestamps, organize by room, generate dispute-ready PDF reports. Get your security deposit back | Reddit | ✅ [Demo](ideas/2026-02-26-rentervault-deposit-proof/prototype/index.html) |
 | 2026-02-26 | [RideRate](ideas/2026-02-26-riderate-transit-feedback/) | Real-time transit experience feedback — rate your daily commute, see live satisfaction pulses by line, track patterns over time. Yelp meets Waze for public transit. Give commuters a collective voice | X/Twitter | ✅ [Demo](ideas/2026-02-26-riderate-transit-feedback/prototype/index.html) |
 | 2026-02-25 | [KinCheck](ideas/2026-02-25-kincheck-family-verification/) | Family voice verification for the AI era — code words, challenge questions, and panic mode to protect against voice cloning scams. Stop grandparent scams and fake kidnapping calls before they devastate your family | Web | ✅ [Demo](ideas/2026-02-25-kincheck-family-verification/prototype/index.html) |
 | 2026-02-25 | [RefTrack](ideas/2026-02-25-reftrack-reference-manager/) | Professional reference manager — track who's agreed to be a reference, prevent overuse burnout, get reminders to give heads-ups and share outcomes. Never burn a reference again | Reddit | ✅ [Demo](ideas/2026-02-25-reftrack-reference-manager/prototype/index.html) |
