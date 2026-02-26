@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KinCheck — Family Voice Verification</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>📶 🔋</span>
+    </div>
+    
+    <div class="app" id="app">
+      <!-- Home Screen -->
+      <div class="screen active" id="home-screen">
+        <div class="header">
+          <h1>🛡️ KinCheck</h1>
+          <p class="subtitle">Family Voice Verification</p>
+        </div>
+        
+        <div class="family-status">
+          <div class="status-card safe">
+            <span class="status-icon">✓</span>
+            <div>
+              <strong>All Clear</strong>
+              <p>No suspicious activity detected</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="panic-btn" onclick="showScreen('panic-screen')">
+            <span class="panic-icon">🚨</span>
+            <span>PANIC MODE</span>
+            <span class="panic-subtitle">Suspicious call? Tap here</span>
+          </button>
+        </div>
+
+        <div class="menu-grid">
+          <button class="menu-item" onclick="showScreen('vault-screen')">
+            <span class="menu-icon">🔐</span>
+            <span>Vault</span>
+          </button>
+          <button class="menu-item" onclick="showScreen('family-screen')">
+            <span class="menu-icon">👨‍👩‍👧‍👦</span>
+            <span>Family</span>
+          </button>
+          <button class="menu-item" onclick="showScreen('alerts-screen')">
+            <span class="menu-icon">🔔</span>
+            <span>Alerts</span>
+          </button>
+          <button class="menu-item" onclick="showScreen('drill-screen')">
+            <span class="menu-icon">🎯</span>
+            <span>Drills</span>
+          </button>
+        </div>
+
+        <div class="recent-activity">
+          <h3>Recent Activity</h3>
+          <div class="activity-item">
+            <span class="activity-icon">✅</span>
+            <div>
+              <strong>Mom completed drill</strong>
+              <p>2 hours ago</p>
+            </div>
+          </div>
+          <div class="activity-item">
+            <span class="activity-icon">🔄</span>
+            <div>
+              <strong>Code words synced</strong>
+              <p>Yesterday</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panic Mode Screen -->
+      <div class="screen" id="panic-screen">
+        <div class="header panic-header">
+          <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+          <h1>🚨 PANIC MODE</h1>
+        </div>
+
+        <div class="panic-content">
+          <div class="panic-warning">
+            <p>⚠️ <strong>Stay calm.</strong> Scammers rely on panic.</p>
+          </div>
+
+          <div class="verification-card">
+            <h2>Verify the Caller</h2>
+            <p>Ask them this question:</p>
+            <div class="question-box" onclick="revealQuestion(this)">
+              <span class="tap-hint">Tap to reveal</span>
+              <span class="question hidden">"What was the name of our first family pet?"</span>
+            </div>
+            <p class="expected">Expected answer: <span class="blur" onclick="this.classList.toggle('blur')">Whiskers</span></p>
+          </div>
+
+          <div class="panic-actions">
+            <button class="action-btn callback" onclick="showCallback()">
+              📞 Request Callback
+              <span>Hang up and call them back</span>
+            </button>
+            <button class="action-btn alert" onclick="showAlertSent()">
+              ⚡ Alert Family
+              <span>Notify everyone about this call</span>
+            </button>
+          </div>
+
+          <div class="panic-tips">
+            <h3>⏱️ Take Your Time</h3>
+            <ul>
+              <li>Real emergencies can wait 5 minutes for verification</li>
+              <li>Scammers create fake urgency — don't fall for it</li>
+              <li>If they can't answer → HANG UP</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vault Screen -->
+      <div class="screen" id="vault-screen">
+        <div class="header">
+          <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+          <h1>🔐 Verification Vault</h1>
+        </div>
+
+        <div class="vault-content">
+          <div class="vault-section">
+            <h3>Family Code Word</h3>
+            <div class="vault-item">
+              <span class="vault-icon">🔑</span>
+              <div class="vault-details">
+                <strong>Emergency Code</strong>
+                <p class="vault-value blur" onclick="this.classList.toggle('blur')">Pineapple2024</p>
+              </div>
+              <button class="edit-btn">✏️</button>
+            </div>
+          </div>
+
+          <div class="vault-section">
+            <h3>Personal Verification Questions</h3>
+            <div class="vault-item">
+              <span class="vault-icon">❓</span>
+              <div class="vault-details">
+                <strong>Mom's Question</strong>
+                <p>First family pet's name</p>
+                <p class="vault-value blur" onclick="this.classList.toggle('blur')">Whiskers</p>
+              </div>
+              <button class="edit-btn">✏️</button>
+            </div>
+            <div class="vault-item">
+              <span class="vault-icon">❓</span>
+              <div class="vault-details">
+                <strong>Dad's Question</strong>
+                <p>Year we moved to current house</p>
+                <p class="vault-value blur" onclick="this.classList.toggle('blur')">2019</p>
+              </div>
+              <button class="edit-btn">✏️</button>
+            </div>
+            <div class="vault-item">
+              <span class="vault-icon">❓</span>
+              <div class="vault-details">
+                <strong>Your Question</strong>
+                <p>Childhood best friend's nickname</p>
+                <p class="vault-value blur" onclick="this.classList.toggle('blur')">Beans</p>
+              </div>
+              <button class="edit-btn">✏️</button>
+            </div>
+          </div>
+
+          <div class="vault-section">
+            <h3>Callback Numbers</h3>
+            <div class="vault-item">
+              <span class="vault-icon">📱</span>
+              <div class="vault-details">
+                <strong>Verified Numbers</strong>
+                <p>Only call back on these saved numbers</p>
+              </div>
+              <button class="edit-btn">→</button>
+            </div>
+          </div>
+
+          <button class="add-btn">+ Add Verification Method</button>
+        </div>
+      </div>
+
+      <!-- Family Screen -->
+      <div class="screen" id="family-screen">
+        <div class="header">
+          <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+          <h1>👨‍👩‍👧‍👦 Family Circle</h1>
+        </div>
+
+        <div class="family-content">
+          <div class="family-member">
+            <div class="avatar">👩</div>
+            <div class="member-info">
+              <strong>Mom (Patricia)</strong>
+              <p>Last drill: 2 hours ago</p>
+              <span class="member-status synced">✓ Synced</span>
+            </div>
+          </div>
+          <div class="family-member">
+            <div class="avatar">👨</div>
+            <div class="member-info">
+              <strong>Dad (Robert)</strong>
+              <p>Last drill: 3 days ago</p>
+              <span class="member-status warning">⚠️ Needs drill</span>
+            </div>
+          </div>
+          <div class="family-member">
+            <div class="avatar">👧</div>
+            <div class="member-info">
+              <strong>Sister (Emma)</strong>
+              <p>Last drill: 1 day ago</p>
+              <span class="member-status synced">✓ Synced</span>
+            </div>
+          </div>
+          <div class="family-member">
+            <div class="avatar">👴</div>
+            <div class="member-info">
+              <strong>Grandpa (Walter)</strong>
+              <p>SMS backup enabled</p>
+              <span class="member-status sms">📱 SMS Mode</span>
+            </div>
+          </div>
+
+          <button class="add-btn">+ Invite Family Member</button>
+          
+          <div class="family-stats">
+            <h3>Circle Health</h3>
+            <div class="stat-bar">
+              <div class="stat-fill" style="width: 75%"></div>
+            </div>
+            <p>3/4 members completed drills this week</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts Screen -->
+      <div class="screen" id="alerts-screen">
+        <div class="header">
+          <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+          <h1>🔔 Scam Alerts</h1>
+        </div>
+
+        <div class="alerts-content">
+          <div class="alert-card warning">
+            <div class="alert-header">
+              <span>⚠️ New Scam Pattern</span>
+              <span class="alert-time">2h ago</span>
+            </div>
+            <p><strong>"Grandchild arrested" calls</strong> are up 300% in your area this week. Scammers claim to be grandchildren in jail needing bail money.</p>
+            <button class="learn-more">Learn More</button>
+          </div>
+
+          <div class="alert-card info">
+            <div class="alert-header">
+              <span>📊 Weekly Report</span>
+              <span class="alert-time">Yesterday</span>
+            </div>
+            <p>Your family blocked <strong>0 suspicious calls</strong> this week. 47 families in your area reported scam attempts.</p>
+          </div>
+
+          <div class="alert-card tip">
+            <div class="alert-header">
+              <span>💡 Tip</span>
+              <span class="alert-time">3 days ago</span>
+            </div>
+            <p>AI voice clones can sound exactly like family. Always verify with your code word — even if the voice sounds perfect.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drill Screen -->
+      <div class="screen" id="drill-screen">
+        <div class="header">
+          <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+          <h1>🎯 Practice Drills</h1>
+        </div>
+
+        <div class="drill-content">
+          <div class="drill-card">
+            <h2>Quick Quiz</h2>
+            <p>Test your family's code word memory</p>
+            <button class="drill-btn" onclick="startQuiz()">Start Quiz</button>
+          </div>
+
+          <div class="drill-card">
+            <h2>Simulated Call</h2>
+            <p>Practice receiving a suspicious call</p>
+            <button class="drill-btn secondary" onclick="showSimulation()">Try Simulation</button>
+            <span class="drill-tag">Advanced</span>
+          </div>
+
+          <div class="streak-card">
+            <h3>🔥 Family Streak</h3>
+            <div class="streak-number">12</div>
+            <p>days in a row with completed drills</p>
+          </div>
+
+          <div class="leaderboard">
+            <h3>This Week's Stars</h3>
+            <div class="leader">
+              <span>🥇</span>
+              <span>Mom</span>
+              <span>5 drills</span>
+            </div>
+            <div class="leader">
+              <span>🥈</span>
+              <span>You</span>
+              <span>4 drills</span>
+            </div>
+            <div class="leader">
+              <span>🥉</span>
+              <span>Emma</span>
+              <span>3 drills</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz Modal -->
+      <div class="modal" id="quiz-modal">
+        <div class="modal-content">
+          <h2>🧠 Quick Quiz</h2>
+          <div class="quiz-question">
+            <p>What is your family's emergency code word?</p>
+            <input type="text" id="quiz-answer" placeholder="Type the code word...">
+          </div>
+          <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+            <button class="submit-btn" onclick="checkAnswer()">Check</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert Sent Modal -->
+      <div class="modal" id="alert-modal">
+        <div class="modal-content success">
+          <span class="success-icon">✓</span>
+          <h2>Family Alerted!</h2>
+          <p>4 family members have been notified about this suspicious call.</p>
+          <button class="submit-btn" onclick="closeModal()">Done</button>
+        </div>
+      </div>
+
+      <!-- Callback Modal -->
+      <div class="modal" id="callback-modal">
+        <div class="modal-content">
+          <h2>📞 Callback Protocol</h2>
+          <p>Hang up and call this verified number:</p>
+          <div class="callback-number">
+            <strong>Mom's Cell</strong>
+            <a href="tel:+15551234567">(555) 123-4567</a>
+          </div>
+          <p class="callback-warning">⚠️ Never call back a number the caller gave you!</p>
+          <button class="submit-btn" onclick="closeModal()">Got it</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
