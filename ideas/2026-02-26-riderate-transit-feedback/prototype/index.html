@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RideRate — Real-Time Transit Feedback</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span class="time">8:47</span>
+            <div class="status-icons">
+                <span class="signal">📶</span>
+                <span class="battery">🔋</span>
+            </div>
+        </div>
+        
+        <div class="app-container">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-content">
+                    <div class="logo">
+                        <span class="logo-icon">🚇</span>
+                        <span class="logo-text">RideRate</span>
+                    </div>
+                    <div class="header-stats">
+                        <span class="xp-badge">⚡ 1,240 XP</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="app-main" id="mainContent">
+                <!-- Live Pulse Section -->
+                <section class="pulse-section" id="pulseSection">
+                    <div class="section-header">
+                        <h2>Live Transit Pulse</h2>
+                        <span class="live-indicator">
+                            <span class="live-dot"></span>
+                            LIVE
+                        </span>
+                    </div>
+                    
+                    <div class="pulse-grid" id="pulseGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Rate Your Ride Section -->
+                <section class="rate-section" id="rateSection">
+                    <div class="detected-route">
+                        <div class="route-badge" id="routeBadge">L</div>
+                        <div class="route-info">
+                            <span class="route-name" id="routeName">L Train</span>
+                            <span class="route-station" id="routeStation">→ 14th St - Union Sq</span>
+                        </div>
+                        <button class="change-route-btn" id="changeRouteBtn">Change</button>
+                    </div>
+
+                    <div class="rating-card">
+                        <h3>How was your ride?</h3>
+                        <div class="mood-selector" id="moodSelector">
+                            <button class="mood-btn" data-mood="1" data-label="Awful">😤</button>
+                            <button class="mood-btn" data-mood="2" data-label="Poor">😕</button>
+                            <button class="mood-btn" data-mood="3" data-label="Okay">😐</button>
+                            <button class="mood-btn" data-mood="4" data-label="Good">🙂</button>
+                            <button class="mood-btn" data-mood="5" data-label="Great">😊</button>
+                        </div>
+                        <p class="mood-label" id="moodLabel">Tap to rate</p>
+
+                        <div class="tags-section">
+                            <p class="tags-label">Quick tags:</p>
+                            <div class="tags-grid" id="tagsGrid">
+                                <button class="tag-btn" data-tag="crowded">👥 Crowded</button>
+                                <button class="tag-btn" data-tag="delayed">⏰ Delayed</button>
+                                <button class="tag-btn" data-tag="ontime">✓ On-time</button>
+                                <button class="tag-btn" data-tag="clean">✨ Clean</button>
+                                <button class="tag-btn" data-tag="dirty">🗑️ Dirty</button>
+                                <button class="tag-btn" data-tag="helpful">💁 Helpful staff</button>
+                            </div>
+                        </div>
+
+                        <div class="comment-section">
+                            <button class="add-comment-btn" id="addCommentBtn">
+                                <span>💬</span> Add comment or photo
+                            </button>
+                            <div class="comment-input hidden" id="commentInput">
+                                <textarea placeholder="What happened on your ride?" id="commentText"></textarea>
+                                <button class="photo-btn" id="photoBtn">📷</button>
+                            </div>
+                        </div>
+
+                        <button class="submit-btn" id="submitBtn" disabled>
+                            Submit Rating
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Recent Activity Feed -->
+                <section class="feed-section" id="feedSection">
+                    <div class="section-header">
+                        <h2>Recent on L Train</h2>
+                        <button class="filter-btn">Filter</button>
+                    </div>
+                    <div class="feed-list" id="feedList">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+            </main>
+
+            <!-- Success Toast -->
+            <div class="toast hidden" id="successToast">
+                <div class="toast-content">
+                    <span class="toast-icon">✓</span>
+                    <div class="toast-text">
+                        <strong>Rating submitted!</strong>
+                        <span>+15 XP earned 🔥</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-btn active" data-tab="home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </button>
+                <button class="nav-btn" data-tab="map">
+                    <span class="nav-icon">🗺️</span>
+                    <span class="nav-label">Map</span>
+                </button>
+                <button class="nav-btn rate-nav" data-tab="rate">
+                    <span class="nav-icon">➕</span>
+                </button>
+                <button class="nav-btn" data-tab="journal">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Journal</span>
+                </button>
+                <button class="nav-btn" data-tab="profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Profile</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Route Selector Modal -->
+    <div class="modal-overlay hidden" id="routeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Your Route</h3>
+                <button class="modal-close" id="closeRouteModal">✕</button>
+            </div>
+            <div class="route-search">
+                <input type="text" placeholder="Search lines or stations..." id="routeSearch">
+            </div>
+            <div class="route-list" id="routeList">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

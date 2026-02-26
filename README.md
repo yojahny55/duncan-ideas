@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-26 | [RideRate](ideas/2026-02-26-riderate-transit-feedback/) | Real-time transit experience feedback — rate your daily commute, see live satisfaction pulses by line, track patterns over time. Yelp meets Waze for public transit. Give commuters a collective voice | X/Twitter | ✅ [Demo](ideas/2026-02-26-riderate-transit-feedback/prototype/index.html) |
 | 2026-02-25 | [KinCheck](ideas/2026-02-25-kincheck-family-verification/) | Family voice verification for the AI era — code words, challenge questions, and panic mode to protect against voice cloning scams. Stop grandparent scams and fake kidnapping calls before they devastate your family | Web | ✅ [Demo](ideas/2026-02-25-kincheck-family-verification/prototype/index.html) |
 | 2026-02-25 | [RefTrack](ideas/2026-02-25-reftrack-reference-manager/) | Professional reference manager — track who's agreed to be a reference, prevent overuse burnout, get reminders to give heads-ups and share outcomes. Never burn a reference again | Reddit | ✅ [Demo](ideas/2026-02-25-reftrack-reference-manager/prototype/index.html) |
 | 2026-02-25 | [ShiftSnap](ideas/2026-02-25-shiftsnap-earnings-tracker/) | Instantly know what you earned after every shift — for hourly/tipped workers who never quite know their true take-home. Track hours, tips, overtime, compare to paychecks, catch payroll errors | X/Twitter | ✅ [Demo](ideas/2026-02-25-shiftsnap-earnings-tracker/prototype/index.html) |
