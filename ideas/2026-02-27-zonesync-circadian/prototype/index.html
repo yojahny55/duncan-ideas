@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZoneSync — Circadian Rhythm Optimizer</title>
+  <style>
+    :root {
+      --bg-primary: #0f0f14;
+      --bg-secondary: #1a1a24;
+      --bg-tertiary: #252532;
+      --text-primary: #f0f0f5;
+      --text-secondary: #9898a8;
+      --text-muted: #68687a;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --peak-zone: #10b981;
+      --flex-zone: #f59e0b;
+      --wind-down: #8b5cf6;
+      --sleep-zone: #3b82f6;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo h1 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .timezone-badge {
+      background: var(--bg-tertiary);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .rhythm-score {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-secondary);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--success);
+    }
+
+    .rhythm-score span:first-child {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .rhythm-score span:last-child {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tab {
+      background: var(--bg-secondary);
+      border: none;
+      color: var(--text-secondary);
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Circadian Clock */
+    .circadian-clock {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto;
+    }
+
+    .clock-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 270deg,
+        var(--sleep-zone) 0deg 90deg,
+        var(--peak-zone) 90deg 150deg,
+        var(--flex-zone) 150deg 210deg,
+        var(--wind-down) 210deg 270deg,
+        var(--sleep-zone) 270deg 360deg
+      );
+      opacity: 0.8;
+    }
+
+    .clock-inner {
+      position: absolute;
+      inset: 30px;
+      background: var(--bg-secondary);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .current-time {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .current-zone {
+      font-size: 14px;
+      color: var(--peak-zone);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .clock-labels {
+      position: absolute;
+      inset: -30px;
+    }
+
+    .clock-label {
+      position: absolute;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .clock-label.top { top: 0; left: 50%; transform: translateX(-50%); }
+    .clock-label.right { right: 0; top: 50%; transform: translateY(-50%); }
+    .clock-label.bottom { bottom: 0; left: 50%; transform: translateX(-50%); }
+    .clock-label.left { left: 0; top: 50%; transform: translateY(-50%); }
+
+    /* Zone Legend */
+    .zone-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 24px;
+      justify-content: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.peak { background: var(--peak-zone); }
+    .legend-dot.flex { background: var(--flex-zone); }
+    .legend-dot.wind { background: var(--wind-down); }
+    .legend-dot.sleep { background: var(--sleep-zone); }
+
+    /* Meetings List */
+    .meetings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .meeting-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      border-left: 4px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .meeting-item:hover {
+      background: var(--bg-primary);
+    }
+
+    .meeting-item.good { border-left-color: var(--success); }
+    .meeting-item.warning { border-left-color: var(--warning); }
+    .meeting-item.bad { border-left-color: var(--danger); }
+
+    .meeting-time {
+      min-width: 80px;
+    }
+
+    .meeting-time .time {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .meeting-time .zone {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .meeting-details {
+      flex: 1;
+    }
+
+    .meeting-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .meeting-attendees {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .meeting-score {
+      text-align: center;
+    }
+
+    .score-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .score-value.good { color: var(--success); }
+    .score-value.warning { color: var(--warning); }
+    .score-value.bad { color: var(--danger); }
+
+    .score-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Score Checker */
+    .score-checker {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--bg-tertiary);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .input-wrapper {
+      flex: 1;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--bg-tertiary);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+    }
+
+    .btn {
+      background: var(--accent-purple);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #7c3aed;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--accent-purple);
+      color: var(--accent-purple);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent-purple);
+      color: white;
+    }
+
+    .score-result {
+      display: none;
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .score-result.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .big-score {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-message {
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .alternative {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .alternative strong {
+      color: var(--success);
+    }
+
+    /* Jet Lag Planner */
+    .jet-lag-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .jet-lag-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .jet-lag-form .btn {
+      grid-column: 1 / -1;
+    }
+
+    .recovery-timeline {
+      display: none;
+    }
+
+    .recovery-timeline.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+
+    .timeline-route {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .timeline-city {
+      text-align: center;
+    }
+
+    .timeline-city .code {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .timeline-city .name {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .timeline-arrow {
+      font-size: 24px;
+      color: var(--accent-purple);
+    }
+
+    .timeline-days {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .day-card {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+    }
+
+    .day-number {
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .day-number .label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .day-number .num {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .day-schedule {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .schedule-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .schedule-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .schedule-icon.light { background: rgba(251, 191, 36, 0.2); }
+    .schedule-icon.sleep { background: rgba(59, 130, 246, 0.2); }
+    .schedule-icon.caffeine { background: rgba(239, 68, 68, 0.2); }
+    .schedule-icon.activity { background: rgba(16, 185, 129, 0.2); }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      padding: 20px;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .stat-trend {
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .stat-trend.up {
+      color: var(--success);
+    }
+
+    .stat-trend.down {
+      color: var(--danger);
+    }
+
+    /* Weekly Chart */
+    .weekly-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 150px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+
+    .chart-bar {
+      flex: 1;
+      margin: 0 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 40px;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.5s ease;
+    }
+
+    .bar-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .bar-value {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Tips Section */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tip-card {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+    }
+
+    .tip-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .tip-content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .tip-content p {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--bg-tertiary);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .footer a {
+      color: var(--accent-purple);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">🌐</div>
+        <h1>ZoneSync</h1>
+      </div>
+      <div class="user-info">
+        <div class="timezone-badge">EST (UTC-5)</div>
+        <div class="rhythm-score">
+          <span>Rhythm</span>
+          <span id="headerScore">82</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="dashboard">Today</button>
+      <button class="tab" data-tab="meetings">Meeting Checker</button>
+      <button class="tab" data-tab="jetlag">Jet Lag Planner</button>
+      <button class="tab" data-tab="insights">Insights</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div class="tab-content active" id="dashboard">
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Today's Meetings</div>
+              <div class="card-subtitle">Impact scores for your schedule</div>
+            </div>
+          </div>
+          <div class="meetings-list">
+            <div class="meeting-item good">
+              <div class="meeting-time">
+                <div class="time">10:00 AM</div>
+                <div class="zone">Peak Zone</div>
+              </div>
+              <div class="meeting-details">
+                <div class="meeting-title">Team Standup</div>
+                <div class="meeting-attendees">With Engineering Team</div>
+              </div>
+              <div class="meeting-score">
+                <div class="score-value good">+25</div>
+                <div class="score-label">Impact</div>
+              </div>
+            </div>
+            <div class="meeting-item good">
+              <div class="meeting-time">
+                <div class="time">2:00 PM</div>
+                <div class="zone">Flex Zone</div>
+              </div>
+              <div class="meeting-details">
+                <div class="meeting-title">Client Check-in</div>
+                <div class="meeting-attendees">With Acme Corp (PST)</div>
+              </div>
+              <div class="meeting-score">
+                <div class="score-value good">+15</div>
+                <div class="score-label">Impact</div>
+              </div>
+            </div>
+            <div class="meeting-item warning">
+              <div class="meeting-time">
+                <div class="time">7:00 PM</div>
+                <div class="zone">Wind-Down</div>
+              </div>
+              <div class="meeting-details">
+                <div class="meeting-title">Europe Sync</div>
+                <div class="meeting-attendees">With Berlin Office (CET)</div>
+              </div>
+              <div class="meeting-score">
+                <div class="score-value warning">-15</div>
+                <div class="score-label">Impact</div>
+              </div>
+            </div>
+            <div class="meeting-item bad">
+              <div class="meeting-time">
+                <div class="time">10:00 PM</div>
+                <div class="zone">Sleep Zone ⚠️</div>
+              </div>
+              <div class="meeting-details">
+                <div class="meeting-title">Asia Standup</div>
+                <div class="meeting-attendees">With Singapore Team (SGT)</div>
+              </div>
+              <div class="meeting-score">
+                <div class="score-value bad">-40</div>
+                <div class="score-label">Impact</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Your Circadian Windows</div>
+              <div class="card-subtitle">Based on your chronotype & timezone</div>
+            </div>
+          </div>
+          <div class="circadian-clock">
+            <div class="clock-ring"></div>
+            <div class="clock-inner">
+              <div class="current-time" id="currentTime">10:32</div>
+              <div class="current-zone">Peak Zone</div>
+            </div>
+            <div class="clock-labels">
+              <span class="clock-label top">12 AM</span>
+              <span class="clock-label right">6 AM</span>
+              <span class="clock-label bottom">12 PM</span>
+              <span class="clock-label left">6 PM</span>
+            </div>
+          </div>
+          <div class="zone-legend">
+            <div class="legend-item">
+              <div class="legend-dot peak"></div>
+              <span>Peak (9a-1p)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot flex"></div>
+              <span>Flex (1p-5p)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot wind"></div>
+              <span>Wind-Down (5p-9p)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot sleep"></div>
+              <span>Sleep (9p-7a)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-icon">☀️</div>
+          <div class="tip-content">
+            <h4>Get morning light now</h4>
+            <p>10 mins of bright light in the next hour will boost your peak zone energy.</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">☕</div>
+          <div class="tip-content">
+            <h4>Caffeine cutoff: 2:00 PM</h4>
+            <p>Based on your 11 PM target sleep time.</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🌙</div>
+          <div class="tip-content">
+            <h4>Dim lights at 8:00 PM</h4>
+            <p>Start wind-down mode to protect your sleep quality.</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">⚠️</div>
+          <div class="tip-content">
+            <h4>10 PM meeting concern</h4>
+            <p>Consider declining or suggesting 7 AM tomorrow instead (+35 pts).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meeting Checker Tab -->
+    <div class="tab-content" id="meetings">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Check Meeting Impact</div>
+            <div class="card-subtitle">See how a proposed time affects your rhythm</div>
+          </div>
+        </div>
+        <div class="score-checker">
+          <div class="input-group">
+            <div class="input-wrapper">
+              <label class="input-label">Meeting Time</label>
+              <input type="time" id="meetingTime" value="22:00">
+            </div>
+            <div class="input-wrapper">
+              <label class="input-label">Duration</label>
+              <select id="meetingDuration">
+                <option value="30">30 minutes</option>
+                <option value="60" selected>1 hour</option>
+                <option value="90">1.5 hours</option>
+                <option value="120">2 hours</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn" onclick="checkScore()">Check Impact Score</button>
+          <div class="score-result" id="scoreResult">
+            <div class="big-score" id="bigScore">-40</div>
+            <div class="score-message" id="scoreMessage">This meeting falls in your Sleep Zone</div>
+            <div class="alternative" id="alternative">
+              💡 <strong>Better option:</strong> 8:00 AM tomorrow (+30 pts)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Quick Reference</div>
+            <div class="card-subtitle">Your optimal meeting windows</div>
+          </div>
+        </div>
+        <div class="meetings-list">
+          <div class="meeting-item good">
+            <div class="meeting-time">
+              <div class="time">9 AM - 1 PM</div>
+              <div class="zone">Peak Zone</div>
+            </div>
+            <div class="meeting-details">
+              <div class="meeting-title">Best for important meetings</div>
+              <div class="meeting-attendees">Deep work, creative sessions, key decisions</div>
+            </div>
+            <div class="meeting-score">
+              <div class="score-value good">+20-30</div>
+              <div class="score-label">Impact</div>
+            </div>
+          </div>
+          <div class="meeting-item good">
+            <div class="meeting-time">
+              <div class="time">1 PM - 5 PM</div>
+              <div class="zone">Flex Zone</div>
+            </div>
+            <div class="meeting-details">
+              <div class="meeting-title">Good for collaborative work</div>
+              <div class="meeting-attendees">Standups, check-ins, async-friendly calls</div>
+            </div>
+            <div class="meeting-score">
+              <div class="score-value good">+5-20</div>
+              <div class="score-label">Impact</div>
+            </div>
+          </div>
+          <div class="meeting-item warning">
+            <div class="meeting-time">
+              <div class="time">5 PM - 9 PM</div>
+              <div class="zone">Wind-Down</div>
+            </div>
+            <div class="meeting-details">
+              <div class="meeting-title">Use sparingly</div>
+              <div class="meeting-attendees">Light check-ins only, affects sleep prep</div>
+            </div>
+            <div class="meeting-score">
+              <div class="score-value warning">-5-20</div>
+              <div class="score-label">Impact</div>
+            </div>
+          </div>
+          <div class="meeting-item bad">
+            <div class="meeting-time">
+              <div class="time">9 PM - 7 AM</div>
+              <div class="zone">Sleep Zone</div>
+            </div>
+            <div class="meeting-details">
+              <div class="meeting-title">Avoid if possible</div>
+              <div class="meeting-attendees">Significant circadian disruption</div>
+            </div>
+            <div class="meeting-score">
+              <div class="score-value bad">-30-50</div>
+              <div class="score-label">Impact</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jet Lag Tab -->
+    <div class="tab-content" id="jetlag">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Jet Lag Recovery Planner</div>
+            <div class="card-subtitle">Get a personalized adaptation schedule</div>
+          </div>
+        </div>
+        <div class="jet-lag-form">
+          <div class="input-wrapper">
+            <label class="input-label">From</label>
+            <select id="fromCity">
+              <option value="NYC">New York (EST)</option>
+              <option value="LA">Los Angeles (PST)</option>
+              <option value="LON">London (GMT)</option>
+              <option value="TYO">Tokyo (JST)</option>
+              <option value="SYD">Sydney (AEDT)</option>
+            </select>
+          </div>
+          <div class="input-wrapper">
+            <label class="input-label">To</label>
+            <select id="toCity">
+              <option value="NYC">New York (EST)</option>
+              <option value="LA">Los Angeles (PST)</option>
+              <option value="LON" selected>London (GMT)</option>
+              <option value="TYO">Tokyo (JST)</option>
+              <option value="SYD">Sydney (AEDT)</option>
+            </select>
+          </div>
+          <div class="input-wrapper">
+            <label class="input-label">Departure Date</label>
+            <input type="date" id="departDate" value="2026-03-15">
+          </div>
+          <div class="input-wrapper">
+            <label class="input-label">Return Date (optional)</label>
+            <input type="date" id="returnDate">
+          </div>
+          <button class="btn" onclick="generatePlan()">Generate Recovery Plan</button>
+        </div>
+
+        <div class="recovery-timeline" id="recoveryTimeline">
+          <div class="timeline-header">
+            <div class="timeline-route">
+              <div class="timeline-city">
+                <div class="code">NYC</div>
+                <div class="name">New York</div>
+              </div>
+              <div class="timeline-arrow">→</div>
+              <div class="timeline-city">
+                <div class="code">LON</div>
+                <div class="name">London</div>
+              </div>
+            </div>
+            <div>
+              <strong>5 hour shift</strong>
+              <div style="font-size: 12px; color: var(--text-muted);">~3 days to adapt</div>
+            </div>
+          </div>
+
+          <div class="timeline-days">
+            <div class="day-card">
+              <div class="day-number">
+                <div class="label">Day</div>
+                <div class="num">-1</div>
+              </div>
+              <div class="day-schedule">
+                <div class="schedule-item">
+                  <div class="schedule-icon light">☀️</div>
+                  <span><strong>Light exposure:</strong> Get bright light 7-9 AM (start shifting)</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon sleep">🌙</div>
+                  <span><strong>Sleep:</strong> Go to bed 1 hour earlier (10 PM instead of 11 PM)</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon caffeine">☕</div>
+                  <span><strong>Caffeine cutoff:</strong> 12 PM (earlier than usual)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="day-card">
+              <div class="day-number">
+                <div class="label">Day</div>
+                <div class="num">0</div>
+              </div>
+              <div class="day-schedule">
+                <div class="schedule-item">
+                  <div class="schedule-icon activity">✈️</div>
+                  <span><strong>Flight day:</strong> Stay awake on plane, arrive London evening</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon sleep">🌙</div>
+                  <span><strong>Sleep:</strong> Force yourself to bed at 10 PM London time</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon caffeine">☕</div>
+                  <span><strong>Caffeine:</strong> OK until 2 PM London time, then stop</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="day-card">
+              <div class="day-number">
+                <div class="label">Day</div>
+                <div class="num">1</div>
+              </div>
+              <div class="day-schedule">
+                <div class="schedule-item">
+                  <div class="schedule-icon light">☀️</div>
+                  <span><strong>Light exposure:</strong> Get outside 7-10 AM, avoid sunglasses</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon activity">🏃</div>
+                  <span><strong>Activity:</strong> Light exercise in the morning (walk, stretch)</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon sleep">🌙</div>
+                  <span><strong>Sleep:</strong> Dim lights by 8 PM, bed by 10 PM</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="day-card">
+              <div class="day-number">
+                <div class="label">Day</div>
+                <div class="num">2</div>
+              </div>
+              <div class="day-schedule">
+                <div class="schedule-item">
+                  <div class="schedule-icon light">☀️</div>
+                  <span><strong>Light exposure:</strong> Continue morning light, should feel better</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon activity">✅</div>
+                  <span><strong>Status:</strong> ~70% adapted, avoid heavy meetings AM if possible</span>
+                </div>
+                <div class="schedule-item">
+                  <div class="schedule-icon sleep">🌙</div>
+                  <span><strong>Sleep:</strong> Normal London schedule should feel natural</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="day-card">
+              <div class="day-number">
+                <div class="label">Day</div>
+                <div class="num">3</div>
+              </div>
+              <div class="day-schedule">
+                <div class="schedule-item">
+                  <div class="schedule-icon activity">🎉</div>
+                  <span><strong>Fully adapted!</strong> Your circadian rhythm is now aligned with London</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights Tab -->
+    <div class="tab-content" id="insights">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">82</div>
+          <div class="stat-label">Weekly Rhythm Score</div>
+          <div class="stat-trend up">↑ 8 pts from last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Sleep Zone Violations</div>
+          <div class="stat-trend down">↓ 2 from last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">7.2h</div>
+          <div class="stat-label">Avg Sleep Window</div>
+          <div class="stat-trend up">↑ 0.4h from last week</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Weekly Rhythm Trend</div>
+            <div class="card-subtitle">Your circadian consistency over time</div>
+          </div>
+        </div>
+        <div class="weekly-chart">
+          <div class="chart-bar">
+            <div class="bar-value">72</div>
+            <div class="bar" style="height: 72%; background: var(--flex-zone);"></div>
+            <div class="bar-label">Mon</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-value">78</div>
+            <div class="bar" style="height: 78%; background: var(--flex-zone);"></div>
+            <div class="bar-label">Tue</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-value">65</div>
+            <div class="bar" style="height: 65%; background: var(--warning);"></div>
+            <div class="bar-label">Wed</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-value">88</div>
+            <div class="bar" style="height: 88%; background: var(--success);"></div>
+            <div class="bar-label">Thu</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-value">92</div>
+            <div class="bar" style="height: 92%; background: var(--success);"></div>
+            <div class="bar-label">Fri</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-value">85</div>
+            <div class="bar" style="height: 85%; background: var(--success);"></div>
+            <div class="bar-label">Sat</div>
+          </div>
+          <div class="chart-bar">
+            <div class="bar-value">82</div>
+            <div class="bar" style="height: 82%; background: var(--success);"></div>
+            <div class="bar-label">Sun</div>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 16px;">
+          📉 Wednesday dip: 10 PM Asia sync + late dinner pushed your rhythm off. 
+          Consider alternating weeks for that meeting.
+        </p>
+      </div>
+
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Meeting Impact Summary</div>
+            <div class="card-subtitle">This week's toll on your rhythm</div>
+          </div>
+        </div>
+        <div class="meetings-list">
+          <div class="meeting-item bad">
+            <div class="meeting-time">
+              <div class="time">Wed 10 PM</div>
+              <div class="zone">Sleep Zone</div>
+            </div>
+            <div class="meeting-details">
+              <div class="meeting-title">Asia Team Sync</div>
+              <div class="meeting-attendees">Recurring weekly — consider async</div>
+            </div>
+            <div class="meeting-score">
+              <div class="score-value bad">-40</div>
+              <div class="score-label">Impact</div>
+            </div>
+          </div>
+          <div class="meeting-item warning">
+            <div class="meeting-time">
+              <div class="time">Mon 7 PM</div>
+              <div class="zone">Wind-Down</div>
+            </div>
+            <div class="meeting-details">
+              <div class="meeting-title">Europe Check-in</div>
+              <div class="meeting-attendees">Could shift to 5 PM (+20 pts)</div>
+            </div>
+            <div class="meeting-score">
+              <div class="score-value warning">-15</div>
+              <div class="score-label">Impact</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 20px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+          <p style="font-size: 14px; font-weight: 500;">💡 Optimization opportunity</p>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+            If you move the Asia sync to async updates + a monthly 8 AM call, you'd gain +35 weekly rhythm points.
+          </p>
+          <button class="btn btn-outline" style="margin-top: 12px;">See Suggestions</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>ZoneSync — Protect your rhythm, reclaim your energy</p>
+      <p style="margin-top: 8px;">Built by <a href="#">Duncan ⚔️</a> • Prototype Demo</p>
+    </footer>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Update current time
+    function updateTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const hour12 = hours % 12 || 12;
+      document.getElementById('currentTime').textContent = `${hour12}:${minutes}`;
+    }
+    updateTime();
+    setInterval(updateTime, 60000);
+
+    // Meeting score checker
+    function checkScore() {
+      const time = document.getElementById('meetingTime').value;
+      const [hours, minutes] = time.split(':').map(Number);
+      const result = document.getElementById('scoreResult');
+      const bigScore = document.getElementById('bigScore');
+      const message = document.getElementById('scoreMessage');
+      const alternative = document.getElementById('alternative');
+
+      let score, zone, altTime, altScore;
+
+      if (hours >= 9 && hours < 13) {
+        score = Math.floor(Math.random() * 10) + 20;
+        zone = 'Peak Zone';
+        bigScore.className = 'big-score';
+        bigScore.style.color = 'var(--success)';
+        alternative.style.display = 'none';
+      } else if (hours >= 13 && hours < 17) {
+        score = Math.floor(Math.random() * 15) + 5;
+        zone = 'Flex Zone';
+        bigScore.style.color = 'var(--success)';
+        alternative.style.display = 'none';
+      } else if (hours >= 17 && hours < 21) {
+        score = -(Math.floor(Math.random() * 15) + 5);
+        zone = 'Wind-Down Zone';
+        bigScore.style.color = 'var(--warning)';
+        altTime = '10:00 AM';
+        altScore = '+25';
+        alternative.innerHTML = `💡 <strong>Better option:</strong> ${altTime} tomorrow (${altScore} pts)`;
+        alternative.style.display = 'block';
+      } else {
+        score = -(Math.floor(Math.random() * 20) + 30);
+        zone = 'Sleep Zone';
+        bigScore.style.color = 'var(--danger)';
+        altTime = '8:00 AM';
+        altScore = '+30';
+        alternative.innerHTML = `💡 <strong>Better option:</strong> ${altTime} tomorrow (${altScore} pts)`;
+        alternative.style.display = 'block';
+      }
+
+      bigScore.textContent = score > 0 ? `+${score}` : score;
+      message.textContent = `This meeting falls in your ${zone}`;
+      result.classList.add('visible');
+    }
+
+    // Jet lag planner
+    function generatePlan() {
+      document.getElementById('recoveryTimeline').classList.add('visible');
+    }
+  </script>
+</body>
+</html>
