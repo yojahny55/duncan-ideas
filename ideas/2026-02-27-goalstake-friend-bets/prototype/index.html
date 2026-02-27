@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoalStake — Bet on Goals with Friends</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="feed">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                </svg>
+                <span>Feed</span>
+            </button>
+            <button class="nav-item" data-view="my-goals">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 8v8m-4-4h8"/>
+                </svg>
+                <span>My Goals</span>
+            </button>
+            <button class="nav-item create-btn" data-view="create">
+                <div class="create-icon">+</div>
+            </button>
+            <button class="nav-item" data-view="challenges">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+                <span>Challenges</span>
+            </button>
+            <button class="nav-item" data-view="profile">
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Profile</span>
+            </button>
+        </nav>
+
+        <!-- Feed View -->
+        <div class="view active" id="feed-view">
+            <header class="view-header">
+                <h1>🎯 GoalStake</h1>
+                <p class="tagline">Put your money where your mouth is</p>
+            </header>
+
+            <div class="feed-content">
+                <!-- Active Challenge Card -->
+                <div class="goal-card challenge-active">
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="avatar">MJ</div>
+                            <div>
+                                <span class="username">@mikejones</span>
+                                <span class="goal-type">Fitness</span>
+                            </div>
+                        </div>
+                        <div class="pot-amount">
+                            <span class="pot-label">Total Pot</span>
+                            <span class="pot-value">$200</span>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-content">
+                        <h3>"I'll lose 20 lbs by April 1st"</h3>
+                        <div class="stakes-breakdown">
+                            <div class="stake believer">
+                                <span class="stake-emoji">💪</span>
+                                <span>Mike: $100</span>
+                            </div>
+                            <div class="stake-vs">VS</div>
+                            <div class="stake doubter">
+                                <span class="stake-emoji">😏</span>
+                                <span>You: $100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 35%"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span>7 lbs lost</span>
+                            <span>33 days left</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="action-btn secondary">💬 Trash Talk</button>
+                        <button class="action-btn">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Open Challenge Card -->
+                <div class="goal-card open-challenge">
+                    <div class="card-badge">🔥 Open Challenge</div>
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="avatar">SR</div>
+                            <div>
+                                <span class="username">@sarahrunner</span>
+                                <span class="goal-type">Fitness</span>
+                            </div>
+                        </div>
+                        <div class="pot-amount">
+                            <span class="pot-label">Her Stake</span>
+                            <span class="pot-value">$75</span>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-content">
+                        <h3>"I'll run a marathon by June 1st"</h3>
+                        <p class="goal-description">Starting from couch potato status. Currently can barely run a mile.</p>
+                    </div>
+
+                    <div class="challenge-options">
+                        <button class="challenge-btn support">
+                            <span class="btn-emoji">🙌</span>
+                            <span class="btn-label">Support Her</span>
+                            <span class="btn-detail">Win if she succeeds</span>
+                        </button>
+                        <button class="challenge-btn doubt">
+                            <span class="btn-emoji">🤔</span>
+                            <span class="btn-label">Counter Bet</span>
+                            <span class="btn-detail">Win if she fails</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Completed Goal Card -->
+                <div class="goal-card completed">
+                    <div class="card-badge winner">🏆 Completed</div>
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="avatar">TC</div>
+                            <div>
+                                <span class="username">@tomcoder</span>
+                                <span class="goal-type">Learning</span>
+                            </div>
+                        </div>
+                        <div class="pot-amount won">
+                            <span class="pot-label">He Won</span>
+                            <span class="pot-value">$150</span>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-content">
+                        <h3>"Ship an app to the App Store"</h3>
+                        <p class="result-text">✅ App "FocusFlow" approved on Feb 20th</p>
+                    </div>
+
+                    <div class="verification-badge">
+                        <span>📸</span> Verified with screenshot proof
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Goals View -->
+        <div class="view" id="my-goals-view">
+            <header class="view-header">
+                <h1>My Goals</h1>
+                <div class="stats-row">
+                    <div class="stat">
+                        <span class="stat-value">3</span>
+                        <span class="stat-label">Active</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">7</span>
+                        <span class="stat-label">Won</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">2</span>
+                        <span class="stat-label">Lost</span>
+                    </div>
+                    <div class="stat highlight">
+                        <span class="stat-value">+$340</span>
+                        <span class="stat-label">Net</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="goals-list">
+                <div class="goal-item">
+                    <div class="goal-icon">🏃</div>
+                    <div class="goal-info">
+                        <h4>Run 5K under 25 min</h4>
+                        <p>Stake: $50 • 14 days left</p>
+                    </div>
+                    <div class="goal-status in-progress">In Progress</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-icon">📚</div>
+                    <div class="goal-info">
+                        <h4>Read 12 books this year</h4>
+                        <p>Stake: $100 • 3/12 done</p>
+                    </div>
+                    <div class="goal-status in-progress">In Progress</div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-icon">💰</div>
+                    <div class="goal-info">
+                        <h4>Save $2000 emergency fund</h4>
+                        <p>Stake: $75 • Deadline: Mar 31</p>
+                    </div>
+                    <div class="goal-status in-progress">In Progress</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Goal View -->
+        <div class="view" id="create-view">
+            <header class="view-header">
+                <h1>Create Goal</h1>
+                <p>Set a goal and put money on it</p>
+            </header>
+
+            <form class="create-form" id="goal-form">
+                <div class="form-group">
+                    <label>What's your goal?</label>
+                    <textarea id="goal-text" placeholder="I will..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <div class="category-picker">
+                        <button type="button" class="category-btn active" data-category="fitness">🏃 Fitness</button>
+                        <button type="button" class="category-btn" data-category="learning">📚 Learning</button>
+                        <button type="button" class="category-btn" data-category="finance">💰 Finance</button>
+                        <button type="button" class="category-btn" data-category="habits">🔄 Habits</button>
+                        <button type="button" class="category-btn" data-category="career">💼 Career</button>
+                        <button type="button" class="category-btn" data-category="creative">🎨 Creative</button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Your Stake</label>
+                        <div class="input-with-icon">
+                            <span class="icon">$</span>
+                            <input type="number" id="stake-amount" value="50" min="5" max="500">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Deadline</label>
+                        <input type="date" id="deadline" class="date-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>How will you prove it?</label>
+                    <div class="verification-options">
+                        <label class="verification-option">
+                            <input type="checkbox" checked> 📸 Photo proof
+                        </label>
+                        <label class="verification-option">
+                            <input type="checkbox"> 📊 App data (Strava, etc.)
+                        </label>
+                        <label class="verification-option">
+                            <input type="checkbox"> 👥 Friend witness
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Who can challenge you?</label>
+                    <div class="visibility-options">
+                        <button type="button" class="visibility-btn active">👥 Friends Only</button>
+                        <button type="button" class="visibility-btn">🌍 Public</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>Stake $50 on This Goal</span>
+                    <span class="btn-subtitle">Friends can challenge you after posting</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Challenges View -->
+        <div class="view" id="challenges-view">
+            <header class="view-header">
+                <h1>Challenges</h1>
+                <div class="tab-bar">
+                    <button class="tab active">Pending (2)</button>
+                    <button class="tab">My Bets (5)</button>
+                </div>
+            </header>
+
+            <div class="challenges-list">
+                <div class="challenge-card incoming">
+                    <div class="challenge-header">
+                        <span class="challenge-type">🎯 Incoming Challenge</span>
+                        <span class="challenge-time">2h ago</span>
+                    </div>
+                    <div class="challenger-info">
+                        <div class="avatar">DK</div>
+                        <div>
+                            <strong>@dannyk</strong> challenged your goal
+                        </div>
+                    </div>
+                    <div class="challenge-details">
+                        <p class="goal-preview">"Learn 100 Spanish words by March 1st"</p>
+                        <div class="bet-info">
+                            <span class="your-stake">Your stake: $25</span>
+                            <span class="their-stake">His counter: $25</span>
+                        </div>
+                        <p class="challenge-message">"No mames, you said the same thing last year 😂"</p>
+                    </div>
+                    <div class="challenge-actions">
+                        <button class="action-btn decline">Decline</button>
+                        <button class="action-btn accept">Accept Challenge</button>
+                    </div>
+                </div>
+
+                <div class="challenge-card incoming">
+                    <div class="challenge-header">
+                        <span class="challenge-type">🙌 Support Bet</span>
+                        <span class="challenge-time">5h ago</span>
+                    </div>
+                    <div class="challenger-info">
+                        <div class="avatar">AW</div>
+                        <div>
+                            <strong>@alexwins</strong> is backing you
+                        </div>
+                    </div>
+                    <div class="challenge-details">
+                        <p class="goal-preview">"Ship an MVP by end of February"</p>
+                        <div class="bet-info">
+                            <span class="your-stake">Your stake: $100</span>
+                            <span class="their-stake support">His support: $50</span>
+                        </div>
+                        <p class="challenge-message">"You got this! Putting money where my mouth is 💪"</p>
+                    </div>
+                    <div class="challenge-actions">
+                        <button class="action-btn decline">Decline</button>
+                        <button class="action-btn accept">Accept Support</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile View -->
+        <div class="view" id="profile-view">
+            <header class="profile-header">
+                <div class="profile-avatar">YC</div>
+                <h2>@yojahny</h2>
+                <p class="member-since">Member since Feb 2026</p>
+            </header>
+
+            <div class="profile-stats">
+                <div class="big-stat">
+                    <span class="big-value">77%</span>
+                    <span class="big-label">Success Rate</span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-num">12</span>
+                        <span>Goals Set</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num">7</span>
+                        <span>Won</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num">2</span>
+                        <span>Lost</span>
+                    </div>
+                    <div class="stat-box highlight">
+                        <span class="stat-num">+$340</span>
+                        <span>Net Earnings</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trust-section">
+                <h3>Trust Score</h3>
+                <div class="trust-bar">
+                    <div class="trust-fill" style="width: 92%"></div>
+                </div>
+                <div class="trust-badges">
+                    <span class="badge">✅ Verified Completer</span>
+                    <span class="badge">🤝 Fair Player</span>
+                    <span class="badge">📸 Proof Provider</span>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent</h3>
+                <div class="activity-item win">
+                    <span class="activity-icon">🏆</span>
+                    <div class="activity-text">
+                        <strong>Won $150</strong> — "Read 5 books in January"
+                    </div>
+                </div>
+                <div class="activity-item loss">
+                    <span class="activity-icon">😅</span>
+                    <div class="activity-text">
+                        <strong>Lost $50</strong> — "No sugar for 30 days"
+                    </div>
+                </div>
+                <div class="activity-item win">
+                    <span class="activity-icon">🏆</span>
+                    <div class="activity-text">
+                        <strong>Won $100</strong> — "Launch side project"
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bet Modal -->
+        <div class="modal" id="bet-modal">
+            <div class="modal-content">
+                <button class="modal-close">&times;</button>
+                <h2>Place Your Bet</h2>
+                <p class="modal-goal">"I'll run a marathon by June 1st"</p>
+                
+                <div class="bet-type-selector">
+                    <button class="bet-type active" data-type="support">
+                        <span class="bet-emoji">🙌</span>
+                        <span class="bet-label">Support</span>
+                        <span class="bet-desc">Win if she succeeds</span>
+                    </button>
+                    <button class="bet-type" data-type="counter">
+                        <span class="bet-emoji">🤔</span>
+                        <span class="bet-label">Counter</span>
+                        <span class="bet-desc">Win if she fails</span>
+                    </button>
+                </div>
+
+                <div class="bet-amount-section">
+                    <label>Your Bet Amount</label>
+                    <div class="amount-selector">
+                        <button class="amount-btn" data-amount="25">$25</button>
+                        <button class="amount-btn active" data-amount="50">$50</button>
+                        <button class="amount-btn" data-amount="75">$75</button>
+                        <button class="amount-btn" data-amount="100">$100</button>
+                    </div>
+                    <div class="custom-amount">
+                        <span>or</span>
+                        <input type="number" placeholder="Custom amount" min="5" max="500">
+                    </div>
+                </div>
+
+                <div class="potential-payout">
+                    <span>Potential Payout</span>
+                    <span class="payout-amount">$125</span>
+                </div>
+
+                <div class="add-message">
+                    <textarea placeholder="Add a message (optional)... e.g. 'You got this! 💪' or 'No way you pull this off 😏'"></textarea>
+                </div>
+
+                <button class="confirm-bet-btn">Confirm $50 Support Bet</button>
+                <p class="escrow-note">💰 Funds held in escrow until goal deadline</p>
+            </div>
+        </div>
+
+        <!-- Success Toast -->
+        <div class="toast" id="success-toast">
+            <span class="toast-icon">✅</span>
+            <span class="toast-text">Goal created! Share with friends to get challenged.</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

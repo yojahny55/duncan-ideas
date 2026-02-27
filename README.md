@@ -34,6 +34,7 @@ ideas/
 
 | Date | Name | Description | Source | Prototype |
 |------|------|-------------|--------|-----------|
+| 2026-02-27 | [GoalStake](ideas/2026-02-27-goalstake-friend-bets/) | Social goal betting with escrow — bet on your own goals or challenge friends. Put real money on the line, winner takes all. Turn "I'll definitely do it" into "prove it or pay" | X/Twitter | ✅ [Demo](ideas/2026-02-27-goalstake-friend-bets/prototype/index.html) |
 | 2026-02-26 | [TrialGuard](ideas/2026-02-26-trialguard-free-trial-defender/) | Free trial defense system — register trials the moment you sign up, get escalating reminders before charges hit, direct cancel links, cancellation difficulty ratings. Never get charged for a forgotten free trial again | Web | ✅ [Demo](ideas/2026-02-26-trialguard-free-trial-defender/prototype/index.html) |
 | 2026-02-26 | [RenterVault](ideas/2026-02-26-rentervault-deposit-proof/) | Tenant digital evidence vault — document move-in/out conditions with tamper-proof timestamps, organize by room, generate dispute-ready PDF reports. Get your security deposit back | Reddit | ✅ [Demo](ideas/2026-02-26-rentervault-deposit-proof/prototype/index.html) |
 | 2026-02-26 | [RideRate](ideas/2026-02-26-riderate-transit-feedback/) | Real-time transit experience feedback — rate your daily commute, see live satisfaction pulses by line, track patterns over time. Yelp meets Waze for public transit. Give commuters a collective voice | X/Twitter | ✅ [Demo](ideas/2026-02-26-riderate-transit-feedback/prototype/index.html) |
