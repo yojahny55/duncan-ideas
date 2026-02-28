@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProofBuild — Contractor Verification & Documentation Vault</title>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            --success: #059669;
+            --success-light: #10b981;
+            --warning: #d97706;
+            --warning-light: #f59e0b;
+            --danger: #dc2626;
+            --danger-light: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.5;
+        }
+
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px;
+            padding-top: 50px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: max-content;
+            padding: 14px 16px;
+            border: none;
+            background: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .tab:hover {
+            color: var(--gray-700);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: white;
+        }
+
+        /* Content */
+        .content {
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        /* Project Card */
+        .project-card {
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .project-card:hover {
+            background: var(--gray-50);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .project-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .project-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .project-status.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .project-status.completed {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        .project-meta {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 12px;
+        }
+
+        .project-progress {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .project-progress span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Verification Card */
+        .verify-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #bae6fd;
+        }
+
+        .verify-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Verification Result */
+        .verification-result {
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        .verification-result.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 16px;
+        }
+
+        .result-header.verified {
+            background: #d1fae5;
+        }
+
+        .result-header.warning {
+            background: #fef3c7;
+        }
+
+        .result-header.failed {
+            background: #fee2e2;
+        }
+
+        .result-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .result-header.verified .result-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .result-header.warning .result-icon {
+            background: var(--warning);
+            color: white;
+        }
+
+        .result-header.failed .result-icon {
+            background: var(--danger);
+            color: white;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .result-subtitle {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .result-details {
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .detail-value {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .detail-value.success {
+            color: var(--success);
+        }
+
+        .detail-value.warning {
+            color: var(--warning);
+        }
+
+        .detail-value.danger {
+            color: var(--danger);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gray-200);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -20px;
+            top: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            background: var(--gray-50);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .timeline-media {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .timeline-media img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        /* Document Item */
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .doc-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .doc-info {
+            flex: 1;
+        }
+
+        .doc-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .doc-meta {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .doc-status {
+            font-size: 20px;
+        }
+
+        /* Action Buttons */
+        .action-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 14px 8px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-light);
+            background: #f0f9ff;
+        }
+
+        .action-btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .action-btn span {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        /* Alert Banner */
+        .alert {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: #1e40af;
+        }
+
+        .alert-icon {
+            font-size: 18px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            padding: 8px 16px;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--gray-400);
+            font-size: 10px;
+            transition: color 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item span:first-child {
+            font-size: 22px;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: calc(50% - 195px);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .fab:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            width: 100%;
+            max-width: 430px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gray-100);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .spinner.show {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Hire Score */
+        .hire-score {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: var(--radius-sm);
+            margin-top: 16px;
+        }
+
+        .hire-score-value {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .hire-score-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 2px;
+        }
+
+        .hire-score-info p {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">🏗️</div>
+                    ProofBuild
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn">🔔</button>
+                    <button class="icon-btn">⚙️</button>
+                </div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Verified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Photos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="projects">
+                📁 Projects
+            </button>
+            <button class="tab" data-tab="verify">
+                ✅ Verify
+            </button>
+            <button class="tab" data-tab="docs">
+                📄 Documents
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Projects Section -->
+            <div class="section active" id="projects">
+                <div class="alert alert-info">
+                    <span class="alert-icon">💡</span>
+                    <span>Tip: Add photos daily to build strong evidence</span>
+                </div>
+
+                <div class="card">
+                    <div class="project-card" onclick="openProject()">
+                        <div class="project-header">
+                            <span class="project-name">Kitchen Renovation</span>
+                            <span class="project-status active">In Progress</span>
+                        </div>
+                        <div class="project-meta">
+                            ABC Contracting • Started Feb 15, 2026
+                        </div>
+                        <div class="project-progress">
+                            <span>📷 24 photos</span>
+                            <span>📄 3 docs</span>
+                            <span>✅ Verified</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <span class="project-name">Roof Replacement</span>
+                            <span class="project-status active">In Progress</span>
+                        </div>
+                        <div class="project-meta">
+                            TopRoof Inc. • Started Feb 20, 2026
+                        </div>
+                        <div class="project-progress">
+                            <span>📷 18 photos</span>
+                            <span>📄 2 docs</span>
+                            <span>✅ Verified</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="project-card">
+                        <div class="project-header">
+                            <span class="project-name">Bathroom Tile</span>
+                            <span class="project-status completed">Completed</span>
+                        </div>
+                        <div class="project-meta">
+                            TileWorks LLC • Dec 2025
+                        </div>
+                        <div class="project-progress">
+                            <span>📷 5 photos</span>
+                            <span>📄 1 doc</span>
+                            <span>✅ Verified</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verify Section -->
+            <div class="section" id="verify">
+                <div class="card verify-card">
+                    <div class="card-header">
+                        <span class="card-title">🔍 Verify Contractor</span>
+                    </div>
+                    <div class="card-body">
+                        <form class="verify-form" id="verifyForm">
+                            <div class="input-group">
+                                <label>State</label>
+                                <select id="state">
+                                    <option value="CA">California</option>
+                                    <option value="FL">Florida</option>
+                                    <option value="TX">Texas</option>
+                                    <option value="NY">New York</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>License Number</label>
+                                <input type="text" id="licenseNum" placeholder="e.g., 1045782" value="1045782">
+                            </div>
+                            <div class="input-group">
+                                <label>Contractor Name (optional)</label>
+                                <input type="text" id="contractorName" placeholder="e.g., ABC Contracting">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <span id="verifyBtnText">Verify License</span>
+                                <div class="spinner" id="verifySpinner"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Verification Result -->
+                <div class="verification-result" id="verificationResult">
+                    <div class="result-header verified">
+                        <div class="result-icon">✓</div>
+                        <div>
+                            <div class="result-title">License Verified</div>
+                            <div class="result-subtitle">Active and in good standing</div>
+                        </div>
+                    </div>
+
+                    <div class="result-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Business Name</span>
+                            <span class="detail-value">ABC Contracting Inc.</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">License Number</span>
+                            <span class="detail-value">#1045782</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">License Type</span>
+                            <span class="detail-value">General Building (B)</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value success">✓ Active</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Expiration</span>
+                            <span class="detail-value">December 31, 2027</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Bond Status</span>
+                            <span class="detail-value success">✓ $15,000 Active</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Complaints</span>
+                            <span class="detail-value warning">⚠️ 1 (Resolved 2024)</span>
+                        </div>
+                    </div>
+
+                    <div class="hire-score">
+                        <div class="hire-score-value">92</div>
+                        <div class="hire-score-info">
+                            <h4>High Confidence Score</h4>
+                            <p>License verified, bond active, minor resolved issue</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 16px; display: flex; gap: 12px;">
+                        <button class="btn btn-secondary" style="flex: 1;">
+                            📸 Scan Insurance
+                        </button>
+                        <button class="btn btn-success" style="flex: 1;">
+                            ➕ Add to Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scan Insurance Card -->
+                <div class="card" style="margin-top: 16px;">
+                    <div class="card-header">
+                        <span class="card-title">📋 Verify Insurance (COI)</span>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">
+                            Upload a Certificate of Insurance to verify coverage and detect forgeries.
+                        </p>
+                        <button class="btn btn-secondary btn-full">
+                            📷 Scan COI Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Section -->
+            <div class="section" id="docs">
+                <div class="action-row">
+                    <button class="action-btn">
+                        <div class="action-btn-icon">📷</div>
+                        <span>Photo</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="action-btn-icon">🎥</div>
+                        <span>Video</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="action-btn-icon">📝</div>
+                        <span>Note</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="action-btn-icon">📄</div>
+                        <span>Document</span>
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Recent Documents</span>
+                        <span style="font-size: 13px; color: var(--gray-500);">All verified ✓</span>
+                    </div>
+                    <div class="card-body" style="padding: 12px;">
+                        <div class="doc-item">
+                            <div class="doc-icon">📄</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Contract - Kitchen Reno.pdf</div>
+                                <div class="doc-meta">Feb 14, 2026 • 2.4 MB</div>
+                            </div>
+                            <span class="doc-status">✅</span>
+                        </div>
+                        <div class="doc-item">
+                            <div class="doc-icon">📋</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Insurance COI - ABC.pdf</div>
+                                <div class="doc-meta">Feb 14, 2026 • 847 KB</div>
+                            </div>
+                            <span class="doc-status">✅</span>
+                        </div>
+                        <div class="doc-item">
+                            <div class="doc-icon">📝</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Change Order #1</div>
+                                <div class="doc-meta">Feb 22, 2026 • $1,200 addition</div>
+                            </div>
+                            <span class="doc-status">✅</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📤 Export Evidence</span>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">
+                            Generate a court-ready evidence package with verification certificates.
+                        </p>
+                        <button class="btn btn-primary btn-full">
+                            📦 Generate Dispute Package
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAB -->
+        <button class="fab" onclick="showAddModal()">+</button>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active">
+                <span>🏠</span>
+                <span>Home</span>
+            </button>
+            <button class="nav-item">
+                <span>📁</span>
+                <span>Projects</span>
+            </button>
+            <button class="nav-item">
+                <span>✅</span>
+                <span>Verify</span>
+            </button>
+            <button class="nav-item">
+                <span>👤</span>
+                <span>Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Project Detail Modal -->
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Kitchen Renovation</span>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" style="margin-bottom: 16px;">
+                    <span class="alert-icon">⚠️</span>
+                    <span>Contractor insurance expires in 45 days</span>
+                </div>
+
+                <div class="action-row">
+                    <button class="action-btn">
+                        <div class="action-btn-icon">📷</div>
+                        <span>Photo</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="action-btn-icon">🎥</div>
+                        <span>Video</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="action-btn-icon">📝</div>
+                        <span>Note</span>
+                    </button>
+                    <button class="action-btn">
+                        <div class="action-btn-icon">💵</div>
+                        <span>Payment</span>
+                    </button>
+                </div>
+
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Work Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot">📷</div>
+                        <div class="timeline-date">Feb 28, 2026</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Cabinet installation started</div>
+                            <div class="timeline-desc">Upper cabinets mounted, waiting for lower units</div>
+                            <div class="timeline-media">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23e5e7eb' width='100' height='100'/%3E%3Ctext x='50' y='55' font-size='12' fill='%239ca3af' text-anchor='middle'%3E📷%3C/text%3E%3C/svg%3E" alt="Photo">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23e5e7eb' width='100' height='100'/%3E%3Ctext x='50' y='55' font-size='12' fill='%239ca3af' text-anchor='middle'%3E📷%3C/text%3E%3C/svg%3E" alt="Photo">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23e5e7eb' width='100' height='100'/%3E%3Ctext x='50' y='55' font-size='12' fill='%239ca3af' text-anchor='middle'%3E📷%3C/text%3E%3C/svg%3E" alt="Photo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">📝</div>
+                        <div class="timeline-date">Feb 25, 2026</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Change Order #1 Signed</div>
+                            <div class="timeline-desc">Additional $1,200 for water damage repair behind wall. Both parties agreed.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">💵</div>
+                        <div class="timeline-date">Feb 22, 2026</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Payment: $5,000 Deposit</div>
+                            <div class="timeline-desc">Check #4521 • Receipt saved</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">📄</div>
+                        <div class="timeline-date">Feb 15, 2026</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Project Started</div>
+                            <div class="timeline-desc">Contract signed, before photos taken (12 images)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Project Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">New Project</span>
+                <button class="modal-close" onclick="closeAddModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <form class="verify-form">
+                    <div class="input-group">
+                        <label>Project Name</label>
+                        <input type="text" placeholder="e.g., Kitchen Renovation">
+                    </div>
+                    <div class="input-group">
+                        <label>Property Address</label>
+                        <input type="text" placeholder="123 Main St, City, State">
+                    </div>
+                    <div class="input-group">
+                        <label>Estimated Budget</label>
+                        <input type="text" placeholder="$25,000">
+                    </div>
+                    <div class="input-group">
+                        <label>Start Date</label>
+                        <input type="date">
+                    </div>
+                    <button type="button" class="btn btn-primary btn-full">
+                        Create Project
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Verify form
+        document.getElementById('verifyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = this.querySelector('button');
+            const text = document.getElementById('verifyBtnText');
+            const spinner = document.getElementById('verifySpinner');
+            
+            text.textContent = 'Verifying...';
+            spinner.classList.add('show');
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                text.textContent = 'Verify License';
+                spinner.classList.remove('show');
+                btn.disabled = false;
+                document.getElementById('verificationResult').classList.add('show');
+            }, 1500);
+        });
+
+        // Modal functions
+        function openProject() {
+            document.getElementById('projectModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('projectModal').classList.remove('show');
+        }
+
+        function showAddModal() {
+            document.getElementById('addModal').classList.add('show');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('show');
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
