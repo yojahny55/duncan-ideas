@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PastProof — Cancel-Proof Your Digital History</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🛡️</span>
+                <span class="logo-text">PastProof</span>
+            </div>
+            
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-view="scan">
+                    <span class="nav-icon">🔍</span>
+                    Scan History
+                </a>
+                <a href="#" class="nav-item" data-view="review">
+                    <span class="nav-icon">⚠️</span>
+                    Review Queue
+                    <span class="badge">12</span>
+                </a>
+                <a href="#" class="nav-item" data-view="archive">
+                    <span class="nav-icon">📦</span>
+                    Archive
+                </a>
+                <a href="#" class="nav-item" data-view="settings">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">JD</div>
+                    <div class="user-details">
+                        <span class="user-name">@johndoe</span>
+                        <span class="user-plan">Pro Plan</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard View -->
+            <section id="dashboard" class="view active">
+                <header class="view-header">
+                    <h1>Dashboard</h1>
+                    <p class="subtitle">Your digital history at a glance</p>
+                </header>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-content">
+                            <span class="stat-value">8,432</span>
+                            <span class="stat-label">Total Posts Scanned</span>
+                        </div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-content">
+                            <span class="stat-value">12</span>
+                            <span class="stat-label">Need Review</span>
+                        </div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <span class="stat-value">47</span>
+                            <span class="stat-label">Resolved</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🛡️</div>
+                        <div class="stat-content">
+                            <span class="stat-value score">B+</span>
+                            <span class="stat-label">Risk Score</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="card risk-timeline">
+                        <h3>Risk Heatmap by Year</h3>
+                        <div class="heatmap">
+                            <div class="heatmap-row">
+                                <span class="year">2026</span>
+                                <div class="heatmap-bar" style="--risk: 5%"><span>2</span></div>
+                            </div>
+                            <div class="heatmap-row">
+                                <span class="year">2025</span>
+                                <div class="heatmap-bar" style="--risk: 8%"><span>5</span></div>
+                            </div>
+                            <div class="heatmap-row">
+                                <span class="year">2024</span>
+                                <div class="heatmap-bar" style="--risk: 12%"><span>8</span></div>
+                            </div>
+                            <div class="heatmap-row">
+                                <span class="year">2023</span>
+                                <div class="heatmap-bar" style="--risk: 20%"><span>14</span></div>
+                            </div>
+                            <div class="heatmap-row">
+                                <span class="year">2022</span>
+                                <div class="heatmap-bar" style="--risk: 35%"><span>22</span></div>
+                            </div>
+                            <div class="heatmap-row">
+                                <span class="year">2021</span>
+                                <div class="heatmap-bar" style="--risk: 15%"><span>11</span></div>
+                            </div>
+                            <div class="heatmap-row">
+                                <span class="year">2020</span>
+                                <div class="heatmap-bar" style="--risk: 25%"><span>18</span></div>
+                            </div>
+                        </div>
+                        <div class="heatmap-legend">
+                            <span class="legend-label">Fewer risks</span>
+                            <div class="legend-gradient"></div>
+                            <span class="legend-label">More risks</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card connected-accounts">
+                        <h3>Connected Accounts</h3>
+                        <div class="accounts-list">
+                            <div class="account connected">
+                                <span class="account-icon">𝕏</span>
+                                <div class="account-info">
+                                    <span class="account-name">@johndoe</span>
+                                    <span class="account-status">8,432 posts scanned</span>
+                                </div>
+                                <span class="connection-status">✓</span>
+                            </div>
+                            <div class="account">
+                                <span class="account-icon">📘</span>
+                                <div class="account-info">
+                                    <span class="account-name">Facebook</span>
+                                    <span class="account-status">Not connected</span>
+                                </div>
+                                <button class="btn-connect">Connect</button>
+                            </div>
+                            <div class="account">
+                                <span class="account-icon">📸</span>
+                                <div class="account-info">
+                                    <span class="account-name">Instagram</span>
+                                    <span class="account-status">Not connected</span>
+                                </div>
+                                <button class="btn-connect">Connect</button>
+                            </div>
+                            <div class="account">
+                                <span class="account-icon">🤖</span>
+                                <div class="account-info">
+                                    <span class="account-name">Reddit</span>
+                                    <span class="account-status">Not connected</span>
+                                </div>
+                                <button class="btn-connect">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card recent-flags">
+                    <h3>Recent Flags</h3>
+                    <div class="flags-list">
+                        <div class="flag-item critical">
+                            <div class="flag-severity">🔴</div>
+                            <div class="flag-content">
+                                <p class="flag-text">"That movie was so [redacted], I can't believe they..."</p>
+                                <span class="flag-date">Mar 15, 2022</span>
+                            </div>
+                            <div class="flag-reason">
+                                <span class="reason-tag">Offensive Language</span>
+                            </div>
+                            <div class="flag-actions">
+                                <button class="btn-review">Review</button>
+                            </div>
+                        </div>
+                        <div class="flag-item high">
+                            <div class="flag-severity">🟠</div>
+                            <div class="flag-content">
+                                <p class="flag-text">"Just saw the news about [public figure]. I always knew..."</p>
+                                <span class="flag-date">Nov 3, 2020</span>
+                            </div>
+                            <div class="flag-reason">
+                                <span class="reason-tag">Hot Take</span>
+                            </div>
+                            <div class="flag-actions">
+                                <button class="btn-review">Review</button>
+                            </div>
+                        </div>
+                        <div class="flag-item medium">
+                            <div class="flag-severity">🟡</div>
+                            <div class="flag-content">
+                                <p class="flag-text">"This whole situation is crazy. People need to calm..."</p>
+                                <span class="flag-date">Jun 1, 2020</span>
+                            </div>
+                            <div class="flag-reason">
+                                <span class="reason-tag">Sensitive Context</span>
+                            </div>
+                            <div class="flag-actions">
+                                <button class="btn-review">Review</button>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="view-all" data-view="review">View all flags →</a>
+                </div>
+            </section>
+            
+            <!-- Scan View -->
+            <section id="scan" class="view">
+                <header class="view-header">
+                    <h1>Scan History</h1>
+                    <p class="subtitle">Import and analyze your social media archives</p>
+                </header>
+                
+                <div class="scan-options">
+                    <div class="scan-card">
+                        <div class="scan-icon">𝕏</div>
+                        <h3>Twitter/X</h3>
+                        <p>Import your complete Twitter archive for analysis</p>
+                        <div class="scan-actions">
+                            <input type="file" id="twitter-upload" accept=".zip" hidden>
+                            <button class="btn-primary" onclick="document.getElementById('twitter-upload').click()">
+                                Upload Archive
+                            </button>
+                            <span class="or">or</span>
+                            <button class="btn-secondary">Connect API</button>
+                        </div>
+                        <a href="https://twitter.com/settings/download_your_data" target="_blank" class="help-link">
+                            How to download your Twitter archive →
+                        </a>
+                    </div>
+                    
+                    <div class="scan-card disabled">
+                        <div class="scan-icon">📘</div>
+                        <h3>Facebook</h3>
+                        <p>Coming soon — Analyze your Facebook posts and comments</p>
+                        <div class="coming-soon">Coming in v2.0</div>
+                    </div>
+                    
+                    <div class="scan-card disabled">
+                        <div class="scan-icon">📸</div>
+                        <h3>Instagram</h3>
+                        <p>Coming soon — Scan your Instagram captions</p>
+                        <div class="coming-soon">Coming in v2.0</div>
+                    </div>
+                    
+                    <div class="scan-card disabled">
+                        <div class="scan-icon">🤖</div>
+                        <h3>Reddit</h3>
+                        <p>Coming soon — Review your Reddit comment history</p>
+                        <div class="coming-soon">Coming in v3.0</div>
+                    </div>
+                </div>
+                
+                <div class="scan-progress hidden">
+                    <div class="progress-card">
+                        <h3>🔍 Scanning your history...</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span class="posts-scanned">0 / 8,432 posts</span>
+                            <span class="flags-found">0 potential flags</span>
+                        </div>
+                        <p class="progress-status">Initializing AI analysis...</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Review Queue View -->
+            <section id="review" class="view">
+                <header class="view-header">
+                    <h1>Review Queue</h1>
+                    <p class="subtitle">12 posts need your attention</p>
+                </header>
+                
+                <div class="review-filters">
+                    <button class="filter-btn active">All (12)</button>
+                    <button class="filter-btn critical">🔴 Critical (2)</button>
+                    <button class="filter-btn high">🟠 High (3)</button>
+                    <button class="filter-btn medium">🟡 Medium (5)</button>
+                    <button class="filter-btn low">🟢 Low (2)</button>
+                </div>
+                
+                <div class="bulk-actions">
+                    <label class="select-all">
+                        <input type="checkbox" id="select-all">
+                        Select All
+                    </label>
+                    <button class="btn-danger" disabled>Delete Selected</button>
+                    <button class="btn-secondary" disabled>Archive Selected</button>
+                    <button class="btn-secondary" disabled>Mark as Safe</button>
+                </div>
+                
+                <div class="review-list">
+                    <div class="review-item" data-severity="critical">
+                        <input type="checkbox" class="item-select">
+                        <div class="severity-indicator critical"></div>
+                        <div class="review-content">
+                            <div class="post-preview">
+                                <p>"Can't believe people are defending this. The whole group is [slur] and everyone knows it..."</p>
+                            </div>
+                            <div class="post-meta">
+                                <span class="platform">𝕏 Twitter</span>
+                                <span class="date">March 15, 2022</span>
+                                <span class="engagement">23 likes · 5 RTs</span>
+                            </div>
+                            <div class="risk-analysis">
+                                <span class="risk-tag critical">🔴 Critical Risk</span>
+                                <div class="risk-reasons">
+                                    <span class="reason">Contains slur (now considered highly offensive)</span>
+                                    <span class="reason">Targets identifiable group</span>
+                                </div>
+                            </div>
+                            <div class="ai-context">
+                                <strong>AI Analysis:</strong> This post contains language that was controversial at the time and has since become widely recognized as a slur. High likelihood of being screenshot and shared out of context. Career risk: Very High.
+                            </div>
+                        </div>
+                        <div class="review-actions">
+                            <button class="btn-danger">🗑️ Delete</button>
+                            <button class="btn-secondary">📦 Archive</button>
+                            <button class="btn-ghost">✓ Keep</button>
+                        </div>
+                    </div>
+                    
+                    <div class="review-item" data-severity="high">
+                        <input type="checkbox" class="item-select">
+                        <div class="severity-indicator high"></div>
+                        <div class="review-content">
+                            <div class="post-preview">
+                                <p>"Just watched the documentary. [Public Figure] was right all along, and everyone who disagreed was just..."</p>
+                            </div>
+                            <div class="post-meta">
+                                <span class="platform">𝕏 Twitter</span>
+                                <span class="date">November 3, 2020</span>
+                                <span class="engagement">8 likes</span>
+                            </div>
+                            <div class="risk-analysis">
+                                <span class="risk-tag high">🟠 High Risk</span>
+                                <div class="risk-reasons">
+                                    <span class="reason">References figure who is now controversial</span>
+                                    <span class="reason">Strong opinion that aged poorly</span>
+                                </div>
+                            </div>
+                            <div class="ai-context">
+                                <strong>AI Analysis:</strong> This figure has since been widely discredited. Expressing support, even in past tense, could be used to associate you with their views. Moderate career risk.
+                            </div>
+                        </div>
+                        <div class="review-actions">
+                            <button class="btn-danger">🗑️ Delete</button>
+                            <button class="btn-secondary">📦 Archive</button>
+                            <button class="btn-ghost">✓ Keep</button>
+                        </div>
+                    </div>
+                    
+                    <div class="review-item" data-severity="medium">
+                        <input type="checkbox" class="item-select">
+                        <div class="severity-indicator medium"></div>
+                        <div class="review-content">
+                            <div class="post-preview">
+                                <p>"This whole situation is crazy. People just need to calm down and think rationally instead of..."</p>
+                            </div>
+                            <div class="post-meta">
+                                <span class="platform">𝕏 Twitter</span>
+                                <span class="date">June 1, 2020</span>
+                                <span class="engagement">3 likes</span>
+                            </div>
+                            <div class="risk-analysis">
+                                <span class="risk-tag medium">🟡 Medium Risk</span>
+                                <div class="risk-reasons">
+                                    <span class="reason">Posted during sensitive historical moment</span>
+                                    <span class="reason">Could be read as dismissive</span>
+                                </div>
+                            </div>
+                            <div class="ai-context">
+                                <strong>AI Analysis:</strong> Without context, this post could be interpreted as dismissive of legitimate concerns during a significant social movement. The date aligns with major protests. Could be misinterpreted.
+                            </div>
+                        </div>
+                        <div class="review-actions">
+                            <button class="btn-danger">🗑️ Delete</button>
+                            <button class="btn-secondary">📦 Archive</button>
+                            <button class="btn-ghost">✓ Keep</button>
+                        </div>
+                    </div>
+                    
+                    <div class="review-item" data-severity="low">
+                        <input type="checkbox" class="item-select">
+                        <div class="severity-indicator low"></div>
+                        <div class="review-content">
+                            <div class="post-preview">
+                                <p>"That's so lame 😂 Can't believe they actually thought this was a good idea"</p>
+                            </div>
+                            <div class="post-meta">
+                                <span class="platform">𝕏 Twitter</span>
+                                <span class="date">August 22, 2019</span>
+                                <span class="engagement">1 like</span>
+                            </div>
+                            <div class="risk-analysis">
+                                <span class="risk-tag low">🟢 Low Risk</span>
+                                <div class="risk-reasons">
+                                    <span class="reason">Uses ableist language ("lame")</span>
+                                </div>
+                            </div>
+                            <div class="ai-context">
+                                <strong>AI Analysis:</strong> The word "lame" is increasingly considered ableist language. Low risk but worth noting if maintaining a carefully curated public image.
+                            </div>
+                        </div>
+                        <div class="review-actions">
+                            <button class="btn-danger">🗑️ Delete</button>
+                            <button class="btn-secondary">📦 Archive</button>
+                            <button class="btn-ghost">✓ Keep</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Archive View -->
+            <section id="archive" class="view">
+                <header class="view-header">
+                    <h1>Archive</h1>
+                    <p class="subtitle">Posts you've saved before deletion</p>
+                </header>
+                
+                <div class="archive-empty">
+                    <div class="empty-icon">📦</div>
+                    <h3>No archived posts yet</h3>
+                    <p>When you archive posts before deleting, they'll appear here for your records.</p>
+                </div>
+            </section>
+            
+            <!-- Settings View -->
+            <section id="settings" class="view">
+                <header class="view-header">
+                    <h1>Settings</h1>
+                    <p class="subtitle">Configure your scan preferences</p>
+                </header>
+                
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3>🎚️ Sensitivity Level</h3>
+                        <p>How cautious should we be when flagging content?</p>
+                        <div class="sensitivity-slider">
+                            <input type="range" min="1" max="5" value="3" id="sensitivity">
+                            <div class="slider-labels">
+                                <span>Relaxed</span>
+                                <span>Balanced</span>
+                                <span>Paranoid</span>
+                            </div>
+                        </div>
+                        <p class="slider-description">
+                            <strong>Balanced:</strong> Flag clearly problematic content and potential risks.
+                        </p>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3>🏷️ Risk Categories</h3>
+                        <p>What types of content should we scan for?</p>
+                        <div class="category-toggles">
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-label">Offensive Language</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-label">Political Statements</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-label">Controversial Figures</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-label">Cultural Insensitivity</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="toggle-label">Dated Humor</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="toggle-label">Strong Opinions</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3>🔔 Notifications</h3>
+                        <p>Stay informed about new risks</p>
+                        <div class="category-toggles">
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-label">Critical risk alerts (immediate)</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-label">Weekly risk digest</span>
+                            </label>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="toggle-label">Cultural shift alerts</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3>🔐 Privacy</h3>
+                        <p>Your data, your control</p>
+                        <div class="privacy-info">
+                            <div class="privacy-item">
+                                <span class="privacy-icon">✓</span>
+                                <span>All processing happens in secure temporary sessions</span>
+                            </div>
+                            <div class="privacy-item">
+                                <span class="privacy-icon">✓</span>
+                                <span>Zero data retention after scan</span>
+                            </div>
+                            <div class="privacy-item">
+                                <span class="privacy-icon">✓</span>
+                                <span>We never sell or share your data</span>
+                            </div>
+                        </div>
+                        <button class="btn-danger" style="margin-top: 1rem;">Delete All My Data</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
