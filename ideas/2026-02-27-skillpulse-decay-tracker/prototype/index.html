@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillPulse - Keep Your Skills Sharp</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">SkillPulse</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" title="Notifications">
+                    <span class="notification-badge">2</span>
+                    🔔
+                </button>
+                <div class="avatar">YC</div>
+            </div>
+        </header>
+
+        <!-- Health Summary -->
+        <section class="health-summary">
+            <div class="summary-card">
+                <div class="summary-ring">
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                        <path class="circle-bg" d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <path class="circle" stroke-dasharray="73, 100" d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <text x="18" y="20.35" class="percentage">73%</text>
+                    </svg>
+                </div>
+                <div class="summary-info">
+                    <h2>Overall Skill Health</h2>
+                    <p>3 skills need attention this week</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-value healthy">8</div>
+                <div class="stat-label">Healthy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value warning">3</div>
+                <div class="stat-label">At Risk</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value danger">1</div>
+                <div class="stat-label">Critical</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value neutral">12</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </section>
+
+        <!-- Needs Attention -->
+        <section class="section">
+            <div class="section-header">
+                <h3>⚠️ Needs Attention</h3>
+                <span class="badge danger">Action Required</span>
+            </div>
+            <div class="skill-list">
+                <div class="skill-card critical" data-skill="rust">
+                    <div class="skill-info">
+                        <div class="skill-icon">🦀</div>
+                        <div class="skill-details">
+                            <h4>Rust</h4>
+                            <p class="skill-meta">Last practiced: 67 days ago</p>
+                        </div>
+                    </div>
+                    <div class="skill-health">
+                        <div class="health-bar">
+                            <div class="health-fill critical" style="width: 25%"></div>
+                        </div>
+                        <span class="health-label">25%</span>
+                    </div>
+                    <div class="skill-actions">
+                        <button class="btn-action practice-btn" onclick="showPractice('rust')">Practice</button>
+                        <button class="btn-action secondary" onclick="logPractice('rust')">Log ✓</button>
+                    </div>
+                </div>
+
+                <div class="skill-card warning" data-skill="kubernetes">
+                    <div class="skill-info">
+                        <div class="skill-icon">☸️</div>
+                        <div class="skill-details">
+                            <h4>Kubernetes</h4>
+                            <p class="skill-meta">Last practiced: 42 days ago</p>
+                        </div>
+                    </div>
+                    <div class="skill-health">
+                        <div class="health-bar">
+                            <div class="health-fill warning" style="width: 48%"></div>
+                        </div>
+                        <span class="health-label">48%</span>
+                    </div>
+                    <div class="skill-actions">
+                        <button class="btn-action practice-btn" onclick="showPractice('kubernetes')">Practice</button>
+                        <button class="btn-action secondary" onclick="logPractice('kubernetes')">Log ✓</button>
+                    </div>
+                </div>
+
+                <div class="skill-card warning" data-skill="graphql">
+                    <div class="skill-info">
+                        <div class="skill-icon">◈</div>
+                        <div class="skill-details">
+                            <h4>GraphQL</h4>
+                            <p class="skill-meta">Last practiced: 38 days ago</p>
+                        </div>
+                    </div>
+                    <div class="skill-health">
+                        <div class="health-bar">
+                            <div class="health-fill warning" style="width: 55%"></div>
+                        </div>
+                        <span class="health-label">55%</span>
+                    </div>
+                    <div class="skill-actions">
+                        <button class="btn-action practice-btn" onclick="showPractice('graphql')">Practice</button>
+                        <button class="btn-action secondary" onclick="logPractice('graphql')">Log ✓</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Healthy Skills -->
+        <section class="section">
+            <div class="section-header">
+                <h3>✅ Healthy Skills</h3>
+                <button class="btn-link">View All</button>
+            </div>
+            <div class="skill-list compact">
+                <div class="skill-card healthy mini">
+                    <div class="skill-info">
+                        <div class="skill-icon">🐍</div>
+                        <div class="skill-details">
+                            <h4>Python</h4>
+                            <p class="skill-meta">5 days ago</p>
+                        </div>
+                    </div>
+                    <div class="health-indicator healthy">92%</div>
+                </div>
+                <div class="skill-card healthy mini">
+                    <div class="skill-info">
+                        <div class="skill-icon">⚛️</div>
+                        <div class="skill-details">
+                            <h4>React</h4>
+                            <p class="skill-meta">2 days ago</p>
+                        </div>
+                    </div>
+                    <div class="health-indicator healthy">95%</div>
+                </div>
+                <div class="skill-card healthy mini">
+                    <div class="skill-info">
+                        <div class="skill-icon">🐳</div>
+                        <div class="skill-details">
+                            <h4>Docker</h4>
+                            <p class="skill-meta">8 days ago</p>
+                        </div>
+                    </div>
+                    <div class="health-indicator healthy">85%</div>
+                </div>
+                <div class="skill-card healthy mini">
+                    <div class="skill-info">
+                        <div class="skill-icon">📊</div>
+                        <div class="skill-details">
+                            <h4>SQL</h4>
+                            <p class="skill-meta">3 days ago</p>
+                        </div>
+                    </div>
+                    <div class="health-indicator healthy">88%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Skill FAB -->
+        <button class="fab" onclick="showAddSkill()">+</button>
+    </div>
+
+    <!-- Practice Modal -->
+    <div class="modal" id="practiceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎯 Practice Suggestions</h3>
+                <button class="close-btn" onclick="closeModal('practiceModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="practiceContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Skill Modal -->
+    <div class="modal" id="addSkillModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Add New Skill</h3>
+                <button class="close-btn" onclick="closeModal('addSkillModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addSkillForm" onsubmit="addSkill(event)">
+                    <div class="form-group">
+                        <label>Skill Name</label>
+                        <input type="text" placeholder="e.g., TypeScript, Piano, Excel" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select>
+                            <option>Programming</option>
+                            <option>Design</option>
+                            <option>Music</option>
+                            <option>Professional</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Proficiency Level</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="level" value="beginner">
+                                <span>Beginner</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="level" value="intermediate" checked>
+                                <span>Intermediate</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="level" value="advanced">
+                                <span>Advanced</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <div class="priority-select">
+                            <button type="button" class="priority-btn" data-priority="low">Nice to have</button>
+                            <button type="button" class="priority-btn active" data-priority="medium">Professional</button>
+                            <button type="button" class="priority-btn" data-priority="high">Career-critical</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Practiced</label>
+                        <input type="date" value="2026-02-27">
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Add Skill</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Practice Modal -->
+    <div class="modal" id="logModal">
+        <div class="modal-content compact">
+            <div class="modal-header">
+                <h3>✓ Log Practice</h3>
+                <button class="close-btn" onclick="closeModal('logModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="log-success">
+                    <div class="success-icon">✅</div>
+                    <h4 id="logSkillName">Skill</h4>
+                    <p>Practice logged! Skill health restored.</p>
+                    <div class="health-boost">
+                        <span class="before">48%</span>
+                        <span class="arrow">→</span>
+                        <span class="after">95%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
