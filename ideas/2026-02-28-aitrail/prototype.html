@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AITrail - Your AI Data Footprint</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand': {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            'slate': {
+              850: '#172033',
+              950: '#0a0f1a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg {
+      background: linear-gradient(135deg, #0a0f1a 0%, #172033 50%, #1a2744 100%);
+    }
+    .card-glow:hover {
+      box-shadow: 0 0 30px rgba(34, 197, 94, 0.15);
+    }
+    .risk-high { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+    .risk-medium { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .risk-low { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+    .service-card {
+      transition: all 0.2s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+  <!-- Header -->
+  <header class="border-b border-slate-700/50 backdrop-blur-sm sticky top-0 z-50 bg-slate-950/80">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <span class="text-xl font-bold">AITrail</span>
+      </div>
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#" class="text-slate-300 hover:text-white transition">Dashboard</a>
+        <a href="#" class="text-slate-400 hover:text-white transition">Services</a>
+        <a href="#" class="text-slate-400 hover:text-white transition">Data Inventory</a>
+        <a href="#" class="text-slate-400 hover:text-white transition">Settings</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button class="px-4 py-2 text-sm bg-brand-600 hover:bg-brand-500 rounded-lg font-medium transition">
+          + Add Service
+        </button>
+        <div class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center text-sm font-medium">
+          YC
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Summary Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+        <div class="text-slate-400 text-sm mb-1">AI Services Tracked</div>
+        <div class="text-3xl font-bold">8</div>
+        <div class="text-brand-400 text-sm mt-1">+2 this month</div>
+      </div>
+      <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+        <div class="text-slate-400 text-sm mb-1">Files Uploaded</div>
+        <div class="text-3xl font-bold">47</div>
+        <div class="text-amber-400 text-sm mt-1">12 sensitive</div>
+      </div>
+      <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+        <div class="text-slate-400 text-sm mb-1">Privacy Score</div>
+        <div class="text-3xl font-bold text-brand-400">B+</div>
+        <div class="text-slate-400 text-sm mt-1">Good standing</div>
+      </div>
+      <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+        <div class="text-slate-400 text-sm mb-1">Cleanup Due</div>
+        <div class="text-3xl font-bold text-amber-400">3</div>
+        <div class="text-slate-400 text-sm mt-1">services need attention</div>
+      </div>
+    </div>
+
+    <!-- Alert Banner -->
+    <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-8 flex items-center gap-4">
+      <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <div class="flex-1">
+        <div class="font-medium text-amber-300">Privacy Policy Update Detected</div>
+        <div class="text-sm text-amber-200/70">ChatGPT updated their data retention policy on Feb 25, 2026. Review changes →</div>
+      </div>
+      <button class="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 rounded-lg text-amber-300 text-sm font-medium transition">
+        Review
+      </button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Services List -->
+      <div class="lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold">Your AI Services</h2>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1.5 text-xs bg-slate-700 rounded-lg">All</button>
+            <button class="px-3 py-1.5 text-xs text-slate-400 hover:bg-slate-700 rounded-lg">Active</button>
+            <button class="px-3 py-1.5 text-xs text-slate-400 hover:bg-slate-700 rounded-lg">Needs Action</button>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <!-- ChatGPT -->
+          <div class="service-card bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 card-glow">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center text-xl font-bold">
+                G
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold">ChatGPT</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-amber-500/20 text-amber-300">Policy Updated</span>
+                </div>
+                <div class="text-sm text-slate-400">OpenAI · Last used: 2 hours ago</div>
+              </div>
+              <div class="text-right">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm text-slate-400">Risk:</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full risk-medium text-white">Medium</span>
+                </div>
+                <div class="text-xs text-slate-500">23 files · Training: Off</div>
+              </div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-700/50 flex items-center justify-between">
+              <div class="flex items-center gap-4 text-sm">
+                <span class="text-slate-400">Data retention: <span class="text-white">30 days</span></span>
+                <span class="text-slate-400">Conversations: <span class="text-white">142</span></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg transition">View Details</button>
+                <button class="px-3 py-1.5 text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition">Cleanup</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Claude -->
+          <div class="service-card bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 card-glow">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-orange-600 flex items-center justify-center text-xl font-bold">
+                C
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold">Claude</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-brand-500/20 text-brand-300">Verified</span>
+                </div>
+                <div class="text-sm text-slate-400">Anthropic · Last used: Today</div>
+              </div>
+              <div class="text-right">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm text-slate-400">Risk:</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full risk-low text-white">Low</span>
+                </div>
+                <div class="text-xs text-slate-500">8 files · Training: Off</div>
+              </div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-700/50 flex items-center justify-between">
+              <div class="flex items-center gap-4 text-sm">
+                <span class="text-slate-400">Data retention: <span class="text-white">Opt-out</span></span>
+                <span class="text-slate-400">Conversations: <span class="text-white">89</span></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg transition">View Details</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Midjourney -->
+          <div class="service-card bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 card-glow">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-xl font-bold">
+                M
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold">Midjourney</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-300">Cleanup Due</span>
+                </div>
+                <div class="text-sm text-slate-400">Midjourney Inc · Last used: 2 weeks ago</div>
+              </div>
+              <div class="text-right">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm text-slate-400">Risk:</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full risk-high text-white">High</span>
+                </div>
+                <div class="text-xs text-slate-500">Public by default</div>
+              </div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-700/50 flex items-center justify-between">
+              <div class="flex items-center gap-4 text-sm">
+                <span class="text-slate-400">Generations: <span class="text-white">234</span></span>
+                <span class="text-amber-400">⚠️ Images may train models</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg transition">View Details</button>
+                <button class="px-3 py-1.5 text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition">Cleanup</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gemini -->
+          <div class="service-card bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 card-glow">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-xl font-bold">
+                G
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold">Gemini</span>
+                </div>
+                <div class="text-sm text-slate-400">Google · Last used: 5 days ago</div>
+              </div>
+              <div class="text-right">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm text-slate-400">Risk:</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full risk-medium text-white">Medium</span>
+                </div>
+                <div class="text-xs text-slate-500">12 files · Training: On</div>
+              </div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-700/50 flex items-center justify-between">
+              <div class="flex items-center gap-4 text-sm">
+                <span class="text-slate-400">Data retention: <span class="text-white">18 months</span></span>
+                <span class="text-slate-400">Conversations: <span class="text-white">56</span></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg transition">View Details</button>
+                <button class="px-3 py-1.5 text-xs bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg transition">Opt Out</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- GitHub Copilot -->
+          <div class="service-card bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 card-glow">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-slate-700 flex items-center justify-center text-xl font-bold">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold">GitHub Copilot</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full bg-brand-500/20 text-brand-300">Verified</span>
+                </div>
+                <div class="text-sm text-slate-400">Microsoft · Last used: Today</div>
+              </div>
+              <div class="text-right">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm text-slate-400">Risk:</span>
+                  <span class="px-2 py-0.5 text-xs rounded-full risk-low text-white">Low</span>
+                </div>
+                <div class="text-xs text-slate-500">Business tier · Training: Off</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Privacy Score Card -->
+        <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+          <h3 class="font-semibold mb-4">Your Privacy Score</h3>
+          <div class="flex items-center justify-center mb-4">
+            <div class="relative w-32 h-32">
+              <svg class="w-full h-full transform -rotate-90">
+                <circle cx="64" cy="64" r="56" stroke="#334155" stroke-width="12" fill="none"/>
+                <circle cx="64" cy="64" r="56" stroke="url(#gradient)" stroke-width="12" fill="none" 
+                        stroke-dasharray="351.86" stroke-dashoffset="70" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#22c55e"/>
+                    <stop offset="100%" stop-color="#4ade80"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-3xl font-bold text-brand-400">B+</span>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-400">Training Opt-outs</span>
+              <span class="text-brand-400">6/8 ✓</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-400">Data Retention</span>
+              <span class="text-amber-400">Needs Review</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-400">Sensitive Data</span>
+              <span class="text-amber-400">12 files flagged</span>
+            </div>
+          </div>
+          <button class="w-full mt-4 px-4 py-2.5 bg-brand-600 hover:bg-brand-500 rounded-lg font-medium text-sm transition">
+            Improve Score
+          </button>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+          <h3 class="font-semibold mb-4">Recent Data Uploads</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400 text-xs">
+                PDF
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm truncate">contract_draft_v2.pdf</div>
+                <div class="text-xs text-slate-500">ChatGPT · 2 hours ago</div>
+              </div>
+              <span class="px-2 py-0.5 text-xs rounded bg-amber-500/20 text-amber-300">Work</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center text-blue-400 text-xs">
+                IMG
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm truncate">reference_design.png</div>
+                <div class="text-xs text-slate-500">Midjourney · Yesterday</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-purple-600/20 flex items-center justify-center text-purple-400 text-xs">
+                CSV
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm truncate">sales_data_q4.csv</div>
+                <div class="text-xs text-slate-500">Claude · 3 days ago</div>
+              </div>
+              <span class="px-2 py-0.5 text-xs rounded bg-red-500/20 text-red-300">Sensitive</span>
+            </div>
+          </div>
+          <a href="#" class="block text-center text-sm text-brand-400 hover:text-brand-300 mt-4">
+            View All Uploads →
+          </a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-slate-800/50 rounded-2xl p-5 border border-slate-700/50">
+          <h3 class="font-semibold mb-4">Quick Actions</h3>
+          <div class="space-y-2">
+            <button class="w-full px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-xl text-left text-sm transition flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-brand-600/20 flex items-center justify-center">
+                <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+              </span>
+              Add New AI Service
+            </button>
+            <button class="w-full px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-xl text-left text-sm transition flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-amber-600/20 flex items-center justify-center">
+                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+              </span>
+              Run Privacy Audit
+            </button>
+            <button class="w-full px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-xl text-left text-sm transition flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-red-600/20 flex items-center justify-center">
+                <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </span>
+              Bulk Cleanup Old Data
+            </button>
+            <button class="w-full px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-xl text-left text-sm transition flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center">
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+              </span>
+              Export Full Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-700/50 mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between text-sm text-slate-500">
+      <span>© 2026 AITrail. Your AI data, your control.</span>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-white transition">Privacy</a>
+        <a href="#" class="hover:text-white transition">Terms</a>
+        <a href="#" class="hover:text-white transition">Help</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
