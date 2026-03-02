@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CallRelay - AI Phone Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #a5b4fc;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* App Shell */
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--surface);
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            background: var(--surface-2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: var(--border);
+        }
+
+        /* Stats Banner */
+        .stats-banner {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 20px;
+            margin: 16px;
+            border-radius: var(--radius);
+            color: white;
+        }
+
+        .stats-title {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .stats-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .stats-subtitle {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* Task Templates */
+        .section {
+            padding: 0 20px 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .section-link {
+            font-size: 14px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .template-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .template-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .template-icon.refund { background: #dbeafe; }
+        .template-icon.appointment { background: #d1fae5; }
+        .template-icon.cancel { background: #fee2e2; }
+        .template-icon.inquiry { background: #fef3c7; }
+
+        .template-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .template-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Recent Calls */
+        .calls-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .call-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .call-card:hover {
+            border-color: var(--primary-light);
+        }
+
+        .call-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .call-company {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .call-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .call-status.success {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .call-status.active {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .call-status.pending {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .call-task {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .call-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* Active Call Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            width: 100%;
+            max-width: 430px;
+            border-radius: 24px 24px 0 0;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        /* Active Call View */
+        .call-visual {
+            text-align: center;
+            padding: 24px 0;
+        }
+
+        .call-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            position: relative;
+        }
+
+        .call-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border: 3px solid var(--primary-light);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        .call-target {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .call-duration {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Live Transcript */
+        .transcript {
+            background: var(--surface-2);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .transcript-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .transcript-title {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .transcript-content {
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .transcript-line {
+            margin-bottom: 12px;
+        }
+
+        .transcript-speaker {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .transcript-speaker.ai { color: var(--primary); }
+        .transcript-speaker.agent { color: var(--success); }
+        .transcript-speaker.system { color: var(--text-tertiary); }
+
+        .transcript-text {
+            color: var(--text-secondary);
+        }
+
+        /* Call Actions */
+        .call-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .call-action {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .call-action.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .call-action.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .call-action.secondary {
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        .call-action.danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* New Task Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Company Chips */
+        .company-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .company-chip {
+            padding: 8px 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .company-chip:hover, .company-chip.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.2s;
+            z-index: 50;
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding: 8px 0 20px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        /* Completed Call Result */
+        .result-banner {
+            background: var(--success-bg);
+            border: 1px solid var(--success);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .result-details {
+            background: var(--surface-2);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .result-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Utility */
+        .mb-80 {
+            margin-bottom: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">📞</div>
+                CallRelay
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn">🔔</button>
+                <button class="icon-btn">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Stats Banner -->
+        <div class="stats-banner">
+            <div class="stats-title">Time saved this month</div>
+            <div class="stats-value">4h 23m</div>
+            <div class="stats-subtitle">7 calls completed • $0 in hold time</div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">What do you need?</h2>
+            </div>
+            <div class="template-grid">
+                <div class="template-card" onclick="openNewTaskModal('refund')">
+                    <div class="template-icon refund">💰</div>
+                    <div class="template-name">Get Refund</div>
+                    <div class="template-desc">Airlines, bills, subscriptions</div>
+                </div>
+                <div class="template-card" onclick="openNewTaskModal('appointment')">
+                    <div class="template-icon appointment">📅</div>
+                    <div class="template-name">Schedule</div>
+                    <div class="template-desc">Doctor, dentist, services</div>
+                </div>
+                <div class="template-card" onclick="openNewTaskModal('cancel')">
+                    <div class="template-icon cancel">❌</div>
+                    <div class="template-name">Cancel</div>
+                    <div class="template-desc">Gym, subscriptions, services</div>
+                </div>
+                <div class="template-card" onclick="openNewTaskModal('inquiry')">
+                    <div class="template-icon inquiry">❓</div>
+                    <div class="template-name">Ask Question</div>
+                    <div class="template-desc">Account status, billing info</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Calls -->
+        <section class="section mb-80">
+            <div class="section-header">
+                <h2 class="section-title">Recent Calls</h2>
+                <a href="#" class="section-link">View all</a>
+            </div>
+            <div class="calls-list">
+                <div class="call-card" onclick="openActiveCallModal()">
+                    <div class="call-header">
+                        <div class="call-company">✈️ United Airlines</div>
+                        <span class="call-status active">🔴 In Progress</span>
+                    </div>
+                    <div class="call-task">Getting refund for delayed flight UA1234</div>
+                    <div class="call-meta">
+                        <span>⏱️ 12:34 elapsed</span>
+                        <span>📍 On hold</span>
+                    </div>
+                </div>
+                <div class="call-card" onclick="openCompletedCallModal()">
+                    <div class="call-header">
+                        <div class="call-company">📺 Comcast</div>
+                        <span class="call-status success">✓ Success</span>
+                    </div>
+                    <div class="call-task">Negotiated lower monthly rate</div>
+                    <div class="call-meta">
+                        <span>⏱️ 34 mins</span>
+                        <span>💰 Saved $25/mo</span>
+                    </div>
+                </div>
+                <div class="call-card">
+                    <div class="call-header">
+                        <div class="call-company">🏥 Dr. Smith's Office</div>
+                        <span class="call-status success">✓ Success</span>
+                    </div>
+                    <div class="call-task">Scheduled annual checkup</div>
+                    <div class="call-meta">
+                        <span>⏱️ 8 mins</span>
+                        <span>📅 Mar 15, 10am</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAB -->
+        <button class="fab" onclick="openNewTaskModal('custom')">+</button>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">🏠</span>
+                Home
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📋</span>
+                Tasks
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📊</span>
+                Stats
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">👤</span>
+                Profile
+            </a>
+        </nav>
+    </div>
+
+    <!-- Active Call Modal -->
+    <div class="modal-overlay" id="activeCallModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Call in Progress</div>
+            </div>
+            <div class="modal-body">
+                <div class="call-visual">
+                    <div class="call-avatar">✈️</div>
+                    <div class="call-target">United Airlines</div>
+                    <div class="call-duration">12:34 • On hold with agent</div>
+                </div>
+
+                <div class="transcript">
+                    <div class="transcript-header">
+                        <span class="transcript-title">
+                            <span class="live-dot"></span>
+                            Live Transcript
+                        </span>
+                    </div>
+                    <div class="transcript-content">
+                        <div class="transcript-line">
+                            <div class="transcript-speaker system">System</div>
+                            <div class="transcript-text">Connected to United Airlines customer service</div>
+                        </div>
+                        <div class="transcript-line">
+                            <div class="transcript-speaker ai">CallRelay AI</div>
+                            <div class="transcript-text">Hi, I'm calling about flight UA1234 on February 15th that was delayed over 3 hours. I'd like to request a refund.</div>
+                        </div>
+                        <div class="transcript-line">
+                            <div class="transcript-speaker agent">Agent (Sarah)</div>
+                            <div class="transcript-text">I'd be happy to help with that. Can I have the confirmation number?</div>
+                        </div>
+                        <div class="transcript-line">
+                            <div class="transcript-speaker ai">CallRelay AI</div>
+                            <div class="transcript-text">Yes, the confirmation number is ABC123.</div>
+                        </div>
+                        <div class="transcript-line">
+                            <div class="transcript-speaker agent">Agent (Sarah)</div>
+                            <div class="transcript-text">Let me pull that up... I see the flight was delayed. I'm checking refund eligibility now, one moment please...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="call-actions">
+                    <button class="call-action secondary" onclick="closeModal('activeCallModal')">Minimize</button>
+                    <button class="call-action primary">Take Over Call</button>
+                    <button class="call-action danger">End Call</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Task Modal -->
+    <div class="modal-overlay" id="newTaskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">New Call Request</div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">What type of call?</label>
+                    <select class="form-input form-select" id="taskType">
+                        <option value="refund">💰 Get a Refund</option>
+                        <option value="appointment">📅 Schedule Appointment</option>
+                        <option value="cancel">❌ Cancel Service</option>
+                        <option value="inquiry">❓ Ask a Question</option>
+                        <option value="negotiate">💵 Negotiate Bill</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Who should we call?</label>
+                    <input type="text" class="form-input" placeholder="Company name or phone number">
+                    <div class="company-chips">
+                        <span class="company-chip">United</span>
+                        <span class="company-chip">Delta</span>
+                        <span class="company-chip">Comcast</span>
+                        <span class="company-chip">AT&T</span>
+                        <span class="company-chip">Chase</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">What do you need?</label>
+                    <textarea class="form-input" placeholder="e.g., Get a refund for my delayed flight UA1234 on February 15th. The flight was delayed 4 hours."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Account info (optional)</label>
+                    <input type="text" class="form-input" placeholder="Confirmation #, account #, member ID...">
+                </div>
+
+                <div class="call-actions">
+                    <button class="call-action secondary" onclick="closeModal('newTaskModal')">Cancel</button>
+                    <button class="call-action primary" onclick="startCall()">📞 Start Call</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Call Modal -->
+    <div class="modal-overlay" id="completedCallModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Call Completed</div>
+            </div>
+            <div class="modal-body">
+                <div class="result-banner">
+                    <div class="result-icon">🎉</div>
+                    <div class="result-title">Refund Approved!</div>
+                </div>
+
+                <div class="result-details">
+                    <div class="result-item">
+                        <span class="result-label">Company</span>
+                        <span class="result-value">📺 Comcast</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Task</span>
+                        <span class="result-value">Negotiate lower rate</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Outcome</span>
+                        <span class="result-value" style="color: var(--success)">$25/mo discount</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Call Duration</span>
+                        <span class="result-value">34 minutes</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Reference #</span>
+                        <span class="result-value">CMC-8827341</span>
+                    </div>
+                </div>
+
+                <div class="call-actions" style="margin-top: 20px;">
+                    <button class="call-action secondary">📄 View Transcript</button>
+                    <button class="call-action primary" onclick="closeModal('completedCallModal')">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openActiveCallModal() {
+            document.getElementById('activeCallModal').classList.add('active');
+        }
+
+        function openCompletedCallModal() {
+            document.getElementById('completedCallModal').classList.add('active');
+        }
+
+        function openNewTaskModal(type) {
+            const typeMap = {
+                'refund': '💰 Get a Refund',
+                'appointment': '📅 Schedule Appointment',
+                'cancel': '❌ Cancel Service',
+                'inquiry': '❓ Ask a Question',
+                'custom': '💰 Get a Refund'
+            };
+            document.getElementById('newTaskModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function startCall() {
+            closeModal('newTaskModal');
+            // Simulate starting a call
+            setTimeout(() => {
+                openActiveCallModal();
+            }, 500);
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Company chip selection
+        document.querySelectorAll('.company-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.company-chip').forEach(c => c.classList.remove('selected'));
+                chip.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>
