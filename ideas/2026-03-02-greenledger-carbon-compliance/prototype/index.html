@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenLedger — Carbon Compliance for Indie Sellers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🌿</span>
+        <span class="logo-text">GreenLedger</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          Dashboard
+        </button>
+        <button class="nav-item" data-view="check">
+          <span class="nav-icon">✓</span>
+          Compliance Check
+        </button>
+        <button class="nav-item" data-view="calculator">
+          <span class="nav-icon">🧮</span>
+          Carbon Calculator
+        </button>
+        <button class="nav-item" data-view="products">
+          <span class="nav-icon">📦</span>
+          My Products
+        </button>
+        <button class="nav-item" data-view="reports">
+          <span class="nav-icon">📄</span>
+          Reports
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="plan-badge">Indie Plan</div>
+        <div class="products-used">12 / 50 products</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Header -->
+      <header class="header">
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+        <div class="header-actions">
+          <button class="btn btn-outline">
+            <span>📤</span> Export Report
+          </button>
+          <div class="user-avatar">JS</div>
+        </div>
+      </header>
+
+      <!-- Dashboard View -->
+      <section class="view active" id="dashboardView">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green">🌍</div>
+            <div class="stat-content">
+              <div class="stat-value">2.4 t</div>
+              <div class="stat-label">Total CO₂e / Year</div>
+            </div>
+            <div class="stat-trend down">↓ 12%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">📦</div>
+            <div class="stat-content">
+              <div class="stat-value">12</div>
+              <div class="stat-label">Products Tracked</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon yellow">⚠️</div>
+            <div class="stat-content">
+              <div class="stat-value">1</div>
+              <div class="stat-label">Compliance Alert</div>
+            </div>
+            <div class="stat-action">View →</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">🏷️</div>
+            <div class="stat-content">
+              <div class="stat-value">8</div>
+              <div class="stat-label">Badges Active</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Carbon by Product Category</h3>
+            </div>
+            <div class="chart-placeholder">
+              <div class="bar-chart">
+                <div class="bar-row">
+                  <span class="bar-label">Jewelry</span>
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width: 65%"></div>
+                  </div>
+                  <span class="bar-value">0.8t</span>
+                </div>
+                <div class="bar-row">
+                  <span class="bar-label">Ceramics</span>
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width: 85%"></div>
+                  </div>
+                  <span class="bar-value">1.1t</span>
+                </div>
+                <div class="bar-row">
+                  <span class="bar-label">Textiles</span>
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width: 40%"></div>
+                  </div>
+                  <span class="bar-value">0.5t</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Compliance Status</h3>
+            </div>
+            <div class="compliance-list">
+              <div class="compliance-item pass">
+                <span class="compliance-icon">✓</span>
+                <div class="compliance-info">
+                  <div class="compliance-name">EU Ecodesign</div>
+                  <div class="compliance-desc">All products compliant</div>
+                </div>
+              </div>
+              <div class="compliance-item warning">
+                <span class="compliance-icon">!</span>
+                <div class="compliance-info">
+                  <div class="compliance-name">CBAM Reporting</div>
+                  <div class="compliance-desc">Due March 31, 2026</div>
+                </div>
+              </div>
+              <div class="compliance-item pass">
+                <span class="compliance-icon">✓</span>
+                <div class="compliance-info">
+                  <div class="compliance-name">Carbon Disclosure</div>
+                  <div class="compliance-desc">8 of 12 products labeled</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Products</h3>
+            <button class="btn btn-sm">+ Add Product</button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>CO₂e</th>
+                <th>Badge</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Handmade Silver Ring</strong></td>
+                <td>Jewelry</td>
+                <td>0.12 kg</td>
+                <td><span class="badge-icon active">🏷️</span></td>
+                <td><span class="status-badge green">Compliant</span></td>
+              </tr>
+              <tr>
+                <td><strong>Ceramic Mug Set</strong></td>
+                <td>Ceramics</td>
+                <td>2.4 kg</td>
+                <td><span class="badge-icon active">🏷️</span></td>
+                <td><span class="status-badge green">Compliant</span></td>
+              </tr>
+              <tr>
+                <td><strong>Woven Wall Hanging</strong></td>
+                <td>Textiles</td>
+                <td>0.85 kg</td>
+                <td><span class="badge-icon inactive">—</span></td>
+                <td><span class="status-badge yellow">Needs Badge</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Compliance Check View -->
+      <section class="view" id="checkView">
+        <div class="card check-card">
+          <div class="check-header">
+            <h2>🔍 Compliance Assessment</h2>
+            <p>Answer a few questions to understand what EU regulations apply to your business.</p>
+          </div>
+          
+          <div class="check-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="checkProgress"></div>
+            </div>
+            <span class="progress-text" id="checkProgressText">Question 1 of 5</span>
+          </div>
+
+          <div class="check-question" id="checkQuestion">
+            <h3 id="questionText">What types of products do you sell?</h3>
+            <div class="check-options" id="checkOptions">
+              <label class="check-option">
+                <input type="checkbox" name="products" value="jewelry">
+                <span class="option-content">
+                  <span class="option-icon">💍</span>
+                  Jewelry & Accessories
+                </span>
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="products" value="ceramics">
+                <span class="option-content">
+                  <span class="option-icon">🏺</span>
+                  Ceramics & Pottery
+                </span>
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="products" value="textiles">
+                <span class="option-content">
+                  <span class="option-icon">🧵</span>
+                  Textiles & Clothing
+                </span>
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="products" value="wood">
+                <span class="option-content">
+                  <span class="option-icon">🪵</span>
+                  Wood Products
+                </span>
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="products" value="electronics">
+                <span class="option-content">
+                  <span class="option-icon">⚡</span>
+                  Electronics
+                </span>
+              </label>
+              <label class="check-option">
+                <input type="checkbox" name="products" value="other">
+                <span class="option-content">
+                  <span class="option-icon">📦</span>
+                  Other
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="check-actions">
+            <button class="btn btn-outline" id="checkBack" disabled>← Back</button>
+            <button class="btn btn-primary" id="checkNext">Next →</button>
+          </div>
+        </div>
+
+        <div class="card check-result hidden" id="checkResult">
+          <div class="result-header">
+            <div class="result-icon">📋</div>
+            <h2>Your Compliance Requirements</h2>
+          </div>
+          <div class="result-summary">
+            <p>Based on your answers, here's what applies to your business:</p>
+          </div>
+          <div class="result-items" id="resultItems"></div>
+          <div class="result-actions">
+            <button class="btn btn-primary">Start Tracking Products</button>
+            <button class="btn btn-outline">Download PDF Summary</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Calculator View -->
+      <section class="view" id="calculatorView">
+        <div class="calculator-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>🧮 Product Carbon Calculator</h3>
+            </div>
+            <form class="calc-form" id="calcForm">
+              <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" placeholder="e.g., Handmade Ceramic Bowl" id="calcName">
+              </div>
+              
+              <div class="form-group">
+                <label>Primary Material</label>
+                <select id="calcMaterial">
+                  <option value="">Select material...</option>
+                  <option value="silver">Silver / Precious Metals</option>
+                  <option value="gold">Gold</option>
+                  <option value="steel">Steel / Iron</option>
+                  <option value="aluminum">Aluminum</option>
+                  <option value="ceramic">Ceramic / Clay</option>
+                  <option value="glass">Glass</option>
+                  <option value="cotton">Cotton</option>
+                  <option value="wool">Wool</option>
+                  <option value="polyester">Polyester / Synthetic</option>
+                  <option value="wood">Wood (sustainable)</option>
+                  <option value="plastic">Plastic</option>
+                  <option value="leather">Leather</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Product Weight</label>
+                  <div class="input-with-unit">
+                    <input type="number" placeholder="0" id="calcWeight" step="0.01">
+                    <span class="input-unit">kg</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Packaging Weight</label>
+                  <div class="input-with-unit">
+                    <input type="number" placeholder="0" id="calcPackaging" step="0.01">
+                    <span class="input-unit">kg</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Shipping Distance (to EU)</label>
+                <select id="calcShipping">
+                  <option value="500">Within EU (~500 km avg)</option>
+                  <option value="1000">UK to EU (~1,000 km)</option>
+                  <option value="6000">US East Coast (~6,000 km)</option>
+                  <option value="9000">US West Coast (~9,000 km)</option>
+                  <option value="15000">Australia (~15,000 km)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Shipping Method</label>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input type="radio" name="shipping" value="air" checked>
+                    <span>✈️ Air</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="shipping" value="sea">
+                    <span>🚢 Sea</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="shipping" value="ground">
+                    <span>🚛 Ground</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block">Calculate Carbon Footprint</button>
+            </form>
+          </div>
+
+          <div class="card calc-results" id="calcResults">
+            <div class="results-empty">
+              <div class="empty-icon">🌱</div>
+              <h3>Enter product details</h3>
+              <p>Fill out the form to calculate your product's carbon footprint</p>
+            </div>
+            <div class="results-content hidden" id="resultsContent">
+              <div class="result-total">
+                <div class="result-label">Total Carbon Footprint</div>
+                <div class="result-value" id="totalCarbon">—</div>
+                <div class="result-unit">kg CO₂e per unit</div>
+              </div>
+              <div class="result-breakdown">
+                <h4>Breakdown</h4>
+                <div class="breakdown-item">
+                  <span class="breakdown-label">Materials</span>
+                  <span class="breakdown-value" id="materialCarbon">—</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label">Packaging</span>
+                  <span class="breakdown-value" id="packagingCarbon">—</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label">Shipping</span>
+                  <span class="breakdown-value" id="shippingCarbon">—</span>
+                </div>
+              </div>
+              <div class="result-comparison">
+                <h4>That's equivalent to...</h4>
+                <div class="comparison-item" id="comparison"></div>
+              </div>
+              <div class="result-actions">
+                <button class="btn btn-primary btn-block">Save to My Products</button>
+                <button class="btn btn-outline btn-block">Generate Badge</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Products View -->
+      <section class="view" id="productsView">
+        <div class="products-header">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search products...">
+          </div>
+          <div class="filter-group">
+            <select>
+              <option>All Categories</option>
+              <option>Jewelry</option>
+              <option>Ceramics</option>
+              <option>Textiles</option>
+            </select>
+            <select>
+              <option>All Status</option>
+              <option>Compliant</option>
+              <option>Needs Badge</option>
+              <option>Incomplete</option>
+            </select>
+          </div>
+          <button class="btn btn-primary">+ Add Product</button>
+        </div>
+
+        <div class="products-grid">
+          <div class="product-card">
+            <div class="product-image">💍</div>
+            <div class="product-info">
+              <h4>Handmade Silver Ring</h4>
+              <span class="product-category">Jewelry</span>
+            </div>
+            <div class="product-carbon">
+              <div class="carbon-value">0.12 kg</div>
+              <div class="carbon-label">CO₂e</div>
+            </div>
+            <div class="product-status">
+              <span class="status-badge green">Compliant</span>
+              <span class="badge-active">🏷️</span>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-image">🏺</div>
+            <div class="product-info">
+              <h4>Ceramic Mug Set (4pc)</h4>
+              <span class="product-category">Ceramics</span>
+            </div>
+            <div class="product-carbon">
+              <div class="carbon-value">2.4 kg</div>
+              <div class="carbon-label">CO₂e</div>
+            </div>
+            <div class="product-status">
+              <span class="status-badge green">Compliant</span>
+              <span class="badge-active">🏷️</span>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-image">🧵</div>
+            <div class="product-info">
+              <h4>Woven Wall Hanging</h4>
+              <span class="product-category">Textiles</span>
+            </div>
+            <div class="product-carbon">
+              <div class="carbon-value">0.85 kg</div>
+              <div class="carbon-label">CO₂e</div>
+            </div>
+            <div class="product-status">
+              <span class="status-badge yellow">Needs Badge</span>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-image">🪵</div>
+            <div class="product-info">
+              <h4>Wooden Cutting Board</h4>
+              <span class="product-category">Wood</span>
+            </div>
+            <div class="product-carbon">
+              <div class="carbon-value">0.45 kg</div>
+              <div class="carbon-label">CO₂e</div>
+            </div>
+            <div class="product-status">
+              <span class="status-badge green">Compliant</span>
+              <span class="badge-active">🏷️</span>
+            </div>
+          </div>
+
+          <div class="product-card add-product">
+            <div class="add-icon">+</div>
+            <span>Add Product</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reports View -->
+      <section class="view" id="reportsView">
+        <div class="reports-grid">
+          <div class="card report-card">
+            <div class="report-icon">📊</div>
+            <h3>Annual Carbon Report</h3>
+            <p>Complete breakdown of your business carbon footprint for EU reporting requirements.</p>
+            <div class="report-meta">
+              <span>Last generated: Feb 28, 2026</span>
+            </div>
+            <button class="btn btn-outline btn-block">Download PDF</button>
+          </div>
+
+          <div class="card report-card">
+            <div class="report-icon">🏷️</div>
+            <h3>Product Badges</h3>
+            <p>Embeddable carbon footprint badges for your product listings.</p>
+            <div class="report-meta">
+              <span>8 badges active</span>
+            </div>
+            <button class="btn btn-outline btn-block">Manage Badges</button>
+          </div>
+
+          <div class="card report-card">
+            <div class="report-icon">📋</div>
+            <h3>CBAM Declaration</h3>
+            <p>Carbon Border Adjustment Mechanism quarterly report for EU customs.</p>
+            <div class="report-meta warning">
+              <span>⚠️ Due March 31, 2026</span>
+            </div>
+            <button class="btn btn-primary btn-block">Generate Report</button>
+          </div>
+
+          <div class="card report-card">
+            <div class="report-icon">🌍</div>
+            <h3>Customer Report</h3>
+            <p>Shareable sustainability report for conscious customers.</p>
+            <div class="report-meta">
+              <span>QR code enabled</span>
+            </div>
+            <button class="btn btn-outline btn-block">Preview & Share</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Badge Preview</h3>
+          </div>
+          <div class="badge-preview">
+            <div class="product-badge">
+              <div class="badge-header">
+                <span class="badge-logo">🌿</span>
+                <span class="badge-title">Climate Transparent</span>
+              </div>
+              <div class="badge-content">
+                <div class="badge-value">0.12 kg</div>
+                <div class="badge-label">CO₂e per unit</div>
+              </div>
+              <div class="badge-footer">
+                <span>Verified by GreenLedger</span>
+                <span class="badge-qr">⊞</span>
+              </div>
+            </div>
+            <div class="badge-info">
+              <p>Embed this badge on your Etsy or Shopify listings to show customers your carbon transparency.</p>
+              <code>&lt;script src="greenledger.io/badge/xyz"&gt;&lt;/script&gt;</code>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
