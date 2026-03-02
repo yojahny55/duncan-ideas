@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowBreak - Context Switching Cost Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #0f0f12;
+      --color-surface: #18181d;
+      --color-surface-elevated: #1f1f26;
+      --color-border: #2a2a35;
+      --color-text: #ffffff;
+      --color-text-secondary: #9ca3af;
+      --color-text-muted: #6b7280;
+      --color-primary: #6366f1;
+      --color-primary-hover: #4f46e5;
+      --color-success: #22c55e;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+      --color-flow: #22c55e;
+      --color-interrupted: #ef4444;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+      padding-bottom: 100px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-primary), #8b5cf6);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .date-badge {
+      background: var(--color-surface);
+      padding: 8px 16px;
+      border-radius: var(--radius-lg);
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+
+    /* Flow Status Card */
+    .flow-status-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 24px;
+      border: 1px solid var(--color-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flow-status-card.in-flow {
+      border-color: var(--color-flow);
+    }
+
+    .flow-status-card.interrupted {
+      border-color: var(--color-interrupted);
+    }
+
+    .flow-status-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .flow-status-card.in-flow::before {
+      background: linear-gradient(90deg, var(--color-flow), #4ade80);
+    }
+
+    .flow-status-card.interrupted::before {
+      background: linear-gradient(90deg, var(--color-interrupted), #f87171);
+    }
+
+    .flow-status-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .flow-timer {
+      font-size: 56px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 8px;
+    }
+
+    .in-flow .flow-timer {
+      color: var(--color-flow);
+    }
+
+    .interrupted .flow-timer {
+      color: var(--color-interrupted);
+    }
+
+    .flow-message {
+      color: var(--color-text-secondary);
+      font-size: 14px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .action-btn {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      border: none;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn-interrupt {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--color-danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .action-btn-interrupt:hover {
+      background: rgba(239, 68, 68, 0.25);
+      transform: scale(1.02);
+    }
+
+    .action-btn-flow {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--color-success);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .action-btn-flow:hover {
+      background: rgba(34, 197, 94, 0.25);
+      transform: scale(1.02);
+    }
+
+    .btn-icon {
+      font-size: 28px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      border: 1px solid var(--color-border);
+    }
+
+    .stat-card.full-width {
+      grid-column: span 2;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-value.danger {
+      color: var(--color-danger);
+    }
+
+    .stat-value.warning {
+      color: var(--color-warning);
+    }
+
+    .stat-subtext {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Cost Breakdown */
+    .cost-card {
+      background: linear-gradient(135deg, var(--color-surface-elevated), var(--color-surface));
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 32px;
+      border: 1px solid var(--color-border);
+    }
+
+    .cost-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .cost-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .cost-total {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-danger);
+    }
+
+    .cost-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cost-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cost-source {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cost-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--color-surface);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .cost-source-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .cost-source-count {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .cost-amount {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-warning);
+    }
+
+    .cost-bar {
+      height: 4px;
+      background: var(--color-border);
+      border-radius: 2px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .cost-bar-fill {
+      height: 100%;
+      background: var(--color-warning);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    /* Switch Log */
+    .switch-log {
+      margin-bottom: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .section-link {
+      font-size: 14px;
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .log-item {
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--color-border);
+    }
+
+    .log-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .log-icon.slack { background: rgba(234, 179, 8, 0.15); }
+    .log-icon.email { background: rgba(239, 68, 68, 0.15); }
+    .log-icon.meeting { background: rgba(99, 102, 241, 0.15); }
+    .log-icon.person { background: rgba(34, 197, 94, 0.15); }
+
+    .log-content {
+      flex: 1;
+    }
+
+    .log-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .log-meta {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .log-recovery {
+      text-align: right;
+    }
+
+    .recovery-time {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-warning);
+    }
+
+    .recovery-label {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background: var(--color-border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .interrupt-types {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .interrupt-type-btn {
+      padding: 20px;
+      background: var(--color-surface-elevated);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .interrupt-type-btn:hover {
+      border-color: var(--color-primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .interrupt-type-btn.selected {
+      border-color: var(--color-primary);
+      background: rgba(99, 102, 241, 0.15);
+    }
+
+    .type-icon {
+      font-size: 28px;
+    }
+
+    .type-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: none;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-btn-cancel {
+      background: var(--color-surface-elevated);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .modal-btn-confirm {
+      background: var(--color-danger);
+      color: white;
+    }
+
+    .modal-btn-confirm:hover {
+      background: #dc2626;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      padding: 12px 0;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    .nav-items {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      color: var(--color-text-muted);
+      font-size: 11px;
+      transition: color 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--color-primary);
+    }
+
+    .nav-icon {
+      font-size: 22px;
+    }
+
+    /* Weekly Trend */
+    .trend-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      border: 1px solid var(--color-border);
+    }
+
+    .trend-chart {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 100px;
+      margin-top: 16px;
+      gap: 8px;
+    }
+
+    .trend-bar-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trend-bar {
+      width: 100%;
+      background: var(--color-surface-elevated);
+      border-radius: var(--radius-sm);
+      position: relative;
+      min-height: 20px;
+    }
+
+    .trend-bar-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, var(--color-primary), #8b5cf6);
+      border-radius: var(--radius-sm);
+      transition: height 0.3s ease;
+    }
+
+    .trend-bar.today .trend-bar-fill {
+      background: linear-gradient(to top, var(--color-warning), #fbbf24);
+    }
+
+    .trend-label {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .trend-label.today {
+      color: var(--color-warning);
+      font-weight: 600;
+    }
+
+    .trend-value {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">FlowBreak</span>
+      </div>
+      <div class="date-badge">Today, Mar 1</div>
+    </header>
+
+    <!-- Flow Status -->
+    <div class="flow-status-card in-flow" id="flowStatusCard">
+      <div class="flow-status-label">Currently in Flow</div>
+      <div class="flow-timer" id="flowTimer">47:23</div>
+      <div class="flow-message">Keep going! You're doing great.</div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="action-btn action-btn-interrupt" onclick="showInterruptModal()">
+        <span class="btn-icon">🔔</span>
+        Log Interruption
+      </button>
+      <button class="action-btn action-btn-flow" onclick="logBackInFlow()">
+        <span class="btn-icon">✨</span>
+        Back in Flow
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Switches Today</div>
+        <div class="stat-value danger">7</div>
+        <div class="stat-subtext">+2 from yesterday</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Recovery</div>
+        <div class="stat-value warning">18m</div>
+        <div class="stat-subtext">-5m from avg</div>
+      </div>
+      <div class="stat-card full-width">
+        <div class="stat-label">Time Lost Today</div>
+        <div class="stat-value">2h 6m</div>
+        <div class="stat-subtext">126 minutes of recovery time</div>
+      </div>
+    </div>
+
+    <!-- Cost Breakdown -->
+    <div class="cost-card">
+      <div class="cost-header">
+        <span class="cost-title">Today's Cost @ $75/hr</span>
+        <span class="cost-total">$157.50</span>
+      </div>
+      <div class="cost-breakdown">
+        <div class="cost-item">
+          <div class="cost-row">
+            <div class="cost-source">
+              <div class="cost-icon">💬</div>
+              <div>
+                <div class="cost-source-name">Slack</div>
+                <div class="cost-source-count">4 interruptions</div>
+              </div>
+            </div>
+            <div class="cost-amount">$90.00</div>
+          </div>
+          <div class="cost-bar">
+            <div class="cost-bar-fill" style="width: 57%"></div>
+          </div>
+        </div>
+        <div class="cost-item">
+          <div class="cost-row">
+            <div class="cost-source">
+              <div class="cost-icon">📅</div>
+              <div>
+                <div class="cost-source-name">Meetings</div>
+                <div class="cost-source-count">2 interruptions</div>
+              </div>
+            </div>
+            <div class="cost-amount">$45.00</div>
+          </div>
+          <div class="cost-bar">
+            <div class="cost-bar-fill" style="width: 29%"></div>
+          </div>
+        </div>
+        <div class="cost-item">
+          <div class="cost-row">
+            <div class="cost-source">
+              <div class="cost-icon">👤</div>
+              <div>
+                <div class="cost-source-name">In-person</div>
+                <div class="cost-source-count">1 interruption</div>
+              </div>
+            </div>
+            <div class="cost-amount">$22.50</div>
+          </div>
+          <div class="cost-bar">
+            <div class="cost-bar-fill" style="width: 14%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Trend -->
+    <div class="trend-card">
+      <div class="section-header">
+        <span class="section-title">This Week</span>
+        <a href="#" class="section-link">Details →</a>
+      </div>
+      <div class="trend-chart">
+        <div class="trend-bar-wrapper">
+          <div class="trend-value">5</div>
+          <div class="trend-bar" style="height: 50px">
+            <div class="trend-bar-fill" style="height: 50%"></div>
+          </div>
+          <span class="trend-label">Mon</span>
+        </div>
+        <div class="trend-bar-wrapper">
+          <div class="trend-value">8</div>
+          <div class="trend-bar" style="height: 50px">
+            <div class="trend-bar-fill" style="height: 80%"></div>
+          </div>
+          <span class="trend-label">Tue</span>
+        </div>
+        <div class="trend-bar-wrapper">
+          <div class="trend-value">3</div>
+          <div class="trend-bar" style="height: 50px">
+            <div class="trend-bar-fill" style="height: 30%"></div>
+          </div>
+          <span class="trend-label">Wed</span>
+        </div>
+        <div class="trend-bar-wrapper">
+          <div class="trend-value">6</div>
+          <div class="trend-bar" style="height: 50px">
+            <div class="trend-bar-fill" style="height: 60%"></div>
+          </div>
+          <span class="trend-label">Thu</span>
+        </div>
+        <div class="trend-bar-wrapper">
+          <div class="trend-value">4</div>
+          <div class="trend-bar" style="height: 50px">
+            <div class="trend-bar-fill" style="height: 40%"></div>
+          </div>
+          <span class="trend-label">Fri</span>
+        </div>
+        <div class="trend-bar-wrapper">
+          <div class="trend-value">7</div>
+          <div class="trend-bar today" style="height: 50px">
+            <div class="trend-bar-fill" style="height: 70%"></div>
+          </div>
+          <span class="trend-label today">Sat</span>
+        </div>
+        <div class="trend-bar-wrapper">
+          <div class="trend-value">-</div>
+          <div class="trend-bar" style="height: 50px">
+            <div class="trend-bar-fill" style="height: 0%"></div>
+          </div>
+          <span class="trend-label">Sun</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Switches -->
+    <div class="switch-log">
+      <div class="section-header">
+        <span class="section-title">Recent Switches</span>
+        <a href="#" class="section-link">View All →</a>
+      </div>
+      <div class="log-list">
+        <div class="log-item">
+          <div class="log-icon slack">💬</div>
+          <div class="log-content">
+            <div class="log-title">Slack - @john: "Quick question..."</div>
+            <div class="log-meta">2:34 PM • While coding feature</div>
+          </div>
+          <div class="log-recovery">
+            <div class="recovery-time">22m</div>
+            <div class="recovery-label">recovery</div>
+          </div>
+        </div>
+        <div class="log-item">
+          <div class="log-icon meeting">📅</div>
+          <div class="log-content">
+            <div class="log-title">Sprint Planning Meeting</div>
+            <div class="log-meta">1:00 PM • Calendar event</div>
+          </div>
+          <div class="log-recovery">
+            <div class="recovery-time">28m</div>
+            <div class="recovery-label">recovery</div>
+          </div>
+        </div>
+        <div class="log-item">
+          <div class="log-icon slack">💬</div>
+          <div class="log-content">
+            <div class="log-title">Slack - #general notification</div>
+            <div class="log-meta">11:45 AM • During code review</div>
+          </div>
+          <div class="log-recovery">
+            <div class="recovery-time">15m</div>
+            <div class="recovery-label">recovery</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interrupt Modal -->
+  <div class="modal-overlay" id="interruptModal">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h2 class="modal-title">What interrupted you?</h2>
+      <div class="interrupt-types">
+        <button class="interrupt-type-btn" onclick="selectType(this, 'slack')">
+          <span class="type-icon">💬</span>
+          <span class="type-label">Slack/Teams</span>
+        </button>
+        <button class="interrupt-type-btn" onclick="selectType(this, 'email')">
+          <span class="type-icon">📧</span>
+          <span class="type-label">Email</span>
+        </button>
+        <button class="interrupt-type-btn" onclick="selectType(this, 'meeting')">
+          <span class="type-icon">📅</span>
+          <span class="type-label">Meeting</span>
+        </button>
+        <button class="interrupt-type-btn" onclick="selectType(this, 'person')">
+          <span class="type-icon">👤</span>
+          <span class="type-label">In-Person</span>
+        </button>
+        <button class="interrupt-type-btn" onclick="selectType(this, 'notification')">
+          <span class="type-icon">🔔</span>
+          <span class="type-label">Notification</span>
+        </button>
+        <button class="interrupt-type-btn" onclick="selectType(this, 'self')">
+          <span class="type-icon">🧠</span>
+          <span class="type-label">Self-Distracted</span>
+        </button>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" onclick="hideInterruptModal()">Cancel</button>
+        <button class="modal-btn modal-btn-confirm" onclick="logInterrupt()">Log Interruption</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="nav-items">
+      <a href="#" class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Analytics</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📝</span>
+        <span>Reports</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>
+    let selectedType = null;
+    let flowSeconds = 47 * 60 + 23;
+    let inFlow = true;
+
+    // Update timer
+    setInterval(() => {
+      if (inFlow) {
+        flowSeconds++;
+        const minutes = Math.floor(flowSeconds / 60);
+        const seconds = flowSeconds % 60;
+        document.getElementById('flowTimer').textContent = 
+          `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      }
+    }, 1000);
+
+    function showInterruptModal() {
+      document.getElementById('interruptModal').classList.add('active');
+    }
+
+    function hideInterruptModal() {
+      document.getElementById('interruptModal').classList.remove('active');
+      document.querySelectorAll('.interrupt-type-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      selectedType = null;
+    }
+
+    function selectType(btn, type) {
+      document.querySelectorAll('.interrupt-type-btn').forEach(b => {
+        b.classList.remove('selected');
+      });
+      btn.classList.add('selected');
+      selectedType = type;
+    }
+
+    function logInterrupt() {
+      if (!selectedType) {
+        alert('Please select an interruption type');
+        return;
+      }
+      
+      const card = document.getElementById('flowStatusCard');
+      card.classList.remove('in-flow');
+      card.classList.add('interrupted');
+      card.querySelector('.flow-status-label').textContent = 'Interrupted';
+      card.querySelector('.flow-message').textContent = 'Tap "Back in Flow" when you regain focus';
+      
+      flowSeconds = 0;
+      inFlow = false;
+      
+      hideInterruptModal();
+    }
+
+    function logBackInFlow() {
+      const card = document.getElementById('flowStatusCard');
+      card.classList.remove('interrupted');
+      card.classList.add('in-flow');
+      card.querySelector('.flow-status-label').textContent = 'Currently in Flow';
+      card.querySelector('.flow-message').textContent = 'Keep going! You\'re doing great.';
+      
+      if (!inFlow) {
+        const recoveryTime = flowSeconds;
+        console.log(`Recovery time: ${Math.floor(recoveryTime / 60)}m ${recoveryTime % 60}s`);
+      }
+      
+      flowSeconds = 0;
+      inFlow = true;
+    }
+
+    // Close modal on overlay click
+    document.getElementById('interruptModal').addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-overlay')) {
+        hideInterruptModal();
+      }
+    });
+  </script>
+</body>
+</html>
