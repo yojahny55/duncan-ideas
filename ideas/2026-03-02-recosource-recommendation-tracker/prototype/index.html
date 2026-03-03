@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>RecoSource — Remember Who Told You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <h1 class="logo">
+          <span class="logo-icon">💡</span>
+          RecoSource
+        </h1>
+        <button class="btn-icon" id="settingsBtn" aria-label="Settings">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="queue">
+        <span class="tab-icon">📋</span>
+        Queue
+        <span class="tab-badge" id="queueCount">5</span>
+      </button>
+      <button class="tab" data-tab="tried">
+        <span class="tab-icon">✅</span>
+        Tried
+      </button>
+      <button class="tab" data-tab="sources">
+        <span class="tab-icon">🏆</span>
+        Sources
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Queue Tab -->
+      <section class="tab-content active" id="queue">
+        <div class="filter-bar">
+          <select class="filter-select" id="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="movie">🎬 Movies</option>
+            <option value="book">📚 Books</option>
+            <option value="tv">📺 TV Shows</option>
+            <option value="restaurant">🍽️ Restaurants</option>
+            <option value="podcast">🎙️ Podcasts</option>
+            <option value="product">📦 Products</option>
+          </select>
+          <select class="filter-select" id="sourceFilter">
+            <option value="all">All Sources</option>
+            <option value="person">👤 People</option>
+            <option value="podcast">🎙️ Podcasts</option>
+            <option value="article">📰 Articles</option>
+            <option value="social">📱 Social</option>
+          </select>
+        </div>
+
+        <div class="reco-list" id="recoList">
+          <!-- Recommendations will be inserted here -->
+        </div>
+
+        <div class="empty-state hidden" id="emptyQueue">
+          <div class="empty-icon">📭</div>
+          <h3>No recommendations yet</h3>
+          <p>Tap + to add your first recommendation</p>
+        </div>
+      </section>
+
+      <!-- Tried Tab -->
+      <section class="tab-content" id="tried">
+        <div class="stats-summary">
+          <div class="stat-card">
+            <span class="stat-value" id="triedCount">12</span>
+            <span class="stat-label">Tried</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="hitRate">75%</span>
+            <span class="stat-label">Hit Rate</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="thanksSent">8</span>
+            <span class="stat-label">Thanks Sent</span>
+          </div>
+        </div>
+
+        <div class="reco-list" id="triedList">
+          <!-- Tried recommendations will be inserted here -->
+        </div>
+      </section>
+
+      <!-- Sources Tab -->
+      <section class="tab-content" id="sources">
+        <h2 class="section-title">Your Best Sources</h2>
+        <p class="section-subtitle">Who gives you the best recommendations?</p>
+
+        <div class="source-leaderboard" id="sourceLeaderboard">
+          <!-- Source cards will be inserted here -->
+        </div>
+      </section>
+    </main>
+
+    <!-- FAB Add Button -->
+    <button class="fab" id="addBtn" aria-label="Add recommendation">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </button>
+
+    <!-- Add Recommendation Modal -->
+    <div class="modal-overlay hidden" id="addModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Add Recommendation</h2>
+          <button class="btn-icon modal-close" aria-label="Close">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <form id="addForm" class="modal-form">
+          <!-- Step 1: What -->
+          <div class="form-step active" data-step="1">
+            <label class="form-label">What was recommended?</label>
+            <input type="text" class="form-input" id="recoTitle" placeholder="e.g., Severance (TV show)" required>
+            
+            <label class="form-label">Category</label>
+            <div class="category-grid">
+              <button type="button" class="category-btn" data-category="movie">🎬 Movie</button>
+              <button type="button" class="category-btn" data-category="book">📚 Book</button>
+              <button type="button" class="category-btn" data-category="tv">📺 TV</button>
+              <button type="button" class="category-btn" data-category="restaurant">🍽️ Restaurant</button>
+              <button type="button" class="category-btn" data-category="podcast">🎙️ Podcast</button>
+              <button type="button" class="category-btn" data-category="product">📦 Product</button>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-next">Next: Who told you?</button>
+          </div>
+
+          <!-- Step 2: From -->
+          <div class="form-step" data-step="2">
+            <label class="form-label">Who recommended this?</label>
+            
+            <div class="source-type-grid">
+              <button type="button" class="source-type-btn active" data-source-type="person">
+                <span class="source-type-icon">👤</span>
+                Person
+              </button>
+              <button type="button" class="source-type-btn" data-source-type="podcast">
+                <span class="source-type-icon">🎙️</span>
+                Podcast
+              </button>
+              <button type="button" class="source-type-btn" data-source-type="article">
+                <span class="source-type-icon">📰</span>
+                Article
+              </button>
+              <button type="button" class="source-type-btn" data-source-type="social">
+                <span class="source-type-icon">📱</span>
+                Social
+              </button>
+            </div>
+
+            <input type="text" class="form-input" id="sourceName" placeholder="Name (e.g., Sarah, Tim Ferriss Show)" required>
+            
+            <label class="form-label">Context (optional)</label>
+            <input type="text" class="form-input" id="recoContext" placeholder="e.g., Dinner last week, Episode #342">
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary btn-back">Back</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Rate Modal -->
+    <div class="modal-overlay hidden" id="rateModal">
+      <div class="modal modal-compact">
+        <div class="modal-header">
+          <h2>How was it?</h2>
+          <button class="btn-icon modal-close" aria-label="Close">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="rate-content">
+          <p class="rate-item-title" id="rateItemTitle">Severance</p>
+          <p class="rate-source">Recommended by <strong id="rateSourceName">Sarah</strong></p>
+
+          <div class="rating-stars" id="ratingStars">
+            <button class="star" data-rating="1">★</button>
+            <button class="star" data-rating="2">★</button>
+            <button class="star" data-rating="3">★</button>
+            <button class="star" data-rating="4">★</button>
+            <button class="star" data-rating="5">★</button>
+          </div>
+
+          <div class="rate-actions">
+            <button class="btn btn-secondary" id="skipRating">Skip</button>
+            <button class="btn btn-primary" id="saveRating" disabled>Rate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thanks Modal -->
+    <div class="modal-overlay hidden" id="thanksModal">
+      <div class="modal modal-compact">
+        <div class="thanks-content">
+          <div class="thanks-icon">🎉</div>
+          <h2>Great pick!</h2>
+          <p>You gave <strong id="thanksItem">Severance</strong> 5 stars.</p>
+          <p class="thanks-source"><strong id="thanksSource">Sarah</strong> recommended it 3 months ago.</p>
+
+          <div class="thanks-actions">
+            <button class="btn btn-secondary" id="skipThanks">Maybe later</button>
+            <button class="btn btn-primary" id="sendThanks">
+              <span>💌</span> Send Thanks
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast hidden" id="toast">
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
