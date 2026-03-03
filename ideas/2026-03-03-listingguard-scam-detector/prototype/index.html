@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ListingGuard - Rental Scam Detector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🛡️</span>
+                <span class="logo-text">ListingGuard</span>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link active">Check Listing</a>
+                <a href="#" class="nav-link">Scam Database</a>
+                <a href="#" class="nav-link">Report Scam</a>
+            </nav>
+            <button class="btn btn-outline">Sign In</button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Hero Section -->
+            <section class="hero" id="heroSection">
+                <h1>Don't get scammed on your next rental</h1>
+                <p class="hero-subtitle">Paste any listing URL and get instant AI-powered scam detection with trust scoring</p>
+                
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <input type="text" id="listingUrl" class="url-input" placeholder="Paste listing URL from Zillow, Facebook, Craigslist, etc...">
+                        <button class="btn btn-primary analyze-btn" id="analyzeBtn">
+                            <span class="btn-text">Analyze</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span>
+                            </span>
+                        </button>
+                    </div>
+                    <p class="input-hint">Or <button class="link-btn" id="uploadBtn">upload screenshots</button></p>
+                </div>
+
+                <div class="trust-badges">
+                    <div class="badge">
+                        <span class="badge-number">47,000+</span>
+                        <span class="badge-label">Scams Detected</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-number">$12M+</span>
+                        <span class="badge-label">Saved for Renters</span>
+                    </div>
+                    <div class="badge">
+                        <span class="badge-number">98.7%</span>
+                        <span class="badge-label">Accuracy Rate</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section (Hidden Initially) -->
+            <section class="results" id="resultsSection" style="display: none;">
+                <button class="back-btn" id="backBtn">← Check Another Listing</button>
+                
+                <!-- Trust Score Card -->
+                <div class="score-card" id="scoreCard">
+                    <div class="score-header">
+                        <div class="listing-info">
+                            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=100&h=100&fit=crop" alt="Listing" class="listing-thumb">
+                            <div>
+                                <h2 class="listing-title" id="listingTitle">2BR Apartment - Downtown</h2>
+                                <p class="listing-source" id="listingSource">facebook.com/marketplace</p>
+                            </div>
+                        </div>
+                        <div class="score-display">
+                            <div class="score-circle" id="scoreCircle">
+                                <svg viewBox="0 0 100 100">
+                                    <circle class="score-bg" cx="50" cy="50" r="45"/>
+                                    <circle class="score-progress" cx="50" cy="50" r="45" id="scoreProgress"/>
+                                </svg>
+                                <span class="score-value" id="scoreValue">--</span>
+                            </div>
+                            <span class="score-label" id="scoreLabel">Analyzing...</span>
+                        </div>
+                    </div>
+                    <p class="score-summary" id="scoreSummary"></p>
+                </div>
+
+                <!-- Analysis Breakdown -->
+                <div class="analysis-grid">
+                    <!-- Price Analysis -->
+                    <div class="analysis-card" id="priceCard">
+                        <div class="analysis-header">
+                            <span class="analysis-icon">💰</span>
+                            <h3>Price Analysis</h3>
+                            <span class="status-badge" id="priceStatus">Checking...</span>
+                        </div>
+                        <div class="analysis-content" id="priceContent">
+                            <div class="price-comparison">
+                                <div class="price-item">
+                                    <span class="price-label">Listed Price</span>
+                                    <span class="price-value" id="listedPrice">--</span>
+                                </div>
+                                <div class="price-item">
+                                    <span class="price-label">Market Average</span>
+                                    <span class="price-value" id="marketPrice">--</span>
+                                </div>
+                                <div class="price-item highlight">
+                                    <span class="price-label">Difference</span>
+                                    <span class="price-value" id="priceDiff">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Verification -->
+                    <div class="analysis-card" id="imageCard">
+                        <div class="analysis-header">
+                            <span class="analysis-icon">📸</span>
+                            <h3>Image Verification</h3>
+                            <span class="status-badge" id="imageStatus">Checking...</span>
+                        </div>
+                        <div class="analysis-content" id="imageContent">
+                            <div class="image-grid">
+                                <div class="image-check">
+                                    <div class="check-indicator" id="imageCheck1">
+                                        <span class="check-icon">⏳</span>
+                                    </div>
+                                    <span class="check-label">Reverse image search</span>
+                                </div>
+                                <div class="image-check">
+                                    <div class="check-indicator" id="imageCheck2">
+                                        <span class="check-icon">⏳</span>
+                                    </div>
+                                    <span class="check-label">Stock photo detection</span>
+                                </div>
+                                <div class="image-check">
+                                    <div class="check-indicator" id="imageCheck3">
+                                        <span class="check-icon">⏳</span>
+                                    </div>
+                                    <span class="check-label">Metadata analysis</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Analysis -->
+                    <div class="analysis-card" id="accountCard">
+                        <div class="analysis-header">
+                            <span class="analysis-icon">👤</span>
+                            <h3>Account Analysis</h3>
+                            <span class="status-badge" id="accountStatus">Checking...</span>
+                        </div>
+                        <div class="analysis-content" id="accountContent">
+                            <div class="account-stats">
+                                <div class="stat-row">
+                                    <span class="stat-label">Account Age</span>
+                                    <span class="stat-value" id="accountAge">--</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Other Listings</span>
+                                    <span class="stat-value" id="otherListings">--</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Response Rate</span>
+                                    <span class="stat-value" id="responseRate">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Language Analysis -->
+                    <div class="analysis-card" id="languageCard">
+                        <div class="analysis-header">
+                            <span class="analysis-icon">📝</span>
+                            <h3>Language Patterns</h3>
+                            <span class="status-badge" id="languageStatus">Checking...</span>
+                        </div>
+                        <div class="analysis-content" id="languageContent">
+                            <div class="flags-list" id="flagsList">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Red Flags Section -->
+                <div class="red-flags" id="redFlagsSection" style="display: none;">
+                    <h3>🚩 Red Flags Detected</h3>
+                    <div class="flags-container" id="redFlagsContainer">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="recommendations" id="recommendationsSection">
+                    <h3>📋 Recommendations</h3>
+                    <div class="rec-list" id="recList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="actions">
+                    <button class="btn btn-outline" id="reportBtn">🚩 Report This Listing</button>
+                    <button class="btn btn-primary" id="saveBtn">💾 Save Analysis</button>
+                    <button class="btn btn-outline" id="shareBtn">📤 Share Results</button>
+                </div>
+            </section>
+
+            <!-- How It Works -->
+            <section class="how-it-works" id="howItWorks">
+                <h2>How ListingGuard Protects You</h2>
+                <div class="steps-grid">
+                    <div class="step">
+                        <div class="step-icon">🔗</div>
+                        <h3>1. Paste Any Listing</h3>
+                        <p>Copy a URL from Facebook Marketplace, Craigslist, Zillow, or any rental site</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">🔍</div>
+                        <h3>2. AI Analysis</h3>
+                        <p>We check price, images, account history, language patterns, and property records</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">📊</div>
+                        <h3>3. Trust Score</h3>
+                        <p>Get a 0-100 score with detailed breakdown of any red flags found</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">✅</div>
+                        <h3>4. Make Informed Decisions</h3>
+                        <p>Know exactly what to verify before sending any money or personal info</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Scams -->
+            <section class="recent-scams">
+                <h2>Recently Detected Scams</h2>
+                <div class="scams-grid">
+                    <div class="scam-card">
+                        <div class="scam-badge danger">SCAM</div>
+                        <h4>$800/mo 3BR "Downtown Luxury"</h4>
+                        <p class="scam-detail">Photos stolen from Zillow listing in Miami</p>
+                        <span class="scam-time">Detected 2 hours ago</span>
+                    </div>
+                    <div class="scam-card">
+                        <div class="scam-badge danger">SCAM</div>
+                        <h4>$650/mo Studio "Near Campus"</h4>
+                        <p class="scam-detail">Account created 3 days ago, requests Zelle deposit</p>
+                        <span class="scam-time">Detected 5 hours ago</span>
+                    </div>
+                    <div class="scam-card">
+                        <div class="scam-badge danger">SCAM</div>
+                        <h4>$1,100/mo 2BR "Pet Friendly"</h4>
+                        <p class="scam-detail">"Landlord traveling abroad" — classic scam pattern</p>
+                        <span class="scam-time">Detected 8 hours ago</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">🛡️</span>
+                    <span class="logo-text">ListingGuard</span>
+                </div>
+                <p class="footer-tagline">Protecting renters since 2026</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">API</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
