@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TapSpot - Find Drinking Water Anywhere</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Map View -->
+        <div id="map-view" class="view active">
+            <!-- Fake Map Background -->
+            <div class="map-canvas" id="mapCanvas">
+                <!-- Map markers will be added by JS -->
+            </div>
+            
+            <!-- Search Bar Overlay -->
+            <div class="search-overlay">
+                <div class="search-bar">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <input type="text" placeholder="Search for water nearby..." id="searchInput">
+                    <button class="filter-btn" id="filterBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 6h16M6 12h12M8 18h8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-pill">
+                    <span class="stat-icon">💧</span>
+                    <span class="stat-value">12</span>
+                    <span class="stat-label">nearby</span>
+                </div>
+            </div>
+            
+            <!-- Center on Location Button -->
+            <button class="locate-btn" id="locateBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                </svg>
+            </button>
+            
+            <!-- Add Source FAB -->
+            <button class="fab" id="addSourceBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Water Source Detail Sheet -->
+        <div class="bottom-sheet" id="sourceDetail">
+            <div class="sheet-handle"></div>
+            <div class="sheet-content">
+                <div class="source-header">
+                    <div class="source-type-badge fountain">
+                        <span>💧</span>
+                        <span>Fountain</span>
+                    </div>
+                    <div class="source-status working">
+                        <span class="status-dot"></span>
+                        Working
+                    </div>
+                </div>
+                
+                <h2 class="source-title">Central Park Fountain</h2>
+                <p class="source-address">Near Bethesda Terrace, Central Park</p>
+                
+                <div class="source-tags">
+                    <span class="tag">🧊 Chilled</span>
+                    <span class="tag">♿ Accessible</span>
+                    <span class="tag">🍼 Bottle Filler</span>
+                </div>
+                
+                <div class="source-stats">
+                    <div class="stat-block">
+                        <span class="stat-number">0.2</span>
+                        <span class="stat-unit">mi away</span>
+                    </div>
+                    <div class="stat-block">
+                        <span class="stat-number">4.8</span>
+                        <span class="stat-unit">rating</span>
+                    </div>
+                    <div class="stat-block">
+                        <span class="stat-number">2d</span>
+                        <span class="stat-unit">ago verified</span>
+                    </div>
+                </div>
+                
+                <div class="source-photo">
+                    <div class="photo-placeholder">
+                        <span>📷</span>
+                        <span>Photo by @HydrationHero</span>
+                    </div>
+                </div>
+                
+                <div class="source-actions">
+                    <button class="action-btn primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                        </svg>
+                        Directions
+                    </button>
+                    <button class="action-btn secondary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Still Here
+                    </button>
+                </div>
+                
+                <div class="verification-cta">
+                    <p>Last verified 2 days ago by <strong>@WaterWatcher</strong></p>
+                    <span class="verify-count">47 people confirmed this month</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Modal -->
+        <div class="modal-overlay" id="filterModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Filter Water Sources</h3>
+                    <button class="close-modal" id="closeFilter">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="filter-section">
+                        <h4>Type</h4>
+                        <div class="filter-chips">
+                            <label class="chip active">
+                                <input type="checkbox" checked>
+                                <span>💧 Fountain</span>
+                            </label>
+                            <label class="chip active">
+                                <input type="checkbox" checked>
+                                <span>🍼 Bottle Filler</span>
+                            </label>
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>🏪 Business</span>
+                            </label>
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>🚰 Tap</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h4>Features</h4>
+                        <div class="filter-chips">
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>🧊 Chilled</span>
+                            </label>
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>♿ Accessible</span>
+                            </label>
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>🐕 Pet Friendly</span>
+                            </label>
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>🌙 24/7</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <h4>Verification</h4>
+                        <label class="toggle-row">
+                            <span>Only verified this week</span>
+                            <div class="toggle">
+                                <input type="checkbox" id="verifiedToggle">
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-text">Clear All</button>
+                    <button class="btn-primary" id="applyFilters">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Source Modal -->
+        <div class="modal-overlay" id="addModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Add Water Source</h3>
+                    <button class="close-modal" id="closeAdd">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <div class="type-selector">
+                            <button class="type-btn active" data-type="fountain">
+                                <span>💧</span>
+                                <span>Fountain</span>
+                            </button>
+                            <button class="type-btn" data-type="filler">
+                                <span>🍼</span>
+                                <span>Bottle Filler</span>
+                            </button>
+                            <button class="type-btn" data-type="business">
+                                <span>🏪</span>
+                                <span>Business</span>
+                            </button>
+                            <button class="type-btn" data-type="tap">
+                                <span>🚰</span>
+                                <span>Tap</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Location</label>
+                        <div class="location-picker">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span>Use current location</span>
+                            <span class="coords">40.7829° N, 73.9654° W</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description (optional)</label>
+                        <input type="text" placeholder="e.g., Next to the playground entrance">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Features</label>
+                        <div class="filter-chips compact">
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>🧊 Chilled</span>
+                            </label>
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>♿ Accessible</span>
+                            </label>
+                            <label class="chip">
+                                <input type="checkbox">
+                                <span>🐕 Pet Bowl</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Add Photo</label>
+                        <div class="photo-upload">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                            <span>Tap to add photo</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-text" id="cancelAdd">Cancel</button>
+                    <button class="btn-primary" id="submitSource">Add Source</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success Toast -->
+        <div class="toast" id="successToast">
+            <span class="toast-icon">✓</span>
+            <span class="toast-message">Water source added! +10 points</span>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-view="map">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>Map</span>
+            </button>
+            <button class="nav-item" data-view="list">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"/>
+                    <line x1="8" y1="12" x2="21" y2="12"/>
+                    <line x1="8" y1="18" x2="21" y2="18"/>
+                    <line x1="3" y1="6" x2="3.01" y2="6"/>
+                    <line x1="3" y1="12" x2="3.01" y2="12"/>
+                    <line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+                <span>List</span>
+            </button>
+            <button class="nav-item" data-view="profile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Profile</span>
+            </button>
+        </nav>
+        
+        <!-- List View -->
+        <div id="list-view" class="view">
+            <div class="list-header">
+                <h1>Nearby Water</h1>
+                <span class="list-count">12 sources within 1 mi</span>
+            </div>
+            <div class="source-list">
+                <div class="source-card" data-distance="0.1">
+                    <div class="source-icon">💧</div>
+                    <div class="source-info">
+                        <h3>Grand Central Station</h3>
+                        <p>Main Concourse, near Track 21</p>
+                        <div class="source-meta">
+                            <span class="distance">0.1 mi</span>
+                            <span class="dot">•</span>
+                            <span class="rating">⭐ 4.9</span>
+                            <span class="dot">•</span>
+                            <span class="verified">✓ Verified today</span>
+                        </div>
+                    </div>
+                    <div class="source-badge">🧊</div>
+                </div>
+                
+                <div class="source-card" data-distance="0.2">
+                    <div class="source-icon">🍼</div>
+                    <div class="source-info">
+                        <h3>Bryant Park</h3>
+                        <p>Near the reading room</p>
+                        <div class="source-meta">
+                            <span class="distance">0.2 mi</span>
+                            <span class="dot">•</span>
+                            <span class="rating">⭐ 4.7</span>
+                            <span class="dot">•</span>
+                            <span class="verified">✓ 1 day ago</span>
+                        </div>
+                    </div>
+                    <div class="source-badge">♿</div>
+                </div>
+                
+                <div class="source-card" data-distance="0.3">
+                    <div class="source-icon">💧</div>
+                    <div class="source-info">
+                        <h3>NYC Public Library</h3>
+                        <p>Ground floor, near restrooms</p>
+                        <div class="source-meta">
+                            <span class="distance">0.3 mi</span>
+                            <span class="dot">•</span>
+                            <span class="rating">⭐ 4.5</span>
+                            <span class="dot">•</span>
+                            <span class="verified">✓ 3 days ago</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="source-card warning" data-distance="0.4">
+                    <div class="source-icon">🚰</div>
+                    <div class="source-info">
+                        <h3>Times Square Station</h3>
+                        <p>N/R platform level</p>
+                        <div class="source-meta">
+                            <span class="distance">0.4 mi</span>
+                            <span class="dot">•</span>
+                            <span class="rating">⭐ 3.2</span>
+                            <span class="dot">•</span>
+                            <span class="unverified">⚠ Needs verification</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="source-card" data-distance="0.5">
+                    <div class="source-icon">🏪</div>
+                    <div class="source-info">
+                        <h3>Whole Foods Market</h3>
+                        <p>Free refills at customer service</p>
+                        <div class="source-meta">
+                            <span class="distance">0.5 mi</span>
+                            <span class="dot">•</span>
+                            <span class="rating">⭐ 4.8</span>
+                            <span class="dot">•</span>
+                            <span class="verified">✓ 2 days ago</span>
+                        </div>
+                    </div>
+                    <div class="source-badge">🧊</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile View -->
+        <div id="profile-view" class="view">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span>🌊</span>
+                </div>
+                <h2>@HydrationHero</h2>
+                <p class="profile-tagline">Keeping NYC hydrated since 2024</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-big">47</span>
+                    <span class="stat-desc">Sources Added</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-big">312</span>
+                    <span class="stat-desc">Verifications</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-big">1,240</span>
+                    <span class="stat-desc">Points</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-big">🏆</span>
+                    <span class="stat-desc">Top 5% NYC</span>
+                </div>
+            </div>
+            
+            <div class="badges-section">
+                <h3>Badges</h3>
+                <div class="badges-grid">
+                    <div class="badge earned">
+                        <span>💧</span>
+                        <span class="badge-name">First Drop</span>
+                    </div>
+                    <div class="badge earned">
+                        <span>🗺️</span>
+                        <span class="badge-name">Explorer</span>
+                    </div>
+                    <div class="badge earned">
+                        <span>✓</span>
+                        <span class="badge-name">Verifier</span>
+                    </div>
+                    <div class="badge earned">
+                        <span>📸</span>
+                        <span class="badge-name">Photographer</span>
+                    </div>
+                    <div class="badge">
+                        <span>🌟</span>
+                        <span class="badge-name">Legend</span>
+                    </div>
+                    <div class="badge">
+                        <span>🌍</span>
+                        <span class="badge-name">Global</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="streak-section">
+                <h3>Contribution Streak</h3>
+                <div class="streak-display">
+                    <span class="streak-fire">🔥</span>
+                    <span class="streak-number">14</span>
+                    <span class="streak-label">days</span>
+                </div>
+                <p class="streak-message">Keep it up! Verify a source today.</p>
+            </div>
+            
+            <div class="impact-section">
+                <h3>Your Impact</h3>
+                <div class="impact-stat">
+                    <span class="impact-icon">🍃</span>
+                    <div class="impact-info">
+                        <span class="impact-number">~234</span>
+                        <span class="impact-desc">plastic bottles saved by your contributions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
