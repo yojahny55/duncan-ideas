@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeKeep — Home Maintenance Scheduler</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2563eb;
+            --color-primary-dark: #1d4ed8;
+            --color-primary-light: #eff6ff;
+            --color-success: #10b981;
+            --color-success-light: #ecfdf5;
+            --color-warning: #f59e0b;
+            --color-warning-light: #fffbeb;
+            --color-danger: #ef4444;
+            --color-danger-light: #fef2f2;
+            --color-gray-50: #f9fafb;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-gray-50);
+            color: var(--color-gray-900);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #3b82f6 100%);
+            color: white;
+            padding: 20px 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .home-health {
+            background: rgba(255,255,255,0.15);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .health-score {
+            position: relative;
+            width: 64px;
+            height: 64px;
+        }
+
+        .health-score svg {
+            transform: rotate(-90deg);
+            width: 64px;
+            height: 64px;
+        }
+
+        .health-score circle {
+            fill: none;
+            stroke-width: 6;
+        }
+
+        .health-score .bg {
+            stroke: rgba(255,255,255,0.2);
+        }
+
+        .health-score .progress {
+            stroke: #10b981;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s;
+        }
+
+        .health-score .value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .health-info {
+            flex: 1;
+        }
+
+        .health-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .health-info p {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid var(--color-gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 14px 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-gray-500);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .nav-tab:hover:not(.active) {
+            color: var(--color-gray-700);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 16px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-badge {
+            background: var(--color-danger);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        /* Task Cards */
+        .task-card {
+            background: white;
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .task-card:hover {
+            border-color: var(--color-gray-300);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .task-card.overdue {
+            border-left: 3px solid var(--color-danger);
+            background: var(--color-danger-light);
+        }
+
+        .task-card.due-soon {
+            border-left: 3px solid var(--color-warning);
+            background: var(--color-warning-light);
+        }
+
+        .task-card.completed {
+            opacity: 0.7;
+            border-left: 3px solid var(--color-success);
+        }
+
+        .task-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--color-gray-100);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .task-card.overdue .task-icon {
+            background: white;
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .task-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-gray-900);
+        }
+
+        .task-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .task-status.overdue {
+            background: var(--color-danger);
+            color: white;
+        }
+
+        .task-status.due-soon {
+            background: var(--color-warning);
+            color: white;
+        }
+
+        .task-status.upcoming {
+            background: var(--color-gray-200);
+            color: var(--color-gray-600);
+        }
+
+        .task-status.completed {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .task-meta {
+            font-size: 13px;
+            color: var(--color-gray-500);
+            display: flex;
+            gap: 12px;
+        }
+
+        .task-system {
+            color: var(--color-gray-400);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--color-gray-100);
+            color: var(--color-gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-gray-200);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        /* Systems Grid */
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .system-card {
+            background: white;
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .system-card:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .system-card.active {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .system-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .system-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-gray-800);
+            margin-bottom: 2px;
+        }
+
+        .system-tasks {
+            font-size: 11px;
+            color: var(--color-gray-500);
+        }
+
+        /* History List */
+        .history-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--color-gray-100);
+        }
+
+        .history-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--color-success-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--color-success);
+            flex-shrink: 0;
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-gray-800);
+        }
+
+        .history-meta {
+            font-size: 12px;
+            color: var(--color-gray-500);
+            margin-top: 2px;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            width: 100%;
+            max-width: 480px;
+            max-height: 85vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .modal-backdrop.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--color-gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--color-gray-100);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-gray-700);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--color-gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--color-gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .photo-upload {
+            border: 2px dashed var(--color-gray-300);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .photo-upload:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .photo-upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .photo-upload-text {
+            font-size: 14px;
+            color: var(--color-gray-600);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--color-gray-800);
+            color: white;
+            padding: 14px 24px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--color-success);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-gray-800);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-desc {
+            font-size: 14px;
+            color: var(--color-gray-500);
+            margin-bottom: 20px;
+        }
+
+        /* Add FAB */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            background: var(--color-primary-dark);
+            transform: scale(1.05);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-gray-900);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--color-gray-500);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">🏠</div>
+                    <span>HomeKeep</span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" title="Notifications">🔔</button>
+                    <button class="icon-btn" title="Settings">⚙️</button>
+                </div>
+            </div>
+            <div class="home-health">
+                <div class="health-score">
+                    <svg viewBox="0 0 64 64">
+                        <circle class="bg" cx="32" cy="32" r="28"></circle>
+                        <circle class="progress" cx="32" cy="32" r="28" 
+                            stroke-dasharray="175.93" 
+                            stroke-dashoffset="35.19"></circle>
+                    </svg>
+                    <span class="value">80</span>
+                </div>
+                <div class="health-info">
+                    <h3>Home Health Score</h3>
+                    <p>2 tasks overdue • 3 due this week</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="schedule">📅 Schedule</button>
+            <button class="nav-tab" data-tab="systems">🔧 Systems</button>
+            <button class="nav-tab" data-tab="history">📋 History</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Schedule Tab -->
+            <div class="tab-content active" id="schedule">
+                <div class="section-header">
+                    <span class="section-title">Overdue</span>
+                    <span class="section-badge">2</span>
+                </div>
+
+                <div class="task-card overdue" onclick="openTaskModal('filter')">
+                    <div class="task-icon">🌀</div>
+                    <div class="task-content">
+                        <div class="task-header">
+                            <span class="task-name">Replace HVAC Filter</span>
+                            <span class="task-status overdue">5 days overdue</span>
+                        </div>
+                        <div class="task-meta">
+                            <span>Every 90 days</span>
+                            <span class="task-system">• HVAC</span>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-success" onclick="event.stopPropagation(); completeTask('filter')">✓ Done</button>
+                            <button class="btn btn-secondary">Snooze</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-card overdue" onclick="openTaskModal('smoke')">
+                    <div class="task-icon">🔋</div>
+                    <div class="task-content">
+                        <div class="task-header">
+                            <span class="task-name">Test Smoke Detectors</span>
+                            <span class="task-status overdue">12 days overdue</span>
+                        </div>
+                        <div class="task-meta">
+                            <span>Monthly</span>
+                            <span class="task-system">• Safety</span>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-success" onclick="event.stopPropagation(); completeTask('smoke')">✓ Done</button>
+                            <button class="btn btn-secondary">Snooze</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 24px;">
+                    <span class="section-title">Due This Week</span>
+                </div>
+
+                <div class="task-card due-soon" onclick="openTaskModal('gutter')">
+                    <div class="task-icon">🍂</div>
+                    <div class="task-content">
+                        <div class="task-header">
+                            <span class="task-name">Clean Gutters</span>
+                            <span class="task-status due-soon">Due in 3 days</span>
+                        </div>
+                        <div class="task-meta">
+                            <span>Seasonal (Spring)</span>
+                            <span class="task-system">• Exterior</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-card" onclick="openTaskModal('water')">
+                    <div class="task-icon">💧</div>
+                    <div class="task-content">
+                        <div class="task-header">
+                            <span class="task-name">Flush Water Heater</span>
+                            <span class="task-status upcoming">Due in 6 days</span>
+                        </div>
+                        <div class="task-meta">
+                            <span>Annually</span>
+                            <span class="task-system">• Plumbing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 24px;">
+                    <span class="section-title">Upcoming</span>
+                </div>
+
+                <div class="task-card" onclick="openTaskModal('furnace')">
+                    <div class="task-icon">🔥</div>
+                    <div class="task-content">
+                        <div class="task-header">
+                            <span class="task-name">Schedule Furnace Service</span>
+                            <span class="task-status upcoming">Due in 23 days</span>
+                        </div>
+                        <div class="task-meta">
+                            <span>Annually (Before Winter)</span>
+                            <span class="task-system">• HVAC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-card" onclick="openTaskModal('fridge')">
+                    <div class="task-icon">❄️</div>
+                    <div class="task-content">
+                        <div class="task-header">
+                            <span class="task-name">Clean Refrigerator Coils</span>
+                            <span class="task-status upcoming">Due in 45 days</span>
+                        </div>
+                        <div class="task-meta">
+                            <span>Every 6 months</span>
+                            <span class="task-system">• Appliances</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Systems Tab -->
+            <div class="tab-content" id="systems">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Systems</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">17</div>
+                        <div class="stat-label">On Track</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <span class="section-title">Your Home Systems</span>
+                </div>
+
+                <div class="systems-grid">
+                    <div class="system-card active">
+                        <div class="system-icon">🌀</div>
+                        <div class="system-name">HVAC</div>
+                        <div class="system-tasks">4 tasks • 1 overdue</div>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon">💧</div>
+                        <div class="system-name">Plumbing</div>
+                        <div class="system-tasks">3 tasks • On track</div>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon">⚡</div>
+                        <div class="system-name">Electrical</div>
+                        <div class="system-tasks">2 tasks • On track</div>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon">🏠</div>
+                        <div class="system-name">Exterior</div>
+                        <div class="system-tasks">5 tasks • 1 due soon</div>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon">🛡️</div>
+                        <div class="system-name">Safety</div>
+                        <div class="system-tasks">3 tasks • 1 overdue</div>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon">❄️</div>
+                        <div class="system-name">Appliances</div>
+                        <div class="system-tasks">4 tasks • On track</div>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon">🌿</div>
+                        <div class="system-name">Lawn & Garden</div>
+                        <div class="system-tasks">2 tasks • On track</div>
+                    </div>
+                    <div class="system-card" style="border-style: dashed; opacity: 0.7;">
+                        <div class="system-icon">➕</div>
+                        <div class="system-name">Add System</div>
+                        <div class="system-tasks">Pool, Septic, etc.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-content" id="history">
+                <div class="section-header">
+                    <span class="section-title">Completed Tasks</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-icon">✓</div>
+                    <div class="history-content">
+                        <div class="history-title">Replaced HVAC Filter</div>
+                        <div class="history-meta">Dec 15, 2025 • HVAC • $28 filter cost</div>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-icon">✓</div>
+                    <div class="history-content">
+                        <div class="history-title">Cleaned Dryer Vent</div>
+                        <div class="history-meta">Dec 10, 2025 • Appliances • DIY</div>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-icon">✓</div>
+                    <div class="history-content">
+                        <div class="history-title">Tested CO Detectors</div>
+                        <div class="history-meta">Dec 1, 2025 • Safety • All working</div>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-icon">✓</div>
+                    <div class="history-content">
+                        <div class="history-title">Winterized Outdoor Faucets</div>
+                        <div class="history-meta">Nov 20, 2025 • Plumbing • 4 faucets covered</div>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-icon">✓</div>
+                    <div class="history-content">
+                        <div class="history-title">Annual Furnace Service</div>
+                        <div class="history-meta">Nov 15, 2025 • HVAC • $175 by ABC Heating</div>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-icon">✓</div>
+                    <div class="history-content">
+                        <div class="history-title">Cleaned Gutters</div>
+                        <div class="history-meta">Nov 5, 2025 • Exterior • DIY, found 1 loose bracket</div>
+                    </div>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-icon">✓</div>
+                    <div class="history-content">
+                        <div class="history-title">Changed Smoke Detector Batteries</div>
+                        <div class="history-meta">Oct 28, 2025 • Safety • 6 detectors</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FAB -->
+        <button class="fab" onclick="openAddModal()">+</button>
+    </div>
+
+    <!-- Complete Task Modal -->
+    <div class="modal-backdrop" id="completeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Complete Task</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Completion Date</label>
+                    <input type="date" class="form-input" id="completionDate">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cost (optional)</label>
+                    <input type="text" class="form-input" placeholder="$0.00">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Who did the work?</label>
+                    <select class="form-select">
+                        <option>DIY</option>
+                        <option>Professional</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes (optional)</label>
+                    <textarea class="form-input" rows="3" placeholder="Any observations, issues found, etc."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Photo Evidence (optional)</label>
+                    <div class="photo-upload">
+                        <div class="photo-upload-icon">📷</div>
+                        <div class="photo-upload-text">Tap to add photo</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" style="width: 100%; padding: 14px; font-size: 15px;" onclick="submitCompletion()">
+                    ✓ Mark as Complete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">Task marked complete! 🎉</div>
+
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Set today's date as default
+        document.getElementById('completionDate').valueAsDate = new Date();
+
+        // Modal Functions
+        function openTaskModal(taskId) {
+            document.getElementById('completeModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('completeModal').classList.remove('active');
+        }
+
+        function completeTask(taskId) {
+            openTaskModal(taskId);
+        }
+
+        function submitCompletion() {
+            closeModal();
+            showToast('Task marked complete! 🎉');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active', 'success');
+            setTimeout(() => {
+                toast.classList.remove('active', 'success');
+            }, 3000);
+        }
+
+        function openAddModal() {
+            showToast('Add task feature coming soon!');
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('completeModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-backdrop')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
