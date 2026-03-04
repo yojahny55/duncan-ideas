@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SplitShare — Friend Balance Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface-2: #252525;
+      --border: #333;
+      --text: #fff;
+      --text-muted: #888;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.1);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.1);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59, 130, 246, 0.15);
+      --radius: 16px;
+      --radius-sm: 12px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .settings-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .settings-btn:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    /* Summary Cards */
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .summary-card.owed {
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .summary-card.owe {
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .summary-amount {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .summary-card.owed .summary-amount {
+      color: var(--green);
+    }
+
+    .summary-card.owe .summary-amount {
+      color: var(--red);
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .add-friend-btn {
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-friend-btn:hover {
+      background: var(--surface-2);
+      border-color: var(--text-muted);
+    }
+
+    /* Friend List */
+    .friend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .friend-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .friend-card:hover {
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    .friend-card.positive {
+      border-left: 3px solid var(--green);
+    }
+
+    .friend-card.negative {
+      border-left: 3px solid var(--red);
+    }
+
+    .friend-card.zero {
+      border-left: 3px solid var(--text-muted);
+    }
+
+    .friend-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .friend-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .friend-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .friend-name {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .friend-balance {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .friend-balance.positive {
+      color: var(--green);
+    }
+
+    .friend-balance.negative {
+      color: var(--red);
+    }
+
+    .friend-balance.zero {
+      color: var(--text-muted);
+    }
+
+    .friend-last {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding-left: 56px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* FAB */
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #16a34a);
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(34, 197, 94, 0.5);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      max-width: 420px;
+      max-height: 90vh;
+      overflow: hidden;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: none;
+      color: var(--text);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: calc(90vh - 70px);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-bg);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .amount-input-wrap {
+      position: relative;
+    }
+
+    .amount-input-wrap::before {
+      content: '$';
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .amount-input-wrap .form-input {
+      padding-left: 32px;
+    }
+
+    /* Direction Toggle */
+    .direction-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .direction-btn {
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .direction-btn.active {
+      border-color: var(--green);
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .direction-btn.active.owe {
+      border-color: var(--red);
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    /* Friend Select */
+    .friend-select {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .friend-chip {
+      padding: 10px 16px;
+      border-radius: 20px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .friend-chip:hover {
+      border-color: var(--text-muted);
+    }
+
+    .friend-chip.selected {
+      background: var(--blue-bg);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--green), #16a34a);
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Friend Detail View */
+    .detail-header {
+      text-align: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0 auto 12px;
+    }
+
+    .detail-name {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .detail-balance {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .detail-balance.positive {
+      color: var(--green);
+    }
+
+    .detail-balance.negative {
+      color: var(--red);
+    }
+
+    .detail-status {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .detail-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-action-btn {
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .detail-action-btn:hover {
+      background: var(--surface);
+      border-color: var(--text-muted);
+    }
+
+    .detail-action-btn.settle {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* History */
+    .history-section {
+      padding: 20px 24px;
+    }
+
+    .history-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-muted);
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-info {
+      flex: 1;
+    }
+
+    .history-desc {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .history-date {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .history-amount {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .history-amount.positive {
+      color: var(--green);
+    }
+
+    .history-amount.negative {
+      color: var(--red);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s ease-out;
+      z-index: 200;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Back button */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      margin: -8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="main-view">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">💸</div>
+        SplitShare
+      </div>
+      <button class="settings-btn">⚙️</button>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary">
+      <div class="summary-card owed">
+        <div class="summary-label">You're owed</div>
+        <div class="summary-amount" id="total-owed">$0</div>
+      </div>
+      <div class="summary-card owe">
+        <div class="summary-label">You owe</div>
+        <div class="summary-amount" id="total-owe">$0</div>
+      </div>
+    </div>
+
+    <!-- Friends Section -->
+    <div class="section-header">
+      <h2 class="section-title">Friends</h2>
+      <button class="add-friend-btn" onclick="showAddFriendModal()">+ Add Friend</button>
+    </div>
+
+    <div class="friend-list" id="friend-list">
+      <!-- Friend cards will be rendered here -->
+    </div>
+
+    <div class="empty-state" id="empty-state" style="display: none;">
+      <div class="empty-icon">👋</div>
+      <div class="empty-title">No friends yet</div>
+      <div class="empty-desc">Add friends to start tracking who owes what. No awkward money convos needed.</div>
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" onclick="showExpenseModal()">+</button>
+  </div>
+
+  <!-- Add Friend Modal -->
+  <div class="modal-overlay" id="add-friend-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Friend</h3>
+        <button class="modal-close" onclick="closeModal('add-friend-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Friend's Name</label>
+          <input type="text" class="form-input" id="friend-name-input" placeholder="e.g., Alex Chen">
+        </div>
+        <button class="submit-btn" onclick="addFriend()">Add Friend</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Expense Modal -->
+  <div class="modal-overlay" id="expense-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Expense</h3>
+        <button class="modal-close" onclick="closeModal('expense-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <!-- Direction -->
+        <div class="direction-toggle">
+          <button class="direction-btn active" id="they-owe-btn" onclick="setDirection('they-owe')">They owe me</button>
+          <button class="direction-btn" id="i-owe-btn" onclick="setDirection('i-owe')">I owe them</button>
+        </div>
+
+        <!-- Friend Selection -->
+        <div class="form-group">
+          <label class="form-label">Who?</label>
+          <div class="friend-select" id="friend-select">
+            <!-- Friend chips rendered here -->
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group">
+          <label class="form-label">Amount</label>
+          <div class="amount-input-wrap">
+            <input type="number" class="form-input" id="amount-input" placeholder="0.00" step="0.01">
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label">What for?</label>
+          <input type="text" class="form-input" id="desc-input" placeholder="e.g., Dinner at Nobu">
+        </div>
+
+        <button class="submit-btn" onclick="addExpense()">Add Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Friend Detail Modal -->
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <button class="back-btn" onclick="closeModal('detail-modal')">←</button>
+        <h3 class="modal-title">Balance</h3>
+        <div style="width: 40px;"></div>
+      </div>
+      <div id="detail-content">
+        <!-- Detail content rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // State
+    let friends = [];
+    let selectedFriend = null;
+    let expenseDirection = 'they-owe';
+
+    // Initialize with demo data
+    function initDemo() {
+      friends = [
+        {
+          id: 1,
+          name: 'Alex Chen',
+          balance: 127.50,
+          history: [
+            { desc: 'Dinner at Nobu', amount: 127.50, date: 'Feb 28', direction: 'they-owe' }
+          ]
+        },
+        {
+          id: 2,
+          name: 'Jordan Rivera',
+          balance: 89.00,
+          history: [
+            { desc: 'Concert tickets', amount: 89.00, date: 'Feb 15', direction: 'they-owe' }
+          ]
+        },
+        {
+          id: 3,
+          name: 'Sam Mitchell',
+          balance: -45.00,
+          history: [
+            { desc: 'Groceries', amount: 45.00, date: 'Mar 1', direction: 'i-owe' }
+          ]
+        },
+        {
+          id: 4,
+          name: 'Taylor Kim',
+          balance: 0,
+          history: [
+            { desc: 'Settled up', amount: 0, date: 'Feb 20', direction: 'settle' }
+          ]
+        }
+      ];
+      render();
+    }
+
+    // Render
+    function render() {
+      const list = document.getElementById('friend-list');
+      const empty = document.getElementById('empty-state');
+      
+      if (friends.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+      } else {
+        empty.style.display = 'none';
+        list.innerHTML = friends.map(f => {
+          const balanceClass = f.balance > 0 ? 'positive' : f.balance < 0 ? 'negative' : 'zero';
+          const balancePrefix = f.balance > 0 ? '+' : '';
+          const lastActivity = f.history[f.history.length - 1];
+          const initials = f.name.split(' ').map(n => n[0]).join('').toUpperCase();
+          
+          return `
+            <div class="friend-card ${balanceClass}" onclick="showFriendDetail(${f.id})">
+              <div class="friend-top">
+                <div class="friend-info">
+                  <div class="friend-avatar">${initials}</div>
+                  <div class="friend-name">${f.name}</div>
+                </div>
+                <div class="friend-balance ${balanceClass}">
+                  ${balancePrefix}$${Math.abs(f.balance).toFixed(2)}
+                  ${f.balance !== 0 ? '<span style="font-size: 14px;">→</span>' : ''}
+                </div>
+              </div>
+              <div class="friend-last">Last: ${lastActivity.desc} (${lastActivity.date})</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      updateSummary();
+      renderFriendSelect();
+    }
+
+    function updateSummary() {
+      const owed = friends.filter(f => f.balance > 0).reduce((sum, f) => sum + f.balance, 0);
+      const owe = friends.filter(f => f.balance < 0).reduce((sum, f) => sum + Math.abs(f.balance), 0);
+      
+      document.getElementById('total-owed').textContent = `$${owed.toFixed(2)}`;
+      document.getElementById('total-owe').textContent = `$${owe.toFixed(2)}`;
+    }
+
+    function renderFriendSelect() {
+      const select = document.getElementById('friend-select');
+      select.innerHTML = friends.map(f => `
+        <button class="friend-chip ${selectedFriend === f.id ? 'selected' : ''}" 
+                onclick="selectFriend(${f.id})">
+          ${f.name}
+        </button>
+      `).join('');
+    }
+
+    // Modals
+    function showAddFriendModal() {
+      document.getElementById('add-friend-modal').classList.add('active');
+      document.getElementById('friend-name-input').focus();
+    }
+
+    function showExpenseModal() {
+      if (friends.length === 0) {
+        showToast('Add a friend first! 👋');
+        return;
+      }
+      selectedFriend = friends[0].id;
+      renderFriendSelect();
+      document.getElementById('expense-modal').classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // Actions
+    function addFriend() {
+      const input = document.getElementById('friend-name-input');
+      const name = input.value.trim();
+      
+      if (!name) {
+        showToast('Enter a name! 📝');
+        return;
+      }
+
+      friends.push({
+        id: Date.now(),
+        name,
+        balance: 0,
+        history: []
+      });
+
+      input.value = '';
+      closeModal('add-friend-modal');
+      render();
+      showToast(`Added ${name}! 🎉`);
+    }
+
+    function selectFriend(id) {
+      selectedFriend = id;
+      renderFriendSelect();
+    }
+
+    function setDirection(dir) {
+      expenseDirection = dir;
+      document.getElementById('they-owe-btn').classList.toggle('active', dir === 'they-owe');
+      document.getElementById('i-owe-btn').classList.toggle('active', dir === 'i-owe');
+      document.getElementById('i-owe-btn').classList.toggle('owe', dir === 'i-owe');
+    }
+
+    function addExpense() {
+      const amount = parseFloat(document.getElementById('amount-input').value);
+      const desc = document.getElementById('desc-input').value.trim();
+
+      if (!amount || amount <= 0) {
+        showToast('Enter an amount! 💰');
+        return;
+      }
+
+      const friend = friends.find(f => f.id === selectedFriend);
+      if (!friend) {
+        showToast('Select a friend! 👥');
+        return;
+      }
+
+      const signedAmount = expenseDirection === 'they-owe' ? amount : -amount;
+      friend.balance += signedAmount;
+      friend.history.push({
+        desc: desc || (expenseDirection === 'they-owe' ? 'They paid' : 'I paid'),
+        amount: amount,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        direction: expenseDirection
+      });
+
+      document.getElementById('amount-input').value = '';
+      document.getElementById('desc-input').value = '';
+      closeModal('expense-modal');
+      render();
+      showToast(`Logged $${amount.toFixed(2)} 💸`);
+    }
+
+    function showFriendDetail(id) {
+      const friend = friends.find(f => f.id === id);
+      if (!friend) return;
+
+      const initials = friend.name.split(' ').map(n => n[0]).join('').toUpperCase();
+      const balanceClass = friend.balance > 0 ? 'positive' : friend.balance < 0 ? 'negative' : '';
+      const statusText = friend.balance > 0 
+        ? 'owes you' 
+        : friend.balance < 0 
+          ? 'you owe' 
+          : 'all settled up! 🎉';
+
+      document.getElementById('detail-content').innerHTML = `
+        <div class="detail-header">
+          <div class="detail-avatar">${initials}</div>
+          <div class="detail-name">${friend.name}</div>
+          <div class="detail-balance ${balanceClass}">
+            ${friend.balance >= 0 ? '+' : ''}$${Math.abs(friend.balance).toFixed(2)}
+          </div>
+          <div class="detail-status">${statusText}</div>
+        </div>
+
+        <div class="detail-actions">
+          <button class="detail-action-btn" onclick="addExpenseFor(${friend.id})">
+            💰 Add Expense
+          </button>
+          <button class="detail-action-btn settle" onclick="settleUp(${friend.id})">
+            ✓ Settle Up
+          </button>
+        </div>
+
+        <div class="history-section">
+          <div class="history-title">History</div>
+          ${friend.history.length === 0 
+            ? '<div style="color: var(--text-muted); text-align: center; padding: 20px;">No expenses yet</div>'
+            : friend.history.slice().reverse().map(h => `
+              <div class="history-item">
+                <div class="history-info">
+                  <div class="history-desc">${h.desc}</div>
+                  <div class="history-date">${h.date}</div>
+                </div>
+                <div class="history-amount ${h.direction === 'they-owe' ? 'positive' : h.direction === 'i-owe' ? 'negative' : ''}">
+                  ${h.direction === 'settle' ? '—' : (h.direction === 'they-owe' ? '+' : '-') + '$' + h.amount.toFixed(2)}
+                </div>
+              </div>
+            `).join('')
+          }
+        </div>
+      `;
+
+      document.getElementById('detail-modal').classList.add('active');
+    }
+
+    function addExpenseFor(id) {
+      closeModal('detail-modal');
+      selectedFriend = id;
+      renderFriendSelect();
+      document.getElementById('expense-modal').classList.add('active');
+    }
+
+    function settleUp(id) {
+      const friend = friends.find(f => f.id === id);
+      if (!friend) return;
+
+      friend.history.push({
+        desc: 'Settled up',
+        amount: Math.abs(friend.balance),
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        direction: 'settle'
+      });
+      friend.balance = 0;
+
+      closeModal('detail-modal');
+      render();
+      showToast(`Settled up with ${friend.name}! 🤝`);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Init
+    initDemo();
+  </script>
+</body>
+</html>
