@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StormHaven — Emergency Shelter Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="app-container">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span class="time">1:00 AM</span>
+                <div class="status-icons">
+                    <span class="signal">📶</span>
+                    <span class="battery">🔋</span>
+                </div>
+            </div>
+
+            <!-- Alert Banner -->
+            <div class="alert-banner warning" id="alertBanner">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-content">
+                    <div class="alert-title">TORNADO WATCH</div>
+                    <div class="alert-subtitle">Until 6:00 AM • Oklahoma County</div>
+                </div>
+                <button class="alert-action" onclick="showEmergencyMode()">Find Shelter</button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content" id="mainContent">
+                <!-- Map View -->
+                <div class="map-container" id="mapContainer">
+                    <div class="map-placeholder">
+                        <div class="map-grid"></div>
+                        <!-- Shelter Markers -->
+                        <div class="shelter-marker primary" style="top: 35%; left: 45%;" onclick="showShelterDetail('community')">
+                            <span class="marker-icon">🏢</span>
+                            <span class="marker-label">0.3 mi</span>
+                        </div>
+                        <div class="shelter-marker" style="top: 25%; left: 65%;" onclick="showShelterDetail('church')">
+                            <span class="marker-icon">⛪</span>
+                            <span class="marker-label">0.8 mi</span>
+                        </div>
+                        <div class="shelter-marker" style="top: 55%; left: 30%;" onclick="showShelterDetail('school')">
+                            <span class="marker-icon">🏫</span>
+                            <span class="marker-label">1.2 mi</span>
+                        </div>
+                        <div class="shelter-marker" style="top: 70%; left: 55%;" onclick="showShelterDetail('walmart')">
+                            <span class="marker-icon">🏪</span>
+                            <span class="marker-label">1.5 mi</span>
+                        </div>
+                        <!-- User Location -->
+                        <div class="user-marker" style="top: 50%; left: 50%;">
+                            <div class="user-pulse"></div>
+                            <div class="user-dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shelter List -->
+                <div class="shelter-list" id="shelterList">
+                    <div class="list-header">
+                        <h2>Nearby Shelters</h2>
+                        <button class="filter-btn" onclick="showFilters()">
+                            <span>Filter</span>
+                            <span class="filter-icon">⚙️</span>
+                        </button>
+                    </div>
+                    
+                    <div class="shelter-card featured" onclick="showShelterDetail('community')">
+                        <div class="shelter-badge">NEAREST</div>
+                        <div class="shelter-info">
+                            <div class="shelter-icon">🏢</div>
+                            <div class="shelter-details">
+                                <h3>Moore Community Center</h3>
+                                <p class="shelter-type">Official Public Shelter • Underground</p>
+                                <div class="shelter-meta">
+                                    <span class="distance">📍 0.3 mi</span>
+                                    <span class="time">🚶 2 min walk</span>
+                                    <span class="status open">✅ Open</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="go-btn">GO</button>
+                    </div>
+
+                    <div class="shelter-card" onclick="showShelterDetail('church')">
+                        <div class="shelter-info">
+                            <div class="shelter-icon">⛪</div>
+                            <div class="shelter-details">
+                                <h3>First Baptist Church</h3>
+                                <p class="shelter-type">Community Shelter • Basement</p>
+                                <div class="shelter-meta">
+                                    <span class="distance">📍 0.8 mi</span>
+                                    <span class="time">🚗 3 min drive</span>
+                                    <span class="status open">✅ Open</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="go-btn">GO</button>
+                    </div>
+
+                    <div class="shelter-card" onclick="showShelterDetail('school')">
+                        <div class="shelter-info">
+                            <div class="shelter-icon">🏫</div>
+                            <div class="shelter-details">
+                                <h3>Lincoln Elementary</h3>
+                                <p class="shelter-type">School Shelter • Safe Room</p>
+                                <div class="shelter-meta">
+                                    <span class="distance">📍 1.2 mi</span>
+                                    <span class="time">🚗 5 min drive</span>
+                                    <span class="status warning">⚠️ Limited</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="go-btn">GO</button>
+                    </div>
+
+                    <div class="shelter-card" onclick="showShelterDetail('walmart')">
+                        <div class="shelter-info">
+                            <div class="shelter-icon">🏪</div>
+                            <div class="shelter-details">
+                                <h3>Walmart Supercenter</h3>
+                                <p class="shelter-type">Business Shelter • Interior Corridor</p>
+                                <div class="shelter-meta">
+                                    <span class="distance">📍 1.5 mi</span>
+                                    <span class="time">🚗 6 min drive</span>
+                                    <span class="status open">✅ Open 24/7</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="go-btn">GO</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Mode Overlay -->
+            <div class="emergency-overlay" id="emergencyOverlay">
+                <div class="emergency-header">
+                    <div class="emergency-alert">
+                        <span class="pulse-dot"></span>
+                        <span class="emergency-text">TORNADO WARNING</span>
+                    </div>
+                    <p class="emergency-subtitle">Seek shelter IMMEDIATELY</p>
+                </div>
+
+                <div class="emergency-content">
+                    <div class="direction-compass">
+                        <div class="compass-arrow">⬆️</div>
+                        <p class="direction-text">HEAD NORTH</p>
+                    </div>
+
+                    <div class="emergency-shelter-card">
+                        <div class="shelter-icon-large">🏢</div>
+                        <h2>Moore Community Center</h2>
+                        <p class="address">234 Main Street</p>
+                        <div class="emergency-stats">
+                            <div class="stat">
+                                <span class="stat-value">0.3</span>
+                                <span class="stat-label">miles</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">2</span>
+                                <span class="stat-label">min walk</span>
+                            </div>
+                            <div class="stat status-indicator">
+                                <span class="stat-value">✅</span>
+                                <span class="stat-label">OPEN</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn primary" onclick="startNavigation()">
+                            <span class="btn-icon">🚗</span>
+                            <span>Drive</span>
+                        </button>
+                        <button class="action-btn" onclick="startNavigation()">
+                            <span class="btn-icon">🚶</span>
+                            <span>Walk</span>
+                        </button>
+                        <button class="action-btn" onclick="callShelter()">
+                            <span class="btn-icon">📞</span>
+                            <span>Call</span>
+                        </button>
+                    </div>
+
+                    <div class="storm-eta">
+                        <div class="eta-icon">⚡</div>
+                        <div class="eta-text">
+                            <p class="eta-label">Storm ETA</p>
+                            <p class="eta-value">8 minutes</p>
+                        </div>
+                        <p class="eta-message">You have time. Move now.</p>
+                    </div>
+                </div>
+
+                <button class="close-emergency" onclick="hideEmergencyMode()">← Back to Map</button>
+            </div>
+
+            <!-- Shelter Detail Modal -->
+            <div class="shelter-detail-modal" id="shelterDetailModal">
+                <div class="modal-header">
+                    <button class="back-btn" onclick="hideShelterDetail()">← Back</button>
+                    <button class="share-btn">📤</button>
+                </div>
+
+                <div class="modal-content">
+                    <div class="detail-hero">
+                        <div class="detail-icon">🏢</div>
+                        <h1 id="detailName">Moore Community Center</h1>
+                        <div class="detail-badge">⭐ Official Public Shelter</div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-row">
+                            <span class="detail-icon-sm">📍</span>
+                            <span id="detailAddress">234 Main Street, Moore, OK 73160</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-icon-sm">📞</span>
+                            <span>(405) 555-0123</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Type</span>
+                            <span class="spec-value" id="detailType">Underground Safe Room</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Capacity</span>
+                            <span class="spec-value">500 people</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Accessibility</span>
+                            <span class="spec-value">♿ Wheelchair OK</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Hours</span>
+                            <span class="spec-value">24/7 during warnings</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-divider"></div>
+
+                    <div class="verification-section">
+                        <p class="verification-text">Last verified: <strong>2 days ago</strong></p>
+                        <p class="checkin-count">23 check-ins this season</p>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button class="detail-action-btn primary" onclick="startNavigation()">
+                            <span>🧭</span> Navigate
+                        </button>
+                        <button class="detail-action-btn" onclick="checkIn()">
+                            <span>📍</span> Check In
+                        </button>
+                        <button class="detail-action-btn" onclick="reportIssue()">
+                            <span>🚩</span> Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Modal -->
+            <div class="filter-modal" id="filterModal">
+                <div class="modal-header">
+                    <button class="back-btn" onclick="hideFilters()">← Back</button>
+                    <h2>Filter Shelters</h2>
+                    <button class="reset-btn" onclick="resetFilters()">Reset</button>
+                </div>
+
+                <div class="filter-content">
+                    <div class="filter-group">
+                        <h3>Shelter Type</h3>
+                        <div class="filter-options">
+                            <label class="filter-chip active">
+                                <input type="checkbox" checked> All
+                            </label>
+                            <label class="filter-chip">
+                                <input type="checkbox"> Official
+                            </label>
+                            <label class="filter-chip">
+                                <input type="checkbox"> Underground
+                            </label>
+                            <label class="filter-chip">
+                                <input type="checkbox"> Safe Room
+                            </label>
+                            <label class="filter-chip">
+                                <input type="checkbox"> Business
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h3>Distance</h3>
+                        <div class="range-slider">
+                            <input type="range" min="0.5" max="10" value="5" step="0.5" id="distanceRange">
+                            <span class="range-value">Within 5 miles</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h3>Features</h3>
+                        <div class="filter-options">
+                            <label class="filter-chip">
+                                <input type="checkbox"> ♿ Accessible
+                            </label>
+                            <label class="filter-chip">
+                                <input type="checkbox"> 🅿️ Parking
+                            </label>
+                            <label class="filter-chip">
+                                <input type="checkbox"> 🐕 Pet Friendly
+                            </label>
+                            <label class="filter-chip">
+                                <input type="checkbox"> 🔌 Generator
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="apply-filters-btn" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+
+            <!-- Check-in Toast -->
+            <div class="toast" id="toast">
+                <span class="toast-icon">✅</span>
+                <span class="toast-message">Checked in! Stay safe.</span>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <button class="nav-item active">
+                    <span class="nav-icon">🗺️</span>
+                    <span class="nav-label">Map</span>
+                </button>
+                <button class="nav-item" onclick="showShelterListView()">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">List</span>
+                </button>
+                <button class="nav-item">
+                    <span class="nav-icon">🔔</span>
+                    <span class="nav-label">Alerts</span>
+                    <span class="nav-badge">1</span>
+                </button>
+                <button class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
