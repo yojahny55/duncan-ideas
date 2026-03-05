@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NoiseCase — Noise Complaint Evidence Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <span class="logo">📋</span>
+                <h1>NoiseCase</h1>
+            </div>
+            <button class="header-btn" id="settingsBtn">⚙️</button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Case Overview Card -->
+            <section class="case-card">
+                <div class="case-header">
+                    <div>
+                        <h2>Active Case</h2>
+                        <p class="case-address">123 Main St, Apt 4B</p>
+                    </div>
+                    <span class="case-badge violation">3 Violations</span>
+                </div>
+                <div class="case-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="totalIncidents">7</span>
+                        <span class="stat-label">Incidents</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="violationRate">43%</span>
+                        <span class="stat-label">Violation Rate</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="peakDb">78</span>
+                        <span class="stat-label">Peak dB</span>
+                    </div>
+                </div>
+                <div class="ordinance-info">
+                    <span class="ordinance-icon">📜</span>
+                    <div class="ordinance-text">
+                        <strong>Tampa Noise Ordinance</strong>
+                        <span>Night (10PM-7AM): 55 dB max • Day: 65 dB max</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Monitor Section -->
+            <section class="monitor-section">
+                <div class="monitor-header">
+                    <h3>Live Monitor</h3>
+                    <span class="monitor-status" id="monitorStatus">Standby</span>
+                </div>
+                <div class="db-display">
+                    <div class="db-circle" id="dbCircle">
+                        <span class="db-value" id="dbValue">42</span>
+                        <span class="db-unit">dB</span>
+                    </div>
+                    <div class="db-bars" id="dbBars">
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                        <div class="db-bar"></div>
+                    </div>
+                </div>
+                <div class="threshold-indicator">
+                    <div class="threshold-bar">
+                        <div class="threshold-fill" id="thresholdFill"></div>
+                        <div class="threshold-marker" id="thresholdMarker">
+                            <span>55 dB</span>
+                        </div>
+                    </div>
+                    <div class="threshold-labels">
+                        <span>Quiet</span>
+                        <span>Normal</span>
+                        <span>Loud</span>
+                        <span>Violation</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Record Button -->
+            <div class="record-container">
+                <button class="record-btn" id="recordBtn">
+                    <span class="record-icon">🎙️</span>
+                    <span class="record-text">Record Incident</span>
+                </button>
+            </div>
+
+            <!-- Recent Incidents -->
+            <section class="incidents-section">
+                <div class="section-header">
+                    <h3>Recent Incidents</h3>
+                    <button class="view-all-btn">View All →</button>
+                </div>
+                <div class="incidents-list" id="incidentsList">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Pattern Detection -->
+            <section class="pattern-section">
+                <h3>Detected Patterns</h3>
+                <div class="pattern-cards">
+                    <div class="pattern-card">
+                        <span class="pattern-icon">🔄</span>
+                        <div class="pattern-info">
+                            <strong>Recurring: Friday Nights</strong>
+                            <span>4 of 7 incidents between 10PM-2AM on Fridays</span>
+                        </div>
+                    </div>
+                    <div class="pattern-card">
+                        <span class="pattern-icon">📈</span>
+                        <div class="pattern-info">
+                            <strong>Peak Time: 11:30 PM</strong>
+                            <span>Average 72 dB during this time slot</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </button>
+            <button class="nav-btn">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Incidents</span>
+            </button>
+            <button class="nav-btn" id="exportBtn">
+                <span class="nav-icon">📄</span>
+                <span class="nav-label">Export</span>
+            </button>
+            <button class="nav-btn">
+                <span class="nav-icon">📜</span>
+                <span class="nav-label">Laws</span>
+            </button>
+        </nav>
+
+        <!-- Recording Modal -->
+        <div class="modal" id="recordModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Recording Incident</h3>
+                    <button class="modal-close" id="closeRecordModal">✕</button>
+                </div>
+                <div class="recording-display">
+                    <div class="recording-indicator">
+                        <span class="pulse"></span>
+                        <span class="recording-text">Recording...</span>
+                    </div>
+                    <div class="recording-db" id="recordingDb">67</div>
+                    <div class="recording-time" id="recordingTime">00:00</div>
+                    <div class="recording-stats">
+                        <div class="rec-stat">
+                            <span class="rec-stat-label">Peak</span>
+                            <span class="rec-stat-value" id="recPeak">67 dB</span>
+                        </div>
+                        <div class="rec-stat">
+                            <span class="rec-stat-label">Avg</span>
+                            <span class="rec-stat-value" id="recAvg">62 dB</span>
+                        </div>
+                        <div class="rec-stat">
+                            <span class="rec-stat-label">Status</span>
+                            <span class="rec-stat-value violation" id="recStatus">Violation</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="noise-type-select">
+                    <label>Noise Type</label>
+                    <div class="type-options">
+                        <button class="type-btn active">🎵 Music</button>
+                        <button class="type-btn">🗣️ Voices</button>
+                        <button class="type-btn">👣 Footsteps</button>
+                        <button class="type-btn">🐕 Pets</button>
+                        <button class="type-btn">🔨 Construction</button>
+                        <button class="type-btn">📺 TV/Media</button>
+                    </div>
+                </div>
+                <div class="notes-input">
+                    <label>Notes (optional)</label>
+                    <textarea placeholder="Describe the noise source, location, etc."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="cancelRecording">Cancel</button>
+                    <button class="btn-primary" id="saveIncident">Save Incident</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Modal -->
+        <div class="modal" id="exportModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Export Evidence Package</h3>
+                    <button class="modal-close" id="closeExportModal">✕</button>
+                </div>
+                <div class="export-preview">
+                    <div class="export-doc">
+                        <div class="doc-header">
+                            <span class="doc-icon">📋</span>
+                            <span>NoiseCase Evidence Report</span>
+                        </div>
+                        <div class="doc-content">
+                            <p><strong>Case:</strong> 123 Main St, Apt 4B</p>
+                            <p><strong>Period:</strong> Feb 15 - Mar 4, 2026</p>
+                            <p><strong>Total Incidents:</strong> 7</p>
+                            <p><strong>Violations:</strong> 3 (43%)</p>
+                            <p><strong>Peak Reading:</strong> 78 dB</p>
+                        </div>
+                        <div class="doc-sections">
+                            <div class="doc-section">✓ Incident Timeline</div>
+                            <div class="doc-section">✓ dB Readings Chart</div>
+                            <div class="doc-section">✓ Audio File Links</div>
+                            <div class="doc-section">✓ Tampa Noise Ordinance</div>
+                            <div class="doc-section">✓ Violation Analysis</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="export-options">
+                    <label>Include Audio Files</label>
+                    <div class="toggle">
+                        <input type="checkbox" id="includeAudio" checked>
+                        <span class="toggle-slider"></span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" id="cancelExport">Cancel</button>
+                    <button class="btn-primary" id="downloadPdf">
+                        <span>📥</span> Download PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <span class="toast-icon">✓</span>
+            <span class="toast-message">Incident saved successfully</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
