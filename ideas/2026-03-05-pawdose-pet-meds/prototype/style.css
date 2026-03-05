@@ -1,0 +1,766 @@
+/* PawDose - Pet Medication Tracker */
+/* Design: Warm, friendly, trustworthy */
+
+:root {
+    --primary: #7C4DFF;
+    --primary-light: #B388FF;
+    --primary-dark: #651FFF;
+    --success: #00C853;
+    --success-light: #B9F6CA;
+    --warning: #FFB300;
+    --warning-light: #FFE082;
+    --danger: #FF5252;
+    --danger-light: #FFCDD2;
+    
+    --bg: #F8F6FF;
+    --card: #FFFFFF;
+    --text: #2D3142;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --border: #E5E7EB;
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 999px;
+    
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(124,77,255,0.15);
+    --shadow-lg: 0 8px 24px rgba(124,77,255,0.2);
+    
+    --transition: 0.2s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* App Container - Mobile First */
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg);
+    padding-bottom: 80px;
+}
+
+/* Header */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--card);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-icon {
+    font-size: 28px;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.add-pet-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.add-pet-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Sections */
+section {
+    padding: 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.section-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.today-date {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Schedule Cards */
+.schedule-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.schedule-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    border-left: 4px solid var(--primary);
+}
+
+.schedule-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(4px);
+}
+
+.schedule-card.completed {
+    border-left-color: var(--success);
+    opacity: 0.7;
+}
+
+.schedule-card.overdue {
+    border-left-color: var(--danger);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.schedule-time {
+    text-align: center;
+    min-width: 60px;
+}
+
+.schedule-time .time {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.schedule-time .period {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.schedule-info {
+    flex: 1;
+}
+
+.schedule-pet {
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.schedule-pet .pet-emoji {
+    font-size: 18px;
+}
+
+.schedule-med {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.schedule-dosage {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.schedule-status {
+    font-size: 24px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.empty-state .empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    font-size: 14px;
+}
+
+/* Pets Grid */
+.pets-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.pet-card {
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.pet-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.pet-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 32px;
+}
+
+.pet-name {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.pet-meds-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.add-pet-card {
+    border: 2px dashed var(--border);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+}
+
+.add-pet-card:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    background: rgba(124,77,255,0.05);
+}
+
+.add-pet-card .add-icon {
+    font-size: 32px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.add-pet-card span {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* Refill List */
+.refill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.refill-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.refill-card.urgent {
+    background: var(--danger-light);
+    border: 1px solid var(--danger);
+}
+
+.refill-card.warning {
+    background: var(--warning-light);
+    border: 1px solid var(--warning);
+}
+
+.refill-icon {
+    font-size: 24px;
+}
+
+.refill-info {
+    flex: 1;
+}
+
+.refill-med {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.refill-pet {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.refill-count {
+    font-weight: 700;
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    background: var(--bg);
+}
+
+.refill-card.urgent .refill-count {
+    background: var(--danger);
+    color: white;
+}
+
+.refill-card.warning .refill-count {
+    background: var(--warning);
+    color: white;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--card);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.nav-btn.active {
+    color: var(--primary);
+}
+
+.nav-icon {
+    font-size: 22px;
+}
+
+.nav-label {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal {
+    background: var(--card);
+    width: 100%;
+    max-width: 480px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 24px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal {
+    transform: translateY(0);
+}
+
+.modal-compact {
+    border-radius: var(--radius-lg);
+    margin: 20px;
+    max-height: 80vh;
+}
+
+.modal-large {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Forms */
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+input, select, textarea {
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124,77,255,0.1);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 8px;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+/* Time Inputs */
+.time-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.time-inputs input {
+    width: 110px;
+}
+
+/* Dose Modal */
+.dose-header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.dose-header .dose-pet {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.dose-header .dose-med-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.dose-header .dose-med-info {
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+.dose-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 20px 0;
+}
+
+.dose-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 12px;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.dose-btn .dose-icon {
+    font-size: 28px;
+}
+
+.dose-btn.given {
+    background: var(--success-light);
+    color: #00701a;
+}
+
+.dose-btn.given:hover {
+    background: var(--success);
+    color: white;
+}
+
+.dose-btn.skipped {
+    background: var(--danger-light);
+    color: #c62828;
+}
+
+.dose-btn.skipped:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.dose-btn.reschedule {
+    background: var(--warning-light);
+    color: #ff6f00;
+}
+
+.dose-btn.reschedule:hover {
+    background: var(--warning);
+    color: white;
+}
+
+/* Pet Detail */
+.pet-detail-content {
+    padding: 10px 0;
+}
+
+.pet-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.pet-detail-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.pet-detail-info h4 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.pet-detail-info p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.pet-meds-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pet-meds-list h5 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.med-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+}
+
+.med-item-info .med-name {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.med-item-info .med-schedule {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.med-item-dosage {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 14px;
+}
+
+.add-med-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: var(--transition);
+}
+
+.add-med-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--text);
+    color: white;
+    padding: 14px 24px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 2000;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.success {
+    background: var(--success);
+}
+
+.toast.error {
+    background: var(--danger);
+}
+
+/* Responsive */
+@media (min-width: 481px) {
+    .app-container {
+        margin-top: 20px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        min-height: calc(100vh - 40px);
+    }
+    
+    .bottom-nav {
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+    
+    .modal {
+        border-radius: var(--radius-lg);
+        margin: 20px;
+    }
+}

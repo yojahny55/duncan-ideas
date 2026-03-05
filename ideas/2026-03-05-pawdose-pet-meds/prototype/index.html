@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawDose — Pet Medication Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🐾</span>
+                <span class="logo-text">PawDose</span>
+            </div>
+            <button class="add-pet-btn" onclick="openModal('addPetModal')">+ Add Pet</button>
+        </header>
+
+        <!-- Today's Schedule -->
+        <section class="today-section">
+            <div class="section-header">
+                <h2>Today's Schedule</h2>
+                <span class="today-date" id="todayDate"></span>
+            </div>
+            <div class="schedule-cards" id="scheduleCards">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Pets Section -->
+        <section class="pets-section">
+            <div class="section-header">
+                <h2>My Pets</h2>
+            </div>
+            <div class="pets-grid" id="petsGrid">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Refill Alerts -->
+        <section class="refills-section">
+            <div class="section-header">
+                <h2>Refill Alerts</h2>
+            </div>
+            <div class="refill-list" id="refillList">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-view="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-btn" data-view="calendar">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">History</span>
+            </button>
+            <button class="nav-btn" data-view="share">
+                <span class="nav-icon">🔗</span>
+                <span class="nav-label">Share</span>
+            </button>
+            <button class="nav-btn" data-view="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Add Pet Modal -->
+    <div class="modal-overlay" id="addPetModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Add New Pet</h3>
+                <button class="modal-close" onclick="closeModal('addPetModal')">×</button>
+            </div>
+            <form class="modal-form" id="addPetForm">
+                <div class="form-group">
+                    <label>Pet Name</label>
+                    <input type="text" name="petName" placeholder="e.g., Max" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Species</label>
+                        <select name="species" required>
+                            <option value="">Select...</option>
+                            <option value="dog">🐕 Dog</option>
+                            <option value="cat">🐈 Cat</option>
+                            <option value="rabbit">🐰 Rabbit</option>
+                            <option value="bird">🦜 Bird</option>
+                            <option value="other">🐾 Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Weight</label>
+                        <input type="number" name="weight" placeholder="lbs">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Breed</label>
+                    <input type="text" name="breed" placeholder="e.g., Golden Retriever">
+                </div>
+                <div class="form-group">
+                    <label>Allergies / Notes</label>
+                    <textarea name="notes" placeholder="Any allergies or special notes..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Add Pet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Medication Modal -->
+    <div class="modal-overlay" id="addMedModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Add Medication</h3>
+                <button class="modal-close" onclick="closeModal('addMedModal')">×</button>
+            </div>
+            <form class="modal-form" id="addMedForm">
+                <input type="hidden" name="petId" id="medPetId">
+                <div class="form-group">
+                    <label>Medication Name</label>
+                    <input type="text" name="medName" placeholder="e.g., Vetmedin" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Dosage</label>
+                        <input type="text" name="dosage" placeholder="e.g., 5mg" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Frequency</label>
+                        <select name="frequency" required>
+                            <option value="1x">Once daily</option>
+                            <option value="2x">Twice daily</option>
+                            <option value="3x">Three times daily</option>
+                            <option value="every8h">Every 8 hours</option>
+                            <option value="eod">Every other day</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Dose Times</label>
+                    <div class="time-inputs" id="timeInputs">
+                        <input type="time" name="time1" value="08:00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Instructions</label>
+                    <textarea name="instructions" placeholder="e.g., Give with food, 30 min before meal..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pills Remaining</label>
+                        <input type="number" name="remaining" placeholder="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Refill Alert At</label>
+                        <input type="number" name="refillAt" placeholder="7" value="7">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Add Medication</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dose Confirmation Modal -->
+    <div class="modal-overlay" id="doseModal">
+        <div class="modal modal-compact">
+            <div class="dose-header" id="doseHeader">
+                <!-- Populated by JS -->
+            </div>
+            <div class="dose-actions">
+                <button class="dose-btn given" onclick="logDose('given')">
+                    <span class="dose-icon">✓</span>
+                    <span>Given</span>
+                </button>
+                <button class="dose-btn skipped" onclick="logDose('skipped')">
+                    <span class="dose-icon">✕</span>
+                    <span>Skipped</span>
+                </button>
+                <button class="dose-btn reschedule" onclick="logDose('reschedule')">
+                    <span class="dose-icon">⏰</span>
+                    <span>Later</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pet Detail Modal -->
+    <div class="modal-overlay" id="petDetailModal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3 id="petDetailName">Pet Name</h3>
+                <button class="modal-close" onclick="closeModal('petDetailModal')">×</button>
+            </div>
+            <div class="pet-detail-content" id="petDetailContent">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
