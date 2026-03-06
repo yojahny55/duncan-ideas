@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProofPost - Turn Reviews Into Social Content</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="nav-logo">✨</span>
+                <span class="nav-name">ProofPost</span>
+            </div>
+            <div class="nav-links">
+                <a href="#how-it-works">How it works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#demo" class="btn btn-outline">Try Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <span class="hero-badge">For restaurants, salons, and local businesses</span>
+            <h1 class="hero-title">
+                Turn your <span class="gradient-text">5-star reviews</span><br>
+                into Instagram-ready posts
+            </h1>
+            <p class="hero-subtitle">
+                You have hundreds of glowing reviews doing nothing. ProofPost turns them 
+                into beautiful social content in 30 seconds — no design skills needed.
+            </p>
+            <div class="hero-cta">
+                <a href="#demo" class="btn btn-primary">Try the Demo</a>
+                <span class="hero-price">Free to start · $9/mo Pro</span>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">400+</span>
+                    <span class="stat-label">avg reviews unused</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">30s</span>
+                    <span class="stat-label">time to create post</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">$9</span>
+                    <span class="stat-label">per month</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem">
+        <div class="container">
+            <h2 class="section-title">Your reviews are marketing gold.<br>Why aren't you using them?</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <span class="problem-icon">⏰</span>
+                    <h3>No time</h3>
+                    <p>You're running a business. Creating social content is the last thing on your list.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="problem-icon">🎨</span>
+                    <h3>No design skills</h3>
+                    <p>Opening Canva feels overwhelming. You're not a graphic designer.</p>
+                </div>
+                <div class="problem-card">
+                    <span class="problem-icon">💸</span>
+                    <h3>Tools are expensive</h3>
+                    <p>Marketing tools cost $75-200/mo. That's not in your budget.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">From review to post in 3 steps</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Connect your Google Business</h3>
+                        <p>One click to link your profile. We automatically import your best reviews.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Pick a quote & template</h3>
+                        <p>We highlight the best lines. Choose a style that matches your brand.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Post or download</h3>
+                        <p>Share directly to Instagram/Facebook or download for later.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section id="demo" class="demo-section">
+        <div class="container">
+            <h2 class="section-title">Try it yourself</h2>
+            <p class="section-subtitle">See how easy it is to turn a review into a post</p>
+            
+            <div class="demo-container">
+                <!-- Step 1: Review Selection -->
+                <div class="demo-panel demo-reviews" id="demo-step-1">
+                    <div class="demo-header">
+                        <span class="demo-step-badge">Step 1</span>
+                        <h3>Select a review</h3>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-card" data-review="1" onclick="selectReview(this)">
+                            <div class="review-header">
+                                <div class="review-stars">★★★★★</div>
+                                <span class="review-date">2 days ago</span>
+                            </div>
+                            <p class="review-text">"Best tacos I've ever had! The al pastor was absolutely incredible and the staff was so friendly. We'll definitely be back every week."</p>
+                            <span class="review-author">— Maria G.</span>
+                            <span class="review-highlight">"Best tacos I've ever had!"</span>
+                        </div>
+                        <div class="review-card" data-review="2" onclick="selectReview(this)">
+                            <div class="review-header">
+                                <div class="review-stars">★★★★★</div>
+                                <span class="review-date">1 week ago</span>
+                            </div>
+                            <p class="review-text">"Finally found our go-to spot! Fresh ingredients, generous portions, and the salsa verde is life-changing. 10/10 would recommend to everyone."</p>
+                            <span class="review-author">— James T.</span>
+                            <span class="review-highlight">"the salsa verde is life-changing"</span>
+                        </div>
+                        <div class="review-card" data-review="3" onclick="selectReview(this)">
+                            <div class="review-header">
+                                <div class="review-stars">★★★★★</div>
+                                <span class="review-date">2 weeks ago</span>
+                            </div>
+                            <p class="review-text">"Authentic flavors that remind me of my grandmother's cooking. You can taste the love in every bite. This is the real deal!"</p>
+                            <span class="review-author">— Carlos M.</span>
+                            <span class="review-highlight">"You can taste the love in every bite"</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Template Selection -->
+                <div class="demo-panel demo-templates hidden" id="demo-step-2">
+                    <div class="demo-header">
+                        <span class="demo-step-badge">Step 2</span>
+                        <h3>Choose a template</h3>
+                        <button class="btn-back" onclick="goBack(1)">← Back</button>
+                    </div>
+                    <div class="templates-grid">
+                        <div class="template-card" data-template="modern" onclick="selectTemplate(this)">
+                            <div class="template-preview modern">
+                                <div class="template-quote">"Quote here"</div>
+                                <div class="template-stars">★★★★★</div>
+                            </div>
+                            <span class="template-name">Modern</span>
+                        </div>
+                        <div class="template-card" data-template="minimal" onclick="selectTemplate(this)">
+                            <div class="template-preview minimal">
+                                <div class="template-quote">"Quote here"</div>
+                                <div class="template-stars">★★★★★</div>
+                            </div>
+                            <span class="template-name">Minimal</span>
+                        </div>
+                        <div class="template-card" data-template="bold" onclick="selectTemplate(this)">
+                            <div class="template-preview bold">
+                                <div class="template-quote">"Quote here"</div>
+                                <div class="template-stars">★★★★★</div>
+                            </div>
+                            <span class="template-name">Bold</span>
+                        </div>
+                        <div class="template-card" data-template="warm" onclick="selectTemplate(this)">
+                            <div class="template-preview warm">
+                                <div class="template-quote">"Quote here"</div>
+                                <div class="template-stars">★★★★★</div>
+                            </div>
+                            <span class="template-name">Warm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Result -->
+                <div class="demo-panel demo-result hidden" id="demo-step-3">
+                    <div class="demo-header">
+                        <span class="demo-step-badge">Step 3</span>
+                        <h3>Your post is ready!</h3>
+                        <button class="btn-back" onclick="goBack(2)">← Back</button>
+                    </div>
+                    <div class="result-container">
+                        <div class="result-preview" id="result-preview">
+                            <!-- Generated dynamically -->
+                        </div>
+                        <div class="result-actions">
+                            <button class="btn btn-primary" onclick="downloadPost()">
+                                <span>📥</span> Download PNG
+                            </button>
+                            <button class="btn btn-secondary">
+                                <span>📱</span> Share to Instagram
+                            </button>
+                            <button class="btn btn-outline" onclick="startOver()">
+                                Create Another
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2 class="section-title">Simple, affordable pricing</h2>
+            <p class="section-subtitle">No hidden fees. Cancel anytime.</p>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 class="pricing-name">Free</h3>
+                    <div class="pricing-price">
+                        <span class="price-amount">$0</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ 3 posts per month</li>
+                        <li>✓ 5 templates</li>
+                        <li>✓ Download as PNG</li>
+                        <li class="muted">× Small watermark</li>
+                        <li class="muted">× Direct posting</li>
+                    </ul>
+                    <button class="btn btn-outline btn-full">Get Started</button>
+                </div>
+                <div class="pricing-card featured">
+                    <span class="pricing-badge">Most Popular</span>
+                    <h3 class="pricing-name">Pro</h3>
+                    <div class="pricing-price">
+                        <span class="price-amount">$9</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Unlimited posts</li>
+                        <li>✓ All templates</li>
+                        <li>✓ No watermark</li>
+                        <li>✓ Post to Instagram & Facebook</li>
+                        <li>✓ Brand colors</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full">Start Free Trial</button>
+                </div>
+                <div class="pricing-card">
+                    <h3 class="pricing-name">Business</h3>
+                    <div class="pricing-price">
+                        <span class="price-amount">$29</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Everything in Pro</li>
+                        <li>✓ Multiple locations</li>
+                        <li>✓ Team access</li>
+                        <li>✓ Video templates</li>
+                        <li>✓ Priority support</li>
+                    </ul>
+                    <button class="btn btn-outline btn-full">Contact Us</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Stop letting your reviews go to waste</h2>
+            <p>Join hundreds of local businesses using ProofPost to turn happy customers into social proof.</p>
+            <a href="#demo" class="btn btn-primary btn-large">Try the Demo</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand">
+                <span class="nav-logo">✨</span>
+                <span class="nav-name">ProofPost</span>
+            </div>
+            <p class="footer-tagline">Turn reviews into social content</p>
+            <p class="footer-copyright">© 2026 ProofPost. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
