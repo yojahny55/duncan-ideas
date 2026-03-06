@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParentPane — Unified Parental Controls</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">👁️</span>
+                <span class="logo-text">ParentPane</span>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">👨‍👩‍👧‍👦</span>
+                    Children
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🔌</span>
+                    Platforms
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⏰</span>
+                    Schedules
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    Reports
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name">Sarah M.</div>
+                        <div class="user-plan">Family Plan</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Family Dashboard</h1>
+                    <p class="header-subtitle">Thursday, March 6, 2026</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-outline" id="bedtimeBtn">
+                        <span>🌙</span> Bedtime Mode
+                    </button>
+                    <button class="btn btn-danger" id="pauseAllBtn">
+                        <span>⏸️</span> Pause All
+                    </button>
+                </div>
+            </header>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">👨‍👩‍👧‍👦</div>
+                    <div class="stat-content">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Active Children</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">🔌</div>
+                    <div class="stat-content">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Connected Platforms</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">⏱️</div>
+                    <div class="stat-content">
+                        <div class="stat-value">4h 23m</div>
+                        <div class="stat-label">Total Screen Time Today</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🔔</div>
+                    <div class="stat-content">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Pending Requests</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Children Cards -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Children Overview</h2>
+                    <a href="#" class="link">View Details →</a>
+                </div>
+                <div class="children-grid">
+                    <!-- Child 1: Marcus -->
+                    <div class="child-card" data-child="marcus">
+                        <div class="child-header">
+                            <div class="child-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">M</div>
+                            <div class="child-info">
+                                <div class="child-name">Marcus</div>
+                                <div class="child-age">Age 14 • Teen</div>
+                            </div>
+                            <div class="child-status online">
+                                <span class="status-dot"></span>
+                                Online
+                            </div>
+                        </div>
+                        <div class="child-activity">
+                            <div class="activity-current">
+                                <span class="platform-icon">🎮</span>
+                                <span>Playing <strong>Fortnite</strong> on PlayStation</span>
+                            </div>
+                            <div class="activity-time">1h 45m today</div>
+                        </div>
+                        <div class="child-limits">
+                            <div class="limit-bar">
+                                <div class="limit-label">
+                                    <span>Gaming Time</span>
+                                    <span class="limit-remaining">45m left</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="child-platforms">
+                            <span class="platform-badge ps">PS5</span>
+                            <span class="platform-badge xbox">Xbox</span>
+                            <span class="platform-badge youtube">YouTube</span>
+                            <span class="platform-badge roblox">Roblox</span>
+                        </div>
+                        <div class="child-actions">
+                            <button class="btn-sm btn-outline" onclick="sendMessage('marcus')">💬 Message</button>
+                            <button class="btn-sm btn-outline" onclick="addTime('marcus')">⏰ +15 min</button>
+                            <button class="btn-sm btn-danger" onclick="pauseChild('marcus')">⏸️ Pause</button>
+                        </div>
+                    </div>
+
+                    <!-- Child 2: Emma -->
+                    <div class="child-card" data-child="emma">
+                        <div class="child-header">
+                            <div class="child-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">E</div>
+                            <div class="child-info">
+                                <div class="child-name">Emma</div>
+                                <div class="child-age">Age 10 • Pre-Teen</div>
+                            </div>
+                            <div class="child-status online">
+                                <span class="status-dot"></span>
+                                Online
+                            </div>
+                        </div>
+                        <div class="child-activity">
+                            <div class="activity-current">
+                                <span class="platform-icon">🟪</span>
+                                <span>Playing <strong>Roblox</strong> on iPad</span>
+                            </div>
+                            <div class="activity-time">52m today</div>
+                        </div>
+                        <div class="child-limits">
+                            <div class="limit-bar">
+                                <div class="limit-label">
+                                    <span>Gaming Time</span>
+                                    <span class="limit-remaining good">1h 8m left</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill good" style="width: 43%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="child-platforms">
+                            <span class="platform-badge nintendo">Switch</span>
+                            <span class="platform-badge roblox">Roblox</span>
+                            <span class="platform-badge youtube">YouTube</span>
+                            <span class="platform-badge minecraft">Minecraft</span>
+                        </div>
+                        <div class="child-actions">
+                            <button class="btn-sm btn-outline" onclick="sendMessage('emma')">💬 Message</button>
+                            <button class="btn-sm btn-outline" onclick="addTime('emma')">⏰ +15 min</button>
+                            <button class="btn-sm btn-danger" onclick="pauseChild('emma')">⏸️ Pause</button>
+                        </div>
+                    </div>
+
+                    <!-- Child 3: Jake -->
+                    <div class="child-card" data-child="jake">
+                        <div class="child-header">
+                            <div class="child-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">J</div>
+                            <div class="child-info">
+                                <div class="child-name">Jake</div>
+                                <div class="child-age">Age 7 • Child</div>
+                            </div>
+                            <div class="child-status offline">
+                                <span class="status-dot"></span>
+                                Offline
+                            </div>
+                        </div>
+                        <div class="child-activity">
+                            <div class="activity-current inactive">
+                                <span class="platform-icon">💤</span>
+                                <span>Last active 2h ago on <strong>Nintendo Switch</strong></span>
+                            </div>
+                            <div class="activity-time">1h 46m today</div>
+                        </div>
+                        <div class="child-limits">
+                            <div class="limit-bar">
+                                <div class="limit-label">
+                                    <span>Gaming Time</span>
+                                    <span class="limit-remaining danger">14m left</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill danger" style="width: 88%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="child-platforms">
+                            <span class="platform-badge nintendo">Switch</span>
+                            <span class="platform-badge youtube">YT Kids</span>
+                            <span class="platform-badge pbs">PBS Kids</span>
+                        </div>
+                        <div class="child-actions">
+                            <button class="btn-sm btn-outline" onclick="sendMessage('jake')">💬 Message</button>
+                            <button class="btn-sm btn-outline" onclick="addTime('jake')">⏰ +15 min</button>
+                            <button class="btn-sm btn-danger" onclick="pauseChild('jake')">⏸️ Pause</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Connected Platforms -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Connected Platforms</h2>
+                    <button class="btn btn-outline">+ Add Platform</button>
+                </div>
+                <div class="platforms-grid">
+                    <div class="platform-card connected">
+                        <div class="platform-icon-large ps">🎮</div>
+                        <div class="platform-name">PlayStation</div>
+                        <div class="platform-status">✓ Connected</div>
+                        <div class="platform-children">Marcus</div>
+                    </div>
+                    <div class="platform-card connected">
+                        <div class="platform-icon-large xbox">🟩</div>
+                        <div class="platform-name">Xbox</div>
+                        <div class="platform-status">✓ Connected</div>
+                        <div class="platform-children">Marcus</div>
+                    </div>
+                    <div class="platform-card connected">
+                        <div class="platform-icon-large nintendo">🔴</div>
+                        <div class="platform-name">Nintendo</div>
+                        <div class="platform-status">✓ Connected</div>
+                        <div class="platform-children">Emma, Jake</div>
+                    </div>
+                    <div class="platform-card connected">
+                        <div class="platform-icon-large roblox">🟪</div>
+                        <div class="platform-name">Roblox</div>
+                        <div class="platform-status">✓ Connected</div>
+                        <div class="platform-children">Marcus, Emma</div>
+                    </div>
+                    <div class="platform-card connected">
+                        <div class="platform-icon-large youtube">▶️</div>
+                        <div class="platform-name">YouTube</div>
+                        <div class="platform-status">✓ Connected</div>
+                        <div class="platform-children">All Children</div>
+                    </div>
+                    <div class="platform-card connected">
+                        <div class="platform-icon-large google">🔵</div>
+                        <div class="platform-name">Google/Android</div>
+                        <div class="platform-status">✓ Connected</div>
+                        <div class="platform-children">Emma</div>
+                    </div>
+                    <div class="platform-card connected">
+                        <div class="platform-icon-large apple">🍎</div>
+                        <div class="platform-name">Apple/iOS</div>
+                        <div class="platform-status">✓ Connected</div>
+                        <div class="platform-children">Marcus</div>
+                    </div>
+                    <div class="platform-card pending">
+                        <div class="platform-icon-large steam">🎮</div>
+                        <div class="platform-name">Steam</div>
+                        <div class="platform-status pending">⏳ Setup Needed</div>
+                        <div class="platform-children">—</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Recent Activity</h2>
+                    <a href="#" class="link">View All →</a>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon alert">🚫</div>
+                        <div class="activity-content">
+                            <div class="activity-title"><strong>Marcus</strong> tried to access age-restricted content on YouTube</div>
+                            <div class="activity-meta">15 minutes ago • Blocked</div>
+                        </div>
+                        <button class="btn-sm btn-outline">Review</button>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon request">🙋</div>
+                        <div class="activity-content">
+                            <div class="activity-title"><strong>Emma</strong> requested 30 more minutes of Roblox</div>
+                            <div class="activity-meta">22 minutes ago • Pending</div>
+                        </div>
+                        <div class="activity-actions">
+                            <button class="btn-sm btn-success" onclick="approveRequest()">✓ Approve</button>
+                            <button class="btn-sm btn-danger" onclick="denyRequest()">✗ Deny</button>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon info">⏱️</div>
+                        <div class="activity-content">
+                            <div class="activity-title"><strong>Jake</strong> reached daily gaming limit</div>
+                            <div class="activity-meta">2 hours ago • Enforced</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon success">✓</div>
+                        <div class="activity-content">
+                            <div class="activity-title"><strong>Marcus</strong> completed homework time (Khan Academy)</div>
+                            <div class="activity-meta">3 hours ago • +30 min gaming earned</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toastMessage">Action completed</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
