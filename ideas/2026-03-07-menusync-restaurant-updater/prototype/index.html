@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MenuSync - One Menu, Every Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">🍽️</span>
+        <span class="logo-text">MenuSync</span>
+      </div>
+      
+      <nav class="nav">
+        <a href="#" class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item" data-view="menu">
+          <span class="nav-icon">📋</span>
+          Menu Editor
+        </a>
+        <a href="#" class="nav-item" data-view="platforms">
+          <span class="nav-icon">🔗</span>
+          Platforms
+        </a>
+        <a href="#" class="nav-item" data-view="history">
+          <span class="nav-icon">📜</span>
+          Sync History
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="restaurant-info">
+          <span class="restaurant-avatar">🌮</span>
+          <div class="restaurant-details">
+            <span class="restaurant-name">Taco Loco</span>
+            <span class="restaurant-plan">Pro Plan</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Dashboard View -->
+      <section id="dashboard" class="view active">
+        <header class="view-header">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="subtitle">Sync status across all platforms</p>
+          </div>
+          <button class="btn btn-primary btn-large" id="syncAllBtn">
+            <span class="btn-icon">🔄</span>
+            Sync All Platforms
+          </button>
+        </header>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">📋</span>
+            <div class="stat-content">
+              <span class="stat-value">24</span>
+              <span class="stat-label">Menu Items</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🔗</span>
+            <div class="stat-content">
+              <span class="stat-value">4</span>
+              <span class="stat-label">Connected Platforms</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">✅</span>
+            <div class="stat-content">
+              <span class="stat-value">3</span>
+              <span class="stat-label">In Sync</span>
+            </div>
+          </div>
+          <div class="stat-card warning">
+            <span class="stat-icon">⚠️</span>
+            <div class="stat-content">
+              <span class="stat-value">1</span>
+              <span class="stat-label">Needs Attention</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="platforms-status">
+          <h2>Platform Status</h2>
+          <div class="platform-cards" id="platformCards">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        
+        <div class="recent-changes">
+          <h2>Pending Changes</h2>
+          <div class="changes-list" id="changesList">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+      
+      <!-- Menu Editor View -->
+      <section id="menu" class="view">
+        <header class="view-header">
+          <div>
+            <h1>Menu Editor</h1>
+            <p class="subtitle">Edit your menu in one place</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" id="bulkEditBtn">
+              <span class="btn-icon">✏️</span>
+              Bulk Edit Prices
+            </button>
+            <button class="btn btn-primary" id="addItemBtn">
+              <span class="btn-icon">➕</span>
+              Add Item
+            </button>
+          </div>
+        </header>
+        
+        <div class="menu-categories" id="menuCategories">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+      
+      <!-- Platforms View -->
+      <section id="platforms" class="view">
+        <header class="view-header">
+          <div>
+            <h1>Connected Platforms</h1>
+            <p class="subtitle">Manage your delivery platform connections</p>
+          </div>
+        </header>
+        
+        <div class="platforms-grid" id="platformsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+      
+      <!-- History View -->
+      <section id="history" class="view">
+        <header class="view-header">
+          <div>
+            <h1>Sync History</h1>
+            <p class="subtitle">Track all changes and syncs</p>
+          </div>
+        </header>
+        
+        <div class="history-list" id="historyList">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <!-- Sync Modal -->
+  <div class="modal" id="syncModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Syncing Platforms</h2>
+      </div>
+      <div class="modal-body">
+        <div class="sync-progress" id="syncProgress">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeSyncModal" style="display: none;">Done</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Item Edit Modal -->
+  <div class="modal" id="itemModal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="itemModalTitle">Edit Item</h2>
+        <button class="modal-close" id="closeItemModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="itemForm">
+          <div class="form-group">
+            <label for="itemName">Item Name</label>
+            <input type="text" id="itemName" placeholder="e.g., Street Tacos">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="itemPrice">Price</label>
+              <input type="number" id="itemPrice" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label for="itemCategory">Category</label>
+              <select id="itemCategory">
+                <option value="tacos">Tacos</option>
+                <option value="burritos">Burritos</option>
+                <option value="sides">Sides</option>
+                <option value="drinks">Drinks</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="itemDescription">Description</label>
+            <textarea id="itemDescription" rows="3" placeholder="Describe the item..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Availability</label>
+            <div class="toggle-group">
+              <label class="toggle">
+                <input type="checkbox" id="itemAvailable" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Available for order</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelItemEdit">Cancel</button>
+        <button class="btn btn-primary" id="saveItemEdit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bulk Edit Modal -->
+  <div class="modal" id="bulkModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Bulk Price Update</h2>
+        <button class="modal-close" id="closeBulkModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Adjustment Type</label>
+          <div class="radio-group">
+            <label class="radio">
+              <input type="radio" name="bulkType" value="percent" checked>
+              <span>Percentage</span>
+            </label>
+            <label class="radio">
+              <input type="radio" name="bulkType" value="fixed">
+              <span>Fixed Amount</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bulkAmount">Amount</label>
+          <div class="input-with-addon">
+            <input type="number" id="bulkAmount" step="0.01" placeholder="0">
+            <span class="addon" id="bulkAddon">%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Apply To</label>
+          <select id="bulkCategory">
+            <option value="all">All Items</option>
+            <option value="tacos">Tacos</option>
+            <option value="burritos">Burritos</option>
+            <option value="sides">Sides</option>
+            <option value="drinks">Drinks</option>
+          </select>
+        </div>
+        <div class="bulk-preview">
+          <p>Preview: <strong>Increase all prices by 5%</strong></p>
+          <p class="muted">This will affect 24 items</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelBulkEdit">Cancel</button>
+        <button class="btn btn-primary" id="applyBulkEdit">Apply Changes</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
