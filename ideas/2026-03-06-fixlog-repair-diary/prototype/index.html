@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FixLog - Never Forget How You Fixed It</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Colors */
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --primary-light: #60a5fa;
+      --success: #22c55e;
+      --success-bg: #dcfce7;
+      --warning: #f59e0b;
+      --warning-bg: #fef3c7;
+      --danger: #ef4444;
+      --danger-bg: #fee2e2;
+      
+      /* Neutrals */
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-raised: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      
+      /* Spacing */
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      
+      /* Typography */
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-base: 16px;
+      --text-lg: 18px;
+      --text-xl: 20px;
+      --text-2xl: 24px;
+      
+      /* Effects */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Mobile Container */
+    .phone-frame {
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Header */
+    .header {
+      background: var(--surface);
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .header h1 {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+    }
+    
+    /* Search Bar */
+    .search-bar {
+      margin-top: var(--space-md);
+      position: relative;
+    }
+    
+    .search-bar input {
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      padding-left: 44px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .search-bar input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: var(--space-md);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 var(--space-md);
+    }
+    
+    .tab {
+      flex: 1;
+      padding: var(--space-md) var(--space-sm);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    
+    .tab:hover:not(.active) {
+      color: var(--text);
+    }
+    
+    /* Content */
+    .content {
+      padding: var(--space-md);
+      padding-bottom: 100px;
+    }
+    
+    .section-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--space-sm);
+    }
+    
+    /* Device Card */
+    .device-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .device-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    
+    .device-card:active {
+      transform: scale(0.99);
+    }
+    
+    .device-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    
+    .device-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    
+    .device-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .device-name {
+      font-weight: 600;
+      font-size: var(--text-base);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .device-model {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .device-stats {
+      display: flex;
+      gap: var(--space-md);
+      margin-top: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--border);
+    }
+    
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+    }
+    
+    .stat-icon {
+      font-size: 14px;
+    }
+    
+    .stat.issues .stat-icon { color: var(--warning); }
+    .stat.fixed .stat-icon { color: var(--success); }
+    
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+    
+    .badge.warning {
+      background: var(--warning-bg);
+      color: #b45309;
+    }
+    
+    .badge.success {
+      background: var(--success-bg);
+      color: #166534;
+    }
+    
+    .badge.danger {
+      background: var(--danger-bg);
+      color: #b91c1c;
+    }
+    
+    /* Recent Fixes */
+    .fix-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--success);
+    }
+    
+    .fix-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .fix-device {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    
+    .fix-date {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
+    .fix-problem {
+      font-weight: 500;
+      margin-bottom: var(--space-xs);
+    }
+    
+    .fix-solution {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      background: var(--success-bg);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-sm);
+      margin-top: var(--space-sm);
+    }
+    
+    .fix-solution-label {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: #166534;
+      margin-bottom: var(--space-xs);
+    }
+    
+    /* FAB */
+    .fab {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      box-shadow: var(--shadow-lg);
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 90;
+    }
+    
+    .fab:hover {
+      transform: scale(1.05);
+    }
+    
+    .fab:active {
+      transform: scale(0.95);
+    }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 390px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: var(--space-sm) 0;
+      padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+    
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: var(--space-xs);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: var(--text-xs);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    
+    .nav-item.active {
+      color: var(--primary);
+    }
+    
+    .nav-icon {
+      font-size: 22px;
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      width: 100%;
+      max-width: 390px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s ease-out;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+    }
+    
+    .modal-title {
+      font-weight: 600;
+      font-size: var(--text-lg);
+    }
+    
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: var(--bg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .modal-content {
+      padding: var(--space-md);
+    }
+    
+    /* Form */
+    .form-group {
+      margin-bottom: var(--space-md);
+    }
+    
+    .form-label {
+      display: block;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      margin-bottom: var(--space-xs);
+      color: var(--text);
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: var(--space-sm) var(--space-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-base);
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    textarea.form-input {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 40px;
+    }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-base);
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+    
+    .btn-block {
+      width: 100%;
+    }
+    
+    /* Device Detail View */
+    .device-detail {
+      display: none;
+    }
+    
+    .device-detail.active {
+      display: block;
+    }
+    
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      color: var(--primary);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: var(--space-md);
+    }
+    
+    .device-hero {
+      text-align: center;
+      padding: var(--space-lg) 0;
+    }
+    
+    .device-hero-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-lg);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto var(--space-md);
+    }
+    
+    .device-hero-name {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      margin-bottom: var(--space-xs);
+    }
+    
+    .device-hero-model {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    
+    .stat-value {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .stat-label {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      margin-top: var(--space-xs);
+    }
+    
+    /* Problem Timeline */
+    .timeline {
+      position: relative;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    
+    .timeline-item {
+      position: relative;
+      padding-left: 52px;
+      padding-bottom: var(--space-lg);
+    }
+    
+    .timeline-marker {
+      position: absolute;
+      left: 12px;
+      top: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-full);
+      background: var(--success);
+      border: 3px solid var(--surface);
+    }
+    
+    .timeline-marker.open {
+      background: var(--warning);
+    }
+    
+    .timeline-date {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      margin-bottom: var(--space-xs);
+    }
+    
+    .timeline-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      border: 1px solid var(--border);
+    }
+    
+    .timeline-problem {
+      font-weight: 500;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .timeline-fix {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      background: var(--success-bg);
+      padding: var(--space-sm);
+      border-radius: var(--radius-sm);
+    }
+    
+    /* Voice Input */
+    .voice-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.2s;
+    }
+    
+    .voice-btn:hover {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .input-with-voice {
+      display: flex;
+      gap: var(--space-sm);
+    }
+    
+    .input-with-voice .form-input {
+      flex: 1;
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      color: var(--text-secondary);
+    }
+    
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: var(--space-md);
+      opacity: 0.5;
+    }
+    
+    .empty-title {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: var(--space-xs);
+    }
+    
+    /* Pattern Alert */
+    .pattern-alert {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      display: flex;
+      gap: var(--space-sm);
+    }
+    
+    .pattern-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    
+    .pattern-text {
+      font-size: var(--text-sm);
+    }
+    
+    .pattern-text strong {
+      display: block;
+      margin-bottom: var(--space-xs);
+    }
+    
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    .voice-btn.recording {
+      animation: pulse 1s infinite;
+      background: var(--danger);
+      color: white;
+    }
+    
+    /* View switching */
+    .view {
+      display: none;
+    }
+    
+    .view.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <!-- Main View -->
+    <div id="main-view" class="view active">
+      <header class="header">
+        <div class="header-title">
+          <h1>
+            <span class="logo-icon">🔧</span>
+            FixLog
+          </h1>
+        </div>
+        <div class="search-bar">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Search fixes... (e.g., 'dishwasher drain')" id="search-input">
+        </div>
+      </header>
+      
+      <div class="tabs">
+        <button class="tab active" data-tab="devices">My Devices</button>
+        <button class="tab" data-tab="recent">Recent Fixes</button>
+      </div>
+      
+      <div class="content">
+        <!-- Devices Tab -->
+        <div id="devices-tab" class="tab-content">
+          <div class="section-title">Devices with Issues</div>
+          
+          <div class="device-card" onclick="showDevice('dishwasher')">
+            <div class="device-header">
+              <div class="device-icon">🍽️</div>
+              <div class="device-info">
+                <div class="device-name">Kitchen Dishwasher</div>
+                <div class="device-model">Samsung DW80R5060US</div>
+              </div>
+              <span class="badge warning">1 open</span>
+            </div>
+            <div class="device-stats">
+              <span class="stat issues">
+                <span class="stat-icon">⚠️</span>
+                4 issues logged
+              </span>
+              <span class="stat fixed">
+                <span class="stat-icon">✅</span>
+                3 fixed
+              </span>
+            </div>
+          </div>
+          
+          <div class="device-card" onclick="showDevice('router')">
+            <div class="device-header">
+              <div class="device-icon">📶</div>
+              <div class="device-info">
+                <div class="device-name">WiFi Router</div>
+                <div class="device-model">ASUS RT-AX88U</div>
+              </div>
+              <span class="badge success">All fixed</span>
+            </div>
+            <div class="device-stats">
+              <span class="stat issues">
+                <span class="stat-icon">⚠️</span>
+                6 issues logged
+              </span>
+              <span class="stat fixed">
+                <span class="stat-icon">✅</span>
+                6 fixed
+              </span>
+            </div>
+          </div>
+          
+          <div class="device-card">
+            <div class="device-header">
+              <div class="device-icon">❄️</div>
+              <div class="device-info">
+                <div class="device-name">Garage Fridge</div>
+                <div class="device-model">LG LRMVS3006S</div>
+              </div>
+              <span class="badge success">All fixed</span>
+            </div>
+            <div class="device-stats">
+              <span class="stat issues">
+                <span class="stat-icon">⚠️</span>
+                2 issues logged
+              </span>
+              <span class="stat fixed">
+                <span class="stat-icon">✅</span>
+                2 fixed
+              </span>
+            </div>
+          </div>
+          
+          <div class="device-card">
+            <div class="device-header">
+              <div class="device-icon">🚗</div>
+              <div class="device-info">
+                <div class="device-name">Garage Door Opener</div>
+                <div class="device-model">Chamberlain B6765</div>
+              </div>
+              <span class="badge success">All fixed</span>
+            </div>
+            <div class="device-stats">
+              <span class="stat issues">
+                <span class="stat-icon">⚠️</span>
+                1 issue logged
+              </span>
+              <span class="stat fixed">
+                <span class="stat-icon">✅</span>
+                1 fixed
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Fixes Tab -->
+        <div id="recent-tab" class="tab-content" style="display: none;">
+          <div class="section-title">This Week</div>
+          
+          <div class="fix-card">
+            <div class="fix-header">
+              <div class="fix-device">🍽️ Kitchen Dishwasher</div>
+              <div class="fix-date">2 days ago</div>
+            </div>
+            <div class="fix-problem">Water not draining after cycle</div>
+            <div class="fix-solution">
+              <div class="fix-solution-label">✓ What fixed it:</div>
+              Removed and cleaned the filter housing (the rubber part under the main filter). Had food debris stuck in the drain port.
+            </div>
+          </div>
+          
+          <div class="fix-card">
+            <div class="fix-header">
+              <div class="fix-device">📶 WiFi Router</div>
+              <div class="fix-date">5 days ago</div>
+            </div>
+            <div class="fix-problem">Internet keeps dropping every few hours</div>
+            <div class="fix-solution">
+              <div class="fix-solution-label">✓ What fixed it:</div>
+              Changed WiFi channel from Auto to Channel 6 (2.4GHz) and Channel 149 (5GHz). Neighbor's new mesh system was causing interference.
+            </div>
+          </div>
+          
+          <div class="section-title">Earlier</div>
+          
+          <div class="fix-card">
+            <div class="fix-header">
+              <div class="fix-device">❄️ Garage Fridge</div>
+              <div class="fix-date">2 weeks ago</div>
+            </div>
+            <div class="fix-problem">Making loud humming noise</div>
+            <div class="fix-solution">
+              <div class="fix-solution-label">✓ What fixed it:</div>
+              Leveled the fridge using adjustable feet. Front was 1/2 inch lower than back causing compressor strain.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Device Detail View -->
+    <div id="device-view" class="view">
+      <header class="header">
+        <button class="back-btn" onclick="showMain()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Back
+        </button>
+      </header>
+      
+      <div class="content">
+        <div class="device-hero">
+          <div class="device-hero-icon" id="detail-icon">🍽️</div>
+          <div class="device-hero-name" id="detail-name">Kitchen Dishwasher</div>
+          <div class="device-hero-model" id="detail-model">Samsung DW80R5060US • Purchased Jan 2023</div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Total Issues</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">$0</div>
+            <div class="stat-label">Repair Costs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">~90d</div>
+            <div class="stat-label">Issue Interval</div>
+          </div>
+        </div>
+        
+        <div class="pattern-alert" id="pattern-alert">
+          <span class="pattern-icon">🔄</span>
+          <div class="pattern-text">
+            <strong>Pattern Detected</strong>
+            Drainage issues occur roughly every 3 months. Consider adding monthly filter cleaning to your routine.
+          </div>
+        </div>
+        
+        <div class="section-title">Issue History</div>
+        
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-marker open"></div>
+            <div class="timeline-date">Mar 4, 2026 • Open</div>
+            <div class="timeline-card">
+              <div class="timeline-problem">Dishes not getting fully clean</div>
+              <p style="font-size: 14px; color: var(--text-secondary);">Spray arms might be clogged. Need to investigate.</p>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-date">Mar 4, 2026 • Fixed</div>
+            <div class="timeline-card">
+              <div class="timeline-problem">Water not draining after cycle</div>
+              <div class="timeline-fix">
+                <strong>Fix:</strong> Cleaned filter housing (rubber part under main filter). Food debris in drain port.
+              </div>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-date">Dec 15, 2025 • Fixed</div>
+            <div class="timeline-card">
+              <div class="timeline-problem">Water pooling at bottom after wash</div>
+              <div class="timeline-fix">
+                <strong>Fix:</strong> Same as above - filter housing needed cleaning. Set reminder for quarterly cleaning.
+              </div>
+            </div>
+          </div>
+          
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-date">Sep 8, 2025 • Fixed</div>
+            <div class="timeline-card">
+              <div class="timeline-problem">Error code 5E displayed</div>
+              <div class="timeline-fix">
+                <strong>Fix:</strong> 5E = drainage issue. Cleaned filter and ran empty hot cycle with vinegar.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- FAB -->
+    <button class="fab" onclick="openModal('log-modal')">+</button>
+    
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">📱</span>
+        <span>Devices</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">🔍</span>
+        <span>Search</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile</span>
+      </button>
+    </nav>
+    
+    <!-- Log Problem Modal -->
+    <div class="modal-overlay" id="log-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 class="modal-title">Log a Problem</h2>
+          <button class="modal-close" onclick="closeModal('log-modal')">×</button>
+        </div>
+        <div class="modal-content">
+          <div class="form-group">
+            <label class="form-label">Device</label>
+            <select class="form-input form-select">
+              <option>Select a device...</option>
+              <option>🍽️ Kitchen Dishwasher</option>
+              <option>📶 WiFi Router</option>
+              <option>❄️ Garage Fridge</option>
+              <option>🚗 Garage Door Opener</option>
+              <option>+ Add new device</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">What's the problem?</label>
+            <div class="input-with-voice">
+              <textarea class="form-input" placeholder="Describe what's happening..."></textarea>
+              <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">🎤</button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Photo (optional)</label>
+            <div style="border: 2px dashed var(--border); border-radius: var(--radius-md); padding: var(--space-lg); text-align: center; color: var(--text-secondary);">
+              <span style="font-size: 32px; display: block; margin-bottom: var(--space-sm);">📷</span>
+              Tap to add photo
+            </div>
+          </div>
+          
+          <button class="btn btn-primary btn-block">Log Problem</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const tabId = tab.dataset.tab;
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.style.display = content.id === tabId + '-tab' ? 'block' : 'none';
+        });
+      });
+    });
+    
+    // View switching
+    function showDevice(device) {
+      document.getElementById('main-view').classList.remove('active');
+      document.getElementById('device-view').classList.add('active');
+      
+      // Update device details based on device type
+      if (device === 'router') {
+        document.getElementById('detail-icon').textContent = '📶';
+        document.getElementById('detail-name').textContent = 'WiFi Router';
+        document.getElementById('detail-model').textContent = 'ASUS RT-AX88U • Purchased Mar 2022';
+        document.getElementById('pattern-alert').style.display = 'none';
+      }
+    }
+    
+    function showMain() {
+      document.getElementById('device-view').classList.remove('active');
+      document.getElementById('main-view').classList.add('active');
+      // Reset pattern alert visibility
+      document.getElementById('pattern-alert').style.display = 'flex';
+    }
+    
+    // Modal
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+    
+    // Voice recording toggle
+    function toggleVoice() {
+      const btn = document.getElementById('voice-btn');
+      btn.classList.toggle('recording');
+    }
+    
+    // Search functionality
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      if (query.includes('drain') || query.includes('dishwasher')) {
+        // Show relevant results - in real app, this would filter
+        alert('Found 3 fixes for "' + e.target.value + '":\n\n1. Dishwasher drain issue (Mar 2026)\n2. Dishwasher drain issue (Dec 2025)\n3. Dishwasher error 5E (Sep 2025)');
+      }
+    });
+    
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
