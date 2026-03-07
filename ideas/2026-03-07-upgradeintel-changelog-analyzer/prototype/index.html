@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UpgradeIntel — AI-Powered Dependency Changelog Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="6" fill="url(#logo-gradient)"/>
+            <path d="M8 14L12 18L20 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="logo-gradient" x1="0" y1="0" x2="28" y2="28">
+                <stop stop-color="#6366F1"/>
+                <stop offset="1" stop-color="#8B5CF6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="logo-text">UpgradeIntel</span>
+        </div>
+      </div>
+      <div class="header-center">
+        <div class="repo-selector">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/>
+          </svg>
+          <span>acme-corp/frontend-app</span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" class="chevron">
+            <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 1v2M8 13v2M14 8h-2M4 8H2M12.5 3.5l-1.4 1.4M4.9 11.1l-1.4 1.4M12.5 12.5l-1.4-1.4M4.9 4.9L3.5 3.5"/>
+          </svg>
+          Settings
+        </button>
+        <button class="btn btn-primary" id="scanBtn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M1 8a7 7 0 1014 0A7 7 0 001 8z"/>
+            <path d="M8 4v4l2.5 2.5"/>
+          </svg>
+          Rescan
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-value">89</span>
+          <span class="stat-label">Dependencies</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">23</span>
+          <span class="stat-label">Updates Available</span>
+        </div>
+        <div class="stat stat-critical">
+          <span class="stat-value">2</span>
+          <span class="stat-label">Critical</span>
+        </div>
+        <div class="stat stat-breaking">
+          <span class="stat-value">3</span>
+          <span class="stat-label">Breaking</span>
+        </div>
+        <div class="stat stat-safe">
+          <span class="stat-value">18</span>
+          <span class="stat-label">Safe</span>
+        </div>
+        <div class="stat-action">
+          <button class="btn btn-success" id="updateSafeBtn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M2 8l4 4 8-8"/>
+            </svg>
+            Update All Safe (18)
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All Updates (23)</button>
+        <button class="filter-btn" data-filter="critical">
+          <span class="dot dot-critical"></span>
+          Critical (2)
+        </button>
+        <button class="filter-btn" data-filter="breaking">
+          <span class="dot dot-breaking"></span>
+          Breaking (3)
+        </button>
+        <button class="filter-btn" data-filter="safe">
+          <span class="dot dot-safe"></span>
+          Safe (18)
+        </button>
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="7" cy="7" r="5"/>
+            <path d="M11 11l3 3"/>
+          </svg>
+          <input type="text" placeholder="Search packages..." id="searchInput">
+        </div>
+      </div>
+
+      <!-- Package List -->
+      <div class="package-list" id="packageList">
+        <!-- Critical Section -->
+        <div class="section-header section-critical">
+          <span class="section-icon">🔴</span>
+          <span class="section-title">Critical — Security Vulnerabilities</span>
+        </div>
+
+        <div class="package-card critical" data-package="axios" data-category="critical">
+          <div class="package-header">
+            <div class="package-info">
+              <div class="package-name">
+                <span class="name">axios</span>
+                <span class="version-badge">1.6.2 → 1.7.9</span>
+              </div>
+              <div class="package-meta">
+                <span class="tag tag-critical">CVE-2024-39338</span>
+                <span class="impact-count">⚠️ 2 files affected</span>
+              </div>
+            </div>
+            <div class="package-actions">
+              <button class="btn btn-small btn-outline">View Details</button>
+              <button class="btn btn-small btn-danger">Update Now</button>
+            </div>
+          </div>
+          <div class="package-summary">
+            <p><strong>SSRF vulnerability in proxy handling</strong> — Attacker-controlled proxy URLs could bypass request validation. Your code uses proxy config in <code>src/api/client.js</code>.</p>
+          </div>
+        </div>
+
+        <div class="package-card critical" data-package="lodash" data-category="critical">
+          <div class="package-header">
+            <div class="package-info">
+              <div class="package-name">
+                <span class="name">lodash</span>
+                <span class="version-badge">4.17.20 → 4.17.21</span>
+              </div>
+              <div class="package-meta">
+                <span class="tag tag-critical">CVE-2021-23337</span>
+                <span class="impact-count">✅ No impact detected</span>
+              </div>
+            </div>
+            <div class="package-actions">
+              <button class="btn btn-small btn-outline">View Details</button>
+              <button class="btn btn-small btn-danger">Update Now</button>
+            </div>
+          </div>
+          <div class="package-summary">
+            <p><strong>Command injection in template()</strong> — Arbitrary code execution via template strings. Your codebase doesn't use <code>_.template()</code>, so this is safe to update.</p>
+          </div>
+        </div>
+
+        <!-- Breaking Section -->
+        <div class="section-header section-breaking">
+          <span class="section-icon">🟡</span>
+          <span class="section-title">Breaking Changes — Review Required</span>
+        </div>
+
+        <div class="package-card breaking expanded" data-package="react-query" data-category="breaking">
+          <div class="package-header">
+            <div class="package-info">
+              <div class="package-name">
+                <span class="name">@tanstack/react-query</span>
+                <span class="version-badge">3.39.3 → 5.28.0</span>
+              </div>
+              <div class="package-meta">
+                <span class="tag tag-breaking">Major Version</span>
+                <span class="impact-count">⚠️ 12 files, 34 usages</span>
+              </div>
+            </div>
+            <div class="package-actions">
+              <button class="btn btn-small btn-primary">Migration Guide</button>
+              <button class="btn btn-small btn-outline expand-btn">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="package-summary">
+            <p><strong>TL;DR:</strong> Major rewrite with new API. Package renamed from <code>react-query</code> to <code>@tanstack/react-query</code>. Query keys now required to be arrays.</p>
+          </div>
+          <div class="package-details">
+            <div class="detail-section">
+              <h4>Breaking Changes</h4>
+              <ul class="change-list">
+                <li class="change-breaking">
+                  <span class="change-type">RENAMED</span>
+                  <code>useQuery</code> signature changed — options now required as object
+                </li>
+                <li class="change-breaking">
+                  <span class="change-type">REMOVED</span>
+                  <code>QueryClient.cancelQueries()</code> replaced with <code>queryClient.cancelQueries({ queryKey })</code>
+                </li>
+                <li class="change-breaking">
+                  <span class="change-type">CHANGED</span>
+                  Query keys must be arrays: <code>['todos']</code> not <code>'todos'</code>
+                </li>
+              </ul>
+            </div>
+            <div class="detail-section">
+              <h4>Affected Files</h4>
+              <div class="file-list">
+                <div class="file-item">
+                  <code>src/hooks/useUserData.ts</code>
+                  <span class="usage-count">8 usages</span>
+                </div>
+                <div class="file-item">
+                  <code>src/hooks/useTodos.ts</code>
+                  <span class="usage-count">6 usages</span>
+                </div>
+                <div class="file-item">
+                  <code>src/components/Dashboard.tsx</code>
+                  <span class="usage-count">5 usages</span>
+                </div>
+                <div class="file-item more">
+                  <span>+ 9 more files</span>
+                </div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <h4>AI Migration Suggestion</h4>
+              <div class="code-block">
+                <div class="code-header">
+                  <span>Before → After</span>
+                  <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code><span class="code-comment">// Before (v3)</span>
+<span class="code-keyword">const</span> { data } = <span class="code-function">useQuery</span>(<span class="code-string">'todos'</span>, fetchTodos)
+
+<span class="code-comment">// After (v5)</span>
+<span class="code-keyword">const</span> { data } = <span class="code-function">useQuery</span>({
+  <span class="code-property">queryKey</span>: [<span class="code-string">'todos'</span>],
+  <span class="code-property">queryFn</span>: fetchTodos
+})</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="package-card breaking" data-package="next" data-category="breaking">
+          <div class="package-header">
+            <div class="package-info">
+              <div class="package-name">
+                <span class="name">next</span>
+                <span class="version-badge">13.5.6 → 14.1.0</span>
+              </div>
+              <div class="package-meta">
+                <span class="tag tag-breaking">Major Version</span>
+                <span class="impact-count">⚠️ 3 files affected</span>
+              </div>
+            </div>
+            <div class="package-actions">
+              <button class="btn btn-small btn-primary">Migration Guide</button>
+              <button class="btn btn-small btn-outline expand-btn">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="package-summary">
+            <p><strong>Node.js 18.17+ required.</strong> App Router is now stable. <code>next/image</code> improvements. Your project uses <code>getServerSideProps</code> which still works but is being phased out.</p>
+          </div>
+        </div>
+
+        <div class="package-card breaking" data-package="zod" data-category="breaking">
+          <div class="package-header">
+            <div class="package-info">
+              <div class="package-name">
+                <span class="name">zod</span>
+                <span class="version-badge">3.21.4 → 3.22.4</span>
+              </div>
+              <div class="package-meta">
+                <span class="tag tag-breaking">Minor Breaking</span>
+                <span class="impact-count">⚠️ 1 file affected</span>
+              </div>
+            </div>
+            <div class="package-actions">
+              <button class="btn btn-small btn-outline">View Details</button>
+              <button class="btn btn-small btn-warning">Review & Update</button>
+            </div>
+          </div>
+          <div class="package-summary">
+            <p><strong>Stricter email validation.</strong> <code>z.string().email()</code> now rejects some edge-case emails. Your validation in <code>src/forms/signup.ts</code> may reject previously-valid inputs.</p>
+          </div>
+        </div>
+
+        <!-- Safe Section -->
+        <div class="section-header section-safe">
+          <span class="section-icon">🟢</span>
+          <span class="section-title">Safe Updates — No Breaking Changes</span>
+          <button class="btn btn-small btn-success section-action">Update All (18)</button>
+        </div>
+
+        <div class="safe-packages-grid">
+          <div class="safe-package" data-package="typescript" data-category="safe">
+            <span class="name">typescript</span>
+            <span class="version">5.3.2 → 5.4.2</span>
+            <span class="tag tag-safe">Patch</span>
+          </div>
+          <div class="safe-package" data-package="eslint" data-category="safe">
+            <span class="name">eslint</span>
+            <span class="version">8.55.0 → 8.57.0</span>
+            <span class="tag tag-safe">Minor</span>
+          </div>
+          <div class="safe-package" data-package="prettier" data-category="safe">
+            <span class="name">prettier</span>
+            <span class="version">3.1.0 → 3.2.5</span>
+            <span class="tag tag-safe">Minor</span>
+          </div>
+          <div class="safe-package" data-package="tailwindcss" data-category="safe">
+            <span class="name">tailwindcss</span>
+            <span class="version">3.4.0 → 3.4.1</span>
+            <span class="tag tag-safe">Patch</span>
+          </div>
+          <div class="safe-package" data-package="react-dom" data-category="safe">
+            <span class="name">react-dom</span>
+            <span class="version">18.2.0 → 18.2.0</span>
+            <span class="tag tag-uptodate">Up to date</span>
+          </div>
+          <div class="safe-package" data-package="vitest" data-category="safe">
+            <span class="name">vitest</span>
+            <span class="version">1.1.0 → 1.3.1</span>
+            <span class="tag tag-safe">Minor</span>
+          </div>
+          <div class="safe-package" data-package="date-fns" data-category="safe">
+            <span class="name">date-fns</span>
+            <span class="version">3.0.0 → 3.3.1</span>
+            <span class="tag tag-safe">Minor</span>
+          </div>
+          <div class="safe-package" data-package="framer-motion" data-category="safe">
+            <span class="name">framer-motion</span>
+            <span class="version">10.16.16 → 11.0.8</span>
+            <span class="tag tag-safe">Minor</span>
+          </div>
+        </div>
+
+        <button class="show-more-btn" id="showMoreSafe">Show 10 more safe packages...</button>
+      </div>
+    </main>
+
+    <!-- Scan Modal -->
+    <div class="modal-overlay" id="scanModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Scanning Dependencies...</h3>
+        </div>
+        <div class="modal-body">
+          <div class="scan-progress">
+            <div class="scan-step completed">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" stroke="#22C55E" stroke-width="2"/>
+                <path d="M6 10l2.5 2.5L14 7" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>Reading package.json</span>
+            </div>
+            <div class="scan-step completed">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" stroke="#22C55E" stroke-width="2"/>
+                <path d="M6 10l2.5 2.5L14 7" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>Fetching latest versions</span>
+            </div>
+            <div class="scan-step active">
+              <div class="spinner"></div>
+              <span>Analyzing changelogs with AI...</span>
+            </div>
+            <div class="scan-step">
+              <div class="step-circle"></div>
+              <span>Scanning codebase for impact</span>
+            </div>
+            <div class="scan-step">
+              <div class="step-circle"></div>
+              <span>Generating migration guides</span>
+            </div>
+          </div>
+          <div class="scan-package">
+            <span class="current-package">@tanstack/react-query</span>
+            <span class="package-progress">12 of 23</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" id="cancelScan">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast" id="toast">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="9" stroke="#22C55E" stroke-width="2"/>
+        <path d="M6 10l2.5 2.5L14 7" stroke="#22C55E" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>18 packages updated successfully!</span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
