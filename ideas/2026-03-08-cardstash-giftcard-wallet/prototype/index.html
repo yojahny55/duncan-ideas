@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardStash - Gift Card Wallet</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">💳</span>
+          <span class="logo-text">CardStash</span>
+        </div>
+        <button class="btn-icon" aria-label="Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Value Summary -->
+      <section class="value-summary">
+        <div class="value-card">
+          <span class="value-label">Total Available</span>
+          <span class="value-amount" id="totalValue">$287.50</span>
+          <div class="value-stats">
+            <span class="stat">
+              <span class="stat-value" id="cardCount">8</span>
+              <span class="stat-label">cards</span>
+            </span>
+            <span class="stat-divider"></span>
+            <span class="stat">
+              <span class="stat-value" id="usedThisMonth">$45</span>
+              <span class="stat-label">used this month</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alerts -->
+      <section class="alerts" id="alertsSection">
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <span class="alert-title">Expires in 7 days</span>
+            <span class="alert-subtitle">Starbucks - $15.00</span>
+          </div>
+          <button class="alert-action">Use Now</button>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">📍</span>
+          <div class="alert-content">
+            <span class="alert-title">You're near Target</span>
+            <span class="alert-subtitle">You have $50.00 available</span>
+          </div>
+          <button class="alert-action">Show Card</button>
+        </div>
+      </section>
+
+      <!-- Filter Tabs -->
+      <section class="filter-tabs">
+        <button class="tab active" data-filter="all">All</button>
+        <button class="tab" data-filter="retail">Retail</button>
+        <button class="tab" data-filter="food">Food</button>
+        <button class="tab" data-filter="entertainment">Entertainment</button>
+      </section>
+
+      <!-- Cards List -->
+      <section class="cards-list" id="cardsList">
+        <!-- Cards will be rendered here -->
+      </section>
+    </main>
+
+    <!-- Add Card FAB -->
+    <button class="fab" id="addCardBtn" aria-label="Add card">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Cards</span>
+      </button>
+      <button class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>Nearby</span>
+      </button>
+      <button class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        <span>Insights</span>
+      </button>
+    </nav>
+
+    <!-- Add Card Modal -->
+    <div class="modal" id="addCardModal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Add Gift Card</h2>
+          <button class="btn-close" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="add-options">
+            <button class="add-option" id="scanOption">
+              <span class="add-option-icon">📷</span>
+              <span class="add-option-text">Scan Card</span>
+              <span class="add-option-desc">Use camera to scan barcode</span>
+            </button>
+            <button class="add-option" id="manualOption">
+              <span class="add-option-icon">✏️</span>
+              <span class="add-option-text">Enter Manually</span>
+              <span class="add-option-desc">Type in card details</span>
+            </button>
+            <button class="add-option" id="emailOption">
+              <span class="add-option-icon">📧</span>
+              <span class="add-option-text">Import from Email</span>
+              <span class="add-option-desc">Forward confirmation emails</span>
+            </button>
+          </div>
+
+          <!-- Manual Entry Form (hidden by default) -->
+          <form class="add-form hidden" id="manualForm">
+            <div class="form-group">
+              <label for="retailer">Retailer</label>
+              <input type="text" id="retailer" placeholder="e.g., Amazon, Target, Starbucks" list="retailers" required>
+              <datalist id="retailers">
+                <option value="Amazon">
+                <option value="Target">
+                <option value="Walmart">
+                <option value="Starbucks">
+                <option value="Best Buy">
+                <option value="Apple">
+                <option value="Nike">
+                <option value="Sephora">
+                <option value="Chipotle">
+                <option value="Netflix">
+              </datalist>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="balance">Balance</label>
+                <div class="input-prefix">
+                  <span>$</span>
+                  <input type="number" id="balance" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="expiration">Expires</label>
+                <input type="date" id="expiration">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cardNumber">Card Number (optional)</label>
+              <input type="text" id="cardNumber" placeholder="Last 4 digits or full number">
+            </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category">
+                <option value="retail">Retail</option>
+                <option value="food">Food & Dining</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="travel">Travel</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary">Add Card</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Detail Modal -->
+    <div class="modal" id="cardDetailModal">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content modal-card-detail">
+        <div class="modal-header">
+          <h2 id="detailRetailer">Retailer</h2>
+          <button class="btn-close" id="closeDetailModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="card-detail-visual" id="detailVisual">
+            <div class="card-visual-balance" id="detailBalance">$50.00</div>
+            <div class="card-visual-barcode">
+              <div class="barcode"></div>
+              <span id="detailCardNumber">**** 1234</span>
+            </div>
+          </div>
+          <div class="card-detail-info">
+            <div class="detail-row">
+              <span class="detail-label">Expires</span>
+              <span class="detail-value" id="detailExpiration">Dec 31, 2026</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Category</span>
+              <span class="detail-value" id="detailCategory">Retail</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Added</span>
+              <span class="detail-value" id="detailAdded">Mar 1, 2026</span>
+            </div>
+          </div>
+          <div class="card-detail-actions">
+            <button class="btn-secondary" id="updateBalanceBtn">Update Balance</button>
+            <button class="btn-outline" id="checkBalanceBtn">Check Balance Online</button>
+            <button class="btn-danger" id="deleteCardBtn">Remove Card</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast hidden" id="toast">
+      <span class="toast-message"></span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
