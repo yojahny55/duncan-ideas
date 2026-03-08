@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobPulse - Your Job Search Command Center</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">📊</span>
+                <span class="logo-text">JobPulse</span>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-view="pipeline">
+                    <span class="nav-icon">📋</span>
+                    <span>Pipeline</span>
+                </a>
+                <a href="#" class="nav-item" data-view="analytics">
+                    <span class="nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="nav-item" data-view="reminders">
+                    <span class="nav-icon">⏰</span>
+                    <span>Reminders</span>
+                </a>
+                <a href="#" class="nav-item" data-view="interviews">
+                    <span class="nav-icon">💬</span>
+                    <span>Interviews</span>
+                </a>
+            </nav>
+            <div class="sidebar-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalApps">0</span>
+                    <span class="stat-label">Applications</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="responseRate">0%</span>
+                    <span class="stat-label">Response Rate</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    <h1 id="viewTitle">Application Pipeline</h1>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" id="addAppBtn">
+                        <span>+ Add Application</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Pipeline View -->
+            <div class="view" id="pipelineView">
+                <div class="kanban">
+                    <div class="kanban-column" data-status="applied">
+                        <div class="column-header">
+                            <span class="column-title">Applied</span>
+                            <span class="column-count" id="appliedCount">0</span>
+                        </div>
+                        <div class="column-cards" id="appliedCards"></div>
+                    </div>
+                    <div class="kanban-column" data-status="screening">
+                        <div class="column-header">
+                            <span class="column-title">Phone Screen</span>
+                            <span class="column-count" id="screeningCount">0</span>
+                        </div>
+                        <div class="column-cards" id="screeningCards"></div>
+                    </div>
+                    <div class="kanban-column" data-status="interview">
+                        <div class="column-header">
+                            <span class="column-title">Interview</span>
+                            <span class="column-count" id="interviewCount">0</span>
+                        </div>
+                        <div class="column-cards" id="interviewCards"></div>
+                    </div>
+                    <div class="kanban-column" data-status="offer">
+                        <div class="column-header">
+                            <span class="column-title">Offer</span>
+                            <span class="column-count" id="offerCount">0</span>
+                        </div>
+                        <div class="column-cards" id="offerCards"></div>
+                    </div>
+                    <div class="kanban-column" data-status="rejected">
+                        <div class="column-header">
+                            <span class="column-title">Rejected</span>
+                            <span class="column-count" id="rejectedCount">0</span>
+                        </div>
+                        <div class="column-cards" id="rejectedCards"></div>
+                    </div>
+                    <div class="kanban-column" data-status="ghosted">
+                        <div class="column-header">
+                            <span class="column-title">Ghosted</span>
+                            <span class="column-count" id="ghostedCount">0</span>
+                        </div>
+                        <div class="column-cards" id="ghostedCards"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div class="view hidden" id="analyticsView">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Applications This Week</h3>
+                        <div class="analytics-value" id="weeklyApps">0</div>
+                        <div class="analytics-chart" id="weeklyChart"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Response Rate by Source</h3>
+                        <div class="source-bars" id="sourceBars"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Time to Response</h3>
+                        <div class="analytics-value" id="avgResponse">— days</div>
+                        <p class="analytics-note">Average time to first response</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Interview Conversion</h3>
+                        <div class="analytics-value" id="interviewConversion">0%</div>
+                        <p class="analytics-note">Applications → Interviews</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reminders View -->
+            <div class="view hidden" id="remindersView">
+                <div class="reminders-list">
+                    <div class="reminder-section">
+                        <h3>🔴 Overdue Follow-ups</h3>
+                        <div id="overdueReminders"></div>
+                    </div>
+                    <div class="reminder-section">
+                        <h3>🟡 Follow Up Today</h3>
+                        <div id="todayReminders"></div>
+                    </div>
+                    <div class="reminder-section">
+                        <h3>🟢 Upcoming This Week</h3>
+                        <div id="upcomingReminders"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interviews View -->
+            <div class="view hidden" id="interviewsView">
+                <div class="interviews-list" id="interviewsList">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Application Modal -->
+    <div class="modal-overlay hidden" id="addModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Add Application</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <form id="addAppForm">
+                <div class="form-group">
+                    <label>Company *</label>
+                    <input type="text" name="company" required placeholder="e.g., Stripe">
+                </div>
+                <div class="form-group">
+                    <label>Role *</label>
+                    <input type="text" name="role" required placeholder="e.g., Senior Software Engineer">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Source</label>
+                        <select name="source">
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="indeed">Indeed</option>
+                            <option value="company">Company Site</option>
+                            <option value="referral">Referral</option>
+                            <option value="recruiter">Recruiter</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Salary Range</label>
+                        <input type="text" name="salary" placeholder="e.g., $150k-180k">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Resume Used</label>
+                    <select name="resume">
+                        <option value="main">Main Resume</option>
+                        <option value="tech">Tech-focused</option>
+                        <option value="leadership">Leadership-focused</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea name="notes" placeholder="Any initial notes, contacts, etc."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="setReminder" checked>
+                        Set follow-up reminder (3 days)
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAdd">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Detail Modal -->
+    <div class="modal-overlay hidden" id="detailModal">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h2 id="detailTitle">Company Name</h2>
+                <button class="modal-close" id="closeDetail">&times;</button>
+            </div>
+            <div class="detail-content">
+                <div class="detail-meta">
+                    <span class="detail-role" id="detailRole"></span>
+                    <span class="detail-status" id="detailStatus"></span>
+                </div>
+                <div class="detail-info">
+                    <div class="info-row">
+                        <span class="info-label">Applied:</span>
+                        <span class="info-value" id="detailDate"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Source:</span>
+                        <span class="info-value" id="detailSource"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Salary:</span>
+                        <span class="info-value" id="detailSalary"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Resume:</span>
+                        <span class="info-value" id="detailResume"></span>
+                    </div>
+                </div>
+                <div class="detail-notes">
+                    <h4>Notes</h4>
+                    <textarea id="detailNotes" placeholder="Add notes, interview feedback, contacts..."></textarea>
+                </div>
+                <div class="detail-timeline">
+                    <h4>Timeline</h4>
+                    <div id="detailTimeline"></div>
+                </div>
+                <div class="detail-actions">
+                    <select id="statusChange">
+                        <option value="applied">Applied</option>
+                        <option value="screening">Phone Screen</option>
+                        <option value="interview">Interview</option>
+                        <option value="offer">Offer</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="ghosted">Ghosted</option>
+                    </select>
+                    <button class="btn btn-primary" id="updateStatus">Update Status</button>
+                    <button class="btn btn-danger" id="deleteApp">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
