@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TruckStock — Food Truck Inventory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="app">
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C7.46 3 3.34 4.78.29 7.67c-.18.18-.29.43-.29.71 0 .28.11.53.29.71l11 11c.39.39 1.02.39 1.41 0l11-11c.18-.18.29-.43.29-.71 0-.28-.11-.53-.29-.71C20.66 4.78 16.54 3 12 3z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2 22h20V2H2v20zm18-2H4V4h16v16z"/><path d="M6 20h12V6H6v14z"/></svg>
+          <span class="battery">87%</span>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <h1>🚚 TruckStock</h1>
+          <span class="event-badge" id="currentEvent">Farmers Market</span>
+        </div>
+        <button class="icon-btn" id="settingsBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </header>
+
+      <!-- Weather & Capacity Bar -->
+      <div class="info-bar">
+        <div class="weather-card">
+          <span class="weather-icon">☀️</span>
+          <div class="weather-info">
+            <span class="weather-temp">72°F</span>
+            <span class="weather-label">High demand day</span>
+          </div>
+        </div>
+        <div class="capacity-card">
+          <div class="capacity-header">
+            <span>Truck Capacity</span>
+            <span class="capacity-pct">68%</span>
+          </div>
+          <div class="capacity-bar">
+            <div class="capacity-fill" style="width: 68%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert Banner -->
+      <div class="alert-banner" id="alertBanner">
+        <span class="alert-icon">⚠️</span>
+        <span class="alert-text"><strong>2 items</strong> below par level</span>
+        <button class="alert-action" id="viewAlerts">View</button>
+      </div>
+
+      <!-- Nav Tabs -->
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="inventory">Inventory</button>
+        <button class="nav-tab" data-tab="prep">Prep Calc</button>
+        <button class="nav-tab" data-tab="history">History</button>
+      </nav>
+
+      <!-- Tab Content -->
+      <main class="tab-content">
+        <!-- Inventory Tab -->
+        <div class="tab-panel active" id="inventory">
+          <div class="search-bar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search items..." id="searchInput">
+          </div>
+
+          <div class="inventory-list" id="inventoryList">
+            <!-- Items injected by JS -->
+          </div>
+
+          <button class="fab" id="addItemBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+
+        <!-- Prep Calculator Tab -->
+        <div class="tab-panel" id="prep">
+          <div class="prep-form">
+            <div class="form-group">
+              <label>Event Type</label>
+              <select id="eventType">
+                <option value="farmers-market">Farmers Market</option>
+                <option value="food-truck-rally">Food Truck Rally</option>
+                <option value="festival">Festival / Fair</option>
+                <option value="corporate">Corporate Event</option>
+                <option value="private">Private Party</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Expected Attendees</label>
+              <input type="number" id="attendees" placeholder="e.g., 500" value="500">
+            </div>
+
+            <div class="form-group">
+              <label>Event Duration</label>
+              <select id="duration">
+                <option value="2">2 hours</option>
+                <option value="4" selected>4 hours</option>
+                <option value="6">6 hours</option>
+                <option value="8">8 hours</option>
+              </select>
+            </div>
+
+            <div class="weather-note">
+              <span class="weather-icon">☀️</span>
+              <span>Sunny, 72°F — +20% demand expected</span>
+            </div>
+
+            <button class="btn-primary" id="calculatePrep">Calculate Prep Amounts</button>
+          </div>
+
+          <div class="prep-results hidden" id="prepResults">
+            <h3>Recommended Prep</h3>
+            <div class="prep-list" id="prepList">
+              <!-- Prep items injected by JS -->
+            </div>
+            <button class="btn-secondary" id="applyPrep">Apply to Shopping List</button>
+          </div>
+        </div>
+
+        <!-- History Tab -->
+        <div class="tab-panel" id="history">
+          <div class="history-list">
+            <div class="history-item">
+              <div class="history-date">
+                <span class="day">Sat</span>
+                <span class="date">Mar 8</span>
+              </div>
+              <div class="history-content">
+                <div class="history-event">Farmers Market</div>
+                <div class="history-stats">
+                  <span>127 items sold</span>
+                  <span class="divider">•</span>
+                  <span>$847 revenue</span>
+                </div>
+                <div class="history-waste">
+                  <span class="waste-label">Waste:</span>
+                  <span class="waste-value low">3%</span>
+                </div>
+              </div>
+              <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+
+            <div class="history-item">
+              <div class="history-date">
+                <span class="day">Fri</span>
+                <span class="date">Mar 7</span>
+              </div>
+              <div class="history-content">
+                <div class="history-event">Food Truck Rally</div>
+                <div class="history-stats">
+                  <span>243 items sold</span>
+                  <span class="divider">•</span>
+                  <span>$1,521 revenue</span>
+                </div>
+                <div class="history-waste">
+                  <span class="waste-label">Waste:</span>
+                  <span class="waste-value medium">8%</span>
+                </div>
+              </div>
+              <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+
+            <div class="history-item">
+              <div class="history-date">
+                <span class="day">Wed</span>
+                <span class="date">Mar 5</span>
+              </div>
+              <div class="history-content">
+                <div class="history-event">Corporate Lunch</div>
+                <div class="history-stats">
+                  <span>85 items sold</span>
+                  <span class="divider">•</span>
+                  <span>$680 revenue</span>
+                </div>
+                <div class="history-waste">
+                  <span class="waste-label">Waste:</span>
+                  <span class="waste-value low">2%</span>
+                </div>
+              </div>
+              <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Quick Count Modal -->
+      <div class="modal-overlay hidden" id="quickCountModal">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 id="modalItemName">Item Name</h3>
+            <button class="close-btn" id="closeModal">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="count-display">
+              <button class="count-btn minus" id="countMinus">−</button>
+              <div class="count-value">
+                <span id="countNumber">0</span>
+                <span class="count-unit" id="countUnit">units</span>
+              </div>
+              <button class="count-btn plus" id="countPlus">+</button>
+            </div>
+            <div class="par-info">
+              <span>Par level: <strong id="parLevel">0</strong></span>
+              <span id="parStatus" class="par-status">OK</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary" id="logWaste">Log Waste</button>
+            <button class="btn-primary" id="saveCount">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Item Modal -->
+      <div class="modal-overlay hidden" id="addItemModal">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>Add Item</h3>
+            <button class="close-btn" id="closeAddModal">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Item Name</label>
+              <input type="text" id="newItemName" placeholder="e.g., Burger Patties">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" id="newItemQty" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label>Unit</label>
+                <select id="newItemUnit">
+                  <option>units</option>
+                  <option>lbs</option>
+                  <option>oz</option>
+                  <option>portions</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Par Level (minimum stock)</label>
+              <input type="number" id="newItemPar" placeholder="e.g., 50">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="newItemCategory">
+                <option value="protein">🥩 Protein</option>
+                <option value="produce">🥬 Produce</option>
+                <option value="dairy">🧀 Dairy</option>
+                <option value="dry">🌾 Dry Goods</option>
+                <option value="sauce">🫙 Sauces</option>
+                <option value="other">📦 Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary" id="cancelAdd">Cancel</button>
+            <button class="btn-primary" id="confirmAdd">Add Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
