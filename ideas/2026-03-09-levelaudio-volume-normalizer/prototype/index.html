@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LevelAudio — Automatic Volume Normalizer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🎚️</span>
+                <span class="logo-text">LevelAudio</span>
+            </div>
+            <div class="header-subtitle">Automatic Volume Normalizer</div>
+        </header>
+
+        <!-- Main Control Panel -->
+        <main class="main-panel">
+            <!-- Power Toggle -->
+            <div class="power-section">
+                <button class="power-toggle" id="powerToggle">
+                    <span class="power-icon">⏻</span>
+                </button>
+                <div class="power-label" id="powerLabel">Off</div>
+            </div>
+
+            <!-- Audio Visualization -->
+            <div class="visualization-section">
+                <div class="viz-header">
+                    <span class="viz-label">Input</span>
+                    <span class="viz-label">Output</span>
+                </div>
+                <div class="viz-container">
+                    <div class="waveform input-wave" id="inputWave">
+                        <div class="wave-bars" id="inputBars"></div>
+                    </div>
+                    <div class="compression-indicator">
+                        <div class="compression-arrow">→</div>
+                        <div class="compression-value" id="compressionValue">0 dB</div>
+                    </div>
+                    <div class="waveform output-wave" id="outputWave">
+                        <div class="wave-bars" id="outputBars"></div>
+                    </div>
+                </div>
+                <div class="gain-reduction">
+                    <span class="gr-label">Gain Reduction</span>
+                    <div class="gr-meter">
+                        <div class="gr-bar" id="grBar"></div>
+                    </div>
+                    <span class="gr-value" id="grValue">0 dB</span>
+                </div>
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="modes-section">
+                <h3 class="section-title">Mode</h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" data-mode="night">
+                        <span class="mode-icon">🌙</span>
+                        <span class="mode-name">Night</span>
+                    </button>
+                    <button class="mode-btn" data-mode="movie">
+                        <span class="mode-icon">🎬</span>
+                        <span class="mode-name">Movie</span>
+                    </button>
+                    <button class="mode-btn" data-mode="music">
+                        <span class="mode-icon">🎵</span>
+                        <span class="mode-name">Music</span>
+                    </button>
+                    <button class="mode-btn" data-mode="game">
+                        <span class="mode-icon">🎮</span>
+                        <span class="mode-name">Game</span>
+                    </button>
+                    <button class="mode-btn" data-mode="speech">
+                        <span class="mode-icon">🎙️</span>
+                        <span class="mode-name">Speech</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Compression Strength -->
+            <div class="slider-section">
+                <div class="slider-header">
+                    <span class="slider-label">Compression Strength</span>
+                    <span class="slider-value" id="strengthValue">50%</span>
+                </div>
+                <input type="range" class="slider" id="strengthSlider" min="0" max="100" value="50">
+                <div class="slider-hints">
+                    <span>Light</span>
+                    <span>Heavy</span>
+                </div>
+            </div>
+
+            <!-- Max Volume -->
+            <div class="slider-section">
+                <div class="slider-header">
+                    <span class="slider-label">Max Volume</span>
+                    <span class="slider-value" id="maxVolValue">-6 dB</span>
+                </div>
+                <input type="range" class="slider" id="maxVolSlider" min="-20" max="0" value="-6">
+                <div class="slider-hints">
+                    <span>Quieter</span>
+                    <span>Louder</span>
+                </div>
+            </div>
+
+            <!-- Dialog Enhancement -->
+            <div class="toggle-section">
+                <div class="toggle-info">
+                    <span class="toggle-label">Dialog Enhancement</span>
+                    <span class="toggle-desc">Boost voice frequencies for clearer speech</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dialogToggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <!-- Current App -->
+            <div class="current-app">
+                <div class="app-icon">▶️</div>
+                <div class="app-info">
+                    <span class="app-name">Netflix</span>
+                    <span class="app-status">Active • Night Mode</span>
+                </div>
+                <div class="app-profile-btn">Edit Profile</div>
+            </div>
+        </main>
+
+        <!-- Before/After Demo -->
+        <section class="demo-section">
+            <h3 class="section-title">See the Difference</h3>
+            <div class="demo-container">
+                <div class="demo-panel">
+                    <div class="demo-label">Without LevelAudio</div>
+                    <div class="demo-viz" id="demoWithout">
+                        <div class="demo-bars"></div>
+                    </div>
+                    <div class="demo-desc">
+                        <span class="loud-warning">⚠️ Sudden loud peaks</span>
+                        <span class="quiet-warning">🔇 Can't hear dialogue</span>
+                    </div>
+                </div>
+                <div class="demo-panel with-levelaudio">
+                    <div class="demo-label">With LevelAudio</div>
+                    <div class="demo-viz" id="demoWith">
+                        <div class="demo-bars"></div>
+                    </div>
+                    <div class="demo-desc">
+                        <span class="good-indicator">✓ Consistent volume</span>
+                        <span class="good-indicator">✓ Clear dialogue</span>
+                    </div>
+                </div>
+            </div>
+            <button class="demo-btn" id="playDemo">▶ Play Demo</button>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-stats">
+                <div class="stat">
+                    <span class="stat-value">2.3 hrs</span>
+                    <span class="stat-label">Today's Usage</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">847</span>
+                    <span class="stat-label">Peaks Smoothed</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">-12 dB</span>
+                    <span class="stat-label">Avg Reduction</span>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Settings</a>
+                <a href="#" class="footer-link">Per-App Profiles</a>
+                <a href="#" class="footer-link">About</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
