@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutageProof — ISP Accountability Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <span>OutageProof</span>
+            </div>
+            
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-view="timeline">
+                    <span class="nav-icon">📅</span>
+                    Timeline
+                </a>
+                <a href="#" class="nav-item" data-view="reports">
+                    <span class="nav-icon">📄</span>
+                    Reports
+                </a>
+                <a href="#" class="nav-item" data-view="settings">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+            </nav>
+            
+            <div class="isp-info">
+                <div class="isp-label">Your ISP</div>
+                <div class="isp-name">Spectrum Cable</div>
+                <div class="isp-plan">200 Mbps Plan</div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Connection Dashboard</h1>
+                    <p class="subtitle">Monitoring since March 1, 2026</p>
+                </div>
+                <div class="header-right">
+                    <div class="status-badge online">
+                        <span class="status-dot"></span>
+                        Online
+                    </div>
+                    <button class="btn btn-primary" id="generateReport">
+                        📄 Generate Report
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Dashboard View -->
+            <div class="view active" id="dashboard-view">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon uptime">✓</div>
+                        <div class="stat-content">
+                            <div class="stat-value">97.2%</div>
+                            <div class="stat-label">Uptime This Month</div>
+                            <div class="stat-change negative">-2.8% vs promised 99.9%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon outages">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-value">7</div>
+                            <div class="stat-label">Outages This Month</div>
+                            <div class="stat-change negative">+3 vs last month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon time">⏱️</div>
+                        <div class="stat-content">
+                            <div class="stat-value">4h 12m</div>
+                            <div class="stat-label">Total Downtime</div>
+                            <div class="stat-change">~12 min avg per outage</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card highlight">
+                        <div class="stat-icon money">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-value">$315</div>
+                            <div class="stat-label">Estimated Impact</div>
+                            <div class="stat-change">Based on $75/hr rate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLA Violation Alert -->
+                <div class="alert alert-warning">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <div class="alert-title">SLA Violation Detected</div>
+                        <div class="alert-text">Your ISP promises 99.9% uptime. You're at 97.2% — that's a 2.7% shortfall. You may be eligible for a service credit of approximately <strong>$8.10</strong> based on your $90/mo plan.</div>
+                    </div>
+                    <button class="btn btn-outline">Request Credit</button>
+                </div>
+                
+                <!-- Recent Outages -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Recent Outages</h2>
+                        <a href="#" class="link">View all →</a>
+                    </div>
+                    
+                    <div class="outage-list">
+                        <div class="outage-item">
+                            <div class="outage-severity high"></div>
+                            <div class="outage-info">
+                                <div class="outage-time">Today, 2:34 PM</div>
+                                <div class="outage-duration">47 minutes</div>
+                            </div>
+                            <div class="outage-type">Full Outage</div>
+                            <div class="outage-context">
+                                <span class="context-tag">💼 Work Meeting</span>
+                            </div>
+                            <div class="outage-impact">-$58.75</div>
+                        </div>
+                        
+                        <div class="outage-item">
+                            <div class="outage-severity medium"></div>
+                            <div class="outage-info">
+                                <div class="outage-time">Yesterday, 9:12 AM</div>
+                                <div class="outage-duration">12 minutes</div>
+                            </div>
+                            <div class="outage-type">Speed Drop (15 Mbps)</div>
+                            <div class="outage-context">
+                                <span class="context-tag">🎮 Gaming</span>
+                            </div>
+                            <div class="outage-impact">-$15.00</div>
+                        </div>
+                        
+                        <div class="outage-item">
+                            <div class="outage-severity high"></div>
+                            <div class="outage-info">
+                                <div class="outage-time">Mar 7, 11:45 PM</div>
+                                <div class="outage-duration">1h 23m</div>
+                            </div>
+                            <div class="outage-type">Full Outage</div>
+                            <div class="outage-context">
+                                <span class="context-tag">🎬 Streaming</span>
+                            </div>
+                            <div class="outage-impact">-$103.75</div>
+                        </div>
+                        
+                        <div class="outage-item">
+                            <div class="outage-severity low"></div>
+                            <div class="outage-info">
+                                <div class="outage-time">Mar 6, 3:22 PM</div>
+                                <div class="outage-duration">3 minutes</div>
+                            </div>
+                            <div class="outage-type">Intermittent</div>
+                            <div class="outage-context">
+                                <span class="context-tag">🌐 Browsing</span>
+                            </div>
+                            <div class="outage-impact">-$3.75</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Speed Graph -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Speed Over Time</h2>
+                        <div class="time-filters">
+                            <button class="time-btn active">24h</button>
+                            <button class="time-btn">7d</button>
+                            <button class="time-btn">30d</button>
+                        </div>
+                    </div>
+                    
+                    <div class="speed-chart">
+                        <div class="chart-y-axis">
+                            <span>200</span>
+                            <span>150</span>
+                            <span>100</span>
+                            <span>50</span>
+                            <span>0</span>
+                        </div>
+                        <div class="chart-area">
+                            <div class="promised-line" style="bottom: 100%">
+                                <span class="promised-label">Promised: 200 Mbps</span>
+                            </div>
+                            <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path class="chart-line" d="M0,10 L5,12 L10,8 L15,15 L20,10 L25,12 L30,80 L35,85 L40,20 L45,15 L50,18 L55,12 L60,10 L65,15 L70,8 L75,12 L80,10 L85,15 L90,12 L95,10 L100,8"></path>
+                                <path class="chart-fill" d="M0,10 L5,12 L10,8 L15,15 L20,10 L25,12 L30,80 L35,85 L40,20 L45,15 L50,18 L55,12 L60,10 L65,15 L70,8 L75,12 L80,10 L85,15 L90,12 L95,10 L100,8 L100,100 L0,100 Z"></path>
+                            </svg>
+                            <div class="outage-marker" style="left: 30%">
+                                <div class="marker-dot"></div>
+                                <div class="marker-tooltip">Outage: 47 min</div>
+                            </div>
+                        </div>
+                        <div class="chart-x-axis">
+                            <span>12 AM</span>
+                            <span>6 AM</span>
+                            <span>12 PM</span>
+                            <span>6 PM</span>
+                            <span>Now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Report Modal -->
+            <div class="modal" id="reportModal">
+                <div class="modal-backdrop"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Generate Evidence Report</h2>
+                        <button class="modal-close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Date Range</label>
+                            <div class="date-range">
+                                <input type="date" value="2026-03-01">
+                                <span>to</span>
+                                <input type="date" value="2026-03-09">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Report Type</label>
+                            <div class="radio-group">
+                                <label class="radio-item">
+                                    <input type="radio" name="report-type" checked>
+                                    <span>Refund Request</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="report-type">
+                                    <span>FCC Complaint</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="report-type">
+                                    <span>Full Statistics</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Include in Report</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked>
+                                    <span>Outage timeline</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked>
+                                    <span>Financial impact</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked>
+                                    <span>SLA violations</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox">
+                                    <span>Speed test results</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="report-preview">
+                            <div class="preview-header">
+                                <span class="preview-icon">📄</span>
+                                <div>
+                                    <div class="preview-title">OutageProof_Report_Mar2026.pdf</div>
+                                    <div class="preview-meta">7 outages • 4h 12m downtime • $315 impact</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline modal-cancel">Cancel</button>
+                        <button class="btn btn-primary">Download PDF</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
