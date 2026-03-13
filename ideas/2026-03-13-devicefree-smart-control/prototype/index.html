@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeviceFree — Control Smart Devices Without Their Apps</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="time" id="currentTime">9:41</span>
+            <div class="status-icons">
+                <span class="wifi-icon">📶</span>
+                <span class="battery">🔋</span>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>DeviceFree</h1>
+                <span class="connection-badge">
+                    <span class="pulse"></span>
+                    LAN Only
+                </span>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn scan-btn" id="scanBtn" title="Scan Network">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat">
+                <span class="stat-number" id="totalDevices">12</span>
+                <span class="stat-label">Devices</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="onlineDevices">10</span>
+                <span class="stat-label">Online</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">0</span>
+                <span class="stat-label">Accounts</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">0</span>
+                <span class="stat-label">Cloud</span>
+            </div>
+        </div>
+
+        <!-- Scene Bar -->
+        <div class="scene-bar">
+            <button class="scene-pill active" data-scene="home">🏠 Home</button>
+            <button class="scene-pill" data-scene="movie">🎬 Movie Night</button>
+            <button class="scene-pill" data-scene="sleep">🌙 Goodnight</button>
+            <button class="scene-pill" data-scene="away">🔒 Away</button>
+        </div>
+
+        <!-- Room Tabs -->
+        <div class="room-tabs" id="roomTabs">
+            <button class="room-tab active" data-room="all">All</button>
+            <button class="room-tab" data-room="living">Living Room</button>
+            <button class="room-tab" data-room="bedroom">Bedroom</button>
+            <button class="room-tab" data-room="kitchen">Kitchen</button>
+            <button class="room-tab" data-room="office">Office</button>
+        </div>
+
+        <!-- Device Grid -->
+        <div class="device-grid" id="deviceGrid">
+            <!-- Devices populated by JS -->
+        </div>
+
+        <!-- Device Control Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="deviceModal">
+                <div class="modal-header">
+                    <div class="modal-title-row">
+                        <span class="modal-icon" id="modalIcon">💡</span>
+                        <div>
+                            <h2 id="modalName">Device Name</h2>
+                            <span class="modal-brand" id="modalBrand">Brand • Protocol</span>
+                        </div>
+                    </div>
+                    <button class="modal-close" id="modalClose">✕</button>
+                </div>
+
+                <div class="modal-body" id="modalBody">
+                    <!-- Dynamic controls -->
+                </div>
+
+                <div class="modal-footer">
+                    <div class="connection-info">
+                        <span class="local-badge">🔒 Local Connection</span>
+                        <span class="latency" id="modalLatency">2ms</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scan Modal -->
+        <div class="modal-overlay" id="scanOverlay">
+            <div class="modal scan-modal">
+                <div class="scan-animation">
+                    <div class="radar">
+                        <div class="radar-sweep"></div>
+                        <div class="radar-ring r1"></div>
+                        <div class="radar-ring r2"></div>
+                        <div class="radar-ring r3"></div>
+                        <div class="radar-dot" id="dot1"></div>
+                        <div class="radar-dot" id="dot2"></div>
+                        <div class="radar-dot" id="dot3"></div>
+                    </div>
+                </div>
+                <h2>Scanning Network...</h2>
+                <p class="scan-status" id="scanStatus">Discovering devices on 192.168.1.0/24</p>
+                <div class="scan-found" id="scanFound"></div>
+                <button class="btn-primary" id="scanDone" style="display:none">Done</button>
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <button class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Devices</span>
+            </button>
+            <button class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span>Scenes</span>
+            </button>
+            <button class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                <span>Automate</span>
+            </button>
+            <button class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span>Network</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
