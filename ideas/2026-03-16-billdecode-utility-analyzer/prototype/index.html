@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BillDecode — AI Utility Bill Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Hero / Upload -->
+  <header class="hero">
+    <nav class="nav">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">BillDecode</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#pricing">Pricing</a>
+        <button class="btn btn-sm btn-outline">Sign In</button>
+      </div>
+    </nav>
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="badge">🔍 AI-Powered Bill Analysis</div>
+        <h1>Stop Overpaying on <span class="gradient-text">Utility Bills</span></h1>
+        <p class="hero-subtitle">Upload your bill. Get a plain-English breakdown, catch overcharges, and discover the cheapest rate plan — in seconds.</p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">$840</span>
+            <span class="stat-label">Avg. annual savings found</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">67%</span>
+            <span class="stat-label">Can't explain their bill</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">200+</span>
+            <span class="stat-label">Bill formats supported</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-upload">
+        <div class="upload-card" id="uploadCard">
+          <div class="upload-zone" id="uploadZone">
+            <div class="upload-icon">📄</div>
+            <h3>Drop your bill here</h3>
+            <p>PDF, photo, or screenshot</p>
+            <button class="btn btn-primary" id="uploadBtn">Choose File</button>
+            <span class="upload-hint">or drag & drop</span>
+          </div>
+          <div class="upload-processing hidden" id="uploadProcessing">
+            <div class="spinner"></div>
+            <p class="processing-text" id="processingText">Scanning bill...</p>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Analysis Dashboard (shown after upload) -->
+  <section class="dashboard hidden" id="dashboard">
+    <div class="dashboard-header">
+      <div class="bill-summary-row">
+        <div class="bill-provider">
+          <span class="provider-logo">⚡</span>
+          <div>
+            <h2>Tampa Electric (TECO)</h2>
+            <span class="bill-period">February 2026 • Account: ****4821</span>
+          </div>
+        </div>
+        <div class="bill-total">
+          <span class="total-label">Total Due</span>
+          <span class="total-amount">$287.43</span>
+          <span class="total-change negative">↑ 23% vs last month</span>
+        </div>
+      </div>
+
+      <!-- Score Cards -->
+      <div class="score-cards">
+        <div class="score-card">
+          <div class="score-ring" data-score="72" data-color="#f59e0b">
+            <svg viewBox="0 0 36 36">
+              <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+              <path class="ring-fill" stroke-dasharray="72, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+              <text x="18" y="20.5" class="ring-text">72</text>
+            </svg>
+          </div>
+          <div class="score-info">
+            <span class="score-label">Bill Health</span>
+            <span class="score-desc">Fair — room for savings</span>
+          </div>
+        </div>
+        <div class="score-card highlight">
+          <div class="savings-amount">$47<span class="savings-period">/mo</span></div>
+          <div class="score-info">
+            <span class="score-label">Potential Savings</span>
+            <span class="score-desc">Switch to TOU-D rate plan</span>
+          </div>
+        </div>
+        <div class="score-card">
+          <div class="anomaly-count">2</div>
+          <div class="score-info">
+            <span class="score-label">Anomalies Found</span>
+            <span class="score-desc">1 spike, 1 unusual fee</span>
+          </div>
+        </div>
+        <div class="score-card">
+          <div class="neighbor-rank">Top 30%</div>
+          <div class="score-info">
+            <span class="score-label">vs. Neighbors</span>
+            <span class="score-desc">Higher than 70% in your zip</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Items Breakdown -->
+    <div class="section">
+      <h3 class="section-title">📝 Bill Breakdown — In Plain English</h3>
+      <div class="line-items" id="lineItems">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Rate Plan Comparison -->
+    <div class="section">
+      <h3 class="section-title">💡 Rate Plan Optimizer</h3>
+      <div class="rate-comparison">
+        <div class="rate-card current">
+          <div class="rate-badge">Current Plan</div>
+          <h4>RS-1 Standard</h4>
+          <div class="rate-price">$287.43<span>/mo</span></div>
+          <ul class="rate-features">
+            <li>Flat rate: $0.124/kWh</li>
+            <li>No time-of-use discounts</li>
+            <li>Simple, predictable billing</li>
+          </ul>
+        </div>
+        <div class="rate-card recommended">
+          <div class="rate-badge recommended-badge">⭐ Recommended</div>
+          <h4>TOU-D Time-of-Use</h4>
+          <div class="rate-price">$240.18<span>/mo</span></div>
+          <div class="rate-savings">Save $47.25/mo ($567/yr)</div>
+          <ul class="rate-features">
+            <li>Off-peak: $0.089/kWh (9pm-2pm)</li>
+            <li>On-peak: $0.178/kWh (2pm-9pm)</li>
+            <li class="feature-match">✅ 68% of your usage is off-peak</li>
+          </ul>
+          <button class="btn btn-primary btn-full">Switch to This Plan →</button>
+        </div>
+        <div class="rate-card">
+          <div class="rate-badge">Alternative</div>
+          <h4>RS-EV Electric Vehicle</h4>
+          <div class="rate-price">$259.61<span>/mo</span></div>
+          <div class="rate-savings">Save $27.82/mo</div>
+          <ul class="rate-features">
+            <li>Super off-peak: $0.062/kWh (12am-6am)</li>
+            <li>Requires EV ownership</li>
+            <li class="feature-miss">❌ You don't have an EV registered</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage Chart -->
+    <div class="section">
+      <h3 class="section-title">📊 Usage Trends</h3>
+      <div class="chart-container">
+        <div class="chart-bar-group" id="chartBars">
+          <!-- Populated by JS -->
+        </div>
+        <div class="chart-labels" id="chartLabels">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Anomaly Alerts -->
+    <div class="section">
+      <h3 class="section-title">🚨 Anomalies & Alerts</h3>
+      <div class="alerts">
+        <div class="alert alert-warning">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-content">
+            <strong>Usage Spike Detected</strong>
+            <p>Your February usage (2,318 kWh) is 34% higher than your 12-month average (1,729 kWh). Possible causes: space heater, HVAC issue, or meter error. <a href="#">Compare to weather data →</a></p>
+          </div>
+        </div>
+        <div class="alert alert-error">
+          <div class="alert-icon">🔴</div>
+          <div class="alert-content">
+            <strong>Unusual Fee: "Storm Protection Surcharge" — $8.47</strong>
+            <p>This fee was approved in 2024 for hurricane hardening. However, your county wasn't in the affected zone. You may be eligible for an exemption. <a href="#">Generate dispute letter →</a></p>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <div class="alert-icon">💡</div>
+          <div class="alert-content">
+            <strong>Tip: Your peak usage is 2-6 PM weekdays</strong>
+            <p>If you can shift laundry/dishwasher to after 9 PM, you'd save an extra $12/mo on a TOU plan.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <h2>Everything You Need to Fight Back</h2>
+    <p class="section-subtitle">Utilities have teams of analysts. Now you do too.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📸</div>
+        <h3>Snap & Scan</h3>
+        <p>Photo, PDF, or screenshot. We read 200+ utility bill formats from every major US provider.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗣️</div>
+        <h3>Plain English</h3>
+        <p>Every charge explained like a friend would. No jargon, no confusion, no BS.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚨</div>
+        <h3>Error Detection</h3>
+        <p>Catch billing errors, unusual charges, and meter reading anomalies automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Rate Optimizer</h3>
+        <p>Compare every rate plan your utility offers. Find the cheapest one for YOUR usage pattern.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏘️</div>
+        <h3>Neighbor Compare</h3>
+        <p>See how your usage stacks up against similar homes in your zip code.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Dispute Generator</h3>
+        <p>Found an error? Generate a professional complaint letter with evidence in one click.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-section" id="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Upload Your Bill</h3>
+        <p>Snap a photo or upload the PDF. Takes 5 seconds.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>AI Analyzes Everything</h3>
+        <p>OCR + AI extracts, decodes, and compares every charge.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Get Your Report</h3>
+        <p>Plain-English breakdown, savings found, and action items.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing-section" id="pricing">
+    <h2>Simple Pricing</h2>
+    <p class="section-subtitle">Start free. Upgrade when BillDecode pays for itself (it will).</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <ul>
+          <li>✅ 3 bill scans/month</li>
+          <li>✅ Basic line-item explanations</li>
+          <li>✅ Usage vs. neighbor comparison</li>
+          <li>❌ Rate plan optimization</li>
+          <li>❌ Anomaly detection</li>
+        </ul>
+        <button class="btn btn-outline btn-full">Get Started</button>
+      </div>
+      <div class="pricing-card popular">
+        <div class="popular-badge">Most Popular</div>
+        <h3>Plus</h3>
+        <div class="price">$7.99<span>/mo</span></div>
+        <ul>
+          <li>✅ Unlimited bill scans</li>
+          <li>✅ Full AI explanations</li>
+          <li>✅ Rate plan optimizer</li>
+          <li>✅ Anomaly alerts</li>
+          <li>✅ Historical tracking</li>
+        </ul>
+        <button class="btn btn-primary btn-full">Start Free Trial</button>
+      </div>
+      <div class="pricing-card">
+        <h3>Pro</h3>
+        <div class="price">$14.99<span>/mo</span></div>
+        <ul>
+          <li>✅ Everything in Plus</li>
+          <li>✅ Multi-property support</li>
+          <li>✅ Dispute letter generator</li>
+          <li>✅ API access</li>
+          <li>✅ Priority support</li>
+        </ul>
+        <button class="btn btn-outline btn-full">Start Free Trial</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">BillDecode</span>
+        <p>Stop overpaying. Start understanding.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Blog</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 BillDecode. All rights reserved. <span class="footer-note">Built by Duncan ⚔️</span></p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
