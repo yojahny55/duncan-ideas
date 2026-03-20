@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinePrint — AI Contract Scanner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Landing / Upload View -->
+        <div id="upload-view" class="view active">
+            <header class="hero">
+                <div class="logo">
+                    <span class="logo-icon">📋</span>
+                    <span class="logo-text">FinePrint</span>
+                </div>
+                <p class="tagline">Know what you're signing. In plain English.</p>
+            </header>
+
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">📄</div>
+                <h2>Drop your contract here</h2>
+                <p>PDF, DOCX, image, or paste text below</p>
+                <button class="btn btn-primary" id="browse-btn">Browse Files</button>
+                <input type="file" id="file-input" accept=".pdf,.docx,.doc,.png,.jpg,.jpeg,.txt" hidden>
+            </div>
+
+            <div class="paste-area">
+                <div class="divider"><span>or paste contract text</span></div>
+                <textarea id="contract-text" placeholder="Paste your contract text here...&#10;&#10;Example: &quot;The Tenant agrees to a 12-month lease term beginning...&quot;"></textarea>
+                <button class="btn btn-primary btn-full" id="analyze-btn" disabled>Analyze Contract</button>
+            </div>
+
+            <div class="demo-contracts">
+                <p class="demo-label">Try a demo contract:</p>
+                <div class="demo-chips">
+                    <button class="chip" data-demo="lease">🏠 Apartment Lease</button>
+                    <button class="chip" data-demo="gym">💪 Gym Membership</button>
+                    <button class="chip" data-demo="employment">💼 Employment Offer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analyzing View -->
+        <div id="analyzing-view" class="view">
+            <div class="analyzing-container">
+                <div class="analyzing-icon">🔍</div>
+                <h2>Scanning your contract...</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="analyzing-steps">
+                    <div class="step" id="step-1"><span class="step-icon">⏳</span> Extracting text and clauses</div>
+                    <div class="step" id="step-2"><span class="step-icon">⏳</span> Identifying contract type</div>
+                    <div class="step" id="step-3"><span class="step-icon">⏳</span> Analyzing each clause</div>
+                    <div class="step" id="step-4"><span class="step-icon">⏳</span> Comparing against benchmarks</div>
+                    <div class="step" id="step-5"><span class="step-icon">⏳</span> Generating recommendations</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results View -->
+        <div id="results-view" class="view">
+            <header class="results-header">
+                <button class="btn btn-ghost" id="back-btn">← New Contract</button>
+                <div class="logo-sm">
+                    <span class="logo-icon">📋</span>
+                    <span class="logo-text">FinePrint</span>
+                </div>
+            </header>
+
+            <!-- Contract Scorecard -->
+            <div class="scorecard">
+                <div class="score-main">
+                    <div class="grade-circle" id="grade-circle">
+                        <span class="grade" id="grade">B-</span>
+                    </div>
+                    <div class="score-info">
+                        <h2 id="contract-type">Apartment Lease Agreement</h2>
+                        <p class="score-summary" id="score-summary">Generally fair with a few concerning clauses</p>
+                    </div>
+                </div>
+                <div class="score-categories">
+                    <div class="category">
+                        <span class="cat-label">Financial Risk</span>
+                        <div class="cat-bar"><div class="cat-fill" style="width:35%" data-level="low"></div></div>
+                        <span class="cat-value">Low</span>
+                    </div>
+                    <div class="category">
+                        <span class="cat-label">Rights Given Up</span>
+                        <div class="cat-bar"><div class="cat-fill" style="width:60%" data-level="medium"></div></div>
+                        <span class="cat-value">Medium</span>
+                    </div>
+                    <div class="category">
+                        <span class="cat-label">Exit Difficulty</span>
+                        <div class="cat-bar"><div class="cat-fill" style="width:75%" data-level="high"></div></div>
+                        <span class="cat-value">High</span>
+                    </div>
+                    <div class="category">
+                        <span class="cat-label">Privacy Exposure</span>
+                        <div class="cat-bar"><div class="cat-fill" style="width:20%" data-level="low"></div></div>
+                        <span class="cat-value">Low</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="section">
+                <h3>📝 Plain-English Summary</h3>
+                <div class="summary-card" id="summary-card">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Red Flags -->
+            <div class="section">
+                <h3>🚩 Red Flags <span class="badge badge-red" id="flag-count">3</span></h3>
+                <div class="flags-list" id="flags-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Clause Analysis -->
+            <div class="section">
+                <h3>🔍 Clause-by-Clause Analysis</h3>
+                <div class="clause-filters">
+                    <button class="filter active" data-filter="all">All</button>
+                    <button class="filter" data-filter="red">🚩 Red Flags</button>
+                    <button class="filter" data-filter="watch">⚠️ Watch</button>
+                    <button class="filter" data-filter="ok">✅ Standard</button>
+                </div>
+                <div class="clauses-list" id="clauses-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Negotiation Tips -->
+            <div class="section">
+                <h3>💬 Negotiation Suggestions</h3>
+                <div class="tips-list" id="tips-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Ask a Question -->
+            <div class="section">
+                <h3>❓ Ask About This Contract</h3>
+                <div class="chat-area">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-msg bot">
+                            <p>I've analyzed your contract. Ask me anything — "Can I break this lease early?" or "What happens if I miss a payment?"</p>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Ask about your contract...">
+                        <button class="btn btn-primary btn-sm" id="chat-send">Ask</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
