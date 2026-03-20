@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AskThem — Family Story Preservation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Navigation -->
+    <nav class="top-nav">
+      <div class="nav-brand">
+        <span class="brand-icon">💬</span>
+        <span class="brand-name">AskThem</span>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-icon" title="Search stories">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="btn-icon" title="Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Hero / Home Screen -->
+      <section id="screen-home" class="screen active">
+        <div class="hero-section">
+          <div class="hero-text">
+            <h1>Their stories won't<br>wait forever</h1>
+            <p class="hero-sub">Guided questions to capture your family's memories — before it's too late.</p>
+          </div>
+          <div class="urgency-banner">
+            <span class="urgency-icon">⏳</span>
+            <span>It's been <strong>12 days</strong> since your last session with Mom</span>
+          </div>
+        </div>
+
+        <!-- Quick Start -->
+        <div class="section-header">
+          <h2>Start a Session</h2>
+          <span class="see-all" onclick="showScreen('screen-people')">See all →</span>
+        </div>
+        <div class="people-row">
+          <div class="person-card" onclick="showScreen('screen-topics')">
+            <div class="person-avatar" style="background: linear-gradient(135deg, #e8b4b8, #d4908f)">M</div>
+            <span class="person-name">Mom</span>
+            <span class="person-stories">23 stories</span>
+          </div>
+          <div class="person-card" onclick="showScreen('screen-topics')">
+            <div class="person-avatar" style="background: linear-gradient(135deg, #8fb5d4, #6b9bc4)">D</div>
+            <span class="person-name">Dad</span>
+            <span class="person-stories">8 stories</span>
+          </div>
+          <div class="person-card" onclick="showScreen('screen-topics')">
+            <div class="person-avatar" style="background: linear-gradient(135deg, #b8d4a8, #8fba78)">A</div>
+            <span class="person-name">Abuela</span>
+            <span class="person-stories">41 stories</span>
+          </div>
+          <div class="person-card add-person">
+            <div class="person-avatar add">+</div>
+            <span class="person-name">Add Person</span>
+          </div>
+        </div>
+
+        <!-- Today's Question -->
+        <div class="daily-question" onclick="showScreen('screen-session')">
+          <div class="dq-label">💡 Today's Question</div>
+          <p class="dq-text">"What's the bravest thing you ever did?"</p>
+          <div class="dq-meta">
+            <span class="dq-topic">Life Lessons</span>
+            <span class="dq-action">Tap to start →</span>
+          </div>
+        </div>
+
+        <!-- Recent Stories -->
+        <div class="section-header">
+          <h2>Recent Stories</h2>
+          <span class="see-all" onclick="showScreen('screen-vault')">View all →</span>
+        </div>
+        <div class="story-list">
+          <div class="story-card" onclick="showScreen('screen-story-detail')">
+            <div class="story-waveform">
+              <div class="wave-bar" style="height: 60%"></div>
+              <div class="wave-bar" style="height: 80%"></div>
+              <div class="wave-bar" style="height: 40%"></div>
+              <div class="wave-bar" style="height: 90%"></div>
+              <div class="wave-bar" style="height: 50%"></div>
+              <div class="wave-bar" style="height: 70%"></div>
+              <div class="wave-bar" style="height: 30%"></div>
+              <div class="wave-bar" style="height: 85%"></div>
+            </div>
+            <div class="story-info">
+              <h3>Coming to America in 1985</h3>
+              <div class="story-meta">
+                <span class="story-person">Mom</span>
+                <span class="story-duration">12:34</span>
+                <span class="story-date">Mar 8</span>
+              </div>
+              <p class="story-excerpt">"We packed two suitcases for the whole family. Your father said we'd buy everything new..."</p>
+            </div>
+          </div>
+          <div class="story-card">
+            <div class="story-waveform">
+              <div class="wave-bar" style="height: 45%"></div>
+              <div class="wave-bar" style="height: 70%"></div>
+              <div class="wave-bar" style="height: 55%"></div>
+              <div class="wave-bar" style="height: 80%"></div>
+              <div class="wave-bar" style="height: 35%"></div>
+              <div class="wave-bar" style="height: 60%"></div>
+              <div class="wave-bar" style="height: 90%"></div>
+              <div class="wave-bar" style="height: 40%"></div>
+            </div>
+            <div class="story-info">
+              <h3>Abuela's Secret Arroz con Pollo</h3>
+              <div class="story-meta">
+                <span class="story-person">Abuela</span>
+                <span class="story-duration">8:22</span>
+                <span class="story-date">Mar 5</span>
+              </div>
+              <p class="story-excerpt">"The secret is the sofrito. My mother taught me, and her mother taught her..."</p>
+            </div>
+          </div>
+          <div class="story-card">
+            <div class="story-waveform">
+              <div class="wave-bar" style="height: 75%"></div>
+              <div class="wave-bar" style="height: 50%"></div>
+              <div class="wave-bar" style="height: 65%"></div>
+              <div class="wave-bar" style="height: 40%"></div>
+              <div class="wave-bar" style="height: 85%"></div>
+              <div class="wave-bar" style="height: 55%"></div>
+              <div class="wave-bar" style="height: 70%"></div>
+              <div class="wave-bar" style="height: 45%"></div>
+            </div>
+            <div class="story-info">
+              <h3>Dad's First Job at the Factory</h3>
+              <div class="story-meta">
+                <span class="story-person">Dad</span>
+                <span class="story-duration">15:48</span>
+                <span class="story-date">Feb 28</span>
+              </div>
+              <p class="story-excerpt">"I was seventeen. They didn't ask for papers back then..."</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="family-stats">
+          <div class="stat">
+            <span class="stat-num">72</span>
+            <span class="stat-label">Stories</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">6.2</span>
+            <span class="stat-label">Hours</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">3</span>
+            <span class="stat-label">Family</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">47</span>
+            <span class="stat-label">People Named</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Topic Selection Screen -->
+      <section id="screen-topics" class="screen">
+        <div class="screen-header">
+          <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+          <h2>Choose a Topic</h2>
+          <div class="topic-person-badge">
+            <div class="person-avatar-sm" style="background: linear-gradient(135deg, #e8b4b8, #d4908f)">M</div>
+            <span>Session with Mom</span>
+          </div>
+        </div>
+        <div class="topic-grid">
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="childhood">
+            <span class="topic-emoji">🏠</span>
+            <h3>Childhood</h3>
+            <p>Growing up, school, friends, neighborhood</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 35%"></div></div>
+              <span>7/20 asked</span>
+            </div>
+          </div>
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="immigration">
+            <span class="topic-emoji">✈️</span>
+            <h3>Immigration</h3>
+            <p>The journey, first days, culture shock</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
+              <span>12/20 asked</span>
+            </div>
+          </div>
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="love">
+            <span class="topic-emoji">💕</span>
+            <h3>Love Story</h3>
+            <p>How they met, courtship, marriage</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 15%"></div></div>
+              <span>3/20 asked</span>
+            </div>
+          </div>
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="traditions">
+            <span class="topic-emoji">🎄</span>
+            <h3>Traditions</h3>
+            <p>Holidays, recipes, family customs</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 45%"></div></div>
+              <span>9/20 asked</span>
+            </div>
+          </div>
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="work">
+            <span class="topic-emoji">💼</span>
+            <h3>Career & Work</h3>
+            <p>Jobs, dreams, challenges, achievements</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 10%"></div></div>
+              <span>2/20 asked</span>
+            </div>
+          </div>
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="wisdom">
+            <span class="topic-emoji">🌟</span>
+            <h3>Life Lessons</h3>
+            <p>Wisdom, regrets, advice, beliefs</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 5%"></div></div>
+              <span>1/20 asked</span>
+            </div>
+          </div>
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="culture">
+            <span class="topic-emoji">🇨🇺</span>
+            <h3>Cuban Heritage</h3>
+            <p>Culture-specific memories and traditions</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 25%"></div></div>
+              <span>5/20 asked</span>
+            </div>
+          </div>
+          <div class="topic-card" onclick="showScreen('screen-questions')" data-topic="family">
+            <span class="topic-emoji">👨‍👩‍👧‍👦</span>
+            <h3>Family Tree</h3>
+            <p>Relatives, ancestors, family stories</p>
+            <div class="topic-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div>
+              <span>0/20 asked</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Question List Screen -->
+      <section id="screen-questions" class="screen">
+        <div class="screen-header">
+          <button class="back-btn" onclick="showScreen('screen-topics')">← Back</button>
+          <h2>🏠 Childhood</h2>
+        </div>
+        <div class="question-list">
+          <div class="question-item asked">
+            <span class="q-status">✅</span>
+            <div class="q-content">
+              <p>"What was your house like growing up?"</p>
+              <span class="q-meta">Asked Mar 2 · 4:12 recording</span>
+            </div>
+          </div>
+          <div class="question-item asked">
+            <span class="q-status">✅</span>
+            <div class="q-content">
+              <p>"Who was your best friend as a child?"</p>
+              <span class="q-meta">Asked Feb 24 · 7:45 recording</span>
+            </div>
+          </div>
+          <div class="question-item next" onclick="showScreen('screen-session')">
+            <span class="q-status">🎙️</span>
+            <div class="q-content">
+              <p>"What's your earliest memory?"</p>
+              <span class="q-meta">Recommended next · Tap to start</span>
+            </div>
+            <span class="q-arrow">→</span>
+          </div>
+          <div class="question-item">
+            <span class="q-status">○</span>
+            <div class="q-content">
+              <p>"What did you want to be when you grew up?"</p>
+            </div>
+          </div>
+          <div class="question-item">
+            <span class="q-status">○</span>
+            <div class="q-content">
+              <p>"What games did you play as a kid?"</p>
+            </div>
+          </div>
+          <div class="question-item">
+            <span class="q-status">○</span>
+            <div class="q-content">
+              <p>"What was school like for you?"</p>
+            </div>
+          </div>
+          <div class="question-item">
+            <span class="q-status">○</span>
+            <div class="q-content">
+              <p>"What got you in trouble as a kid?"</p>
+            </div>
+          </div>
+          <div class="question-item">
+            <span class="q-status">○</span>
+            <div class="q-content">
+              <p>"What's the funniest thing that happened in your childhood?"</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recording Session Screen -->
+      <section id="screen-session" class="screen">
+        <div class="session-container">
+          <div class="session-header">
+            <button class="back-btn" onclick="showScreen('screen-home')">← End</button>
+            <span class="session-label">Session with Mom</span>
+            <span class="session-timer" id="sessionTimer">00:00</span>
+          </div>
+
+          <div class="question-display">
+            <div class="q-card-large">
+              <span class="q-number">Question 3 of 20</span>
+              <p class="q-main">"What's your earliest memory?"</p>
+              <div class="q-tips">
+                <span class="tip-label">💡 Follow-up ideas:</span>
+                <ul>
+                  <li>How old were you?</li>
+                  <li>Who was there with you?</li>
+                  <li>What feelings does it bring back?</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="recording-area">
+            <div class="live-waveform" id="liveWaveform">
+              <!-- JS animated bars -->
+            </div>
+            <div class="recording-controls">
+              <button class="rec-btn secondary" onclick="skipQuestion()">
+                <span>Skip</span>
+              </button>
+              <button class="rec-btn primary" id="recordBtn" onclick="toggleRecording()">
+                <div class="rec-circle" id="recCircle"></div>
+                <span id="recLabel">Tap to Record</span>
+              </button>
+              <button class="rec-btn secondary" onclick="nextQuestion()">
+                <span>Next →</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="ai-suggestions" id="aiSuggestions" style="display:none">
+            <div class="ai-badge">🧠 AI Detected</div>
+            <p>Mom mentioned <strong>"Abuela Rosa"</strong> — would you like to ask about her?</p>
+            <div class="ai-actions">
+              <button class="btn-sm" onclick="showAiQuestion()">Ask about Abuela Rosa →</button>
+              <button class="btn-sm ghost">Skip</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Story Detail Screen -->
+      <section id="screen-story-detail" class="screen">
+        <div class="screen-header">
+          <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+          <h2>Story Detail</h2>
+        </div>
+        <div class="story-detail">
+          <div class="sd-header">
+            <h1>Coming to America in 1985</h1>
+            <div class="sd-meta">
+              <span class="sd-person">
+                <div class="person-avatar-sm" style="background: linear-gradient(135deg, #e8b4b8, #d4908f)">M</div>
+                Mom
+              </span>
+              <span>March 8, 2026</span>
+              <span>12:34</span>
+            </div>
+          </div>
+
+          <!-- Audio Player -->
+          <div class="audio-player">
+            <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+            <div class="audio-timeline">
+              <div class="audio-progress" style="width: 0%"></div>
+              <div class="audio-chapters">
+                <div class="chapter-mark" style="left: 15%" title="Leaving Havana"></div>
+                <div class="chapter-mark" style="left: 45%" title="The flight"></div>
+                <div class="chapter-mark" style="left: 72%" title="First night in Miami"></div>
+              </div>
+            </div>
+            <span class="audio-time">0:00 / 12:34</span>
+          </div>
+
+          <!-- Chapters -->
+          <div class="chapters-section">
+            <h3>📑 Chapters</h3>
+            <div class="chapter-list">
+              <div class="chapter-item">
+                <span class="ch-time">0:00</span>
+                <div class="ch-content">
+                  <strong>Leaving Havana</strong>
+                  <p>Packing two suitcases, saying goodbye to the house</p>
+                </div>
+              </div>
+              <div class="chapter-item">
+                <span class="ch-time">5:32</span>
+                <div class="ch-content">
+                  <strong>The Flight</strong>
+                  <p>First time on an airplane, holding your father's hand</p>
+                </div>
+              </div>
+              <div class="chapter-item">
+                <span class="ch-time">8:58</span>
+                <div class="ch-content">
+                  <strong>First Night in Miami</strong>
+                  <p>Uncle Carlos's apartment, the smell of the ocean</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transcript Excerpt -->
+          <div class="transcript-section">
+            <h3>📝 Transcript</h3>
+            <div class="transcript">
+              <div class="t-line">
+                <span class="t-speaker mom">Mom</span>
+                <p>"We packed two suitcases for the whole family. Your father said we'd buy everything new. But I hid my mother's rosary in my coat pocket — I wasn't leaving that behind."</p>
+              </div>
+              <div class="t-line">
+                <span class="t-speaker you">You</span>
+                <p>"Do you still have that rosary?"</p>
+              </div>
+              <div class="t-line">
+                <span class="t-speaker mom">Mom</span>
+                <p>"Of course. It's in my jewelry box. I hold it every night before bed. <span class="entity" title="Person mentioned">Your abuela</span> gave it to me at the airport. She said, 'Take God with you, because I can't come.'"</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- People & Places -->
+          <div class="entities-section">
+            <h3>👥 People Mentioned</h3>
+            <div class="entity-tags">
+              <span class="entity-tag">Abuela Rosa</span>
+              <span class="entity-tag">Uncle Carlos</span>
+              <span class="entity-tag">Dad (José)</span>
+            </div>
+            <h3>📍 Places</h3>
+            <div class="entity-tags">
+              <span class="entity-tag">Havana, Cuba</span>
+              <span class="entity-tag">Miami, FL</span>
+              <span class="entity-tag">José Martí Airport</span>
+            </div>
+          </div>
+
+          <div class="story-actions">
+            <button class="btn-primary">📤 Share with Family</button>
+            <button class="btn-outline">📖 Export as PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Family Vault Screen -->
+      <section id="screen-vault" class="screen">
+        <div class="screen-header">
+          <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+          <h2>Family Vault</h2>
+        </div>
+        <div class="vault-filters">
+          <button class="filter-chip active">All</button>
+          <button class="filter-chip">Mom</button>
+          <button class="filter-chip">Dad</button>
+          <button class="filter-chip">Abuela</button>
+        </div>
+        <div class="vault-timeline">
+          <div class="timeline-year">
+            <h3>1985</h3>
+            <div class="timeline-stories">
+              <div class="tl-story">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <h4>Coming to America</h4>
+                  <p>Mom · Immigration · 12:34</p>
+                </div>
+              </div>
+              <div class="tl-story">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <h4>First Christmas in Miami</h4>
+                  <p>Mom · Traditions · 8:15</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-year">
+            <h3>1970s</h3>
+            <div class="timeline-stories">
+              <div class="tl-story">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <h4>Abuela's Secret Arroz con Pollo</h4>
+                  <p>Abuela · Traditions · 8:22</p>
+                </div>
+              </div>
+              <div class="tl-story">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <h4>Growing Up in Old Havana</h4>
+                  <p>Mom · Childhood · 15:02</p>
+                </div>
+              </div>
+              <div class="tl-story">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <h4>Dad's First Job at the Factory</h4>
+                  <p>Dad · Career · 15:48</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-year">
+            <h3>1960s</h3>
+            <div class="timeline-stories">
+              <div class="tl-story">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <h4>How Mom and Dad Met</h4>
+                  <p>Mom · Love Story · 18:41</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- People Screen -->
+      <section id="screen-people" class="screen">
+        <div class="screen-header">
+          <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+          <h2>Family Members</h2>
+        </div>
+        <div class="people-grid">
+          <div class="person-detail-card" onclick="showScreen('screen-topics')">
+            <div class="person-avatar-lg" style="background: linear-gradient(135deg, #e8b4b8, #d4908f)">M</div>
+            <h3>Mom (María)</h3>
+            <div class="person-stats">
+              <span>23 stories</span>
+              <span>2.1 hours</span>
+            </div>
+            <div class="person-topics">
+              <span class="mini-tag">Immigration</span>
+              <span class="mini-tag">Childhood</span>
+              <span class="mini-tag">Traditions</span>
+            </div>
+            <p class="last-session">Last session: 12 days ago</p>
+          </div>
+          <div class="person-detail-card" onclick="showScreen('screen-topics')">
+            <div class="person-avatar-lg" style="background: linear-gradient(135deg, #8fb5d4, #6b9bc4)">D</div>
+            <h3>Dad (José)</h3>
+            <div class="person-stats">
+              <span>8 stories</span>
+              <span>1.3 hours</span>
+            </div>
+            <div class="person-topics">
+              <span class="mini-tag">Career</span>
+              <span class="mini-tag">Childhood</span>
+            </div>
+            <p class="last-session">Last session: 22 days ago</p>
+          </div>
+          <div class="person-detail-card" onclick="showScreen('screen-topics')">
+            <div class="person-avatar-lg" style="background: linear-gradient(135deg, #b8d4a8, #8fba78)">A</div>
+            <h3>Abuela Rosa</h3>
+            <div class="person-stats">
+              <span>41 stories</span>
+              <span>2.8 hours</span>
+            </div>
+            <div class="person-topics">
+              <span class="mini-tag">Traditions</span>
+              <span class="mini-tag">Family Tree</span>
+              <span class="mini-tag">Recipes</span>
+            </div>
+            <p class="last-session">Last session: 5 days ago</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="showScreen('screen-home')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-vault')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <span>Vault</span>
+      </button>
+      <button class="nav-item record-nav" onclick="showScreen('screen-session')">
+        <div class="record-fab">🎙️</div>
+        <span>Record</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('screen-people')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span>Family</span>
+      </button>
+      <button class="nav-item">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        <span>Book</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
