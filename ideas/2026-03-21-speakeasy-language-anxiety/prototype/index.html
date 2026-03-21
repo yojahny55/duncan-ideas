@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpeakEasy — Language Practice Without Fear</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Landing / Onboarding -->
+  <div id="app">
+    <div id="screen-landing" class="screen active">
+      <div class="landing-container">
+        <div class="landing-hero">
+          <div class="logo-mark">🗣️</div>
+          <h1 class="landing-title">Speak<span class="accent">Easy</span></h1>
+          <p class="landing-subtitle">Practice speaking without fear.<br>Your AI partner never judges.</p>
+        </div>
+        <div class="comfort-preview">
+          <div class="zone-pill zone-1">🌊 Whisper</div>
+          <div class="zone-pill zone-2">🔁 Echo</div>
+          <div class="zone-pill zone-3">💬 Chat</div>
+          <div class="zone-pill zone-4">🎭 Adventure</div>
+          <div class="zone-pill zone-5">🌊 Flow</div>
+        </div>
+        <button class="btn-primary" onclick="showScreen('screen-setup')">Start Your Journey</button>
+        <p class="landing-note">No account needed. No judgment. Ever.</p>
+      </div>
+    </div>
+
+    <!-- Setup Screen -->
+    <div id="screen-setup" class="screen">
+      <div class="setup-container">
+        <button class="btn-back" onclick="showScreen('screen-landing')">← Back</button>
+        <h2>Let's set up your practice</h2>
+        <div class="setup-section">
+          <label>What language do you want to practice?</label>
+          <div class="language-grid">
+            <button class="lang-btn selected" data-lang="en">🇺🇸 English</button>
+            <button class="lang-btn" data-lang="es">🇪🇸 Spanish</button>
+            <button class="lang-btn" data-lang="fr">🇫🇷 French</button>
+            <button class="lang-btn" data-lang="pt">🇧🇷 Portuguese</button>
+            <button class="lang-btn" data-lang="de">🇩🇪 German</button>
+            <button class="lang-btn" data-lang="ja">🇯🇵 Japanese</button>
+          </div>
+        </div>
+        <div class="setup-section">
+          <label>How would you describe your speaking level?</label>
+          <div class="level-options">
+            <button class="level-btn selected" data-level="beginner">
+              <span class="level-icon">🌱</span>
+              <span class="level-text">Beginner</span>
+              <span class="level-desc">I know some words but freeze up</span>
+            </button>
+            <button class="level-btn" data-level="intermediate">
+              <span class="level-icon">🌿</span>
+              <span class="level-text">Intermediate</span>
+              <span class="level-desc">I can manage but feel anxious</span>
+            </button>
+            <button class="level-btn" data-level="advanced">
+              <span class="level-icon">🌳</span>
+              <span class="level-text">Advanced</span>
+              <span class="level-desc">I'm fluent-ish but lack confidence</span>
+            </button>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="showScreen('screen-checkin')">Continue</button>
+      </div>
+    </div>
+
+    <!-- Pre-Session Check-in -->
+    <div id="screen-checkin" class="screen">
+      <div class="checkin-container">
+        <button class="btn-back" onclick="showScreen('screen-setup')">← Back</button>
+        <div class="checkin-emoji">🫂</div>
+        <h2>Before we start...</h2>
+        <p class="checkin-prompt">How are you feeling about speaking right now?</p>
+        <div class="anxiety-scale">
+          <button class="anxiety-btn" data-level="1" onclick="selectAnxiety(this)">
+            <span class="anxiety-face">😌</span>
+            <span class="anxiety-label">Calm</span>
+          </button>
+          <button class="anxiety-btn" data-level="2" onclick="selectAnxiety(this)">
+            <span class="anxiety-face">🙂</span>
+            <span class="anxiety-label">Okay</span>
+          </button>
+          <button class="anxiety-btn selected" data-level="3" onclick="selectAnxiety(this)">
+            <span class="anxiety-face">😐</span>
+            <span class="anxiety-label">Unsure</span>
+          </button>
+          <button class="anxiety-btn" data-level="4" onclick="selectAnxiety(this)">
+            <span class="anxiety-face">😰</span>
+            <span class="anxiety-label">Nervous</span>
+          </button>
+          <button class="anxiety-btn" data-level="5" onclick="selectAnxiety(this)">
+            <span class="anxiety-face">😱</span>
+            <span class="anxiety-label">Very anxious</span>
+          </button>
+        </div>
+        <p class="checkin-reassurance">Whatever you're feeling is totally valid. We'll go at your pace. 💚</p>
+        <button class="btn-primary" onclick="showScreen('screen-zones')">I'm Ready</button>
+      </div>
+    </div>
+
+    <!-- Comfort Zones -->
+    <div id="screen-zones" class="screen">
+      <div class="zones-container">
+        <button class="btn-back" onclick="showScreen('screen-checkin')">← Back</button>
+        <h2>Choose your comfort zone</h2>
+        <p class="zones-subtitle">Start wherever feels right. No pressure to advance.</p>
+        <div class="zone-cards">
+          <div class="zone-card zone-1-card" onclick="selectZone('whisper')">
+            <div class="zone-header">
+              <span class="zone-number">Zone 1</span>
+              <span class="zone-badge unlocked">Unlocked</span>
+            </div>
+            <h3>🌊 Whisper</h3>
+            <p>Repeat words and phrases after the AI. Just you and the mic. No conversation pressure.</p>
+            <div class="zone-detail">~2 min sessions</div>
+          </div>
+          <div class="zone-card zone-2-card" onclick="selectZone('echo')">
+            <div class="zone-header">
+              <span class="zone-number">Zone 2</span>
+              <span class="zone-badge unlocked">Unlocked</span>
+            </div>
+            <h3>🔁 Echo</h3>
+            <p>Short responses to simple questions. The AI fills awkward silences so you don't have to.</p>
+            <div class="zone-detail">~5 min sessions</div>
+          </div>
+          <div class="zone-card zone-3-card" onclick="selectZone('chat')">
+            <div class="zone-header">
+              <span class="zone-number">Zone 3</span>
+              <span class="zone-badge unlocked">Unlocked</span>
+            </div>
+            <h3>💬 Chat</h3>
+            <p>Guided conversations on comfortable topics. Like chatting with a kind friend.</p>
+            <div class="zone-detail">~10 min sessions</div>
+          </div>
+          <div class="zone-card zone-4-card locked" onclick="showLockedToast()">
+            <div class="zone-header">
+              <span class="zone-number">Zone 4</span>
+              <span class="zone-badge locked-badge">🔒 Complete Zone 3</span>
+            </div>
+            <h3>🎭 Adventure</h3>
+            <p>Role-play real scenarios. Order food, ask for directions, handle a phone call.</p>
+            <div class="zone-detail">~15 min sessions</div>
+          </div>
+          <div class="zone-card zone-5-card locked" onclick="showLockedToast()">
+            <div class="zone-header">
+              <span class="zone-number">Zone 5</span>
+              <span class="zone-badge locked-badge">🔒 Complete Zone 4</span>
+            </div>
+            <h3>🌊 Flow</h3>
+            <p>Free conversation. You lead, AI follows. You're ready for the real world.</p>
+            <div class="zone-detail">Unlimited</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario Selection -->
+    <div id="screen-scenarios" class="screen">
+      <div class="scenarios-container">
+        <button class="btn-back" onclick="showScreen('screen-zones')">← Back</button>
+        <h2 id="scenario-title">Choose a scenario</h2>
+        <div id="scenario-list" class="scenario-grid"></div>
+      </div>
+    </div>
+
+    <!-- Conversation Screen -->
+    <div id="screen-conversation" class="screen">
+      <div class="conversation-container">
+        <div class="conv-header">
+          <button class="btn-back" onclick="endSession()">← End</button>
+          <div class="conv-info">
+            <span id="conv-zone-label" class="conv-zone">Zone 1 — Whisper</span>
+            <span id="conv-timer" class="conv-timer">0:00</span>
+          </div>
+          <button class="btn-panic" onclick="showBreathing()">🫁 Break</button>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+          <!-- Messages populate here -->
+        </div>
+        <div class="chat-input-area">
+          <div class="typing-helper" id="typing-helper" style="display:none">
+            <p class="helper-text">💡 Not ready to speak? Type it first, then try saying it out loud.</p>
+            <input type="text" id="type-first-input" placeholder="Type your response here..." class="type-first">
+            <button class="btn-secondary btn-small" onclick="typeToSpeech()">Now say it! 🎤</button>
+          </div>
+          <div class="voice-controls">
+            <button class="btn-helper" onclick="toggleTypingHelper()">⌨️</button>
+            <button id="mic-btn" class="mic-button" onclick="toggleRecording()">
+              <span class="mic-icon">🎤</span>
+              <span class="mic-label">Tap to speak</span>
+            </button>
+            <button class="btn-helper" onclick="skipTurn()">⏭️</button>
+          </div>
+          <p class="take-your-time">Take your time. There's no rush. 💚</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breathing Exercise -->
+    <div id="screen-breathing" class="screen">
+      <div class="breathing-container">
+        <h2>Let's take a breath</h2>
+        <p>It's okay to need a moment. You're doing great.</p>
+        <div class="breathing-circle" id="breathing-circle">
+          <span class="breathing-text" id="breathing-text">Breathe in...</span>
+        </div>
+        <p class="breathing-count" id="breathing-count">3 breaths remaining</p>
+        <button class="btn-secondary" onclick="resumeSession()">I'm ready to continue</button>
+        <button class="btn-text" onclick="endSession()">End session for today</button>
+      </div>
+    </div>
+
+    <!-- Post-Session Summary -->
+    <div id="screen-summary" class="screen">
+      <div class="summary-container">
+        <div class="summary-celebration">🎉</div>
+        <h2>You did it!</h2>
+        <p class="summary-affirmation">Speaking a foreign language takes real courage. Be proud of yourself.</p>
+        <div class="summary-stats">
+          <div class="stat-card">
+            <span class="stat-value" id="stat-time">4:32</span>
+            <span class="stat-label">Minutes spoken</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-turns">12</span>
+            <span class="stat-label">Exchanges</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="stat-words">48</span>
+            <span class="stat-label">Words used</span>
+          </div>
+        </div>
+        <div class="confidence-change">
+          <p>How do you feel about speaking now?</p>
+          <div class="anxiety-scale small-scale">
+            <button class="anxiety-btn" onclick="selectPostAnxiety(this)" data-level="1">😌</button>
+            <button class="anxiety-btn" onclick="selectPostAnxiety(this)" data-level="2">🙂</button>
+            <button class="anxiety-btn selected" onclick="selectPostAnxiety(this)" data-level="3">😐</button>
+            <button class="anxiety-btn" onclick="selectPostAnxiety(this)" data-level="4">😰</button>
+            <button class="anxiety-btn" onclick="selectPostAnxiety(this)" data-level="5">😱</button>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="showScreen('screen-dashboard')">See My Progress</button>
+        <button class="btn-secondary" onclick="showScreen('screen-zones')">Practice Again</button>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="screen-dashboard" class="screen">
+      <div class="dashboard-container">
+        <button class="btn-back" onclick="showScreen('screen-landing')">← Home</button>
+        <h2>Your Confidence Journey</h2>
+        <div class="dashboard-grid">
+          <div class="dash-card streak-card">
+            <span class="dash-icon">🔥</span>
+            <span class="dash-value">3</span>
+            <span class="dash-label">Day streak</span>
+            <span class="dash-note">No guilt if you miss a day 💚</span>
+          </div>
+          <div class="dash-card time-card">
+            <span class="dash-icon">⏱️</span>
+            <span class="dash-value">47m</span>
+            <span class="dash-label">Total speaking time</span>
+          </div>
+          <div class="dash-card zone-progress-card">
+            <span class="dash-icon">🌊</span>
+            <span class="dash-value">Zone 3</span>
+            <span class="dash-label">Current comfort zone</span>
+          </div>
+          <div class="dash-card anxiety-card">
+            <span class="dash-icon">📈</span>
+            <span class="dash-value">↓ 1.8</span>
+            <span class="dash-label">Anxiety trend (lower = calmer)</span>
+          </div>
+        </div>
+        <div class="anxiety-chart">
+          <h3>Anxiety Over Time</h3>
+          <div class="chart-visual">
+            <div class="chart-bar" style="height: 90%"><span>4.5</span></div>
+            <div class="chart-bar" style="height: 80%"><span>4.0</span></div>
+            <div class="chart-bar" style="height: 70%"><span>3.5</span></div>
+            <div class="chart-bar" style="height: 60%"><span>3.0</span></div>
+            <div class="chart-bar" style="height: 56%"><span>2.8</span></div>
+            <div class="chart-bar highlight" style="height: 44%"><span>2.2</span></div>
+          </div>
+          <div class="chart-labels">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+        </div>
+        <div class="weekly-summary">
+          <h3>This Week</h3>
+          <div class="week-days">
+            <div class="day done">M<br>✅</div>
+            <div class="day done">T<br>✅</div>
+            <div class="day done">W<br>✅</div>
+            <div class="day skipped">T<br>—</div>
+            <div class="day done">F<br>✅</div>
+            <div class="day current">S<br>🎯</div>
+            <div class="day future">S<br>·</div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="showScreen('screen-zones')">Start a Session</button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Zone locked — complete previous zones first 🔒</div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
