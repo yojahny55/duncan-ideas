@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShrinkCheck — Shrinkflation Scanner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">📏</span>
+        <h1>ShrinkCheck</h1>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" id="watchlistBtn" title="Watch List">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="badge">3</span>
+        </button>
+        <button class="btn-icon" id="profileBtn" title="Profile">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Scanner Section -->
+    <section class="scanner-section" id="scannerSection">
+      <div class="scanner-frame">
+        <div class="scanner-viewfinder">
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+          <div class="scan-line"></div>
+          <p class="scanner-hint">Point camera at barcode</p>
+        </div>
+      </div>
+      <div class="scanner-actions">
+        <button class="btn-primary" id="scanBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="8" x2="7" y2="16"/><line x1="10" y1="6" x2="10" y2="18"/><line x1="13" y1="9" x2="13" y2="15"/><line x1="16" y1="7" x2="16" y2="17"/></svg>
+          Scan Product
+        </button>
+        <button class="btn-secondary" id="searchBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Search by Name
+        </button>
+      </div>
+    </section>
+
+    <!-- Product Result (hidden by default) -->
+    <section class="product-result hidden" id="productResult">
+      <div class="product-card">
+        <div class="product-header">
+          <div class="product-image" id="productImage">🧃</div>
+          <div class="product-info">
+            <h2 id="productName">Tropicana Orange Juice</h2>
+            <p class="product-brand" id="productBrand">Tropicana</p>
+            <p class="product-upc" id="productUPC">UPC: 048500202807</p>
+          </div>
+          <div class="shrink-badge alert" id="shrinkBadge">
+            <span class="shrink-pct" id="shrinkPct">-18%</span>
+            <span class="shrink-label">SHRUNK</span>
+          </div>
+        </div>
+
+        <div class="shrink-alert" id="shrinkAlert">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text">
+            <strong>Shrinkflation detected!</strong>
+            <p id="alertDetail">This product went from 64oz to 52oz while the price stayed at $4.29. You're paying <strong>23% more per ounce</strong>.</p>
+          </div>
+        </div>
+
+        <!-- Size History Timeline -->
+        <div class="timeline-section">
+          <h3>📉 Size History</h3>
+          <div class="timeline-chart" id="timelineChart">
+            <div class="chart-area">
+              <div class="chart-bars">
+                <div class="chart-bar-group">
+                  <div class="chart-bar" style="height: 100%;" data-size="64oz">
+                    <span class="bar-label">64oz</span>
+                  </div>
+                  <span class="bar-year">2020</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar" style="height: 100%;" data-size="64oz">
+                    <span class="bar-label">64oz</span>
+                  </div>
+                  <span class="bar-year">2021</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar shrunk" style="height: 87%;" data-size="56oz">
+                    <span class="bar-label">56oz</span>
+                  </div>
+                  <span class="bar-year">2022</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar shrunk" style="height: 87%;" data-size="56oz">
+                    <span class="bar-label">56oz</span>
+                  </div>
+                  <span class="bar-year">2023</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar shrunk" style="height: 81%;" data-size="52oz">
+                    <span class="bar-label">52oz</span>
+                  </div>
+                  <span class="bar-year">2024</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar shrunk current" style="height: 81%;" data-size="52oz">
+                    <span class="bar-label">52oz</span>
+                  </div>
+                  <span class="bar-year">Now</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unit Price -->
+        <div class="unit-price-section">
+          <h3>💰 True Unit Price</h3>
+          <div class="unit-price-cards">
+            <div class="unit-card before">
+              <span class="unit-label">Before (2020)</span>
+              <span class="unit-value">$0.067/oz</span>
+              <span class="unit-detail">$4.29 ÷ 64oz</span>
+            </div>
+            <div class="unit-card arrow">→</div>
+            <div class="unit-card after">
+              <span class="unit-label">Now (2026)</span>
+              <span class="unit-value bad">$0.082/oz</span>
+              <span class="unit-detail">$4.29 ÷ 52oz</span>
+            </div>
+            <div class="unit-card increase">
+              <span class="unit-label">Hidden Increase</span>
+              <span class="unit-value bad">+23%</span>
+              <span class="unit-detail">stealth price hike</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brand Report Card -->
+        <div class="brand-section">
+          <h3>🏷️ Brand Report Card</h3>
+          <div class="brand-card">
+            <div class="brand-grade">
+              <span class="grade-letter D">D</span>
+              <span class="grade-label">Shrink Score</span>
+            </div>
+            <div class="brand-stats">
+              <div class="stat-row"><span>Products tracked</span><span>23</span></div>
+              <div class="stat-row"><span>Products shrunk</span><span class="bad">14 (61%)</span></div>
+              <div class="stat-row"><span>Avg size reduction</span><span class="bad">-12%</span></div>
+              <div class="stat-row"><span>Last shrink event</span><span>Jan 2026</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alternatives -->
+        <div class="alternatives-section">
+          <h3>🔄 Better Alternatives</h3>
+          <div class="alt-list">
+            <div class="alt-item">
+              <span class="alt-emoji">🍊</span>
+              <div class="alt-info">
+                <strong>Simply Orange</strong>
+                <span class="alt-detail">52oz · $3.99 · $0.077/oz</span>
+              </div>
+              <div class="alt-badge good">A</div>
+            </div>
+            <div class="alt-item">
+              <span class="alt-emoji">🍊</span>
+              <div class="alt-info">
+                <strong>Florida's Natural</strong>
+                <span class="alt-detail">52oz · $4.49 · $0.086/oz</span>
+              </div>
+              <div class="alt-badge ok">B</div>
+            </div>
+            <div class="alt-item best">
+              <span class="alt-emoji">🏆</span>
+              <div class="alt-info">
+                <strong>Store Brand (Kirkland)</strong>
+                <span class="alt-detail">64oz · $3.49 · $0.055/oz</span>
+                <span class="alt-savings">Save 33% per oz — still full size!</span>
+              </div>
+              <div class="alt-badge good">A+</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="product-actions">
+          <button class="btn-watch" id="addWatchBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Add to Watch List
+          </button>
+          <button class="btn-report" id="reportBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Report Change
+          </button>
+          <button class="btn-share" id="shareBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Community Feed -->
+    <section class="feed-section" id="feedSection">
+      <div class="section-header">
+        <h3>🔥 Recent Catches</h3>
+        <select class="feed-filter" id="feedFilter">
+          <option value="recent">Most Recent</option>
+          <option value="worst">Biggest Shrinks</option>
+          <option value="trending">Trending</option>
+        </select>
+      </div>
+
+      <div class="feed-list">
+        <div class="feed-item">
+          <div class="feed-user">
+            <div class="avatar">SM</div>
+            <div class="feed-meta">
+              <span class="username">SavvyShopper_Mike</span>
+              <span class="timestamp">2 hours ago</span>
+            </div>
+            <div class="shrink-badge-sm alert">-25%</div>
+          </div>
+          <div class="feed-content">
+            <div class="feed-product">
+              <span class="feed-emoji">🍪</span>
+              <div>
+                <strong>Oreo Cookies Family Size</strong>
+                <p>Went from 19.1oz to 14.3oz. Same $5.99 price. That's 25% less cookies for the same money!</p>
+              </div>
+            </div>
+            <div class="feed-evidence">
+              <div class="evidence-photo">📸 Before: 19.1oz</div>
+              <div class="evidence-photo">📸 After: 14.3oz</div>
+            </div>
+            <div class="feed-actions">
+              <button class="feed-btn">👍 142</button>
+              <button class="feed-btn">💬 23</button>
+              <button class="feed-btn">🔗 Share</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-item">
+          <div class="feed-user">
+            <div class="avatar">JR</div>
+            <div class="feed-meta">
+              <span class="username">JennyRealTalk</span>
+              <span class="timestamp">5 hours ago</span>
+            </div>
+            <div class="shrink-badge-sm warn">-11%</div>
+          </div>
+          <div class="feed-content">
+            <div class="feed-product">
+              <span class="feed-emoji">🧻</span>
+              <div>
+                <strong>Bounty Paper Towels "Mega Roll"</strong>
+                <p>The "Mega Roll" used to be 110 sheets. Now it's 98. They didn't change the name. Still says Mega.</p>
+              </div>
+            </div>
+            <div class="feed-actions">
+              <button class="feed-btn">👍 89</button>
+              <button class="feed-btn">💬 15</button>
+              <button class="feed-btn">🔗 Share</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-item">
+          <div class="feed-user">
+            <div class="avatar">DK</div>
+            <div class="feed-meta">
+              <span class="username">DealKing_Dave</span>
+              <span class="timestamp">8 hours ago</span>
+            </div>
+            <div class="shrink-badge-sm alert">-20%</div>
+          </div>
+          <div class="feed-content">
+            <div class="feed-product">
+              <span class="feed-emoji">🍫</span>
+              <div>
+                <strong>Cadbury Creme Eggs (Easter 2026)</strong>
+                <p>The Guardian just reported it — Easter eggs are smaller this year. Cadbury egg down from 40g to 34g. Happy Easter! 🐰💸</p>
+              </div>
+            </div>
+            <div class="feed-actions">
+              <button class="feed-btn">👍 231</button>
+              <button class="feed-btn">💬 47</button>
+              <button class="feed-btn">🔗 Share</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Categories -->
+    <section class="trends-section" id="trendsSection">
+      <h3>📈 Shrinking Fastest</h3>
+      <div class="trend-cards">
+        <div class="trend-card">
+          <span class="trend-emoji">🧃</span>
+          <span class="trend-name">Beverages</span>
+          <span class="trend-pct bad">-14% avg</span>
+        </div>
+        <div class="trend-card">
+          <span class="trend-emoji">🍪</span>
+          <span class="trend-name">Snacks</span>
+          <span class="trend-pct bad">-12% avg</span>
+        </div>
+        <div class="trend-card">
+          <span class="trend-emoji">🧻</span>
+          <span class="trend-name">Paper Goods</span>
+          <span class="trend-pct warn">-9% avg</span>
+        </div>
+        <div class="trend-card">
+          <span class="trend-emoji">🧴</span>
+          <span class="trend-name">Personal Care</span>
+          <span class="trend-pct warn">-8% avg</span>
+        </div>
+        <div class="trend-card">
+          <span class="trend-emoji">🥣</span>
+          <span class="trend-name">Cereal</span>
+          <span class="trend-pct bad">-11% avg</span>
+        </div>
+        <div class="trend-card">
+          <span class="trend-emoji">🍫</span>
+          <span class="trend-name">Candy</span>
+          <span class="trend-pct bad">-15% avg</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Savings Calculator -->
+    <section class="savings-section" id="savingsSection">
+      <h3>🧮 Your Shrinkflation Cost</h3>
+      <div class="savings-card">
+        <div class="savings-main">
+          <span class="savings-label">Estimated annual hidden cost</span>
+          <span class="savings-value">$347</span>
+          <span class="savings-sub">Based on 12 products on your watch list</span>
+        </div>
+        <div class="savings-breakdown">
+          <div class="savings-row">
+            <span>🧃 Beverages (3 items)</span>
+            <span class="bad">$112/yr</span>
+          </div>
+          <div class="savings-row">
+            <span>🍪 Snacks (4 items)</span>
+            <span class="bad">$89/yr</span>
+          </div>
+          <div class="savings-row">
+            <span>🧻 Paper goods (3 items)</span>
+            <span class="bad">$78/yr</span>
+          </div>
+          <div class="savings-row">
+            <span>🥣 Cereal (2 items)</span>
+            <span class="bad">$68/yr</span>
+          </div>
+        </div>
+        <button class="btn-primary full-width">See How to Save →</button>
+      </div>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-tab="scan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="8" x2="7" y2="16"/><line x1="10" y1="6" x2="10" y2="18"/><line x1="13" y1="9" x2="13" y2="15"/><line x1="16" y1="7" x2="16" y2="17"/></svg>
+        <span>Scan</span>
+      </button>
+      <button class="nav-btn" data-tab="feed">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Feed</span>
+      </button>
+      <button class="nav-btn" data-tab="trends">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Trends</span>
+      </button>
+      <button class="nav-btn" data-tab="savings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Savings</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
