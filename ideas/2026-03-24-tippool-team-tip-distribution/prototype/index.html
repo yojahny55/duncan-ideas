@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TipPool — Simple Tip Splitting for Small Teams</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="logo">💰 TipPool</span>
+      </div>
+      <div class="header-right">
+        <span class="shop-name">☕ Brew & Co.</span>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="split">New Split</button>
+      <button class="tab-btn" data-tab="history">History</button>
+      <button class="tab-btn" data-tab="team">Team</button>
+    </nav>
+
+    <!-- Tab: New Split -->
+    <main id="tab-split" class="tab-content active">
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step active" data-step="1"><span>1</span> Tips</div>
+        <div class="step-line"></div>
+        <div class="step" data-step="2"><span>2</span> Team</div>
+        <div class="step-line"></div>
+        <div class="step" data-step="3"><span>3</span> Split</div>
+      </div>
+
+      <!-- Step 1: Enter Tips -->
+      <section id="step-1" class="step-panel active">
+        <div class="card">
+          <h2>Today's Tips</h2>
+          <p class="subtitle">Enter the total tips collected this shift</p>
+          
+          <div class="tip-entry-grid">
+            <div class="tip-input-group">
+              <label>💵 Cash Tips</label>
+              <div class="input-wrapper dollar">
+                <input type="number" id="cash-tips" placeholder="0.00" step="0.01" min="0" value="127.50">
+              </div>
+            </div>
+            <div class="tip-input-group">
+              <label>💳 Card Tips</label>
+              <div class="input-wrapper dollar">
+                <input type="number" id="card-tips" placeholder="0.00" step="0.01" min="0" value="120.00">
+              </div>
+            </div>
+          </div>
+
+          <div class="total-banner">
+            <span class="total-label">Total Tips</span>
+            <span class="total-amount" id="total-tips">$247.50</span>
+          </div>
+
+          <div class="split-method">
+            <label>Split Method</label>
+            <div class="method-pills">
+              <button class="pill active" data-method="hours">By Hours</button>
+              <button class="pill" data-method="equal">Equal</button>
+              <button class="pill" data-method="role">By Role</button>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="to-step-2">Select Team →</button>
+        </div>
+      </section>
+
+      <!-- Step 2: Select Team -->
+      <section id="step-2" class="step-panel">
+        <div class="card">
+          <h2>Who Worked?</h2>
+          <p class="subtitle">Check off team members and enter their hours</p>
+
+          <div class="team-select-list" id="team-select-list">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="step-actions">
+            <button class="btn-secondary" id="back-to-1">← Back</button>
+            <button class="btn-primary" id="to-step-3">Calculate Split →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3: Review Split -->
+      <section id="step-3" class="step-panel">
+        <div class="card">
+          <h2>Split Breakdown</h2>
+          <p class="subtitle" id="split-date">Tuesday, Mar 24, 2026 — Evening Shift</p>
+
+          <div class="split-results" id="split-results">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="split-summary">
+            <div class="summary-row">
+              <span>Total Distributed</span>
+              <span class="summary-amount" id="total-distributed">$247.50</span>
+            </div>
+            <div class="summary-row muted">
+              <span>Split Method</span>
+              <span id="method-display">By Hours Worked</span>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button class="btn-secondary" id="back-to-2">← Back</button>
+            <button class="btn-primary" id="send-tips">
+              <span class="btn-icon">📲</span> Send Payment Links
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Success State -->
+      <section id="step-success" class="step-panel">
+        <div class="card success-card">
+          <div class="success-icon">✅</div>
+          <h2>Tips Sent!</h2>
+          <p class="subtitle">Payment links sent to 3 team members</p>
+          
+          <div class="sent-list" id="sent-list">
+            <!-- Populated by JS -->
+          </div>
+
+          <button class="btn-primary" id="new-split">Start New Split</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Tab: History -->
+    <main id="tab-history" class="tab-content">
+      <div class="card">
+        <div class="history-header">
+          <h2>Tip History</h2>
+          <select class="period-select">
+            <option>This Week</option>
+            <option selected>This Month</option>
+            <option>Last Month</option>
+          </select>
+        </div>
+
+        <div class="history-stats">
+          <div class="stat-card">
+            <span class="stat-value">$3,412</span>
+            <span class="stat-label">Total Tips</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">42</span>
+            <span class="stat-label">Shifts Split</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">$81.24</span>
+            <span class="stat-label">Avg/Shift</span>
+          </div>
+        </div>
+
+        <div class="history-list">
+          <div class="history-item">
+            <div class="history-date">
+              <span class="day">Mon</span>
+              <span class="date-num">Mar 23</span>
+            </div>
+            <div class="history-detail">
+              <span class="history-amount">$198.75</span>
+              <span class="history-meta">3 people · By hours · Evening</span>
+            </div>
+            <span class="history-status sent">Sent ✓</span>
+          </div>
+          <div class="history-item">
+            <div class="history-date">
+              <span class="day">Sun</span>
+              <span class="date-num">Mar 22</span>
+            </div>
+            <div class="history-detail">
+              <span class="history-amount">$312.00</span>
+              <span class="history-meta">4 people · By hours · All day</span>
+            </div>
+            <span class="history-status sent">Sent ✓</span>
+          </div>
+          <div class="history-item">
+            <div class="history-date">
+              <span class="day">Sat</span>
+              <span class="date-num">Mar 21</span>
+            </div>
+            <div class="history-detail">
+              <span class="history-amount">$287.50</span>
+              <span class="history-meta">4 people · By hours · All day</span>
+            </div>
+            <span class="history-status sent">Sent ✓</span>
+          </div>
+          <div class="history-item">
+            <div class="history-date">
+              <span class="day">Fri</span>
+              <span class="date-num">Mar 20</span>
+            </div>
+            <div class="history-detail">
+              <span class="history-amount">$341.25</span>
+              <span class="history-meta">5 people · By hours · All day</span>
+            </div>
+            <span class="history-status sent">Sent ✓</span>
+          </div>
+          <div class="history-item">
+            <div class="history-date">
+              <span class="day">Thu</span>
+              <span class="date-num">Mar 19</span>
+            </div>
+            <div class="history-detail">
+              <span class="history-amount">$156.00</span>
+              <span class="history-meta">2 people · Equal · Morning</span>
+            </div>
+            <span class="history-status sent">Sent ✓</span>
+          </div>
+        </div>
+
+        <button class="btn-secondary full-width">Export CSV for Tax Season →</button>
+      </div>
+    </main>
+
+    <!-- Tab: Team -->
+    <main id="tab-team" class="tab-content">
+      <div class="card">
+        <div class="history-header">
+          <h2>Your Team</h2>
+          <button class="btn-small" id="add-member-btn">+ Add</button>
+        </div>
+
+        <div class="team-list">
+          <div class="team-member-card">
+            <div class="member-avatar" style="background: #6366f1;">M</div>
+            <div class="member-info">
+              <span class="member-name">Maya Chen</span>
+              <span class="member-role">Lead Barista</span>
+            </div>
+            <div class="member-stats">
+              <span class="member-earned">$847.50 this month</span>
+              <span class="member-payment">Venmo: @maya-chen</span>
+            </div>
+          </div>
+          <div class="team-member-card">
+            <div class="member-avatar" style="background: #f59e0b;">A</div>
+            <div class="member-info">
+              <span class="member-name">Alex Rivera</span>
+              <span class="member-role">Barista</span>
+            </div>
+            <div class="member-stats">
+              <span class="member-earned">$623.00 this month</span>
+              <span class="member-payment">CashApp: $alexr</span>
+            </div>
+          </div>
+          <div class="team-member-card">
+            <div class="member-avatar" style="background: #10b981;">J</div>
+            <div class="member-info">
+              <span class="member-name">Jordan Park</span>
+              <span class="member-role">Barista</span>
+            </div>
+            <div class="member-stats">
+              <span class="member-earned">$912.25 this month</span>
+              <span class="member-payment">Venmo: @jpark99</span>
+            </div>
+          </div>
+          <div class="team-member-card">
+            <div class="member-avatar" style="background: #ec4899;">S</div>
+            <div class="member-info">
+              <span class="member-name">Sam Torres</span>
+              <span class="member-role">Trainee (50%)</span>
+            </div>
+            <div class="member-stats">
+              <span class="member-earned">$198.75 this month</span>
+              <span class="member-payment">Zelle: sam@email.com</span>
+            </div>
+          </div>
+          <div class="team-member-card">
+            <div class="member-avatar" style="background: #8b5cf6;">K</div>
+            <div class="member-info">
+              <span class="member-name">Kim Nguyen</span>
+              <span class="member-role">Weekend Barista</span>
+            </div>
+            <div class="member-stats">
+              <span class="member-earned">$445.00 this month</span>
+              <span class="member-payment">Venmo: @kimnguyen</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-link-section">
+          <p class="team-link-label">Staff Portal Link</p>
+          <div class="link-display">
+            <span>tippool.app/team/brew-co-2847</span>
+            <button class="copy-btn" id="copy-link">📋 Copy</button>
+          </div>
+          <p class="team-link-help">Share this link so your team can check their tip history anytime</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Pricing Footer -->
+    <footer class="pricing-footer">
+      <div class="pricing-card free">
+        <span class="plan-name">Free</span>
+        <span class="plan-detail">3 members · 10 splits/mo</span>
+      </div>
+      <div class="pricing-card pro">
+        <span class="plan-name">Pro $9/mo</span>
+        <span class="plan-detail">Unlimited everything + tax export</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
