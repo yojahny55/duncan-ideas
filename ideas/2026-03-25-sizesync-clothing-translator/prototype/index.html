@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SizeSync — Your Size, Every Brand</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <div class="logo">
+        <span class="logo-icon">📐</span>
+        <span class="logo-text">SizeSync</span>
+      </div>
+      <nav class="nav">
+        <a href="#translator" class="nav-link">Translate</a>
+        <a href="#brands" class="nav-link">Brands</a>
+        <a href="#profile" class="nav-link">My Profile</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">Stop the sizing roulette 🎰</div>
+      <h1 class="hero-title">Your Size.<br><span class="gradient-text">Every Brand.</span></h1>
+      <p class="hero-sub">You're a M at Nike, S at Zara, L at Uniqlo — we translate your body into the right size at 500+ brands. No more ordering 3 sizes and returning 2.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">70%</span>
+          <span class="stat-label">of returns are size-related</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">$743B</span>
+          <span class="stat-label">in online clothing returns/yr</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">3→1</span>
+          <span class="stat-label">sizes ordered → sizes kept</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Size Translator -->
+  <section id="translator" class="section translator-section">
+    <div class="container">
+      <h2 class="section-title">🔄 Size Translator</h2>
+      <p class="section-sub">Know your size at one brand? Find it at any other.</p>
+
+      <div class="translator-card">
+        <div class="translator-row">
+          <div class="translator-col">
+            <label class="field-label">I wear this size at...</label>
+            <select id="source-brand" class="select-field">
+              <option value="">Select brand</option>
+              <option value="nike">Nike</option>
+              <option value="zara">Zara</option>
+              <option value="uniqlo">Uniqlo</option>
+              <option value="hm">H&M</option>
+              <option value="gap">Gap</option>
+              <option value="levis">Levi's</option>
+              <option value="adidas">Adidas</option>
+              <option value="ralph-lauren">Ralph Lauren</option>
+              <option value="hugo-boss">Hugo Boss</option>
+              <option value="asos">ASOS</option>
+            </select>
+          </div>
+          <div class="translator-col">
+            <label class="field-label">Category</label>
+            <select id="garment-type" class="select-field">
+              <option value="tops">Tops / T-Shirts</option>
+              <option value="bottoms">Pants / Jeans</option>
+              <option value="outerwear">Jackets / Outerwear</option>
+              <option value="shoes">Shoes</option>
+            </select>
+          </div>
+          <div class="translator-col">
+            <label class="field-label">My size</label>
+            <select id="source-size" class="select-field">
+              <option value="">Select size</option>
+              <option value="xs">XS</option>
+              <option value="s">S</option>
+              <option value="m">M</option>
+              <option value="l">L</option>
+              <option value="xl">XL</option>
+              <option value="xxl">XXL</option>
+            </select>
+          </div>
+        </div>
+        <button id="translate-btn" class="btn btn-primary btn-translate">
+          <span>Translate My Size</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+
+      <!-- Results -->
+      <div id="results" class="results hidden">
+        <div class="results-header">
+          <h3>Your size at other brands</h3>
+          <div class="results-meta">Based on <span id="data-points">12,847</span> community reports</div>
+        </div>
+        <div id="results-grid" class="results-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Body Profile -->
+  <section id="profile" class="section profile-section">
+    <div class="container">
+      <h2 class="section-title">📏 Your Body Profile</h2>
+      <p class="section-sub">Enter your measurements once, get accurate sizes everywhere.</p>
+
+      <div class="profile-card">
+        <div class="profile-grid">
+          <div class="measure-group">
+            <label class="field-label">Chest (inches)</label>
+            <input type="number" class="input-field" id="chest" placeholder="e.g. 40" min="28" max="60">
+          </div>
+          <div class="measure-group">
+            <label class="field-label">Waist (inches)</label>
+            <input type="number" class="input-field" id="waist" placeholder="e.g. 33" min="24" max="52">
+          </div>
+          <div class="measure-group">
+            <label class="field-label">Hips (inches)</label>
+            <input type="number" class="input-field" id="hips" placeholder="e.g. 38" min="28" max="56">
+          </div>
+          <div class="measure-group">
+            <label class="field-label">Inseam (inches)</label>
+            <input type="number" class="input-field" id="inseam" placeholder="e.g. 32" min="24" max="38">
+          </div>
+          <div class="measure-group">
+            <label class="field-label">Height</label>
+            <input type="text" class="input-field" id="height" placeholder="e.g. 5'10&quot;">
+          </div>
+          <div class="measure-group">
+            <label class="field-label">Weight (lbs)</label>
+            <input type="number" class="input-field" id="weight" placeholder="e.g. 170" min="80" max="400">
+          </div>
+        </div>
+
+        <div class="fit-pref">
+          <label class="field-label">Fit Preference</label>
+          <div class="fit-options">
+            <button class="fit-btn" data-fit="slim">Slim</button>
+            <button class="fit-btn active" data-fit="regular">Regular</button>
+            <button class="fit-btn" data-fit="relaxed">Relaxed</button>
+            <button class="fit-btn" data-fit="oversized">Oversized</button>
+          </div>
+        </div>
+
+        <button id="save-profile" class="btn btn-primary">
+          <span>Save Profile</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Intelligence -->
+  <section id="brands" class="section brands-section">
+    <div class="container">
+      <h2 class="section-title">📊 Brand Fit Intelligence</h2>
+      <p class="section-sub">Community-verified sizing data — not marketing lies.</p>
+
+      <div class="brand-grid" id="brand-grid"></div>
+    </div>
+  </section>
+
+  <!-- Fit History -->
+  <section class="section history-section">
+    <div class="container">
+      <h2 class="section-title">🏷️ My Fit History</h2>
+      <p class="section-sub">Log what you own and how it fits.</p>
+
+      <div class="history-list" id="history-list"></div>
+
+      <div class="add-item-card">
+        <h3>+ Log a Purchase</h3>
+        <div class="add-item-form">
+          <select id="log-brand" class="select-field">
+            <option value="">Brand</option>
+            <option value="nike">Nike</option>
+            <option value="zara">Zara</option>
+            <option value="uniqlo">Uniqlo</option>
+            <option value="hm">H&M</option>
+            <option value="gap">Gap</option>
+            <option value="levis">Levi's</option>
+          </select>
+          <input type="text" class="input-field" id="log-item" placeholder="Item name (e.g. Dri-FIT Tee)">
+          <select id="log-size" class="select-field">
+            <option value="">Size</option>
+            <option value="xs">XS</option>
+            <option value="s">S</option>
+            <option value="m">M</option>
+            <option value="l">L</option>
+            <option value="xl">XL</option>
+          </select>
+          <div class="fit-rating">
+            <span class="field-label">How does it fit?</span>
+            <div class="fit-rating-options">
+              <button class="rating-btn" data-rating="too-small">😤 Too Small</button>
+              <button class="rating-btn" data-rating="slightly-small">😐 Bit Small</button>
+              <button class="rating-btn active" data-rating="perfect">😍 Perfect</button>
+              <button class="rating-btn" data-rating="slightly-large">😐 Bit Large</button>
+              <button class="rating-btn" data-rating="too-large">😤 Too Large</button>
+            </div>
+          </div>
+          <button id="log-purchase" class="btn btn-secondary">Log It</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Body Twins -->
+  <section class="section twins-section">
+    <div class="container">
+      <h2 class="section-title">👥 Body Twins</h2>
+      <p class="section-sub">People with similar measurements love these brands.</p>
+
+      <div class="twins-card">
+        <div class="twins-match">
+          <div class="match-badge">94% body match</div>
+          <div class="match-info">
+            <p>Based on <strong>2,341 users</strong> with similar chest, waist, and height</p>
+          </div>
+        </div>
+        <div class="twins-brands" id="twins-brands"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <h2>Stop guessing. Start knowing.</h2>
+        <p>Join 47,000+ shoppers who never order the wrong size.</p>
+        <div class="cta-actions">
+          <button class="btn btn-primary btn-lg">Get SizeSync Free</button>
+          <button class="btn btn-outline btn-lg">Install Browser Extension</button>
+        </div>
+        <div class="pricing-hint">Free tier: 5 lookups/mo · Plus: $4/mo · Pro: $8/mo</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>SizeSync — Your body, translated to every brand. 📐</p>
+      <p class="footer-note">Prototype by Duncan ⚔️ · <a href="https://github.com/yojahny55/duncan-ideas">GitHub</a></p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
