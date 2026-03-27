@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encore — Letterboxd for Concerts</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="logo">🎵 <span>encore</span></div>
+      <div class="nav-links">
+        <a href="#" class="active">Feed</a>
+        <a href="#" onclick="showSection('discover')">Discover</a>
+        <a href="#" onclick="showSection('profile')">Profile</a>
+      </div>
+      <button class="btn-log" onclick="openLogModal()">+ Log Concert</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Remember every show.</h1>
+      <p class="hero-sub">Log concerts. Rate performances. Share the moments that gave you chills.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">2.4M</span><span class="stat-label">concerts logged</span></div>
+        <div class="stat"><span class="stat-num">890K</span><span class="stat-label">reviews</span></div>
+        <div class="stat"><span class="stat-num">340K</span><span class="stat-label">members</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feed Section -->
+  <section class="feed" id="feed-section">
+    <div class="container">
+      <h2 class="section-title">Your Feed</h2>
+      <div class="feed-grid" id="feed-grid"></div>
+    </div>
+  </section>
+
+  <!-- Discover Section -->
+  <section class="discover hidden" id="discover-section">
+    <div class="container">
+      <h2 class="section-title">Popular This Week</h2>
+      <div class="discover-grid" id="discover-grid"></div>
+      <h2 class="section-title" style="margin-top:2.5rem">Best Live Acts</h2>
+      <div class="leaderboard" id="leaderboard"></div>
+    </div>
+  </section>
+
+  <!-- Profile Section -->
+  <section class="profile hidden" id="profile-section">
+    <div class="container">
+      <div class="profile-header">
+        <div class="profile-avatar">🎸</div>
+        <div class="profile-info">
+          <h2>Alex Rivera</h2>
+          <p class="profile-handle">@alexlivemusic</p>
+          <div class="profile-stats">
+            <span><strong>147</strong> concerts</span>
+            <span><strong>89</strong> artists</span>
+            <span><strong>42</strong> venues</span>
+            <span><strong>6</strong> festivals</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Concert Calendar Heatmap -->
+      <div class="heatmap-section">
+        <h3>2026 Concert Calendar</h3>
+        <div class="heatmap" id="heatmap"></div>
+        <div class="heatmap-legend">
+          <span>Less</span>
+          <div class="heatmap-cell level-0"></div>
+          <div class="heatmap-cell level-1"></div>
+          <div class="heatmap-cell level-2"></div>
+          <div class="heatmap-cell level-3"></div>
+          <span>More</span>
+        </div>
+      </div>
+
+      <!-- Top Artists -->
+      <h3 class="section-title">Most Seen Artists</h3>
+      <div class="top-artists" id="top-artists"></div>
+
+      <!-- Recent Activity -->
+      <h3 class="section-title">Recent</h3>
+      <div class="feed-grid" id="profile-feed"></div>
+    </div>
+  </section>
+
+  <!-- Log Concert Modal -->
+  <div class="modal-overlay hidden" id="log-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Log a Concert</h2>
+        <button class="modal-close" onclick="closeLogModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Artist / Band</label>
+          <input type="text" id="log-artist" placeholder="Search artists..." autocomplete="off">
+          <div class="suggestions hidden" id="artist-suggestions"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="log-date" value="2026-03-26">
+          </div>
+          <div class="form-group">
+            <label>Venue</label>
+            <input type="text" id="log-venue" placeholder="e.g. Madison Square Garden">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Rating</label>
+          <div class="star-rating" id="star-rating">
+            <span class="star" data-val="1">★</span>
+            <span class="star" data-val="2">★</span>
+            <span class="star" data-val="3">★</span>
+            <span class="star" data-val="4">★</span>
+            <span class="star" data-val="5">★</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Vibe Tags</label>
+          <div class="vibe-tags">
+            <button class="vibe-tag" data-tag="electric">🔥 Electric</button>
+            <button class="vibe-tag" data-tag="emotional">😢 Emotional</button>
+            <button class="vibe-tag" data-tag="legendary">🎸 Legendary</button>
+            <button class="vibe-tag" data-tag="mosh">💀 Mosh Pit</button>
+            <button class="vibe-tag" data-tag="intimate">🕯️ Intimate</button>
+            <button class="vibe-tag" data-tag="euphoric">✨ Euphoric</button>
+            <button class="vibe-tag" data-tag="chill">🌙 Chill</button>
+            <button class="vibe-tag" data-tag="festival">🎪 Festival</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Highlight Moment</label>
+          <input type="text" id="log-highlight" placeholder="That one moment you'll never forget...">
+        </div>
+        <div class="form-group">
+          <label>Review <span class="optional">(optional)</span></label>
+          <textarea id="log-review" rows="3" placeholder="How was it?"></textarea>
+        </div>
+        <button class="btn-submit" onclick="submitLog()">Log Concert 🎶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast">Concert logged! 🎉</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
