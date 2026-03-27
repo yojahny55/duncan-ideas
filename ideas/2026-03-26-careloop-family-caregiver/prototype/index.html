@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareLoop — Family Caregiver Coordination</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">🫂</div>
+        <h1>CareLoop</h1>
+      </div>
+      <div class="care-circle">
+        <div class="circle-label">Care Circle</div>
+        <div class="circle-parent">
+          <div class="parent-avatar">👩‍🦳</div>
+          <div class="parent-info">
+            <span class="parent-name">Mom (Gloria)</span>
+            <span class="parent-status">Last check-in: 2h ago</span>
+          </div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="feed">
+          <span class="nav-icon">📋</span> Daily Feed
+        </button>
+        <button class="nav-item" data-tab="meds">
+          <span class="nav-icon">💊</span> Medications
+        </button>
+        <button class="nav-item" data-tab="calendar">
+          <span class="nav-icon">📅</span> Appointments
+        </button>
+        <button class="nav-item" data-tab="tasks">
+          <span class="nav-icon">✅</span> Tasks
+        </button>
+        <button class="nav-item" data-tab="journal">
+          <span class="nav-icon">📓</span> Care Journal
+        </button>
+        <button class="nav-item" data-tab="fairness">
+          <span class="nav-icon">⚖️</span> Fairness
+        </button>
+      </nav>
+      <div class="sidebar-members">
+        <div class="members-label">Family Members</div>
+        <div class="member">
+          <div class="member-dot" style="background:#4CAF50"></div>
+          <span>Sarah (you)</span>
+        </div>
+        <div class="member">
+          <div class="member-dot" style="background:#2196F3"></div>
+          <span>Michael</span>
+        </div>
+        <div class="member">
+          <div class="member-dot" style="background:#FF9800"></div>
+          <span>Lisa</span>
+        </div>
+        <div class="member">
+          <div class="member-dot" style="background:#9C27B0"></div>
+          <span>David</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Daily Feed Tab -->
+      <section class="tab-content active" id="tab-feed">
+        <div class="tab-header">
+          <h2>Daily Feed</h2>
+          <span class="tab-date">Thursday, March 26, 2026</span>
+        </div>
+
+        <!-- Quick Check-in -->
+        <div class="checkin-card">
+          <div class="checkin-prompt">How is Mom doing right now?</div>
+          <div class="checkin-moods">
+            <button class="mood-btn" onclick="quickCheckin(this, 'Great day')">😊<span>Great</span></button>
+            <button class="mood-btn" onclick="quickCheckin(this, 'Good day')">🙂<span>Good</span></button>
+            <button class="mood-btn" onclick="quickCheckin(this, 'Okay day')">😐<span>Okay</span></button>
+            <button class="mood-btn" onclick="quickCheckin(this, 'Rough day')">😟<span>Rough</span></button>
+            <button class="mood-btn" onclick="quickCheckin(this, 'Needs attention')">🚨<span>Alert</span></button>
+          </div>
+          <textarea class="checkin-note" placeholder="Add a note... (e.g., 'Ate well at lunch, seemed tired in the afternoon')"></textarea>
+          <button class="btn-primary checkin-submit" onclick="submitCheckin()">Post Update</button>
+        </div>
+
+        <!-- Feed Items -->
+        <div class="feed" id="feed-list">
+          <div class="feed-item">
+            <div class="feed-avatar" style="background:#2196F3">M</div>
+            <div class="feed-body">
+              <div class="feed-meta">
+                <strong>Michael</strong>
+                <span class="feed-time">1h ago</span>
+              </div>
+              <div class="feed-mood">🙂 Good day</div>
+              <p>Took Mom to the park this morning. She walked for about 20 minutes and seemed to enjoy it. Appetite was good at lunch.</p>
+              <div class="feed-actions">
+                <button class="feed-react" onclick="this.classList.toggle('reacted')">❤️ 2</button>
+                <button class="feed-react">💬 Reply</button>
+              </div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-avatar" style="background:#FF9800">L</div>
+            <div class="feed-body">
+              <div class="feed-meta">
+                <strong>Lisa</strong>
+                <span class="feed-time">3h ago</span>
+                <span class="feed-badge med-badge">💊 Med Update</span>
+              </div>
+              <p>Confirmed Mom took her morning meds (Metformin, Lisinopril). She said her knee was hurting again — might need to mention at Thursday's appointment.</p>
+              <div class="feed-actions">
+                <button class="feed-react reacted">❤️ 3</button>
+                <button class="feed-react">💬 Reply</button>
+              </div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-avatar" style="background:#4CAF50">S</div>
+            <div class="feed-body">
+              <div class="feed-meta">
+                <strong>Sarah (you)</strong>
+                <span class="feed-time">Yesterday</span>
+              </div>
+              <div class="feed-mood">😊 Great day</div>
+              <p>Mom video-called with her grandkids and was laughing the whole time. Best mood I've seen in weeks! Also refilled her prescriptions — all picked up.</p>
+              <div class="feed-actions">
+                <button class="feed-react reacted">❤️ 4</button>
+                <button class="feed-react">💬 1 reply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Medications Tab -->
+      <section class="tab-content" id="tab-meds">
+        <div class="tab-header">
+          <h2>Medications</h2>
+          <button class="btn-secondary" onclick="showToast('Add medication form would open here')">+ Add Med</button>
+        </div>
+        <div class="med-schedule">
+          <div class="med-time-block">
+            <div class="med-time-header">
+              <span class="time-label">🌅 Morning (8:00 AM)</span>
+              <span class="time-status done">✅ All taken</span>
+            </div>
+            <div class="med-card done">
+              <div class="med-info">
+                <div class="med-name">Metformin 500mg</div>
+                <div class="med-detail">For diabetes • Take with food</div>
+              </div>
+              <div class="med-confirm">
+                <span class="confirmed-by">Lisa confirmed • 8:15 AM</span>
+              </div>
+            </div>
+            <div class="med-card done">
+              <div class="med-info">
+                <div class="med-name">Lisinopril 10mg</div>
+                <div class="med-detail">For blood pressure</div>
+              </div>
+              <div class="med-confirm">
+                <span class="confirmed-by">Lisa confirmed • 8:15 AM</span>
+              </div>
+            </div>
+          </div>
+          <div class="med-time-block">
+            <div class="med-time-header">
+              <span class="time-label">🌞 Afternoon (2:00 PM)</span>
+              <span class="time-status pending">⏳ Upcoming</span>
+            </div>
+            <div class="med-card pending">
+              <div class="med-info">
+                <div class="med-name">Vitamin D 2000 IU</div>
+                <div class="med-detail">Supplement • Take with meal</div>
+              </div>
+              <button class="btn-confirm" onclick="confirmMed(this)">Mark as Taken</button>
+            </div>
+          </div>
+          <div class="med-time-block">
+            <div class="med-time-header">
+              <span class="time-label">🌙 Evening (8:00 PM)</span>
+              <span class="time-status pending">⏳ Upcoming</span>
+            </div>
+            <div class="med-card pending">
+              <div class="med-info">
+                <div class="med-name">Metformin 500mg</div>
+                <div class="med-detail">For diabetes • Take with food</div>
+              </div>
+              <button class="btn-confirm" onclick="confirmMed(this)">Mark as Taken</button>
+            </div>
+            <div class="med-card pending">
+              <div class="med-info">
+                <div class="med-name">Acetaminophen 500mg</div>
+                <div class="med-detail">For knee pain • As needed</div>
+              </div>
+              <button class="btn-confirm" onclick="confirmMed(this)">Mark as Taken</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Appointments Tab -->
+      <section class="tab-content" id="tab-calendar">
+        <div class="tab-header">
+          <h2>Appointments</h2>
+          <button class="btn-secondary" onclick="showToast('Add appointment form would open here')">+ Add Appointment</button>
+        </div>
+        <div class="appointments">
+          <div class="appt-card upcoming">
+            <div class="appt-date">
+              <span class="appt-day">27</span>
+              <span class="appt-month">MAR</span>
+            </div>
+            <div class="appt-info">
+              <div class="appt-title">Dr. Patel — Primary Care</div>
+              <div class="appt-detail">10:30 AM • Tampa General Medical Group</div>
+              <div class="appt-notes">Follow-up on blood work + discuss knee pain</div>
+            </div>
+            <div class="appt-claim">
+              <div class="claimed-by" style="background:#2196F3">M</div>
+              <span class="claim-text">Michael is taking her</span>
+            </div>
+          </div>
+          <div class="appt-card">
+            <div class="appt-date">
+              <span class="appt-day">02</span>
+              <span class="appt-month">APR</span>
+            </div>
+            <div class="appt-info">
+              <div class="appt-title">Dr. Chen — Ophthalmology</div>
+              <div class="appt-detail">2:00 PM • Vision Center of Tampa</div>
+              <div class="appt-notes">Annual eye exam</div>
+            </div>
+            <div class="appt-claim unclaimed">
+              <button class="btn-claim" onclick="claimAppointment(this)">🙋 I'll take this one</button>
+            </div>
+          </div>
+          <div class="appt-card">
+            <div class="appt-date">
+              <span class="appt-day">15</span>
+              <span class="appt-month">APR</span>
+            </div>
+            <div class="appt-info">
+              <div class="appt-title">Physical Therapy</div>
+              <div class="appt-detail">11:00 AM • BayCare Rehab</div>
+              <div class="appt-notes">Knee strengthening — session 4 of 8</div>
+            </div>
+            <div class="appt-claim unclaimed">
+              <button class="btn-claim" onclick="claimAppointment(this)">🙋 I'll take this one</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tasks Tab -->
+      <section class="tab-content" id="tab-tasks">
+        <div class="tab-header">
+          <h2>Tasks</h2>
+          <button class="btn-secondary" onclick="showToast('Add task form would open here')">+ Add Task</button>
+        </div>
+        <div class="tasks-board">
+          <div class="task-column">
+            <div class="column-header">📥 To Do <span class="count">3</span></div>
+            <div class="task-card priority-high">
+              <div class="task-priority">🔴 Urgent</div>
+              <div class="task-title">Refill blood pressure medication</div>
+              <div class="task-detail">CVS Pharmacy — prescription #4421</div>
+              <div class="task-assignee unclaimed">
+                <button class="btn-take" onclick="takeTask(this)">Claim task</button>
+              </div>
+            </div>
+            <div class="task-card">
+              <div class="task-title">Buy groceries for the week</div>
+              <div class="task-detail">List pinned in chat — focus on soft foods</div>
+              <div class="task-assignee">
+                <div class="assignee-dot" style="background:#9C27B0"></div>
+                <span>David</span>
+              </div>
+            </div>
+            <div class="task-card">
+              <div class="task-title">Schedule HVAC maintenance</div>
+              <div class="task-detail">AC filter needs changing, thermostat acting up</div>
+              <div class="task-assignee unclaimed">
+                <button class="btn-take" onclick="takeTask(this)">Claim task</button>
+              </div>
+            </div>
+          </div>
+          <div class="task-column">
+            <div class="column-header">🔄 In Progress <span class="count">2</span></div>
+            <div class="task-card">
+              <div class="task-title">Research home aide services</div>
+              <div class="task-detail">Get quotes from 3 agencies for 10hr/week</div>
+              <div class="task-assignee">
+                <div class="assignee-dot" style="background:#4CAF50"></div>
+                <span>Sarah (you)</span>
+              </div>
+            </div>
+            <div class="task-card">
+              <div class="task-title">Fix bathroom grab bar</div>
+              <div class="task-detail">Loose screws near the shower — safety hazard</div>
+              <div class="task-assignee">
+                <div class="assignee-dot" style="background:#2196F3"></div>
+                <span>Michael</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-column">
+            <div class="column-header">✅ Done <span class="count">2</span></div>
+            <div class="task-card completed">
+              <div class="task-title">Pick up prescriptions</div>
+              <div class="task-assignee">
+                <div class="assignee-dot" style="background:#4CAF50"></div>
+                <span>Sarah — completed Mar 25</span>
+              </div>
+            </div>
+            <div class="task-card completed">
+              <div class="task-title">Install nightlight in hallway</div>
+              <div class="task-assignee">
+                <div class="assignee-dot" style="background:#2196F3"></div>
+                <span>Michael — completed Mar 24</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Care Journal Tab -->
+      <section class="tab-content" id="tab-journal">
+        <div class="tab-header">
+          <h2>Care Journal</h2>
+          <button class="btn-secondary" onclick="showToast('New journal entry form would open')">+ New Entry</button>
+        </div>
+        <div class="journal-note">
+          <p>📋 Log symptoms, observations, and changes here. Bring this journal to doctor visits for a complete picture.</p>
+        </div>
+        <div class="journal-entries">
+          <div class="journal-entry">
+            <div class="entry-date">Mar 26, 2026</div>
+            <div class="entry-tags">
+              <span class="tag tag-symptom">Symptom</span>
+              <span class="tag tag-mobility">Mobility</span>
+            </div>
+            <div class="entry-body">
+              <p><strong>Knee pain increased</strong> — Mom mentioned her right knee has been "catching" when she stands up from sitting. Happens 3-4 times today. No swelling visible. Started about 3 days ago.</p>
+            </div>
+            <div class="entry-author">
+              <div class="author-dot" style="background:#FF9800"></div>
+              Logged by Lisa
+            </div>
+          </div>
+          <div class="journal-entry">
+            <div class="entry-date">Mar 24, 2026</div>
+            <div class="entry-tags">
+              <span class="tag tag-mood">Mood</span>
+              <span class="tag tag-positive">Positive</span>
+            </div>
+            <div class="entry-body">
+              <p><strong>Best day in weeks</strong> — Mom was very engaged during the grandkids' video call. Laughed multiple times, remembered their school projects from last call. Appetite excellent.</p>
+            </div>
+            <div class="entry-author">
+              <div class="author-dot" style="background:#4CAF50"></div>
+              Logged by Sarah
+            </div>
+          </div>
+          <div class="journal-entry">
+            <div class="entry-date">Mar 22, 2026</div>
+            <div class="entry-tags">
+              <span class="tag tag-symptom">Symptom</span>
+              <span class="tag tag-concern">Concern</span>
+            </div>
+            <div class="entry-body">
+              <p><strong>Confusion in the evening</strong> — Mom couldn't find her glasses (they were on her head) and asked about Dad twice. Resolved after about 30 minutes. First time this has happened in a while.</p>
+            </div>
+            <div class="entry-author">
+              <div class="author-dot" style="background:#2196F3"></div>
+              Logged by Michael
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fairness Dashboard -->
+      <section class="tab-content" id="tab-fairness">
+        <div class="tab-header">
+          <h2>Fairness Dashboard</h2>
+          <span class="tab-date">Last 30 days</span>
+        </div>
+        <div class="fairness-note">
+          <p>🤝 This isn't about keeping score — it's about making sure no one burns out. Visible effort helps everyone contribute fairly.</p>
+        </div>
+        <div class="fairness-grid">
+          <div class="fairness-card">
+            <div class="member-header">
+              <div class="member-avatar" style="background:#4CAF50">S</div>
+              <div>
+                <div class="member-name">Sarah (you)</div>
+                <div class="member-role">Primary coordinator</div>
+              </div>
+            </div>
+            <div class="fairness-stats">
+              <div class="stat">
+                <span class="stat-value">12</span>
+                <span class="stat-label">Tasks done</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">4</span>
+                <span class="stat-label">Appointments</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">18</span>
+                <span class="stat-label">Check-ins</span>
+              </div>
+            </div>
+            <div class="contribution-bar">
+              <div class="bar-fill" style="width:38%; background:#4CAF50"></div>
+            </div>
+            <div class="contribution-pct">38% of total contributions</div>
+          </div>
+          <div class="fairness-card">
+            <div class="member-header">
+              <div class="member-avatar" style="background:#2196F3">M</div>
+              <div>
+                <div class="member-name">Michael</div>
+                <div class="member-role">Local support</div>
+              </div>
+            </div>
+            <div class="fairness-stats">
+              <div class="stat">
+                <span class="stat-value">8</span>
+                <span class="stat-label">Tasks done</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">3</span>
+                <span class="stat-label">Appointments</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">14</span>
+                <span class="stat-label">Check-ins</span>
+              </div>
+            </div>
+            <div class="contribution-bar">
+              <div class="bar-fill" style="width:28%; background:#2196F3"></div>
+            </div>
+            <div class="contribution-pct">28% of total contributions</div>
+          </div>
+          <div class="fairness-card">
+            <div class="member-header">
+              <div class="member-avatar" style="background:#FF9800">L</div>
+              <div>
+                <div class="member-name">Lisa</div>
+                <div class="member-role">Morning med check</div>
+              </div>
+            </div>
+            <div class="fairness-stats">
+              <div class="stat">
+                <span class="stat-value">5</span>
+                <span class="stat-label">Tasks done</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">1</span>
+                <span class="stat-label">Appointments</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">22</span>
+                <span class="stat-label">Check-ins</span>
+              </div>
+            </div>
+            <div class="contribution-bar">
+              <div class="bar-fill" style="width:22%; background:#FF9800"></div>
+            </div>
+            <div class="contribution-pct">22% of total contributions</div>
+          </div>
+          <div class="fairness-card">
+            <div class="member-header">
+              <div class="member-avatar" style="background:#9C27B0">D</div>
+              <div>
+                <div class="member-name">David</div>
+                <div class="member-role">Long-distance</div>
+              </div>
+            </div>
+            <div class="fairness-stats">
+              <div class="stat">
+                <span class="stat-value">3</span>
+                <span class="stat-label">Tasks done</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Appointments</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">8</span>
+                <span class="stat-label">Check-ins</span>
+              </div>
+            </div>
+            <div class="contribution-bar">
+              <div class="bar-fill" style="width:12%; background:#9C27B0"></div>
+            </div>
+            <div class="contribution-pct">12% of total contributions</div>
+            <div class="nudge-hint">💡 David could help with remote tasks like insurance calls or research</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
