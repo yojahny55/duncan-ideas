@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChoreScore — Fair Housework Distribution</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">🏠</span>
+        <h1>ChoreScore</h1>
+      </div>
+      <div class="header-right">
+        <span class="household-name">The Apartment</span>
+        <button class="btn-icon" id="settingsBtn" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="tab-nav">
+      <button class="tab active" data-tab="dashboard">Dashboard</button>
+      <button class="tab" data-tab="log">Quick Log</button>
+      <button class="tab" data-tab="history">History</button>
+      <button class="tab" data-tab="rotation">Rotation</button>
+    </nav>
+
+    <!-- Dashboard Tab -->
+    <section class="tab-content active" id="dashboard">
+      <!-- Fairness Meter -->
+      <div class="card fairness-card">
+        <h2>Fairness This Week</h2>
+        <div class="fairness-meter">
+          <div class="meter-bar">
+            <div class="meter-fill" id="fairnessFill" style="width: 62%">
+              <span class="meter-label-left">Alex</span>
+              <span class="meter-label-right">Jordan</span>
+            </div>
+          </div>
+          <div class="meter-stats">
+            <span class="stat stat-alex"><strong>62%</strong> · 187 pts</span>
+            <span class="stat stat-jordan"><strong>38%</strong> · 114 pts</span>
+          </div>
+        </div>
+        <p class="fairness-note">💡 Alex has done more this week. Maybe Jordan can take trash + dishes today?</p>
+      </div>
+
+      <!-- Weekly Summary Cards -->
+      <div class="summary-grid">
+        <div class="card stat-card">
+          <div class="stat-number">23</div>
+          <div class="stat-label">Tasks Done</div>
+          <div class="stat-trend up">↑ 3 from last week</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-number">301</div>
+          <div class="stat-label">Total Points</div>
+          <div class="stat-trend up">↑ 28 from last week</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Appreciations</div>
+          <div class="stat-trend neutral">Same as last week</div>
+        </div>
+      </div>
+
+      <!-- Top Contributors -->
+      <div class="card">
+        <h3>This Week's Breakdown</h3>
+        <div class="breakdown-list">
+          <div class="breakdown-item">
+            <div class="avatar alex">A</div>
+            <div class="breakdown-info">
+              <div class="breakdown-name">Alex</div>
+              <div class="breakdown-tasks">14 tasks · 3 mental load items</div>
+            </div>
+            <div class="breakdown-points">187 pts</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="avatar jordan">J</div>
+            <div class="breakdown-info">
+              <div class="breakdown-name">Jordan</div>
+              <div class="breakdown-tasks">9 tasks · 1 mental load item</div>
+            </div>
+            <div class="breakdown-points">114 pts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Appreciations -->
+      <div class="card">
+        <h3>💛 Recent Appreciations</h3>
+        <div class="appreciation-list">
+          <div class="appreciation">
+            <span class="appreciation-from">Jordan → Alex:</span>
+            <span class="appreciation-text">"Thanks for deep-cleaning the bathroom, it smells amazing!"</span>
+          </div>
+          <div class="appreciation">
+            <span class="appreciation-from">Alex → Jordan:</span>
+            <span class="appreciation-text">"You cooked 3 days in a row — legend 🙌"</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Log Tab -->
+    <section class="tab-content" id="log">
+      <div class="card">
+        <h2>Quick Log a Chore</h2>
+        <p class="subtitle">Tap to log what you just did</p>
+
+        <div class="log-who">
+          <button class="who-btn active" data-who="alex">
+            <div class="avatar alex small">A</div>
+            Alex
+          </button>
+          <button class="who-btn" data-who="jordan">
+            <div class="avatar jordan small">J</div>
+            Jordan
+          </button>
+        </div>
+
+        <div class="chore-categories">
+          <button class="cat-btn active" data-cat="all">All</button>
+          <button class="cat-btn" data-cat="kitchen">🍳 Kitchen</button>
+          <button class="cat-btn" data-cat="bathroom">🚿 Bathroom</button>
+          <button class="cat-btn" data-cat="living">🛋️ Living</button>
+          <button class="cat-btn" data-cat="general">📦 General</button>
+          <button class="cat-btn" data-cat="mental">🧠 Mental Load</button>
+        </div>
+
+        <div class="chore-grid" id="choreGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Log Success Toast (hidden by default) -->
+      <div class="toast" id="logToast">
+        <span class="toast-icon">✅</span>
+        <span class="toast-text">Logged!</span>
+      </div>
+    </section>
+
+    <!-- History Tab -->
+    <section class="tab-content" id="history">
+      <div class="card">
+        <h2>Activity Feed</h2>
+        <div class="filter-row">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="alex">Alex</button>
+          <button class="filter-btn" data-filter="jordan">Jordan</button>
+        </div>
+        <div class="history-list" id="historyList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Weekly Trend Chart -->
+      <div class="card">
+        <h3>4-Week Trend</h3>
+        <div class="chart-container">
+          <div class="chart-bar-group">
+            <div class="chart-label">W1</div>
+            <div class="chart-bars">
+              <div class="chart-bar alex-bar" style="height: 55%"><span>142</span></div>
+              <div class="chart-bar jordan-bar" style="height: 50%"><span>128</span></div>
+            </div>
+          </div>
+          <div class="chart-bar-group">
+            <div class="chart-label">W2</div>
+            <div class="chart-bars">
+              <div class="chart-bar alex-bar" style="height: 62%"><span>160</span></div>
+              <div class="chart-bar jordan-bar" style="height: 45%"><span>113</span></div>
+            </div>
+          </div>
+          <div class="chart-bar-group">
+            <div class="chart-label">W3</div>
+            <div class="chart-bars">
+              <div class="chart-bar alex-bar" style="height: 48%"><span>124</span></div>
+              <div class="chart-bar jordan-bar" style="height: 58%"><span>149</span></div>
+            </div>
+          </div>
+          <div class="chart-bar-group">
+            <div class="chart-label">W4</div>
+            <div class="chart-bars">
+              <div class="chart-bar alex-bar" style="height: 72%"><span>187</span></div>
+              <div class="chart-bar jordan-bar" style="height: 44%"><span>114</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <span class="legend-alex">● Alex</span>
+          <span class="legend-jordan">● Jordan</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rotation Tab -->
+    <section class="tab-content" id="rotation">
+      <div class="card">
+        <h2>Smart Rotation</h2>
+        <p class="subtitle">Suggested schedule based on fairness and preferences</p>
+
+        <div class="rotation-week">
+          <h3>This Week's Suggested Split</h3>
+          <div class="rotation-grid">
+            <div class="rotation-day">
+              <div class="day-label">Mon</div>
+              <div class="rotation-tasks">
+                <div class="rotation-task alex-task">
+                  <span class="task-who">Alex:</span> Dishes, Vacuum living room
+                </div>
+                <div class="rotation-task jordan-task">
+                  <span class="task-who">Jordan:</span> Cook dinner, Take out trash
+                </div>
+              </div>
+            </div>
+            <div class="rotation-day">
+              <div class="day-label">Tue</div>
+              <div class="rotation-tasks">
+                <div class="rotation-task jordan-task">
+                  <span class="task-who">Jordan:</span> Dishes, Wipe counters
+                </div>
+                <div class="rotation-task alex-task">
+                  <span class="task-who">Alex:</span> Cook dinner, Laundry
+                </div>
+              </div>
+            </div>
+            <div class="rotation-day">
+              <div class="day-label">Wed</div>
+              <div class="rotation-tasks">
+                <div class="rotation-task alex-task">
+                  <span class="task-who">Alex:</span> Dishes, Grocery planning 🧠
+                </div>
+                <div class="rotation-task jordan-task">
+                  <span class="task-who">Jordan:</span> Cook dinner, Clean bathroom
+                </div>
+              </div>
+            </div>
+            <div class="rotation-day">
+              <div class="day-label">Thu</div>
+              <div class="rotation-tasks">
+                <div class="rotation-task jordan-task">
+                  <span class="task-who">Jordan:</span> Dishes, Vacuum
+                </div>
+                <div class="rotation-task alex-task">
+                  <span class="task-who">Alex:</span> Cook dinner, Trash + recycling
+                </div>
+              </div>
+            </div>
+            <div class="rotation-day">
+              <div class="day-label">Fri</div>
+              <div class="rotation-tasks">
+                <div class="rotation-task alex-task">
+                  <span class="task-who">Alex:</span> Dishes
+                </div>
+                <div class="rotation-task jordan-task">
+                  <span class="task-who">Jordan:</span> Cook dinner, Mop floors
+                </div>
+              </div>
+            </div>
+            <div class="rotation-day weekend">
+              <div class="day-label">Sat-Sun</div>
+              <div class="rotation-tasks">
+                <div class="rotation-task shared-task">
+                  <span class="task-who">Together:</span> Deep clean, Grocery shopping, Meal prep
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preferences -->
+      <div class="card">
+        <h3>Chore Preferences</h3>
+        <p class="subtitle">Set likes/dislikes to influence rotation</p>
+        <div class="pref-list">
+          <div class="pref-item">
+            <span class="pref-chore">Cooking</span>
+            <div class="pref-people">
+              <span class="pref-badge love">Alex 💚</span>
+              <span class="pref-badge neutral">Jordan 😐</span>
+            </div>
+          </div>
+          <div class="pref-item">
+            <span class="pref-chore">Bathroom cleaning</span>
+            <div class="pref-people">
+              <span class="pref-badge hate">Alex 😩</span>
+              <span class="pref-badge neutral">Jordan 😐</span>
+            </div>
+          </div>
+          <div class="pref-item">
+            <span class="pref-chore">Vacuuming</span>
+            <div class="pref-people">
+              <span class="pref-badge neutral">Alex 😐</span>
+              <span class="pref-badge love">Jordan 💚</span>
+            </div>
+          </div>
+          <div class="pref-item">
+            <span class="pref-chore">Grocery shopping</span>
+            <div class="pref-people">
+              <span class="pref-badge love">Alex 💚</span>
+              <span class="pref-badge hate">Jordan 😩</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
