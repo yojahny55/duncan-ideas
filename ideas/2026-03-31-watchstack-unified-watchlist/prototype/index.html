@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WatchStack — One List to Rule Them All</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="logo">📺 WatchStack</h1>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" id="coupleToggle" title="Couple Mode">
+          <span>👫</span>
+        </button>
+        <button class="btn-icon" id="statsToggle" title="Watch Stats">
+          <span>📊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Quick Pick Banner -->
+    <section class="quick-pick" id="quickPick">
+      <div class="quick-pick-label">YOUR #1 PICK TONIGHT</div>
+      <div class="quick-pick-title" id="quickPickTitle">Loading...</div>
+      <div class="quick-pick-meta" id="quickPickMeta"></div>
+      <button class="btn-watch" id="watchNowBtn">▶ Watch Now</button>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters">
+      <div class="filter-row">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="movie">🎬 Movies</button>
+        <button class="filter-chip" data-filter="show">📺 Shows</button>
+        <button class="filter-chip" data-filter="expiring">⏰ Expiring</button>
+      </div>
+      <div class="filter-row">
+        <select class="platform-filter" id="platformFilter">
+          <option value="all">All Platforms</option>
+          <option value="netflix">Netflix</option>
+          <option value="hulu">Hulu</option>
+          <option value="disney">Disney+</option>
+          <option value="hbo">HBO Max</option>
+          <option value="prime">Prime Video</option>
+          <option value="apple">Apple TV+</option>
+        </select>
+        <select class="mood-filter" id="moodFilter">
+          <option value="all">Any Mood</option>
+          <option value="action">🔥 Action</option>
+          <option value="comedy">😂 Comedy</option>
+          <option value="drama">🎭 Drama</option>
+          <option value="thriller">😰 Thriller</option>
+          <option value="scifi">🚀 Sci-Fi</option>
+          <option value="romance">💕 Romance</option>
+          <option value="horror">👻 Horror</option>
+        </select>
+        <select class="time-filter" id="timeFilter">
+          <option value="all">Any Length</option>
+          <option value="short">⚡ Under 30 min</option>
+          <option value="medium">📺 30-60 min</option>
+          <option value="long">🎬 1-2 hours</option>
+          <option value="epic">🏔 2+ hours</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Stack List -->
+    <section class="stack-container">
+      <div class="stack-header">
+        <h2>Your Stack <span class="stack-count" id="stackCount"></span></h2>
+        <button class="btn-add" id="addBtn">+ Add</button>
+      </div>
+      <ul class="stack-list" id="stackList"></ul>
+    </section>
+
+    <!-- Couple Overlap Modal -->
+    <div class="modal-overlay" id="coupleModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>👫 Couple Overlap</h2>
+          <button class="modal-close" id="coupleClose">&times;</button>
+        </div>
+        <div class="modal-body" id="coupleBody"></div>
+      </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div class="modal-overlay" id="statsModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>📊 Watch Stats</h2>
+          <button class="modal-close" id="statsClose">&times;</button>
+        </div>
+        <div class="modal-body" id="statsBody"></div>
+      </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal-overlay" id="addModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>+ Add to Stack</h2>
+          <button class="modal-close" id="addClose">&times;</button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search movies & shows...">
+          <div class="search-results" id="searchResults"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expiring Alert -->
+    <div class="expiring-toast" id="expiringToast">
+      <span class="toast-icon">⏰</span>
+      <span class="toast-text" id="toastText"></span>
+      <button class="toast-dismiss" id="toastDismiss">&times;</button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="stack">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Stack</span>
+      </button>
+      <button class="nav-item" data-tab="social">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Social</span>
+        <span class="nav-badge">3</span>
+      </button>
+      <button class="nav-item" data-tab="platforms">
+        <span class="nav-icon">📡</span>
+        <span class="nav-label">Platforms</span>
+      </button>
+      <button class="nav-item" data-tab="profile">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
