@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CostPerUse — Know What Your Stuff Really Costs</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="logo">Cost<span class="accent">Per</span>Use</h1>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" id="addBtn" title="Add Item">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Summary Cards -->
+    <section class="summary">
+      <div class="summary-card">
+        <span class="summary-label">Total Items</span>
+        <span class="summary-value" id="totalItems">0</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Total Spent</span>
+        <span class="summary-value" id="totalSpent">$0</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Avg Cost/Use</span>
+        <span class="summary-value" id="avgCpu">—</span>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="items">My Items</button>
+      <button class="tab" data-tab="insights">Insights</button>
+      <button class="tab" data-tab="projector">Projector</button>
+    </nav>
+
+    <!-- Items Tab -->
+    <section class="tab-content active" id="tab-items">
+      <div class="filter-bar">
+        <select id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="clothing">👕 Clothing</option>
+          <option value="kitchen">🍳 Kitchen</option>
+          <option value="tech">💻 Tech</option>
+          <option value="fitness">💪 Fitness</option>
+          <option value="tools">🔧 Tools</option>
+          <option value="hobby">🎨 Hobby</option>
+          <option value="furniture">🛋️ Furniture</option>
+        </select>
+        <select id="sortBy">
+          <option value="cpu-high">Worst Value First</option>
+          <option value="cpu-low">Best Value First</option>
+          <option value="recent">Recently Added</option>
+          <option value="most-used">Most Used</option>
+        </select>
+      </div>
+      <div class="items-list" id="itemsList"></div>
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">📦</div>
+        <h3>No items yet</h3>
+        <p>Add your first purchase to start tracking its real value</p>
+        <button class="btn-primary" id="emptyAddBtn">+ Add First Item</button>
+      </div>
+    </section>
+
+    <!-- Insights Tab -->
+    <section class="tab-content" id="tab-insights">
+      <div class="insight-section">
+        <h3 class="section-title">🏆 Hall of Fame</h3>
+        <p class="section-sub">Your best-value purchases</p>
+        <div id="hallOfFame" class="insight-list"></div>
+      </div>
+      <div class="insight-section">
+        <h3 class="section-title">😬 Wall of Shame</h3>
+        <p class="section-sub">Might want to use these more...</p>
+        <div id="wallOfShame" class="insight-list"></div>
+      </div>
+      <div class="insight-section">
+        <h3 class="section-title">📊 Category Breakdown</h3>
+        <div id="categoryBreakdown" class="category-bars"></div>
+      </div>
+    </section>
+
+    <!-- Projector Tab -->
+    <section class="tab-content" id="tab-projector">
+      <div class="projector-card">
+        <h3 class="section-title">🔮 Pre-Purchase Projector</h3>
+        <p class="section-sub">See the true cost before you buy</p>
+        <div class="projector-form">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="projName" placeholder="e.g., KitchenAid Stand Mixer">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price</label>
+              <input type="number" id="projPrice" placeholder="299" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Uses per Month</label>
+              <input type="number" id="projUsesMonth" placeholder="8" min="1">
+            </div>
+          </div>
+          <button class="btn-primary" id="projCalcBtn">Calculate</button>
+        </div>
+        <div class="projector-results" id="projResults" style="display:none">
+          <div class="proj-timeline">
+            <div class="proj-row">
+              <span class="proj-period">1 Month</span>
+              <span class="proj-cpu" id="proj1m"></span>
+            </div>
+            <div class="proj-row">
+              <span class="proj-period">3 Months</span>
+              <span class="proj-cpu" id="proj3m"></span>
+            </div>
+            <div class="proj-row">
+              <span class="proj-period">6 Months</span>
+              <span class="proj-cpu" id="proj6m"></span>
+            </div>
+            <div class="proj-row">
+              <span class="proj-period">1 Year</span>
+              <span class="proj-cpu" id="proj1y"></span>
+            </div>
+            <div class="proj-row">
+              <span class="proj-period">2 Years</span>
+              <span class="proj-cpu" id="proj2y"></span>
+            </div>
+          </div>
+          <div class="proj-verdict" id="projVerdict"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Item Modal -->
+    <div class="modal-overlay" id="addModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Add Purchase</h2>
+          <button class="btn-close" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>What did you buy?</label>
+            <input type="text" id="itemName" placeholder="e.g., Air Fryer, Running Shoes...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price Paid</label>
+              <input type="number" id="itemPrice" placeholder="0.00" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="itemCategory">
+                <option value="clothing">👕 Clothing</option>
+                <option value="kitchen">🍳 Kitchen</option>
+                <option value="tech">💻 Tech</option>
+                <option value="fitness">💪 Fitness</option>
+                <option value="tools">🔧 Tools</option>
+                <option value="hobby">🎨 Hobby</option>
+                <option value="furniture">🛋️ Furniture</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Target Cost/Use <span class="hint">(optional)</span></label>
+            <input type="number" id="itemTarget" placeholder="e.g., 1.00" min="0" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Times Used So Far</label>
+            <input type="number" id="itemUses" placeholder="0" min="0" value="0">
+          </div>
+          <button class="btn-primary btn-full" id="saveItem">Add Item</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Item Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="detailName">Item</h2>
+          <button class="btn-close" id="closeDetail">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="detail-cpu-big" id="detailCpu">$0.00</div>
+          <div class="detail-sub" id="detailSub">per use</div>
+          <div class="detail-stats">
+            <div class="detail-stat">
+              <span class="stat-label">Paid</span>
+              <span class="stat-value" id="detailPaid">$0</span>
+            </div>
+            <div class="detail-stat">
+              <span class="stat-label">Uses</span>
+              <span class="stat-value" id="detailUses">0</span>
+            </div>
+            <div class="detail-stat">
+              <span class="stat-label">Target</span>
+              <span class="stat-value" id="detailTarget">—</span>
+            </div>
+          </div>
+          <div class="detail-progress" id="detailProgress"></div>
+          <div class="detail-actions">
+            <button class="btn-use" id="logUseBtn">👆 Log a Use</button>
+            <button class="btn-use-multi" id="logUse5Btn">+5 Uses</button>
+            <button class="btn-delete" id="deleteItemBtn">🗑️ Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
