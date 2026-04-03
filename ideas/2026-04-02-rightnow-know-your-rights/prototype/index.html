@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RightNow — Know Your Rights</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- Home Screen -->
+    <div id="screen-home" class="screen active">
+      <header class="home-header">
+        <div class="logo">
+          <span class="logo-icon">⚖️</span>
+          <h1>RightNow</h1>
+        </div>
+        <p class="tagline">Know your rights. Right now.</p>
+      </header>
+
+      <div class="location-bar">
+        <span class="location-icon">📍</span>
+        <select id="state-select">
+          <option value="">Select your state</option>
+          <option value="FL" selected>Florida</option>
+          <option value="CA">California</option>
+          <option value="TX">Texas</option>
+          <option value="NY">New York</option>
+          <option value="IL">Illinois</option>
+        </select>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="What's happening? (e.g., 'my landlord changed locks')">
+        <button class="search-btn" onclick="handleSearch()">→</button>
+      </div>
+
+      <div class="categories">
+        <h2>Common Situations</h2>
+        <div class="category-grid">
+          <button class="category-card" onclick="showCategory('police')">
+            <span class="cat-icon">🚔</span>
+            <span class="cat-label">Police & Stops</span>
+          </button>
+          <button class="category-card" onclick="showCategory('tenant')">
+            <span class="cat-icon">🏠</span>
+            <span class="cat-label">Housing & Rent</span>
+          </button>
+          <button class="category-card" onclick="showCategory('worker')">
+            <span class="cat-icon">💼</span>
+            <span class="cat-label">Workplace</span>
+          </button>
+          <button class="category-card" onclick="showCategory('consumer')">
+            <span class="cat-icon">🛒</span>
+            <span class="cat-label">Consumer</span>
+          </button>
+          <button class="category-card" onclick="showCategory('medical')">
+            <span class="cat-icon">🏥</span>
+            <span class="cat-label">Medical & Billing</span>
+          </button>
+          <button class="category-card" onclick="showCategory('immigration')">
+            <span class="cat-icon">🛂</span>
+            <span class="cat-label">Immigration</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="recent-section">
+        <h2>🔥 Trending Rights Questions</h2>
+        <div class="trending-list">
+          <button class="trending-item" onclick="showSituation('traffic-stop')">
+            <span class="trend-q">Can police search my car without a warrant?</span>
+            <span class="trend-state">FL</span>
+          </button>
+          <button class="trending-item" onclick="showSituation('eviction')">
+            <span class="trend-q">My landlord is trying to evict me with 3 days notice</span>
+            <span class="trend-state">FL</span>
+          </button>
+          <button class="trending-item" onclick="showSituation('wage-theft')">
+            <span class="trend-q">My employer didn't pay me for overtime</span>
+            <span class="trend-state">FL</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Screen -->
+    <div id="screen-category" class="screen">
+      <header class="sub-header">
+        <button class="back-btn" onclick="goHome()">← Back</button>
+        <h2 id="category-title">Police & Stops</h2>
+      </header>
+      <div id="category-situations" class="situation-list"></div>
+    </div>
+
+    <!-- Situation Detail Screen -->
+    <div id="screen-detail" class="screen">
+      <header class="sub-header">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <div class="detail-header-info">
+          <h2 id="detail-title">Traffic Stop</h2>
+          <span class="state-badge" id="detail-state">FL</span>
+        </div>
+      </header>
+
+      <div class="detail-content">
+        <div class="urgency-banner" id="urgency-banner">
+          <span class="urgency-icon">⚡</span>
+          <span class="urgency-text">High-stress situation — read the key points first</span>
+        </div>
+
+        <div class="rights-section">
+          <h3>✅ Your Rights</h3>
+          <div id="rights-list" class="rights-list"></div>
+        </div>
+
+        <div class="scripts-section">
+          <h3>💬 Say This</h3>
+          <div id="scripts-list" class="scripts-list"></div>
+        </div>
+
+        <div class="donts-section">
+          <h3>🚫 Don't Do This</h3>
+          <div id="donts-list" class="donts-list"></div>
+        </div>
+
+        <div class="next-steps-section">
+          <h3>📋 Next Steps</h3>
+          <div id="next-steps" class="next-steps"></div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="action-btn record" onclick="startRecording()">
+            <span>🔴</span> Record Encounter
+          </button>
+          <button class="action-btn document" onclick="showIncidentLog()">
+            <span>📝</span> Document It
+          </button>
+          <button class="action-btn help" onclick="showHelp()">
+            <span>📞</span> Get Help
+          </button>
+        </div>
+
+        <div class="disclaimer">
+          ⚠️ This is legal information, not legal advice. Laws change. Consult an attorney for your specific situation.
+        </div>
+      </div>
+    </div>
+
+    <!-- Incident Log Screen -->
+    <div id="screen-incident" class="screen">
+      <header class="sub-header">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <h2>Document Incident</h2>
+      </header>
+      <div class="incident-form">
+        <div class="form-group">
+          <label>What happened?</label>
+          <select id="incident-type">
+            <option>Traffic stop — searched without consent</option>
+            <option>Landlord — illegal eviction attempt</option>
+            <option>Workplace — unpaid overtime</option>
+            <option>Consumer — refused valid return</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date & Time</label>
+          <input type="datetime-local" id="incident-time">
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <div class="location-input">
+            <input type="text" placeholder="Where did this happen?" id="incident-location">
+            <button class="gps-btn" onclick="getLocation()">📍</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Details</label>
+          <textarea id="incident-details" rows="4" placeholder="Describe what happened. Include names, badge numbers, addresses, witnesses..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Evidence</label>
+          <div class="evidence-buttons">
+            <button class="evidence-btn">📷 Photo</button>
+            <button class="evidence-btn">🎤 Audio</button>
+            <button class="evidence-btn">📹 Video</button>
+            <button class="evidence-btn">📄 Document</button>
+          </div>
+        </div>
+        <button class="save-incident-btn" onclick="saveIncident()">Save Incident Report</button>
+      </div>
+    </div>
+
+    <!-- AI Chat Screen -->
+    <div id="screen-chat" class="screen">
+      <header class="sub-header">
+        <button class="back-btn" onclick="goHome()">← Back</button>
+        <h2>Ask RightNow</h2>
+      </header>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg bot">
+          <div class="msg-content">
+            Tell me what's happening. I'll explain your rights in plain English, specific to <strong>Florida</strong>.
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <input type="text" id="chat-input" placeholder="Describe your situation..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="send-btn" onclick="sendChat()">→</button>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="goHome()">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" onclick="showChat()">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Ask AI</span>
+      </button>
+      <button class="nav-item" onclick="showJournal()">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Journal</span>
+      </button>
+      <button class="nav-item" onclick="showSaved()">
+        <span class="nav-icon">⭐</span>
+        <span class="nav-label">Saved</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
