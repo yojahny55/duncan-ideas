@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UnlockMe — Account Recovery Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Landing Screen -->
+        <div id="screen-landing" class="screen active">
+            <nav class="nav">
+                <div class="nav-brand">
+                    <span class="nav-icon">🔓</span>
+                    <span class="nav-name">UnlockMe</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" onclick="showScreen('screen-services')">Services</a>
+                    <a href="#" onclick="showScreen('screen-cases')">My Cases</a>
+                    <a href="#" class="nav-cta">Get Help</a>
+                </div>
+            </nav>
+            <div class="hero">
+                <div class="hero-badge">🔥 Helped 127K+ people recover accounts this month</div>
+                <h1>Locked out?<br><span class="gradient-text">We'll get you back in.</span></h1>
+                <p class="hero-sub">Step-by-step recovery guides for 500+ services. No more Googling for hours or sitting on hold. Tell us what happened — we'll tell you exactly what to do.</p>
+                <div class="hero-search">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="hero-search-input" placeholder="Which account are you locked out of?" autocomplete="off">
+                        <div id="search-dropdown" class="search-dropdown hidden"></div>
+                    </div>
+                    <button class="btn-primary" onclick="startRecovery()">Start Recovery</button>
+                </div>
+                <div class="hero-popular">
+                    <span class="popular-label">Popular:</span>
+                    <button class="popular-tag" onclick="selectService('google')">Google</button>
+                    <button class="popular-tag" onclick="selectService('instagram')">Instagram</button>
+                    <button class="popular-tag" onclick="selectService('playstation')">PlayStation</button>
+                    <button class="popular-tag" onclick="selectService('apple')">Apple ID</button>
+                    <button class="popular-tag" onclick="selectService('linkedin')">LinkedIn</button>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-num">500+</div>
+                    <div class="stat-label">Services Covered</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">89%</div>
+                    <div class="stat-label">Recovery Success Rate</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">127K</div>
+                    <div class="stat-label">Accounts Recovered</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">12 min</div>
+                    <div class="stat-label">Avg. Time to Solution</div>
+                </div>
+            </div>
+            <div class="section">
+                <h2>How it works</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <div class="step-icon">🔍</div>
+                        <h3>Find Your Service</h3>
+                        <p>Search from 500+ supported services — social media, email, gaming, banking, streaming, and more.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <div class="step-icon">🩺</div>
+                        <h3>Diagnose the Problem</h3>
+                        <p>Answer 3-5 questions about your lockout. Lost email? Lost 2FA? Hacked? We'll figure out the best path.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <div class="step-icon">📋</div>
+                        <h3>Follow the Guide</h3>
+                        <p>Get step-by-step instructions with direct links, template messages, and document checklists.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">4</div>
+                        <div class="step-icon">✅</div>
+                        <h3>Get Back In</h3>
+                        <p>Track your progress, get follow-up reminders, and escalate if standard methods don't work.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="section testimonials-section">
+                <h2>Recovery stories</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p>"PlayStation was charging me $90/year for a sub I couldn't access because the email was hacked. UnlockMe showed me the exact form to fill out and what documents to attach. Got my account back in 3 days."</p>
+                        <div class="testimonial-author">— Ryan B. · PlayStation · Recovered in 3 days</div>
+                    </div>
+                    <div class="testimonial">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p>"I was locked out of my Google account after my phone broke and I lost my 2FA. UnlockMe walked me through the identity verification process step by step. Lifesaver."</p>
+                        <div class="testimonial-author">— Maria K. · Google · Recovered in 1 day</div>
+                    </div>
+                    <div class="testimonial">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p>"LinkedIn locked my account during my job search. The escalation toolkit got me to an actual human at LinkedIn support. I'd still be locked out without this."</p>
+                        <div class="testimonial-author">— Josh P. · LinkedIn · Recovered in 5 days</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Screen -->
+        <div id="screen-services" class="screen">
+            <nav class="nav">
+                <div class="nav-brand" onclick="showScreen('screen-landing')">
+                    <span class="nav-icon">🔓</span>
+                    <span class="nav-name">UnlockMe</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="active">Services</a>
+                    <a href="#" onclick="showScreen('screen-cases')">My Cases</a>
+                </div>
+            </nav>
+            <div class="services-page">
+                <h1>Supported Services</h1>
+                <p class="subtitle">500+ services with step-by-step recovery guides</p>
+                <div class="category-tabs">
+                    <button class="cat-tab active" onclick="filterCategory('all', this)">All</button>
+                    <button class="cat-tab" onclick="filterCategory('social', this)">Social Media</button>
+                    <button class="cat-tab" onclick="filterCategory('email', this)">Email</button>
+                    <button class="cat-tab" onclick="filterCategory('gaming', this)">Gaming</button>
+                    <button class="cat-tab" onclick="filterCategory('finance', this)">Finance</button>
+                    <button class="cat-tab" onclick="filterCategory('streaming', this)">Streaming</button>
+                    <button class="cat-tab" onclick="filterCategory('work', this)">Work</button>
+                </div>
+                <div id="services-grid" class="services-grid"></div>
+            </div>
+        </div>
+
+        <!-- Diagnosis Screen -->
+        <div id="screen-diagnosis" class="screen">
+            <nav class="nav">
+                <div class="nav-brand" onclick="showScreen('screen-landing')">
+                    <span class="nav-icon">🔓</span>
+                    <span class="nav-name">UnlockMe</span>
+                </div>
+            </nav>
+            <div class="diagnosis-page">
+                <div class="diagnosis-header">
+                    <div id="diag-service-icon" class="diag-service-icon"></div>
+                    <h1 id="diag-title">Recovering your account</h1>
+                    <div class="diag-progress">
+                        <div class="diag-progress-bar">
+                            <div id="diag-progress-fill" class="diag-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span id="diag-progress-text">Question 1 of 4</span>
+                    </div>
+                </div>
+                <div id="diag-content" class="diag-content"></div>
+            </div>
+        </div>
+
+        <!-- Recovery Guide Screen -->
+        <div id="screen-guide" class="screen">
+            <nav class="nav">
+                <div class="nav-brand" onclick="showScreen('screen-landing')">
+                    <span class="nav-icon">🔓</span>
+                    <span class="nav-name">UnlockMe</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" onclick="showScreen('screen-cases')">My Cases</a>
+                </div>
+            </nav>
+            <div class="guide-page">
+                <div class="guide-sidebar">
+                    <div class="guide-meta">
+                        <div id="guide-service-icon" class="guide-service-icon"></div>
+                        <h2 id="guide-service-name"></h2>
+                        <div id="guide-lockout-type" class="guide-tag"></div>
+                    </div>
+                    <div class="guide-stats">
+                        <div class="guide-stat">
+                            <span class="guide-stat-label">Success Rate</span>
+                            <span class="guide-stat-value success">89%</span>
+                        </div>
+                        <div class="guide-stat">
+                            <span class="guide-stat-label">Avg. Recovery</span>
+                            <span class="guide-stat-value">2-5 days</span>
+                        </div>
+                        <div class="guide-stat">
+                            <span class="guide-stat-label">Difficulty</span>
+                            <span class="guide-stat-value">Medium</span>
+                        </div>
+                    </div>
+                    <div class="guide-checklist-title">📋 Documents Needed</div>
+                    <ul class="guide-checklist" id="guide-docs"></ul>
+                    <button class="btn-escalate" onclick="showEscalation()">🔥 Recovery Not Working?</button>
+                </div>
+                <div class="guide-main">
+                    <div class="guide-header">
+                        <h1 id="guide-title">Recovery Guide</h1>
+                        <div class="guide-actions">
+                            <button class="btn-ghost" onclick="saveCase()">💾 Save Case</button>
+                            <button class="btn-ghost" onclick="setReminder()">⏰ Set Reminder</button>
+                        </div>
+                    </div>
+                    <div id="guide-steps" class="guide-steps"></div>
+                    <div id="guide-escalation" class="guide-escalation hidden">
+                        <h2>🔥 Escalation Toolkit</h2>
+                        <p class="escalation-desc">Standard recovery didn't work? Here are alternative paths:</p>
+                        <div id="escalation-options" class="escalation-options"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Cases Screen -->
+        <div id="screen-cases" class="screen">
+            <nav class="nav">
+                <div class="nav-brand" onclick="showScreen('screen-landing')">
+                    <span class="nav-icon">🔓</span>
+                    <span class="nav-name">UnlockMe</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" onclick="showScreen('screen-services')">Services</a>
+                    <a href="#" class="active">My Cases</a>
+                </div>
+            </nav>
+            <div class="cases-page">
+                <h1>My Recovery Cases</h1>
+                <p class="subtitle">Track your active and completed recovery efforts</p>
+                <div id="cases-list" class="cases-list"></div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="toast hidden"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
