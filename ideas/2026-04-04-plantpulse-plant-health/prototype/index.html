@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlantPulse — AI Plant Health Companion</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">🌿</span>
+        <h1>PlantPulse</h1>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" title="Notifications">🔔</button>
+        <button class="icon-btn" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="garden">My Garden</button>
+      <button class="tab" data-tab="diagnose">Diagnose</button>
+      <button class="tab" data-tab="treatment">Treatments</button>
+      <button class="tab" data-tab="community">Community</button>
+    </nav>
+
+    <!-- My Garden Tab -->
+    <main id="garden" class="tab-content active">
+      <div class="garden-stats">
+        <div class="stat-card">
+          <span class="stat-num">7</span>
+          <span class="stat-label">Plants</span>
+        </div>
+        <div class="stat-card healthy">
+          <span class="stat-num">5</span>
+          <span class="stat-label">Healthy</span>
+        </div>
+        <div class="stat-card warning">
+          <span class="stat-num">1</span>
+          <span class="stat-label">Needs Attn</span>
+        </div>
+        <div class="stat-card critical">
+          <span class="stat-num">1</span>
+          <span class="stat-label">Critical</span>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>🚨 Needs Attention</h2>
+      </div>
+
+      <div class="plant-card critical-border" data-plant="fiddle">
+        <div class="plant-img">🌳</div>
+        <div class="plant-info">
+          <div class="plant-name">Fiddle Leaf Fig</div>
+          <div class="plant-location">📍 Living Room — East Window</div>
+          <div class="health-bar">
+            <div class="health-fill critical" style="width: 28%"></div>
+          </div>
+          <div class="health-label critical-text">Health: 28/100 — Root Rot Suspected</div>
+        </div>
+        <div class="plant-action">→</div>
+      </div>
+
+      <div class="plant-card warning-border" data-plant="pothos">
+        <div class="plant-img">🌱</div>
+        <div class="plant-info">
+          <div class="plant-name">Golden Pothos</div>
+          <div class="plant-location">📍 Kitchen — Above Sink</div>
+          <div class="health-bar">
+            <div class="health-fill warning" style="width: 62%"></div>
+          </div>
+          <div class="health-label warning-text">Health: 62/100 — Yellowing Lower Leaves</div>
+        </div>
+        <div class="plant-action">→</div>
+      </div>
+
+      <div class="section-header">
+        <h2>🌿 Thriving</h2>
+      </div>
+
+      <div class="plant-grid">
+        <div class="plant-mini">
+          <div class="mini-img">🪴</div>
+          <div class="mini-name">Monstera</div>
+          <div class="mini-score healthy-text">94</div>
+        </div>
+        <div class="plant-mini">
+          <div class="mini-img">🌵</div>
+          <div class="mini-name">Snake Plant</div>
+          <div class="mini-score healthy-text">97</div>
+        </div>
+        <div class="plant-mini">
+          <div class="mini-img">🌸</div>
+          <div class="mini-name">Peace Lily</div>
+          <div class="mini-score healthy-text">88</div>
+        </div>
+        <div class="plant-mini">
+          <div class="mini-img">🌿</div>
+          <div class="mini-name">Philodendron</div>
+          <div class="mini-score healthy-text">91</div>
+        </div>
+        <div class="plant-mini">
+          <div class="mini-img">🍀</div>
+          <div class="mini-name">Pothos Marble</div>
+          <div class="mini-score healthy-text">85</div>
+        </div>
+      </div>
+
+      <button class="fab" id="addPlantBtn" title="Add Plant">+</button>
+    </main>
+
+    <!-- Diagnose Tab -->
+    <main id="diagnose" class="tab-content">
+      <div class="diagnose-hero">
+        <div class="hero-icon">📸</div>
+        <h2>What's wrong with your plant?</h2>
+        <p>Snap a photo and get an instant AI diagnosis with treatment plan</p>
+        <button class="btn-primary" id="scanBtn">
+          <span>📷</span> Scan Plant
+        </button>
+        <button class="btn-secondary" id="uploadBtn">
+          <span>📁</span> Upload Photo
+        </button>
+      </div>
+
+      <!-- Diagnosis Result (hidden by default) -->
+      <div id="diagnosisResult" class="diagnosis-result hidden">
+        <div class="diagnosis-header">
+          <h2>Diagnosis Complete</h2>
+          <div class="confidence">
+            <span class="confidence-badge high">92% Confidence</span>
+          </div>
+        </div>
+
+        <div class="diagnosis-card">
+          <div class="diagnosis-photo">
+            <div class="photo-placeholder">🌳<span class="annotation">⚠️</span></div>
+          </div>
+          <div class="diagnosis-details">
+            <h3>Fiddle Leaf Fig</h3>
+            <div class="diagnosis-tag critical-bg">🔴 Root Rot — Moderate to Severe</div>
+            <p class="diagnosis-desc">Multiple brown spots on lower leaves with mushy stem base indicate root rot, likely from overwatering combined with poor drainage. The soil appears waterlogged.</p>
+          </div>
+        </div>
+
+        <div class="differential">
+          <h4>Differential Diagnosis</h4>
+          <div class="diff-item ruled-out">
+            <span class="diff-name">❌ Bacterial Leaf Spot</span>
+            <span class="diff-reason">No water-soaked margins</span>
+          </div>
+          <div class="diff-item ruled-out">
+            <span class="diff-name">❌ Sunburn</span>
+            <span class="diff-reason">Spots not on sun-facing side</span>
+          </div>
+          <div class="diff-item possible">
+            <span class="diff-name">⚠️ Fungal Infection</span>
+            <span class="diff-reason">Secondary — check roots to confirm</span>
+          </div>
+        </div>
+
+        <button class="btn-primary full-width" id="viewTreatmentBtn">
+          💊 View Treatment Plan
+        </button>
+      </div>
+
+      <div class="recent-scans">
+        <h3>Recent Diagnoses</h3>
+        <div class="scan-item">
+          <span class="scan-plant">🌱 Golden Pothos</span>
+          <span class="scan-result warning-text">Overwatering</span>
+          <span class="scan-date">2 days ago</span>
+        </div>
+        <div class="scan-item">
+          <span class="scan-plant">🌸 Peace Lily</span>
+          <span class="scan-result healthy-text">Healthy ✓</span>
+          <span class="scan-date">5 days ago</span>
+        </div>
+        <div class="scan-item">
+          <span class="scan-plant">🪴 Monstera</span>
+          <span class="scan-result healthy-text">Healthy ✓</span>
+          <span class="scan-date">1 week ago</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Treatments Tab -->
+    <main id="treatment" class="tab-content">
+      <div class="treatment-active">
+        <h2>🩺 Active Treatments</h2>
+
+        <div class="treatment-card">
+          <div class="treatment-header-row">
+            <div>
+              <h3>🌳 Fiddle Leaf Fig — Root Rot Recovery</h3>
+              <div class="treatment-severity">🔴 Critical — Started Apr 2</div>
+            </div>
+            <div class="treatment-progress-circle">
+              <span>2/6</span>
+            </div>
+          </div>
+
+          <div class="treatment-timeline">
+            <div class="step completed">
+              <div class="step-marker">✅</div>
+              <div class="step-content">
+                <div class="step-title">Step 1: Remove from pot</div>
+                <div class="step-desc">Gently remove plant and shake off all soil</div>
+                <div class="step-date">Completed Apr 2</div>
+              </div>
+            </div>
+            <div class="step completed">
+              <div class="step-marker">✅</div>
+              <div class="step-content">
+                <div class="step-title">Step 2: Trim rotten roots</div>
+                <div class="step-desc">Cut away any brown, mushy roots with sterile scissors. Keep only firm, white roots.</div>
+                <div class="step-date">Completed Apr 2</div>
+              </div>
+            </div>
+            <div class="step current">
+              <div class="step-marker">🔵</div>
+              <div class="step-content">
+                <div class="step-title">Step 3: Dry & treat roots</div>
+                <div class="step-desc">Let roots air-dry 24h. Apply hydrogen peroxide (3%) to remaining roots. Dust with cinnamon.</div>
+                <div class="step-due">📸 Photo check-in: Apr 4 (today)</div>
+              </div>
+            </div>
+            <div class="step upcoming">
+              <div class="step-marker">⬜</div>
+              <div class="step-content">
+                <div class="step-title">Step 4: Repot in fresh mix</div>
+                <div class="step-desc">Use well-draining mix: 2 parts perlite, 1 part peat, 1 part orchid bark. New pot with drainage.</div>
+              </div>
+            </div>
+            <div class="step upcoming">
+              <div class="step-marker">⬜</div>
+              <div class="step-content">
+                <div class="step-title">Step 5: Recovery care (2 weeks)</div>
+                <div class="step-desc">No fertilizer. Water only when top 2" dry. Indirect bright light. No direct sun.</div>
+              </div>
+            </div>
+            <div class="step upcoming">
+              <div class="step-marker">⬜</div>
+              <div class="step-content">
+                <div class="step-title">Step 6: Follow-up diagnosis</div>
+                <div class="step-desc">Take new photo for AI comparison. Target health score: 60+</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary full-width" id="checkInBtn">📸 Take Check-in Photo</button>
+        </div>
+
+        <div class="treatment-card mild">
+          <div class="treatment-header-row">
+            <div>
+              <h3>🌱 Golden Pothos — Overwatering Recovery</h3>
+              <div class="treatment-severity">🟡 Moderate — Started Apr 1</div>
+            </div>
+            <div class="treatment-progress-circle done">
+              <span>3/4</span>
+            </div>
+          </div>
+          <div class="treatment-summary">
+            <p>✅ Reduced watering to 1x/week &nbsp; ✅ Moved from low to medium light &nbsp; ✅ Removed yellow leaves</p>
+            <p>⬜ Follow-up check: Apr 8</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="treatment-products">
+        <h3>🛒 Recommended Products</h3>
+        <div class="product-row">
+          <div class="product">
+            <div class="product-icon">🧴</div>
+            <div class="product-name">Hydrogen Peroxide 3%</div>
+            <div class="product-use">Root rot treatment</div>
+          </div>
+          <div class="product">
+            <div class="product-icon">🪨</div>
+            <div class="product-name">Perlite (8 qt)</div>
+            <div class="product-use">Drainage improvement</div>
+          </div>
+          <div class="product">
+            <div class="product-icon">🧪</div>
+            <div class="product-name">Neem Oil Spray</div>
+            <div class="product-use">Pest prevention</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Community Tab -->
+    <main id="community" class="tab-content">
+      <div class="community-header">
+        <h2>🤝 Plant ER</h2>
+        <p>Get help from experienced plant parents</p>
+      </div>
+
+      <div class="community-post urgent">
+        <div class="post-header">
+          <span class="post-avatar">🧑‍🌾</span>
+          <div>
+            <span class="post-user">PlantMom_Sarah</span>
+            <span class="post-time">15 min ago</span>
+          </div>
+          <span class="post-tag urgent-tag">🚨 Urgent</span>
+        </div>
+        <div class="post-body">
+          <p>My monstera has black spots spreading FAST. Started yesterday on one leaf, now on three. AI says bacterial infection (87%). Anyone dealt with this? Treatment plan says isolate immediately but I have 12 plants in the same room 😰</p>
+        </div>
+        <div class="post-footer">
+          <span>💬 8 replies</span>
+          <span>❤️ 12</span>
+          <button class="btn-sm">Help</button>
+        </div>
+      </div>
+
+      <div class="community-post">
+        <div class="post-header">
+          <span class="post-avatar">👨‍🔬</span>
+          <div>
+            <span class="post-user">FigFanatic42</span>
+            <span class="post-time">2 hr ago</span>
+          </div>
+          <span class="post-tag recovery-tag">🌱 Recovery</span>
+        </div>
+        <div class="post-body">
+          <p>6-week update: My fiddle leaf went from health score 22 to 71! Root rot treatment worked. Lost 4 leaves but 3 new ones unfurling. Thank you PlantPulse treatment plan! 🙏</p>
+          <div class="before-after">
+            <div class="ba-item">
+              <div class="ba-label">Before</div>
+              <div class="ba-img sad">🌳💀</div>
+            </div>
+            <div class="ba-arrow">→</div>
+            <div class="ba-item">
+              <div class="ba-label">After</div>
+              <div class="ba-img happy">🌳✨</div>
+            </div>
+          </div>
+        </div>
+        <div class="post-footer">
+          <span>💬 23 replies</span>
+          <span>❤️ 89</span>
+          <button class="btn-sm">🎉 Nice!</button>
+        </div>
+      </div>
+
+      <div class="community-post">
+        <div class="post-header">
+          <span class="post-avatar">👩‍🎨</span>
+          <div>
+            <span class="post-user">UrbanJungle_Kai</span>
+            <span class="post-time">5 hr ago</span>
+          </div>
+          <span class="post-tag question-tag">❓ Question</span>
+        </div>
+        <div class="post-body">
+          <p>Spider mites on my calathea — AI identified them but the treatment plan says "isolate for 3 weeks." Is that really necessary? It's my only calathea and I don't have a separate room.</p>
+        </div>
+        <div class="post-footer">
+          <span>💬 5 replies</span>
+          <span>❤️ 7</span>
+          <button class="btn-sm">Help</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Plant Detail Modal -->
+    <div id="plantModal" class="modal hidden">
+      <div class="modal-content">
+        <button class="modal-close" id="closeModal">×</button>
+        <div class="plant-detail-header">
+          <div class="detail-img">🌳</div>
+          <div>
+            <h2>Fiddle Leaf Fig</h2>
+            <p>📍 Living Room — East Window</p>
+            <p>Added: Jan 15, 2026</p>
+          </div>
+        </div>
+
+        <div class="health-section">
+          <h3>Health Timeline</h3>
+          <div class="health-chart">
+            <div class="chart-bar" style="height: 90%"><span>90</span></div>
+            <div class="chart-bar" style="height: 85%"><span>85</span></div>
+            <div class="chart-bar" style="height: 72%"><span>72</span></div>
+            <div class="chart-bar warning-bar" style="height: 55%"><span>55</span></div>
+            <div class="chart-bar critical-bar" style="height: 35%"><span>35</span></div>
+            <div class="chart-bar critical-bar" style="height: 28%"><span>28</span></div>
+          </div>
+          <div class="chart-labels">
+            <span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
+          </div>
+        </div>
+
+        <div class="environment-section">
+          <h3>🌡️ Environment</h3>
+          <div class="env-grid">
+            <div class="env-item">
+              <span class="env-icon">☀️</span>
+              <span class="env-val">Medium-Bright Indirect</span>
+              <span class="env-status ok">✓ Good</span>
+            </div>
+            <div class="env-item">
+              <span class="env-icon">💧</span>
+              <span class="env-val">45% Humidity</span>
+              <span class="env-status warn">⚠ Low — needs 60%+</span>
+            </div>
+            <div class="env-item">
+              <span class="env-icon">🌡️</span>
+              <span class="env-val">72°F / 22°C</span>
+              <span class="env-status ok">✓ Ideal</span>
+            </div>
+            <div class="env-item">
+              <span class="env-icon">🪴</span>
+              <span class="env-val">Last repotted: 8 months ago</span>
+              <span class="env-status ok">✓ OK</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="care-log">
+          <h3>📋 Recent Care</h3>
+          <div class="log-entry">
+            <span class="log-date">Apr 2</span>
+            <span class="log-action">🩺 Diagnosed: Root Rot</span>
+          </div>
+          <div class="log-entry">
+            <span class="log-date">Apr 2</span>
+            <span class="log-action">🪴 Removed from pot, trimmed roots</span>
+          </div>
+          <div class="log-entry">
+            <span class="log-date">Mar 28</span>
+            <span class="log-action">💧 Watered</span>
+          </div>
+          <div class="log-entry">
+            <span class="log-date">Mar 22</span>
+            <span class="log-action">💧 Watered</span>
+          </div>
+          <div class="log-entry">
+            <span class="log-date">Mar 15</span>
+            <span class="log-action">🧪 Fertilized (10-10-10)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scan Modal -->
+    <div id="scanModal" class="modal hidden">
+      <div class="modal-content scan-modal">
+        <button class="modal-close" id="closeScan">×</button>
+        <div class="scan-view">
+          <div class="camera-frame">
+            <div class="camera-placeholder">
+              <div class="camera-icon">📷</div>
+              <p>Position your plant in the frame</p>
+              <div class="scan-guide">
+                <div class="guide-corner tl"></div>
+                <div class="guide-corner tr"></div>
+                <div class="guide-corner bl"></div>
+                <div class="guide-corner br"></div>
+              </div>
+            </div>
+          </div>
+          <div class="scan-tips">
+            <p>💡 <strong>Tips for best results:</strong></p>
+            <ul>
+              <li>Get close-ups of problem areas</li>
+              <li>Include both healthy and affected leaves</li>
+              <li>Good lighting, no flash</li>
+              <li>Show the soil surface if relevant</li>
+            </ul>
+          </div>
+          <button class="btn-primary full-width" id="captureBtn">📸 Capture</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
