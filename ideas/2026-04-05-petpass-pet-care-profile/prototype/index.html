@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetPass — Shareable Pet Care Profiles</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Hero / Landing -->
+  <section class="hero" id="hero">
+    <nav class="nav">
+      <div class="nav-brand">🐾 <span>PetPass</span></div>
+      <div class="nav-actions">
+        <button class="btn btn-ghost" onclick="showView('login')">Log In</button>
+        <button class="btn btn-primary" onclick="showView('onboarding')">Get Started Free</button>
+      </div>
+    </nav>
+    <div class="hero-content">
+      <div class="hero-badge">Never repeat pet care instructions again</div>
+      <h1>One link.<br>Everything your<br>pet sitter needs.</h1>
+      <p class="hero-sub">Create a shareable care profile for your pet. Feeding schedules, medications, emergency contacts, personality quirks — all in one beautiful page anyone can access.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="showView('onboarding')">Create Your Pet's Profile →</button>
+        <button class="btn btn-outline btn-lg" onclick="showView('shared')">See Example Profile</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>86.9M</strong><span>Pet-owning US households</span></div>
+        <div class="stat"><strong>67%</strong><span>Use pet sitters yearly</span></div>
+        <div class="stat"><strong>$0</strong><span>To get started</span></div>
+      </div>
+    </div>
+    <div class="hero-preview">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="mini-profile">
+            <div class="mini-avatar">🐕</div>
+            <div class="mini-name">Luna</div>
+            <div class="mini-breed">Golden Retriever · 4 yrs</div>
+            <div class="mini-tags">
+              <span class="tag tag-green">Friendly</span>
+              <span class="tag tag-amber">Pulls on leash</span>
+              <span class="tag tag-red">Allergic to chicken</span>
+            </div>
+            <div class="mini-schedule">
+              <div class="mini-item">🍽️ Breakfast: 7am — 1 cup kibble</div>
+              <div class="mini-item">💊 Apoquel: 8am — 1 tablet</div>
+              <div class="mini-item">🚶 Walk: 6pm — 30 min</div>
+              <div class="mini-item">🍽️ Dinner: 6:30pm — 1 cup kibble</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Onboarding / Create Profile -->
+  <section class="view" id="onboarding">
+    <div class="onboard-container">
+      <button class="back-btn" onclick="showView('hero')">← Back</button>
+      <div class="onboard-progress">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">Step 1 of 4</div>
+      </div>
+
+      <!-- Step 1: Basic Info -->
+      <div class="step" id="step1">
+        <div class="step-icon">📸</div>
+        <h2>Let's meet your pet!</h2>
+        <p class="step-sub">Basic info to get started</p>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Pet's Name</label>
+            <input type="text" id="petName" placeholder="Luna" value="Luna">
+          </div>
+          <div class="form-group">
+            <label>Species</label>
+            <select id="petSpecies">
+              <option value="dog" selected>🐕 Dog</option>
+              <option value="cat">🐈 Cat</option>
+              <option value="bird">🦜 Bird</option>
+              <option value="rabbit">🐇 Rabbit</option>
+              <option value="other">🐾 Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Breed</label>
+            <input type="text" id="petBreed" placeholder="Golden Retriever" value="Golden Retriever">
+          </div>
+          <div class="form-group">
+            <label>Age</label>
+            <input type="text" id="petAge" placeholder="4 years" value="4 years">
+          </div>
+          <div class="form-group">
+            <label>Weight</label>
+            <input type="text" id="petWeight" placeholder="65 lbs" value="65 lbs">
+          </div>
+          <div class="form-group full">
+            <label>Microchip #</label>
+            <input type="text" id="petChip" placeholder="Optional" value="985112345678901">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg full-width" onclick="nextStep(2)">Next: Personality →</button>
+      </div>
+
+      <!-- Step 2: Personality -->
+      <div class="step hidden" id="step2">
+        <div class="step-icon">🧠</div>
+        <h2>What's their personality?</h2>
+        <p class="step-sub">Help caretakers understand your pet</p>
+        <div class="form-group">
+          <label>Personality Traits (click to select)</label>
+          <div class="trait-grid" id="traitGrid">
+            <button class="trait-btn selected" data-trait="friendly">😊 Friendly</button>
+            <button class="trait-btn" data-trait="shy">🙈 Shy with strangers</button>
+            <button class="trait-btn selected" data-trait="playful">🎾 Playful</button>
+            <button class="trait-btn" data-trait="anxious">😰 Anxious</button>
+            <button class="trait-btn selected" data-trait="cuddly">🤗 Cuddly</button>
+            <button class="trait-btn" data-trait="independent">😎 Independent</button>
+            <button class="trait-btn" data-trait="vocal">🗣️ Vocal/Barky</button>
+            <button class="trait-btn selected" data-trait="food-motivated">🦴 Food motivated</button>
+            <button class="trait-btn" data-trait="leash-puller">🏃 Pulls on leash</button>
+            <button class="trait-btn" data-trait="door-dasher">🚪 Door dasher</button>
+            <button class="trait-btn" data-trait="counter-surfer">🍕 Counter surfer</button>
+            <button class="trait-btn" data-trait="thunder-phobia">⛈️ Storm phobia</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Special Notes for Caretakers</label>
+          <textarea id="petNotes" rows="3" placeholder="Anything a sitter should know...">Loves belly rubs! Will bring you her toy to play fetch. Gets nervous during thunderstorms — give her the anxiety vest from the closet. Knows "sit", "stay", "shake", and "go to bed".</textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="nextStep(1)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="nextStep(3)">Next: Care Schedule →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Care Schedule -->
+      <div class="step hidden" id="step3">
+        <div class="step-icon">📋</div>
+        <h2>Daily care schedule</h2>
+        <p class="step-sub">What does a typical day look like?</p>
+        <div class="schedule-builder" id="scheduleBuilder">
+          <div class="schedule-item">
+            <div class="schedule-time">7:00 AM</div>
+            <div class="schedule-icon">🍽️</div>
+            <div class="schedule-details">
+              <strong>Breakfast</strong>
+              <span>1 cup Blue Buffalo kibble + 1 tbsp pumpkin puree</span>
+            </div>
+            <button class="schedule-delete" onclick="this.closest('.schedule-item').remove()">×</button>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">8:00 AM</div>
+            <div class="schedule-icon">💊</div>
+            <div class="schedule-details">
+              <strong>Apoquel (allergy med)</strong>
+              <span>1 tablet — hide in peanut butter</span>
+            </div>
+            <button class="schedule-delete" onclick="this.closest('.schedule-item').remove()">×</button>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">12:00 PM</div>
+            <div class="schedule-icon">🚶</div>
+            <div class="schedule-details">
+              <strong>Midday walk</strong>
+              <span>15-20 min around the block. Use the blue leash.</span>
+            </div>
+            <button class="schedule-delete" onclick="this.closest('.schedule-item').remove()">×</button>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">6:00 PM</div>
+            <div class="schedule-icon">🚶</div>
+            <div class="schedule-details">
+              <strong>Evening walk</strong>
+              <span>30 min. She loves the park on Oak Street.</span>
+            </div>
+            <button class="schedule-delete" onclick="this.closest('.schedule-item').remove()">×</button>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">6:30 PM</div>
+            <div class="schedule-icon">🍽️</div>
+            <div class="schedule-details">
+              <strong>Dinner</strong>
+              <span>1 cup Blue Buffalo kibble + warm water</span>
+            </div>
+            <button class="schedule-delete" onclick="this.closest('.schedule-item').remove()">×</button>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">9:00 PM</div>
+            <div class="schedule-icon">🌙</div>
+            <div class="schedule-details">
+              <strong>Bedtime potty break</strong>
+              <span>Quick trip to the backyard. She sleeps in her crate (bedroom).</span>
+            </div>
+            <button class="schedule-delete" onclick="this.closest('.schedule-item').remove()">×</button>
+          </div>
+        </div>
+        <button class="btn btn-outline add-schedule" onclick="addScheduleItem()">+ Add item</button>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="nextStep(2)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="nextStep(4)">Next: Medical & Emergency →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Medical + Emergency -->
+      <div class="step hidden" id="step4">
+        <div class="step-icon">🏥</div>
+        <h2>Medical & Emergency Info</h2>
+        <p class="step-sub">Critical info for caretakers and vets</p>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>⚠️ Allergies</label>
+            <input type="text" id="petAllergies" placeholder="Chicken, grass pollen..." value="Chicken protein — causes itching and hot spots">
+          </div>
+          <div class="form-group full">
+            <label>💊 Current Medications</label>
+            <textarea rows="2" id="petMeds">Apoquel 16mg — 1 tablet daily with breakfast (for allergies)
+Fish oil supplement — 1 pump on dinner</textarea>
+          </div>
+          <div class="form-group">
+            <label>🏥 Primary Vet</label>
+            <input type="text" id="vetName" value="Bayshore Animal Hospital">
+          </div>
+          <div class="form-group">
+            <label>📞 Vet Phone</label>
+            <input type="tel" id="vetPhone" value="(813) 555-0147">
+          </div>
+          <div class="form-group">
+            <label>🚨 Emergency Vet</label>
+            <input type="text" id="emergVet" value="BluePearl Emergency">
+          </div>
+          <div class="form-group">
+            <label>📞 Emergency Phone</label>
+            <input type="tel" id="emergPhone" value="(813) 555-0199">
+          </div>
+          <div class="form-group full">
+            <label>🆔 Pet Insurance</label>
+            <input type="text" id="petInsurance" placeholder="Optional" value="Healthy Paws — Policy #HP-445821">
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="nextStep(3)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="createProfile()">✨ Create PetPass Profile</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section class="view" id="dashboard">
+    <nav class="nav nav-dark">
+      <div class="nav-brand">🐾 <span>PetPass</span></div>
+      <div class="nav-actions">
+        <button class="btn btn-ghost" onclick="showView('hero')">Log Out</button>
+      </div>
+    </nav>
+    <div class="dash-container">
+      <div class="dash-header">
+        <h2>Your Pets</h2>
+        <button class="btn btn-primary" onclick="showView('onboarding')">+ Add Pet</button>
+      </div>
+      <div class="pet-cards">
+        <div class="pet-card" onclick="showView('shared')">
+          <div class="pet-card-avatar">🐕</div>
+          <div class="pet-card-info">
+            <h3>Luna</h3>
+            <p>Golden Retriever · 4 yrs · 65 lbs</p>
+            <div class="pet-card-tags">
+              <span class="tag tag-green">Profile Complete</span>
+              <span class="tag tag-blue">3 Active Shares</span>
+            </div>
+          </div>
+          <div class="pet-card-actions">
+            <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); showShareModal()">Share 🔗</button>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); showView('shared')">View</button>
+          </div>
+        </div>
+        <div class="pet-card inactive">
+          <div class="pet-card-avatar">🐈</div>
+          <div class="pet-card-info">
+            <h3>Mochi</h3>
+            <p>Tabby Cat · 7 yrs · 11 lbs</p>
+            <div class="pet-card-tags">
+              <span class="tag tag-amber">Needs Medical Info</span>
+            </div>
+          </div>
+          <div class="pet-card-actions">
+            <button class="btn btn-sm btn-outline">Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-section">
+        <h3>📊 Recent Care Activity</h3>
+        <div class="activity-feed">
+          <div class="activity-item">
+            <div class="activity-dot green"></div>
+            <div class="activity-text"><strong>Sarah M.</strong> fed Luna breakfast and gave meds</div>
+            <div class="activity-time">Today, 7:15 AM</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot blue"></div>
+            <div class="activity-text"><strong>Sarah M.</strong> walked Luna — 25 min, great energy!</div>
+            <div class="activity-time">Yesterday, 6:20 PM</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot green"></div>
+            <div class="activity-text"><strong>Sarah M.</strong> fed Luna dinner</div>
+            <div class="activity-time">Yesterday, 6:35 PM</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot purple"></div>
+            <div class="activity-text"><strong>Sarah M.</strong> sent a photo update 📸</div>
+            <div class="activity-time">Yesterday, 3:45 PM</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-section">
+        <h3>🔗 Active Share Links</h3>
+        <div class="share-links">
+          <div class="share-link-item">
+            <div class="share-link-info">
+              <strong>Sarah M. (Pet Sitter)</strong>
+              <span>Full access · Expires Apr 12</span>
+            </div>
+            <button class="btn btn-sm btn-ghost">Revoke</button>
+          </div>
+          <div class="share-link-item">
+            <div class="share-link-info">
+              <strong>Mom (Emergency Contact)</strong>
+              <span>Full access · No expiration</span>
+            </div>
+            <button class="btn btn-sm btn-ghost">Revoke</button>
+          </div>
+          <div class="share-link-item">
+            <div class="share-link-info">
+              <strong>QR Collar Tag</strong>
+              <span>Emergency info only · No expiration</span>
+            </div>
+            <button class="btn btn-sm btn-ghost">Regenerate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shared Profile View (what sitter sees) -->
+  <section class="view" id="shared">
+    <div class="shared-container">
+      <div class="shared-header">
+        <div class="shared-badge">🐾 PetPass Profile</div>
+        <button class="back-btn" onclick="showView('dashboard')">← Back to Dashboard</button>
+      </div>
+
+      <div class="profile-hero">
+        <div class="profile-avatar">🐕</div>
+        <h1 class="profile-name">Luna</h1>
+        <p class="profile-breed">Golden Retriever · 4 years · 65 lbs</p>
+        <p class="profile-chip">Microchip: 985112345678901</p>
+      </div>
+
+      <div class="profile-traits">
+        <span class="trait-pill">😊 Friendly</span>
+        <span class="trait-pill">🎾 Playful</span>
+        <span class="trait-pill">🤗 Cuddly</span>
+        <span class="trait-pill">🦴 Food motivated</span>
+      </div>
+
+      <div class="profile-notes">
+        <p>Loves belly rubs! Will bring you her toy to play fetch. Gets nervous during thunderstorms — give her the anxiety vest from the closet. Knows "sit", "stay", "shake", and "go to bed".</p>
+      </div>
+
+      <!-- Emergency Banner -->
+      <div class="emergency-card">
+        <div class="emergency-title">🚨 Emergency Quick Info</div>
+        <div class="emergency-grid">
+          <div class="emergency-item">
+            <strong>⚠️ Allergy</strong>
+            <span>Chicken protein</span>
+          </div>
+          <div class="emergency-item">
+            <strong>💊 Daily Med</strong>
+            <span>Apoquel 16mg</span>
+          </div>
+          <div class="emergency-item">
+            <strong>🏥 Vet</strong>
+            <span><a href="tel:8135550147">(813) 555-0147</a></span>
+          </div>
+          <div class="emergency-item">
+            <strong>🚨 Emergency</strong>
+            <span><a href="tel:8135550199">(813) 555-0199</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Schedule -->
+      <div class="profile-section">
+        <h2>📋 Daily Schedule</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-time">7:00 AM</div>
+            <div class="timeline-dot meal"></div>
+            <div class="timeline-content">
+              <strong>🍽️ Breakfast</strong>
+              <p>1 cup Blue Buffalo kibble + 1 tbsp pumpkin puree</p>
+            </div>
+            <button class="check-btn" onclick="toggleCheck(this)">✓</button>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">8:00 AM</div>
+            <div class="timeline-dot med"></div>
+            <div class="timeline-content">
+              <strong>💊 Apoquel (allergy med)</strong>
+              <p>1 tablet — hide in peanut butter</p>
+            </div>
+            <button class="check-btn" onclick="toggleCheck(this)">✓</button>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">12:00 PM</div>
+            <div class="timeline-dot walk"></div>
+            <div class="timeline-content">
+              <strong>🚶 Midday Walk</strong>
+              <p>15-20 min around the block. Use the blue leash.</p>
+            </div>
+            <button class="check-btn" onclick="toggleCheck(this)">✓</button>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">6:00 PM</div>
+            <div class="timeline-dot walk"></div>
+            <div class="timeline-content">
+              <strong>🚶 Evening Walk</strong>
+              <p>30 min. She loves the park on Oak Street.</p>
+            </div>
+            <button class="check-btn" onclick="toggleCheck(this)">✓</button>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">6:30 PM</div>
+            <div class="timeline-dot meal"></div>
+            <div class="timeline-content">
+              <strong>🍽️ Dinner</strong>
+              <p>1 cup Blue Buffalo kibble + warm water</p>
+            </div>
+            <button class="check-btn" onclick="toggleCheck(this)">✓</button>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">9:00 PM</div>
+            <div class="timeline-dot night"></div>
+            <div class="timeline-content">
+              <strong>🌙 Bedtime</strong>
+              <p>Quick potty break in backyard. She sleeps in her crate (bedroom).</p>
+            </div>
+            <button class="check-btn" onclick="toggleCheck(this)">✓</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical Details -->
+      <div class="profile-section">
+        <h2>🏥 Medical Info</h2>
+        <div class="medical-grid">
+          <div class="medical-card">
+            <div class="medical-label">Allergies</div>
+            <div class="medical-value danger">Chicken protein — causes itching and hot spots</div>
+          </div>
+          <div class="medical-card">
+            <div class="medical-label">Medications</div>
+            <div class="medical-value">
+              <div>Apoquel 16mg — 1 tablet daily with breakfast</div>
+              <div>Fish oil supplement — 1 pump on dinner</div>
+            </div>
+          </div>
+          <div class="medical-card">
+            <div class="medical-label">Primary Vet</div>
+            <div class="medical-value">
+              Bayshore Animal Hospital<br>
+              <a href="tel:8135550147">(813) 555-0147</a>
+            </div>
+          </div>
+          <div class="medical-card">
+            <div class="medical-label">Emergency Vet</div>
+            <div class="medical-value">
+              BluePearl Emergency<br>
+              <a href="tel:8135550199">(813) 555-0199</a>
+            </div>
+          </div>
+          <div class="medical-card">
+            <div class="medical-label">Insurance</div>
+            <div class="medical-value">Healthy Paws — Policy #HP-445821</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sitter Log -->
+      <div class="profile-section">
+        <h2>📝 Care Log</h2>
+        <p class="section-sub">Tap ✓ on schedule items to log completion</p>
+        <div class="log-entries" id="logEntries">
+          <div class="log-empty">No entries yet today. Tap ✓ on schedule items above!</div>
+        </div>
+        <div class="log-input-row">
+          <input type="text" id="logNote" placeholder="Add a note or update..." class="log-input">
+          <button class="btn btn-primary btn-sm" onclick="addLogNote()">Send</button>
+        </div>
+      </div>
+
+      <div class="shared-footer">
+        <p>Shared via <strong>PetPass</strong> · <a href="#" onclick="showView('hero')">Create your pet's profile free →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal">
+      <button class="modal-close" onclick="hideShareModal()">×</button>
+      <h2>Share Luna's Profile</h2>
+      <div class="share-options">
+        <div class="share-option">
+          <div class="share-option-icon">🔗</div>
+          <div class="share-option-info">
+            <strong>Copy Link</strong>
+            <p>Anyone with this link can view the profile</p>
+            <div class="share-link-box">
+              <input type="text" value="petpass.app/p/luna-abc123" readonly id="shareLink">
+              <button class="btn btn-sm btn-primary" onclick="copyLink()">Copy</button>
+            </div>
+          </div>
+        </div>
+        <div class="share-option">
+          <div class="share-option-icon">📱</div>
+          <div class="share-option-info">
+            <strong>QR Code</strong>
+            <p>Print for collar tag, crate, or care binder</p>
+            <div class="qr-placeholder">
+              <div class="qr-grid">
+                <div class="qr-block"></div><div class="qr-block"></div><div class="qr-block"></div>
+                <div class="qr-block"></div><div class="qr-space"></div><div class="qr-block"></div>
+                <div class="qr-block"></div><div class="qr-block"></div><div class="qr-block"></div>
+              </div>
+              <p class="qr-label">Scan to view Luna's profile</p>
+            </div>
+          </div>
+        </div>
+        <div class="share-option">
+          <div class="share-option-icon">⏱️</div>
+          <div class="share-option-info">
+            <strong>Temporary Link</strong>
+            <p>Auto-expires after your trip</p>
+            <div class="temp-link-row">
+              <select class="temp-select">
+                <option>Expires in 3 days</option>
+                <option>Expires in 1 week</option>
+                <option>Expires in 2 weeks</option>
+                <option>Expires in 1 month</option>
+              </select>
+              <button class="btn btn-sm btn-outline">Generate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login (simple) -->
+  <section class="view" id="login">
+    <div class="login-container">
+      <button class="back-btn" onclick="showView('hero')">← Back</button>
+      <div class="login-brand">🐾</div>
+      <h2>Welcome back</h2>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="you@email.com">
+      </div>
+      <button class="btn btn-primary btn-lg full-width" onclick="showView('dashboard')">Send Magic Link ✨</button>
+      <div class="login-divider"><span>or</span></div>
+      <button class="btn btn-outline btn-lg full-width" onclick="showView('dashboard')">Continue with Google</button>
+      <p class="login-footer">Don't have an account? <a href="#" onclick="showView('onboarding')">Create one free →</a></p>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
