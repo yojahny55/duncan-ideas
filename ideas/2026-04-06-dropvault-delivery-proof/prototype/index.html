@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DropVault — Delivery Evidence Vault</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">📦 Consumer-Side Evidence Vault</div>
+      <h1>Your package.<br><span class="accent">Your proof.</span></h1>
+      <p class="hero-sub">Never lose a delivery dispute again. DropVault captures independent, timestamped evidence of what happens at your doorstep — so carriers can't deny your claims.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">$12B</span>
+          <span class="stat-label">Annual porch piracy losses</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">1.7M</span>
+          <span class="stat-label">Packages lost/stolen daily</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">80%+</span>
+          <span class="stat-label">Claim approval with photo proof</span>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="scrollToDemo()">Try the Demo</button>
+        <button class="btn btn-outline" onclick="scrollToFeatures()">See How It Works</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="problem">
+    <div class="container">
+      <h2>The deck is stacked against you</h2>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-icon">📭</div>
+          <h3>"Delivered" but missing</h3>
+          <p>Carrier says delivered. Nothing's at your door. Their word vs. yours — and they control the "proof."</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📸</div>
+          <h3>Blurry carrier photos</h3>
+          <p>Amazon's delivery photo shows a vague doorstep from 10 feet away. Is that even your house? Good luck.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">🚫</div>
+          <h3>Claim denied</h3>
+          <p>"Delivery confirmed by carrier." Case closed. No independent evidence = no leverage. You eat the loss.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="features">
+    <div class="container">
+      <h2>Your evidence timeline</h2>
+      <p class="section-sub">DropVault builds an independent record that's stronger than anything a carrier provides.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Log Expected Package</h3>
+            <p>Enter tracking number, carrier, item, and value. DropVault auto-detects the carrier and sets up your evidence timeline.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Capture Evidence</h3>
+            <p>When delivery window opens, snap a porch photo. Timestamped. Geolocated. Before, during, and after delivery.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Document Issues</h3>
+            <p>Missing? Damaged? Wrong item? Log it instantly with photos and notes. Your timeline builds itself.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Generate Dispute</h3>
+            <p>One tap creates a carrier-specific dispute PDF with all evidence, timestamps, and a pre-written cover letter.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo App -->
+  <section class="demo-section" id="demo">
+    <div class="container">
+      <h2>Try it yourself</h2>
+      <p class="section-sub">Interactive demo — log a package, capture evidence, generate a dispute.</p>
+
+      <div class="app-shell">
+        <!-- Tab Nav -->
+        <nav class="app-nav">
+          <button class="nav-tab active" data-tab="packages" onclick="switchTab('packages')">📦 Packages</button>
+          <button class="nav-tab" data-tab="evidence" onclick="switchTab('evidence')">📸 Evidence</button>
+          <button class="nav-tab" data-tab="disputes" onclick="switchTab('disputes')">🛡️ Disputes</button>
+          <button class="nav-tab" data-tab="analytics" onclick="switchTab('analytics')">📊 Analytics</button>
+        </nav>
+
+        <!-- Packages Tab -->
+        <div class="tab-content active" id="tab-packages">
+          <div class="tab-header">
+            <h3>Your Packages</h3>
+            <button class="btn btn-sm btn-primary" onclick="showAddPackage()">+ Add Package</button>
+          </div>
+
+          <!-- Add Package Form (hidden by default) -->
+          <div class="add-package-form hidden" id="add-package-form">
+            <div class="form-group">
+              <label>Tracking Number</label>
+              <input type="text" id="tracking-input" placeholder="e.g., 1Z999AA10123456784" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Carrier</label>
+                <select id="carrier-input">
+                  <option value="auto">Auto-detect</option>
+                  <option value="amazon">Amazon</option>
+                  <option value="fedex">FedEx</option>
+                  <option value="ups">UPS</option>
+                  <option value="usps">USPS</option>
+                  <option value="dhl">DHL</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Item Value</label>
+                <input type="number" id="value-input" placeholder="$0.00" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <input type="text" id="desc-input" placeholder="e.g., Sony WH-1000XM5 Headphones" />
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="addPackage()">Add Package</button>
+              <button class="btn btn-outline" onclick="hideAddPackage()">Cancel</button>
+            </div>
+          </div>
+
+          <div class="package-list" id="package-list">
+            <div class="empty-state">
+              <div class="empty-icon">📦</div>
+              <h4>No packages yet</h4>
+              <p>Add your first expected delivery to start building your evidence timeline.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evidence Tab -->
+        <div class="tab-content" id="tab-evidence">
+          <div class="tab-header">
+            <h3>Evidence Capture</h3>
+            <button class="btn btn-sm btn-primary" onclick="captureEvidence()">📸 Capture Now</button>
+          </div>
+
+          <div class="evidence-quick-actions">
+            <div class="evidence-action" onclick="captureEvidenceType('porch')">
+              <span class="action-icon">🏠</span>
+              <span>Porch Check</span>
+              <small>Timestamped doorstep photo</small>
+            </div>
+            <div class="evidence-action" onclick="captureEvidenceType('damage')">
+              <span class="action-icon">💔</span>
+              <span>Damage Report</span>
+              <small>Document condition issues</small>
+            </div>
+            <div class="evidence-action" onclick="captureEvidenceType('missing')">
+              <span class="action-icon">🚫</span>
+              <span>Not Received</span>
+              <small>Confirm package is missing</small>
+            </div>
+          </div>
+
+          <div class="evidence-timeline" id="evidence-timeline">
+            <div class="empty-state">
+              <div class="empty-icon">📸</div>
+              <h4>No evidence captured</h4>
+              <p>Use the quick actions above or snap a photo when a delivery is expected.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disputes Tab -->
+        <div class="tab-content" id="tab-disputes">
+          <div class="tab-header">
+            <h3>Dispute Generator</h3>
+          </div>
+
+          <div class="dispute-builder" id="dispute-builder">
+            <div class="empty-state">
+              <div class="empty-icon">🛡️</div>
+              <h4>Ready to file a claim?</h4>
+              <p>Once you've captured evidence for a package, generate a carrier-specific dispute PDF.</p>
+            </div>
+          </div>
+
+          <div class="dispute-preview hidden" id="dispute-preview">
+            <div class="preview-header">
+              <h4>Dispute Package Preview</h4>
+              <button class="btn btn-sm btn-primary" onclick="downloadDispute()">📥 Download PDF</button>
+            </div>
+            <div class="preview-content" id="preview-content"></div>
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-content" id="tab-analytics">
+          <div class="tab-header">
+            <h3>Delivery Analytics</h3>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <div class="analytics-label">Total Packages Tracked</div>
+              <div class="analytics-value" id="total-packages">0</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-label">Issues Reported</div>
+              <div class="analytics-value" id="total-issues">0</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-label">Evidence Captured</div>
+              <div class="analytics-value" id="total-evidence">0</div>
+            </div>
+            <div class="analytics-card">
+              <div class="analytics-label">Disputes Filed</div>
+              <div class="analytics-value" id="total-disputes">0</div>
+            </div>
+          </div>
+
+          <div class="carrier-scores">
+            <h4>Carrier Reliability</h4>
+            <div class="carrier-bar">
+              <span class="carrier-name">Amazon</span>
+              <div class="bar-track"><div class="bar-fill" style="width: 92%"></div></div>
+              <span class="carrier-pct">92%</span>
+            </div>
+            <div class="carrier-bar">
+              <span class="carrier-name">FedEx</span>
+              <div class="bar-track"><div class="bar-fill" style="width: 85%"></div></div>
+              <span class="carrier-pct">85%</span>
+            </div>
+            <div class="carrier-bar">
+              <span class="carrier-name">UPS</span>
+              <div class="bar-track"><div class="bar-fill" style="width: 88%"></div></div>
+              <span class="carrier-pct">88%</span>
+            </div>
+            <div class="carrier-bar">
+              <span class="carrier-name">USPS</span>
+              <div class="bar-track"><div class="bar-fill" style="width: 76%"></div></div>
+              <span class="carrier-pct">76%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing">
+    <div class="container">
+      <h2>Simple pricing</h2>
+      <p class="section-sub">Start free. Upgrade when you need more protection.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price">$0</div>
+          <ul>
+            <li>5 packages/month</li>
+            <li>Basic photo capture</li>
+            <li>1 dispute/month</li>
+            <li>7-day evidence retention</li>
+          </ul>
+          <button class="btn btn-outline">Get Started</button>
+        </div>
+        <div class="pricing-card featured">
+          <div class="featured-badge">Most Popular</div>
+          <h3>Shield</h3>
+          <div class="price">$3.99<span>/mo</span></div>
+          <ul>
+            <li>Unlimited packages</li>
+            <li>Unlimited evidence</li>
+            <li>Unlimited disputes</li>
+            <li>Delivery analytics</li>
+            <li>Smart alerts</li>
+            <li>90-day retention</li>
+          </ul>
+          <button class="btn btn-primary">Start Shield</button>
+        </div>
+        <div class="pricing-card">
+          <h3>Vault</h3>
+          <div class="price">$7.99<span>/mo</span></div>
+          <ul>
+            <li>Everything in Shield</li>
+            <li>Neighborhood intel</li>
+            <li>Priority dispute support</li>
+            <li>Insurance integration</li>
+            <li>Unlimited retention</li>
+          </ul>
+          <button class="btn btn-outline">Go Vault</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">📦 DropVault</div>
+        <p>Your package, your proof. Built by Duncan ⚔️</p>
+        <div class="footer-links">
+          <a href="https://github.com/yojahny55/duncan-ideas" target="_blank">GitHub</a>
+          <a href="https://yojahny.dev" target="_blank">yojahny.dev</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
