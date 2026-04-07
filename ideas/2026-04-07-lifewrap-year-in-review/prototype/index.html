@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>LifeWrap — Your 2025, Wrapped</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <!-- Progress bar -->
+  <div class="progress-bar">
+    <div class="progress-segment" data-slide="0"></div>
+    <div class="progress-segment" data-slide="1"></div>
+    <div class="progress-segment" data-slide="2"></div>
+    <div class="progress-segment" data-slide="3"></div>
+    <div class="progress-segment" data-slide="4"></div>
+    <div class="progress-segment" data-slide="5"></div>
+    <div class="progress-segment" data-slide="6"></div>
+    <div class="progress-segment" data-slide="7"></div>
+  </div>
+
+  <!-- Slides container -->
+  <div class="slides-wrapper" id="slidesWrapper">
+
+    <!-- Slide 0: Intro -->
+    <div class="slide slide-intro" data-index="0">
+      <div class="slide-content">
+        <div class="logo-mark">🎁</div>
+        <h1 class="title-animate">Life<span class="accent">Wrap</span></h1>
+        <p class="subtitle-animate">Your 2025,<br>Beautifully Told.</p>
+        <div class="tap-hint animate-fade-delay">
+          <span class="tap-icon">👆</span>
+          <span>Tap to begin</span>
+        </div>
+      </div>
+      <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+    </div>
+
+    <!-- Slide 1: Year Overview -->
+    <div class="slide slide-overview" data-index="1">
+      <div class="slide-content">
+        <div class="stat-label">YOUR YEAR AT A GLANCE</div>
+        <div class="big-number" data-count="365">0</div>
+        <div class="stat-unit">days lived</div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-value" data-count="12847">0</div>
+            <div class="stat-desc">photos taken</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" data-count="14">0</div>
+            <div class="stat-desc">cities visited</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" data-count="2847">0</div>
+            <div class="stat-desc">songs played</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" data-count="892">0</div>
+            <div class="stat-desc">miles walked</div>
+          </div>
+        </div>
+        <div class="narrative-text">"You didn't just exist this year. You <em>lived</em>."</div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Music -->
+    <div class="slide slide-music" data-index="2">
+      <div class="slide-content">
+        <div class="stat-label">🎵 YOUR SOUNDTRACK</div>
+        <div class="music-hero">
+          <div class="album-art" id="albumArt">🎧</div>
+          <div class="music-stat-big">
+            <div class="big-number" data-count="847">0</div>
+            <div class="stat-unit">hours of music</div>
+          </div>
+        </div>
+        <div class="top-artists">
+          <div class="artist-row"><span class="rank">1</span><span class="artist-name">Frank Ocean</span><span class="play-count">312 plays</span></div>
+          <div class="artist-row"><span class="rank">2</span><span class="artist-name">Tyler, The Creator</span><span class="play-count">247 plays</span></div>
+          <div class="artist-row"><span class="rank">3</span><span class="artist-name">SZA</span><span class="play-count">198 plays</span></div>
+          <div class="artist-row"><span class="rank">4</span><span class="artist-name">Daniel Caesar</span><span class="play-count">156 plays</span></div>
+          <div class="artist-row"><span class="rank">5</span><span class="artist-name">Steve Lacy</span><span class="play-count">134 plays</span></div>
+        </div>
+        <div class="narrative-text">"Your most musical month? October. Rainy days and late-night coding sessions."</div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Fitness -->
+    <div class="slide slide-fitness" data-index="3">
+      <div class="slide-content">
+        <div class="stat-label">💪 MOVEMENT</div>
+        <div class="fitness-visual">
+          <div class="ring-container">
+            <svg class="ring" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="url(#fitnessGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" class="ring-progress" data-progress="78"/>
+              <defs>
+                <linearGradient id="fitnessGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00f5a0"/>
+                  <stop offset="100%" style="stop-color:#00d9f5"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-value" data-count="278">0</div>
+              <div class="ring-label">active days</div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-grid compact">
+          <div class="stat-card">
+            <div class="stat-value">1.2M</div>
+            <div class="stat-desc">steps</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" data-count="147">0</div>
+            <div class="stat-desc">workouts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" data-count="312">0</div>
+            <div class="stat-desc">miles run</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">48K</div>
+            <div class="stat-desc">cal burned</div>
+          </div>
+        </div>
+        <div class="narrative-text">"Your most active month was November — the same month you started your new job. Coincidence?"</div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Places -->
+    <div class="slide slide-places" data-index="4">
+      <div class="slide-content">
+        <div class="stat-label">📍 WHERE YOU WENT</div>
+        <div class="places-map">
+          <div class="map-placeholder">
+            <div class="map-dot dot-1" style="--x: 25%; --y: 35%"></div>
+            <div class="map-dot dot-2" style="--x: 45%; --y: 25%"></div>
+            <div class="map-dot dot-3" style="--x: 60%; --y: 45%"></div>
+            <div class="map-dot dot-4" style="--x: 35%; --y: 55%"></div>
+            <div class="map-dot dot-5" style="--x: 75%; --y: 30%"></div>
+            <div class="map-dot dot-6" style="--x: 50%; --y: 60%"></div>
+            <div class="map-dot dot-7" style="--x: 20%; --y: 50%"></div>
+            <div class="map-dot dot-8" style="--x: 80%; --y: 55%"></div>
+            <div class="map-line line-1"></div>
+            <div class="map-line line-2"></div>
+            <div class="map-line line-3"></div>
+          </div>
+        </div>
+        <div class="city-list">
+          <div class="city-item">
+            <span class="city-icon">🏠</span>
+            <div class="city-info">
+              <div class="city-name">Tampa, FL</div>
+              <div class="city-time">287 days</div>
+            </div>
+          </div>
+          <div class="city-item">
+            <span class="city-icon">✈️</span>
+            <div class="city-info">
+              <div class="city-name">Havana, Cuba</div>
+              <div class="city-time">12 days — hometown visit</div>
+            </div>
+          </div>
+          <div class="city-item">
+            <span class="city-icon">🏔️</span>
+            <div class="city-info">
+              <div class="city-name">Denver, CO</div>
+              <div class="city-time">8 days — conference</div>
+            </div>
+          </div>
+          <div class="city-item new-badge">
+            <span class="city-icon">🆕</span>
+            <div class="city-info">
+              <div class="city-name">6 new cities</div>
+              <div class="city-time">discovered this year</div>
+            </div>
+          </div>
+        </div>
+        <div class="narrative-text">"You spent 78% of your year in Tampa, but your best stories came from the other 22%."</div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Screen Time -->
+    <div class="slide slide-screen" data-index="5">
+      <div class="slide-content">
+        <div class="stat-label">📱 SCREEN TIME</div>
+        <div class="screen-hero">
+          <div class="big-number" data-count="1847">0</div>
+          <div class="stat-unit">hours on your phone</div>
+          <div class="screen-context">That's 77 days. Or 21% of your year.</div>
+        </div>
+        <div class="app-bars">
+          <div class="app-bar-row">
+            <span class="app-name">Instagram</span>
+            <div class="bar-track"><div class="bar-fill" style="--width: 85%"><span>412h</span></div></div>
+          </div>
+          <div class="app-bar-row">
+            <span class="app-name">X / Twitter</span>
+            <div class="bar-track"><div class="bar-fill" style="--width: 72%"><span>347h</span></div></div>
+          </div>
+          <div class="app-bar-row">
+            <span class="app-name">YouTube</span>
+            <div class="bar-track"><div class="bar-fill" style="--width: 65%"><span>298h</span></div></div>
+          </div>
+          <div class="app-bar-row">
+            <span class="app-name">VS Code</span>
+            <div class="bar-track"><div class="bar-fill code" style="--width: 58%"><span>267h</span></div></div>
+          </div>
+          <div class="app-bar-row">
+            <span class="app-name">Messages</span>
+            <div class="bar-track"><div class="bar-fill" style="--width: 40%"><span>189h</span></div></div>
+          </div>
+        </div>
+        <div class="narrative-text">"You spent more time in VS Code than on YouTube. That's either dedication or a cry for help."</div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Growth -->
+    <div class="slide slide-growth" data-index="6">
+      <div class="slide-content">
+        <div class="stat-label">🌱 HOW YOU GREW</div>
+        <div class="growth-timeline">
+          <div class="growth-item">
+            <div class="growth-month">JAN</div>
+            <div class="growth-event">Started learning Go</div>
+            <div class="growth-icon">📖</div>
+          </div>
+          <div class="growth-item">
+            <div class="growth-month">MAR</div>
+            <div class="growth-event">Shipped NASA+ streaming</div>
+            <div class="growth-icon">🚀</div>
+          </div>
+          <div class="growth-item highlight">
+            <div class="growth-month">JUN</div>
+            <div class="growth-event">Promoted to Senior Engineer</div>
+            <div class="growth-icon">🎉</div>
+          </div>
+          <div class="growth-item">
+            <div class="growth-month">SEP</div>
+            <div class="growth-event">100th GitHub contribution streak</div>
+            <div class="growth-icon">⚡</div>
+          </div>
+          <div class="growth-item">
+            <div class="growth-month">NOV</div>
+            <div class="growth-event">Launched side project</div>
+            <div class="growth-icon">🛠️</div>
+          </div>
+        </div>
+        <div class="narrative-text">"The version of you from January wouldn't recognize the version of you in December. That's the whole point."</div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Summary / Share -->
+    <div class="slide slide-summary" data-index="7">
+      <div class="slide-content">
+        <div class="summary-badge">YOUR 2025</div>
+        <div class="summary-title">A Year of<br><span class="accent">Building & Living</span></div>
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <div class="summary-num">365</div>
+            <div class="summary-label">days</div>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-stat">
+            <div class="summary-num">12.8K</div>
+            <div class="summary-label">photos</div>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-stat">
+            <div class="summary-num">14</div>
+            <div class="summary-label">cities</div>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-stat">
+            <div class="summary-num">847h</div>
+            <div class="summary-label">music</div>
+          </div>
+        </div>
+        <div class="share-section">
+          <button class="share-btn primary" id="shareBtn">
+            <span>📤</span> Share Your Wrap
+          </button>
+          <button class="share-btn secondary" id="downloadBtn">
+            <span>💾</span> Save as Image
+          </button>
+        </div>
+        <div class="cta-section">
+          <div class="cta-text">Want your own LifeWrap?</div>
+          <button class="cta-btn" id="ctaBtn">Get Early Access</button>
+        </div>
+        <div class="footer-text">LifeWrap — Your Year, Beautifully Told.</div>
+      </div>
+      <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-arrows">
+    <button class="nav-arrow prev" id="prevBtn" aria-label="Previous slide">‹</button>
+    <button class="nav-arrow next" id="nextBtn" aria-label="Next slide">›</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
