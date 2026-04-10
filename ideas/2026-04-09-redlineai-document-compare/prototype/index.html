@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RedlineAI — Catch Hidden Document Changes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">🔴</span>
+        <span class="logo-text">RedlineAI</span>
+      </div>
+      <div class="nav-links">
+        <a href="#how">How It Works</a>
+        <a href="#demo">Demo</a>
+        <a href="#pricing">Pricing</a>
+        <button class="btn btn-primary btn-sm">Try Free</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-content">
+      <div class="badge">AI-Powered Document Comparison</div>
+      <h1>Someone sent you a <span class="highlight">"minor update"</span>.<br>What actually changed?</h1>
+      <p class="hero-sub">Upload two versions of any document. Get every change highlighted with plain-English explanations. Know exactly what matters before you sign.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" id="cta-upload">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          Upload Two Documents
+        </button>
+        <button class="btn btn-ghost btn-lg" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">See Demo ↓</button>
+      </div>
+      <p class="hero-note">Free — 3 comparisons per month, no signup required</p>
+    </div>
+  </header>
+
+  <section class="pain-points">
+    <div class="container">
+      <h2>You've signed without reading. We all have.</h2>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <span class="pain-icon">🏠</span>
+          <h3>Lease Renewal</h3>
+          <p>Your landlord sends the renewal. It <em>looks</em> identical — but they added a $200 pet fee and changed the move-out notice from 30 to 60 days.</p>
+        </div>
+        <div class="pain-card">
+          <span class="pain-icon">📝</span>
+          <h3>Freelance Contract</h3>
+          <p>Client sends an "updated" scope of work. Payment terms quietly shifted from Net-15 to Net-45. That's an extra month to get paid.</p>
+        </div>
+        <div class="pain-card">
+          <span class="pain-icon">🏢</span>
+          <h3>Employment Agreement</h3>
+          <p>Company updates the handbook. The non-compete clause now covers your entire state, not just your city. Missed it? You're locked in.</p>
+        </div>
+        <div class="pain-card">
+          <span class="pain-icon">🏡</span>
+          <h3>HOA Bylaws</h3>
+          <p>New parking restrictions, changed architectural review rules, increased assessments — buried in a 47-page PDF that "hasn't changed much."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how">
+    <div class="container">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Upload Both Versions</h3>
+          <p>Drag-and-drop the original and revised documents. Supports PDF, Word, text, and images.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>AI Finds Every Change</h3>
+          <p>Smart alignment catches moved, reordered, and reformatted text — not just line-by-line diffs.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Understand What Matters</h3>
+          <p>Every change explained in plain English: what it is, why it matters, and what you should do about it.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3>Export & Share</h3>
+          <p>Download a clean PDF report or share your findings. No more printing 30 pages and using a highlighter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-section" id="demo">
+    <div class="container">
+      <h2>See It In Action</h2>
+      <p class="demo-sub">Real lease comparison — original vs. "minor update"</p>
+
+      <div class="demo-browser">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="browser-title">RedlineAI — 7 changes found</span>
+        </div>
+        <div class="demo-content">
+          <div class="demo-header-bar">
+            <div class="demo-tabs">
+              <button class="demo-tab active" onclick="switchView('split')">Split View</button>
+              <button class="demo-tab" onclick="switchView('unified')">Unified View</button>
+              <button class="demo-tab" onclick="switchView('summary')">AI Summary</button>
+            </div>
+            <div class="demo-stats">
+              <span class="stat stat-red">3 Significant</span>
+              <span class="stat stat-orange">2 Moderate</span>
+              <span class="stat stat-yellow">2 Minor</span>
+            </div>
+          </div>
+
+          <div class="split-view" id="split-view">
+            <div class="doc-pane doc-original">
+              <div class="doc-label">📄 Original — Lease Agreement.pdf</div>
+              <div class="doc-body">
+                <div class="doc-line">
+                  <span class="line-num">1</span>
+                  <span class="line-text"><strong>RESIDENTIAL LEASE AGREEMENT</strong></span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">2</span>
+                  <span class="line-text">This agreement made this 1st day of March, 2026</span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">3</span>
+                  <span class="line-text">between Johnson Properties LLC ("Landlord") and</span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">4</span>
+                  <span class="line-text">Jane Smith ("Tenant").</span>
+                </div>
+                <div class="doc-line blank"></div>
+                <div class="doc-line">
+                  <span class="line-num">8</span>
+                  <span class="line-text"><strong>Section 3 — Pets:</strong></span>
+                </div>
+                <div class="doc-line changed-line removed">
+                  <span class="line-num">9</span>
+                  <span class="line-text">Tenant may keep pets with written</span>
+                </div>
+                <div class="doc-line changed-line removed">
+                  <span class="line-num">10</span>
+                  <span class="line-text">Landlord approval. No additional fee required.</span>
+                </div>
+                <div class="doc-line blank"></div>
+                <div class="doc-line">
+                  <span class="line-num">14</span>
+                  <span class="line-text"><strong>Section 5 — Termination:</strong></span>
+                </div>
+                <div class="doc-line changed-line removed">
+                  <span class="line-num">15</span>
+                  <span class="line-text">Either party may terminate with 30 days</span>
+                </div>
+                <div class="doc-line changed-line removed">
+                  <span class="line-num">16</span>
+                  <span class="line-text">written notice. Security deposit returned</span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">17</span>
+                  <span class="line-text">within 14 days of move-out.</span>
+                </div>
+                <div class="doc-line blank"></div>
+                <div class="doc-line">
+                  <span class="line-num">21</span>
+                  <span class="line-text"><strong>Section 7 — Late Fees:</strong></span>
+                </div>
+                <div class="doc-line changed-line removed">
+                  <span class="line-num">22</span>
+                  <span class="line-text">Rent due on the 1st. Late fee of $50</span>
+                </div>
+                <div class="doc-line changed-line removed">
+                  <span class="line-num">23</span>
+                  <span class="line-text">applied after the 5th of the month.</span>
+                </div>
+              </div>
+            </div>
+            <div class="doc-pane doc-revised">
+              <div class="doc-label">📄 Revised — Lease Agreement (2026).pdf</div>
+              <div class="doc-body">
+                <div class="doc-line">
+                  <span class="line-num">1</span>
+                  <span class="line-text"><strong>RESIDENTIAL LEASE AGREEMENT</strong></span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">2</span>
+                  <span class="line-text">This agreement made this 1st day of March, 2026</span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">3</span>
+                  <span class="line-text">between Johnson Properties LLC ("Landlord") and</span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">4</span>
+                  <span class="line-text">Jane Smith ("Tenant").</span>
+                </div>
+                <div class="doc-line blank"></div>
+                <div class="doc-line">
+                  <span class="line-num">8</span>
+                  <span class="line-text"><strong>Section 3 — Pets:</strong></span>
+                </div>
+                <div class="doc-line changed-line added">
+                  <span class="line-num">9</span>
+                  <span class="line-text">Tenant may keep pets with written</span>
+                </div>
+                <div class="doc-line changed-line added">
+                  <span class="line-num">10</span>
+                  <span class="line-text">Landlord approval. Monthly pet fee of</span>
+                </div>
+                <div class="doc-line changed-line added">
+                  <span class="line-num">11</span>
+                  <span class="line-text">$200 per pet applies.</span>
+                </div>
+                <div class="doc-line blank"></div>
+                <div class="doc-line">
+                  <span class="line-num">14</span>
+                  <span class="line-text"><strong>Section 5 — Termination:</strong></span>
+                </div>
+                <div class="doc-line changed-line added">
+                  <span class="line-num">15</span>
+                  <span class="line-text">Either party may terminate with 60 days</span>
+                </div>
+                <div class="doc-line changed-line added">
+                  <span class="line-num">16</span>
+                  <span class="line-text">written notice. Security deposit returned</span>
+                </div>
+                <div class="doc-line">
+                  <span class="line-num">17</span>
+                  <span class="line-text">within 30 days of move-out.</span>
+                </div>
+                <div class="doc-line blank"></div>
+                <div class="doc-line">
+                  <span class="line-num">21</span>
+                  <span class="line-text"><strong>Section 7 — Late Fees:</strong></span>
+                </div>
+                <div class="doc-line changed-line added">
+                  <span class="line-num">22</span>
+                  <span class="line-text">Rent due on the 1st. Late fee of $75</span>
+                </div>
+                <div class="doc-line changed-line added">
+                  <span class="line-num">23</span>
+                  <span class="line-text">applied on the 3rd of the month.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="unified-view" id="unified-view" style="display:none">
+            <div class="change-list">
+              <div class="change-item change-significant">
+                <div class="change-header">
+                  <span class="severity-badge severity-red">🔴 Significant</span>
+                  <span class="change-location">Section 3 — Pets</span>
+                </div>
+                <div class="change-diff">
+                  <span class="removed">No additional fee required.</span>
+                  <span class="arrow">→</span>
+                  <span class="added">Monthly pet fee of $200 per pet applies.</span>
+                </div>
+                <div class="change-explanation">
+                  <strong>What this means:</strong> They added a $200/month pet fee. If you have 1 pet, that's <strong>$2,400/year</strong> in new costs. If you have 2 pets, $4,800/year.
+                </div>
+              </div>
+              <div class="change-item change-significant">
+                <div class="change-header">
+                  <span class="severity-badge severity-red">🔴 Significant</span>
+                  <span class="change-location">Section 5 — Termination</span>
+                </div>
+                <div class="change-diff">
+                  <span class="removed">30 days written notice</span>
+                  <span class="arrow">→</span>
+                  <span class="added">60 days written notice</span>
+                </div>
+                <div class="change-explanation">
+                  <strong>What this means:</strong> You now need to give 2 months' notice instead of 1 to move out. If you want to leave June 1st, you need to notify by <strong>April 1st</strong> instead of May 1st.
+                </div>
+              </div>
+              <div class="change-item change-significant">
+                <div class="change-header">
+                  <span class="severity-badge severity-red">🔴 Significant</span>
+                  <span class="change-location">Section 5 — Termination</span>
+                </div>
+                <div class="change-diff">
+                  <span class="removed">Security deposit returned within 14 days</span>
+                  <span class="arrow">→</span>
+                  <span class="added">Security deposit returned within 30 days</span>
+                </div>
+                <div class="change-explanation">
+                  <strong>What this means:</strong> You'll wait twice as long to get your deposit back. In many states, this exceeds the legal limit (check your state's law).
+                </div>
+              </div>
+              <div class="change-item change-moderate">
+                <div class="change-header">
+                  <span class="severity-badge severity-orange">🟠 Moderate</span>
+                  <span class="change-location">Section 7 — Late Fees</span>
+                </div>
+                <div class="change-diff">
+                  <span class="removed">Late fee of $50 applied after the 5th</span>
+                  <span class="arrow">→</span>
+                  <span class="added">Late fee of $75 applied on the 3rd</span>
+                </div>
+                <div class="change-explanation">
+                  <strong>What this means:</strong> Late fee increased by 50% ($50→$75) AND you get 2 fewer days before it kicks in (5th→3rd). Pay by the 2nd or you lose $75.
+                </div>
+              </div>
+              <div class="change-item change-moderate">
+                <div class="change-header">
+                  <span class="severity-badge severity-orange">🟠 Moderate</span>
+                  <span class="change-location">Section 7 — Late Fees</span>
+                </div>
+                <div class="change-diff">
+                  <span class="removed">Late fee applied after the 5th</span>
+                  <span class="arrow">→</span>
+                  <span class="added">Late fee applied on the 3rd</span>
+                </div>
+                <div class="change-explanation">
+                  <strong>What this means:</strong> Grace period reduced from 5 days to 3 days. Combined with the fee increase, the penalty for late rent is harsher.
+                </div>
+              </div>
+              <div class="change-item change-minor">
+                <div class="change-header">
+                  <span class="severity-badge severity-yellow">🟡 Minor</span>
+                  <span class="change-location">Section 3 — Pets</span>
+                </div>
+                <div class="change-diff">
+                  <span class="removed">Tenant may keep pets with written Landlord approval.</span>
+                  <span class="arrow">→</span>
+                  <span class="added">Tenant may keep pets with written Landlord approval.</span>
+                </div>
+                <div class="change-explanation">
+                  <strong>What this means:</strong> No meaningful change to the approval language itself — the fee was added as a separate item. (Cosmetic formatting difference only.)
+                </div>
+              </div>
+              <div class="change-item change-minor">
+                <div class="change-header">
+                  <span class="severity-badge severity-yellow">🟡 Minor</span>
+                  <span class="change-location">Formatting</span>
+                </div>
+                <div class="change-diff">
+                  <span class="removed">Page layout, line spacing adjustments</span>
+                  <span class="arrow">→</span>
+                  <span class="added">Slightly different spacing and font rendering</span>
+                </div>
+                <div class="change-explanation">
+                  <strong>What this means:</strong> Purely cosmetic — the text is the same, just reformatted when they resaved the document. Nothing to worry about.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-view" id="summary-view" style="display:none">
+            <div class="ai-summary">
+              <div class="summary-header">
+                <span class="ai-icon">🤖</span>
+                <h3>AI Analysis</h3>
+              </div>
+              <div class="summary-verdict">
+                <span class="verdict-badge verdict-caution">⚠️ Proceed with Caution</span>
+              </div>
+              <div class="summary-text">
+                <p>This "minor update" contains <strong>3 significant changes</strong> that will cost you money and restrict your flexibility:</p>
+                <ol>
+                  <li><strong>New pet fee: $200/month per pet.</strong> This wasn't in the original. If you have pets, this is a major new expense — $2,400-4,800/year.</li>
+                  <li><strong>Notice period doubled: 30 → 60 days.</strong> You need to decide about moving out 2 months in advance instead of 1. This makes it harder to be flexible.</li>
+                  <li><strong>Deposit return window doubled: 14 → 30 days.</strong> In many states (CA: 21 days, MA: 30 days, FL: 15 days), there are legal limits on how long a landlord can hold your deposit. Check your state law.</li>
+                </ol>
+                <p><strong>Recommendation:</strong> Do NOT sign as-is. The pet fee and notice period changes are substantial. Consider negotiating: ask to keep the 30-day notice, reduce the pet fee to $100/month, or cap the deposit return at your state's legal limit.</p>
+              </div>
+              <div class="summary-ask">
+                <h4>Ask a Question</h4>
+                <div class="ask-input">
+                  <input type="text" placeholder="e.g. Can the landlord legally increase the late fee this much?" class="ask-field">
+                  <button class="btn btn-primary btn-sm">Ask</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <h2>Not Just a Diff — Understanding</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🔍</span>
+          <h3>Smart Alignment</h3>
+          <p>Catches moved, reordered, and reformatted text — not just line-by-line diffs. Even if sections were shuffled, RedlineAI finds the match.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🧠</span>
+          <h3>Plain-English Explanations</h3>
+          <p>"Clause 5.2(a) was amended" → "Your notice period doubled — you now need 2 months to move out instead of 1." Every change explained.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎯</span>
+          <h3>Severity Rating</h3>
+          <p>Every change rated 🟢🟡🟠🔴 so you can focus on what matters. Skip the typos, catch the $2,400/year new fee.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3>Section Heatmap</h3>
+          <p>Visual overview showing where all changes concentrate. Pages 1-3: nothing. Page 4: 12 changes. Now you know where to look.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🤖</span>
+          <h3>AI Q&A</h3>
+          <p>Ask anything about the changes: "What's the worst thing?" "Can I still break the lease early?" "What's my state's deposit law?"</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📄</span>
+          <h3>Clean PDF Export</h3>
+          <p>Download a shareable report with all changes, severity ratings, and explanations. Send it to your lawyer, save it for records.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <h2>Simple Pricing</h2>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-tier">Free</div>
+          <div class="price-amount">$0<span>/mo</span></div>
+          <ul class="price-features">
+            <li>✅ 3 comparisons/month</li>
+            <li>✅ Visual diff view</li>
+            <li>✅ Basic change detection</li>
+            <li>❌ AI explanations</li>
+            <li>❌ PDF export</li>
+          </ul>
+          <button class="btn btn-ghost btn-full">Get Started</button>
+        </div>
+        <div class="price-card price-card-highlighted">
+          <div class="price-badge">Most Popular</div>
+          <div class="price-tier">Pro</div>
+          <div class="price-amount">$9.99<span>/mo</span></div>
+          <ul class="price-features">
+            <li>✅ Unlimited comparisons</li>
+            <li>✅ Visual diff view</li>
+            <li>✅ AI explanations</li>
+            <li>✅ PDF export</li>
+            <li>✅ AI Q&A</li>
+          </ul>
+          <button class="btn btn-primary btn-full">Start Free Trial</button>
+        </div>
+        <div class="price-card">
+          <div class="price-tier">Business</div>
+          <div class="price-amount">$24.99<span>/mo</span></div>
+          <ul class="price-features">
+            <li>✅ Everything in Pro</li>
+            <li>✅ Team sharing</li>
+            <li>✅ API access</li>
+            <li>✅ Batch comparison</li>
+            <li>✅ Audit trail</li>
+          </ul>
+          <button class="btn btn-ghost btn-full">Contact Sales</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="logo-icon">🔴</span>
+          <span class="logo-text">RedlineAI</span>
+          <p>Know exactly what changed before you sign.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+      <p class="footer-copy">© 2026 RedlineAI. Made with 🔴 in Florida.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
