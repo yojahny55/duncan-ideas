@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PodSkip — Podcast Voice Filter</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface-2: #1a1a26;
+      --border: #2a2a3a;
+      --text: #e8e8f0;
+      --text-muted: #8888a0;
+      --accent: #7c5cfc;
+      --accent-glow: rgba(124, 92, 252, 0.3);
+      --accent-2: #5ce0d8;
+      --accent-2-glow: rgba(92, 224, 216, 0.2);
+      --danger: #ff4466;
+      --success: #44dd88;
+      --host-color: #7c5cfc;
+      --guest-a-color: #5ce0d8;
+      --guest-b-color: #ff9f43;
+      --guest-c-color: #ff6b9d;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 50%, var(--accent-glow) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 50%, var(--accent-2-glow) 0%, transparent 50%);
+      animation: drift 20s ease-in-out infinite;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(2%, -1%) rotate(1deg); }
+      66% { transform: translate(-1%, 1%) rotate(-1deg); }
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 640px; }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--text), var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .hero .tagline {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge-source {
+      background: rgba(124, 92, 252, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(124, 92, 252, 0.3);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-8px); }
+    }
+
+    /* Sections */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    /* Problem cards */
+    .pain-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .pain-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: border-color 0.3s;
+    }
+
+    .pain-card:hover { border-color: var(--accent); }
+
+    .pain-card .emoji { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .pain-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .pain-card p { font-size: 0.9rem; color: var(--text-muted); }
+
+    /* App Demo */
+    .app-shell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: var(--shadow), 0 0 60px rgba(124, 92, 252, 0.08);
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .app-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .app-logo .icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .app-nav {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .app-nav button {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .app-nav button:hover, .app-nav button.active {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    /* Search */
+    .search-bar {
+      padding: 1rem 1.25rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      padding-left: 2.5rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap::before {
+      content: '🔍';
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+    }
+
+    /* Episode Card */
+    .episode-card {
+      margin: 0 1.25rem;
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .episode-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .episode-info {
+      padding: 1.25rem;
+    }
+
+    .episode-show {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+    }
+
+    .episode-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .episode-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .episode-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* Speaker Analysis */
+    .analysis-section {
+      padding: 1.25rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .analysis-section.visible { display: block; }
+
+    .analysis-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .analysis-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .ai-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 100px;
+      background: rgba(124, 92, 252, 0.15);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Progress bar */
+    .analysis-progress {
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    .progress-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Speaker rows */
+    .speaker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .speaker-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .speaker-row.selected {
+      border-color: var(--accent);
+      background: rgba(124, 92, 252, 0.05);
+    }
+
+    .speaker-toggle {
+      width: 40px;
+      height: 22px;
+      border-radius: 100px;
+      background: var(--border);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .speaker-toggle.on {
+      background: var(--accent);
+    }
+
+    .speaker-toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.3s;
+    }
+
+    .speaker-toggle.on::after {
+      transform: translateX(18px);
+    }
+
+    .speaker-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .speaker-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .speaker-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .speaker-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .speaker-waveform {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .wave-bar {
+      width: 3px;
+      border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 100%; }
+    }
+
+    /* Playback bar */
+    .playback-section {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .playback-section.visible { display: block; }
+
+    .playback-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .playback-summary .label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .playback-summary .value {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .playback-summary .value.highlight {
+      color: var(--accent-2);
+    }
+
+    .time-saved {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: rgba(92, 224, 216, 0.08);
+      border: 1px solid rgba(92, 224, 216, 0.2);
+      border-radius: var(--radius-sm);
+      margin-bottom: 1rem;
+    }
+
+    .time-saved .number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent-2);
+    }
+
+    .time-saved .desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: left;
+    }
+
+    .play-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, var(--accent), #6b4ce0);
+      border: none;
+      border-radius: var(--radius);
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .play-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+
+    /* Segment timeline */
+    .timeline {
+      margin: 1rem 0;
+      display: flex;
+      gap: 2px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .timeline-segment {
+      position: relative;
+      transition: opacity 0.3s;
+    }
+
+    .timeline-segment.muted {
+      opacity: 0.15;
+    }
+
+    .timeline-segment:hover::after {
+      content: attr(data-speaker);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      margin-bottom: 4px;
+      z-index: 5;
+    }
+
+    /* Features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .feature-card .icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .feature-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      position: relative;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .price-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .price-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 0 40px var(--accent-glow);
+    }
+
+    .price-card.featured::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .price-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .price-card .price {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .price-card .price span {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .price-features {
+      list-style: none;
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+
+    .price-features li {
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .price-features li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    /* Competition table */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .comp-table th {
+      text-align: left;
+      padding: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .comp-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comp-table tr:last-child td {
+      border-bottom: none;
+      font-weight: 600;
+      color: var(--accent-2);
+    }
+
+    .comp-table .check { color: var(--success); }
+    .comp-table .cross { color: var(--danger); opacity: 0.5; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .section { padding: 3rem 1.25rem; }
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="badge badge-source">🐦 Found on X/Twitter</div>
+      <h1>PodSkip</h1>
+      <p class="tagline">Skip to your favorite guest. Skip the co-hosts you don't care about. Listen on your terms.</p>
+    </div>
+    <div class="scroll-hint">↓ See it in action</div>
+  </section>
+
+  <!-- Problem -->
+  <section class="section fade-in">
+    <h2 class="section-title">The Problem</h2>
+    <p class="section-subtitle">You love podcasts. You don't love every voice on them.</p>
+    <div class="pain-cards">
+      <div class="pain-card">
+        <div class="emoji">🎙️</div>
+        <h3>4-Hour Interviews</h3>
+        <p>Your favorite guest is on for 45 minutes in a 4-hour episode. Good luck finding them.</p>
+      </div>
+      <div class="pain-card">
+        <div class="emoji">⏭️</div>
+        <h3>Co-Host Noise</h3>
+        <p>Two of three hosts are great. The third makes you want to unsubscribe.</p>
+      </div>
+      <div class="pain-card">
+        <div class="emoji">🎧</div>
+        <h3>Fixed Commute</h3>
+        <p>You have 30 minutes. You want the good stuff, not 20 minutes of ads and housekeeping.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- App Demo -->
+  <section class="section fade-in">
+    <h2 class="section-title">Try It</h2>
+    <p class="section-subtitle">Tap an episode, see speaker detection, pick who you want to hear.</p>
+
+    <div class="app-shell">
+      <div class="app-header">
+        <div class="app-logo">
+          <div class="icon">🎙</div>
+          PodSkip
+        </div>
+        <div class="app-nav">
+          <button class="active">🔍</button>
+          <button>📚</button>
+          <button>👤</button>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <div class="search-wrap">
+          <input type="text" class="search-input" placeholder="Search podcasts..." value="Lex Fridman Podcast">
+        </div>
+      </div>
+
+      <div class="episode-card" id="episode1" onclick="analyzeEpisode(this)">
+        <div class="episode-info">
+          <div class="episode-show">Lex Fridman Podcast #457</div>
+          <div class="episode-title">Mark Zuckerberg — The Future of AI, Meta & the Metaverse</div>
+          <div class="episode-meta">
+            <span>🎙 4 speakers detected</span>
+            <span>⏱ 3h 42m</span>
+            <span>📅 Today</span>
+          </div>
+        </div>
+
+        <div class="analysis-section" id="analysis">
+          <div class="analysis-header">
+            <h3>Speaker Analysis</h3>
+            <span class="ai-badge">⚡ AI Detected</span>
+          </div>
+
+          <div class="analysis-progress" id="progressWrap">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Analyzing speakers...</div>
+          </div>
+
+          <div class="speaker-list" id="speakerList" style="display:none;">
+            <div class="speaker-row selected" data-time="98">
+              <div class="speaker-toggle on" onclick="toggleSpeaker(this, event)"></div>
+              <div class="speaker-avatar" style="background: var(--host-color); color: white;">LF</div>
+              <div class="speaker-details">
+                <div class="speaker-name">Lex Fridman <span style="font-size:0.75rem; color:var(--text-muted)">(Host)</span></div>
+                <div class="speaker-time">98 min — 44% of episode</div>
+              </div>
+              <div class="speaker-waveform">
+                <div class="wave-bar" style="background:var(--host-color); height:8px; animation-delay:0s"></div>
+                <div class="wave-bar" style="background:var(--host-color); height:14px; animation-delay:0.2s"></div>
+                <div class="wave-bar" style="background:var(--host-color); height:6px; animation-delay:0.4s"></div>
+                <div class="wave-bar" style="background:var(--host-color); height:12px; animation-delay:0.1s"></div>
+              </div>
+            </div>
+
+            <div class="speaker-row selected" data-time="102">
+              <div class="speaker-toggle on" onclick="toggleSpeaker(this, event)"></div>
+              <div class="speaker-avatar" style="background: var(--guest-a-color); color: #0a0a0f;">MZ</div>
+              <div class="speaker-details">
+                <div class="speaker-name">Mark Zuckerberg <span style="font-size:0.75rem; color:var(--accent-2)">(Guest)</span></div>
+                <div class="speaker-time">102 min — 46% of episode</div>
+              </div>
+              <div class="speaker-waveform">
+                <div class="wave-bar" style="background:var(--guest-a-color); height:12px; animation-delay:0.3s"></div>
+                <div class="wave-bar" style="background:var(--guest-a-color); height:6px; animation-delay:0.1s"></div>
+                <div class="wave-bar" style="background:var(--guest-a-color); height:16px; animation-delay:0.5s"></div>
+                <div class="wave-bar" style="background:var(--guest-a-color); height:10px; animation-delay:0s"></div>
+              </div>
+            </div>
+
+            <div class="speaker-row selected" data-time="18">
+              <div class="speaker-toggle on" onclick="toggleSpeaker(this, event)"></div>
+              <div class="speaker-avatar" style="background: var(--guest-b-color); color: #0a0a0f;">AI</div>
+              <div class="speaker-details">
+                <div class="speaker-name">AI Introduction <span style="font-size:0.75rem; color:var(--text-muted)">(Auto)</span></div>
+                <div class="speaker-time">18 min — 8% of episode</div>
+              </div>
+              <div class="speaker-waveform">
+                <div class="wave-bar" style="background:var(--guest-b-color); height:6px; animation-delay:0.2s"></div>
+                <div class="wave-bar" style="background:var(--guest-b-color); height:10px; animation-delay:0.4s"></div>
+                <div class="wave-bar" style="background:var(--guest-b-color); height:4px; animation-delay:0s"></div>
+                <div class="wave-bar" style="background:var(--guest-b-color); height:8px; animation-delay:0.3s"></div>
+              </div>
+            </div>
+
+            <div class="speaker-row" data-time="4">
+              <div class="speaker-toggle" onclick="toggleSpeaker(this, event)"></div>
+              <div class="speaker-avatar" style="background: var(--guest-c-color); color: white;">CR</div>
+              <div class="speaker-details">
+                <div class="speaker-name">Crowd/Audience <span style="font-size:0.75rem; color:var(--text-muted)">(Noise)</span></div>
+                <div class="speaker-time">4 min — 2% of episode</div>
+              </div>
+              <div class="speaker-waveform">
+                <div class="wave-bar" style="background:var(--guest-c-color); height:4px; animation-delay:0.1s"></div>
+                <div class="wave-bar" style="background:var(--guest-c-color); height:6px; animation-delay:0.3s"></div>
+                <div class="wave-bar" style="background:var(--guest-c-color); height:3px; animation-delay:0.5s"></div>
+                <div class="wave-bar" style="background:var(--guest-c-color); height:5px; animation-delay:0s"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="playback-section" id="playback">
+          <div class="analysis-header">
+            <h3>Your Cut</h3>
+          </div>
+
+          <!-- Timeline visualization -->
+          <div class="timeline" id="timeline"></div>
+
+          <div class="playback-summary">
+            <div>
+              <div class="label">Original</div>
+              <div class="value">3h 42m</div>
+            </div>
+            <div>
+              <div class="label">Your Cut</div>
+              <div class="value highlight" id="cutTime">2h 16m</div>
+            </div>
+            <div>
+              <div class="label">Skipped</div>
+              <div class="value" id="skippedTime">1h 26m</div>
+            </div>
+          </div>
+
+          <div class="time-saved">
+            <div class="number" id="savedPercent">39%</div>
+            <div class="desc">
+              <div style="font-weight:600; color:var(--text); font-size:0.85rem;">Time Saved</div>
+              <div>Only listening to speakers you selected</div>
+            </div>
+          </div>
+
+          <button class="play-btn" onclick="playDemo()">
+            ▶ Play Filtered Episode
+          </button>
+        </div>
+      </div>
+
+      <div style="padding: 1.25rem; padding-top: 0.75rem;">
+        <div class="episode-card" style="margin:0; opacity: 0.5; cursor: default;">
+          <div class="episode-info">
+            <div class="episode-show">Huberman Lab</div>
+            <div class="episode-title">Dr. Andrew Huberman — Optimize Your Sleep, Energy & Focus</div>
+            <div class="episode-meta">
+              <span>🎙 2 speakers</span>
+              <span>⏱ 2h 18m</span>
+              <span>🔒 Pro</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section fade-in">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle">AI speaker diarization meets consumer UX.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">🔍</div>
+        <h3>1. Find an Episode</h3>
+        <p>Search any podcast or paste a link. PodSkip works with any show on any platform.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🧠</div>
+        <h3>2. AI Detects Speakers</h3>
+        <p>Speaker diarization identifies every voice in the episode. Label them — host, guest, whatever.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🎛️</div>
+        <h3>3. Pick Your Mix</h3>
+        <p>Toggle which speakers you want. See a visual timeline of who talks when.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">▶️</div>
+        <h3>4. Listen Seamlessly</h3>
+        <p>PodSkip stitches selected segments together. Smooth transitions, no jumps or gaps.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔔</div>
+        <h3>5. Follow Guests</h3>
+        <p>Subscribe to a person. Get notified when they appear on ANY podcast.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">✂️</div>
+        <h3>6. Export Clips</h3>
+        <p>Save and share 30-60 second clips of specific speakers. Perfect for social.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Competition -->
+  <section class="section fade-in">
+    <h2 class="section-title">Competition</h2>
+    <p class="section-subtitle">Nobody owns the "listen to who you want" position.</p>
+    <div style="overflow-x:auto;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Apple</th>
+            <th>Spotify</th>
+            <th>Overcast</th>
+            <th>Snipd</th>
+            <th>PodSkip</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Speaker Detection</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Voice Filtering</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Guest Following</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Per-Speaker Speed</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Clip Export</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+          </tr>
+          <tr>
+            <td>Consumer-First</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section fade-in">
+    <h2 class="section-title">Pricing</h2>
+    <p class="section-subtitle">Free to try. Pro for power listeners.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <ul class="price-features">
+          <li>3 episodes/month</li>
+          <li>Basic speaker detection</li>
+          <li>Voice filtering</li>
+          <li>Episode search</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <h3>Pro</h3>
+        <div class="price">$4.99<span>/mo</span></div>
+        <ul class="price-features">
+          <li>Unlimited episodes</li>
+          <li>Guest following</li>
+          <li>Offline downloads</li>
+          <li>Per-speaker speed</li>
+          <li>Skip presets</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>Premium</h3>
+        <div class="price">$9.99<span>/mo</span></div>
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>Clip export & sharing</li>
+          <li>Playlist mode</li>
+          <li>Full transcripts</li>
+          <li>API access</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Source -->
+  <section class="section fade-in" style="text-align:center;">
+    <h2 class="section-title">The Tweet That Started It</h2>
+    <p class="section-subtitle">Sometimes the best ideas come in 280 characters.</p>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; max-width:500px; margin:0 auto; text-align:left;">
+      <div style="font-weight:600; margin-bottom:0.5rem;">@sumayyaka</div>
+      <div style="color:var(--text-muted); font-size:0.95rem; line-height:1.6; font-style:italic;">
+        "is there an app that lets you identify which voice you want to hear in a podcast and forwards past everyone else?"
+      </div>
+      <div style="margin-top:0.75rem; font-size:0.8rem; color:var(--text-muted);">
+        📅 April 4, 2026 · 4.2K likes
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>PodSkip — Research by <a href="https://github.com/yojahny55/duncan-ideas">Duncan ⚔️</a></p>
+    <p style="margin-top:0.5rem;">April 10, 2026 · Daily App Ideas</p>
+  </footer>
+
+  <script>
+    // Intersection observer for fade-in
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Episode analysis
+    let analyzed = false;
+
+    function analyzeEpisode(el) {
+      if (analyzed) return;
+
+      const analysis = document.getElementById('analysis');
+      const progress = document.getElementById('progressWrap');
+      const speakers = document.getElementById('speakerList');
+      const playback = document.getElementById('playback');
+
+      analysis.classList.add('visible');
+
+      // Animate progress
+      const fill = document.getElementById('progressFill');
+      const text = document.getElementById('progressText');
+
+      const steps = [
+        { pct: 20, label: 'Downloading audio...' },
+        { pct: 45, label: 'Running speaker diarization...' },
+        { pct: 70, label: 'Identifying voices...' },
+        { pct: 90, label: 'Mapping speaker segments...' },
+        { pct: 100, label: '4 speakers detected ✓' }
+      ];
+
+      let i = 0;
+      function nextStep() {
+        if (i >= steps.length) {
+          setTimeout(() => {
+            progress.style.display = 'none';
+            speakers.style.display = 'flex';
+            speakers.style.flexDirection = 'column';
+            speakers.style.gap = '0.75rem';
+            buildTimeline();
+            updatePlayback();
+            playback.classList.add('visible');
+          }, 300);
+          return;
+        }
+        fill.style.width = steps[i].pct + '%';
+        text.textContent = steps[i].label;
+        i++;
+        setTimeout(nextStep, 600);
+      }
+      nextStep();
+
+      analyzed = true;
+    }
+
+    // Toggle speaker
+    function toggleSpeaker(el, e) {
+      e.stopPropagation();
+      el.classList.toggle('on');
+      el.closest('.speaker-row').classList.toggle('selected');
+      updatePlayback();
+      updateTimeline();
+    }
+
+    // Build timeline
+    function buildTimeline() {
+      const timeline = document.getElementById('timeline');
+      const total = 222; // 3h42m in minutes
+      const segments = [
+        { speaker: 'AI Intro', start: 0, end: 18, color: 'var(--guest-b-color)', key: 'intro' },
+        { speaker: 'Lex', start: 18, end: 45, color: 'var(--host-color)', key: 'lex' },
+        { speaker: 'Zuckerberg', start: 45, end: 92, color: 'var(--guest-a-color)', key: 'zuck' },
+        { speaker: 'Lex', start: 92, end: 110, color: 'var(--host-color)', key: 'lex' },
+        { speaker: 'Zuckerberg', start: 110, end: 160, color: 'var(--guest-a-color)', key: 'zuck' },
+        { speaker: 'Crowd', start: 160, end: 164, color: 'var(--guest-c-color)', key: 'crowd' },
+        { speaker: 'Lex', start: 164, end: 190, color: 'var(--host-color)', key: 'lex' },
+        { speaker: 'Zuckerberg', start: 190, end: 218, color: 'var(--guest-a-color)', key: 'zuck' },
+        { speaker: 'Lex', start: 218, end: 222, color: 'var(--host-color)', key: 'lex' },
+      ];
+
+      timeline.innerHTML = '';
+      segments.forEach(seg => {
+        const div = document.createElement('div');
+        div.className = 'timeline-segment';
+        div.style.flex = (seg.end - seg.start);
+        div.style.background = seg.color;
+        div.setAttribute('data-speaker', seg.speaker);
+        div.dataset.key = seg.key;
+        timeline.appendChild(div);
+      });
+    }
+
+    function updateTimeline() {
+      const rows = document.querySelectorAll('.speaker-row');
+      const activeKeys = new Set();
+
+      rows.forEach(row => {
+        const toggle = row.querySelector('.speaker-toggle');
+        const name = row.querySelector('.speaker-name').textContent.toLowerCase();
+        if (toggle.classList.contains('on')) {
+          if (name.includes('lex')) activeKeys.add('lex');
+          else if (name.includes('zuckerberg')) activeKeys.add('zuck');
+          else if (name.includes('introduction') || name.includes('ai intro')) activeKeys.add('intro');
+          else if (name.includes('crowd')) activeKeys.add('crowd');
+        }
+      });
+
+      document.querySelectorAll('.timeline-segment').forEach(seg => {
+        if (activeKeys.has(seg.dataset.key)) {
+          seg.classList.remove('muted');
+        } else {
+          seg.classList.add('muted');
+        }
+      });
+    }
+
+    // Update playback stats
+    function updatePlayback() {
+      const rows = document.querySelectorAll('.speaker-row');
+      let selectedMinutes = 0;
+      const total = 222;
+
+      rows.forEach(row => {
+        const toggle = row.querySelector('.speaker-toggle');
+        if (toggle.classList.contains('on')) {
+          selectedMinutes += parseInt(row.dataset.time);
+        }
+      });
+
+      const saved = total - selectedMinutes;
+      const pct = Math.round((saved / total) * 100);
+
+      const h = Math.floor(selectedMinutes / 60);
+      const m = selectedMinutes % 60;
+      const sh = Math.floor(saved / 60);
+      const sm = saved % 60;
+
+      document.getElementById('cutTime').textContent = `${h}h ${m}m`;
+      document.getElementById('skippedTime').textContent = `${sh}h ${sm}m`;
+      document.getElementById('savedPercent').textContent = pct + '%';
+    }
+
+    // Play demo
+    function playDemo() {
+      const btn = document.querySelector('.play-btn');
+      btn.innerHTML = '⏸ Playing filtered episode...';
+      btn.style.background = 'linear-gradient(135deg, var(--accent-2), #3abfb5)';
+
+      // Simulate segment playback
+      const timeline = document.querySelectorAll('.timeline-segment:not(.muted)');
+      let i = 0;
+
+      function highlightNext() {
+        if (i > 0) timeline[i-1].style.filter = '';
+        if (i < timeline.length) {
+          timeline[i].style.filter = 'brightness(1.5)';
+          i++;
+          setTimeout(highlightNext, 400);
+        } else {
+          btn.innerHTML = '▶ Play Filtered Episode';
+          btn.style.background = '';
+        }
+      }
+      highlightNext();
+    }
+
+    // Animate wave bars randomly
+    setInterval(() => {
+      document.querySelectorAll('.wave-bar').forEach(bar => {
+        bar.style.animationDelay = (Math.random() * 0.5) + 's';
+      });
+    }, 3000);
+  </script>
+</body>
+</html>
