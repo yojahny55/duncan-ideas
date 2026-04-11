@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodePeek — Glassdoor for Engineering Culture</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">{}</span>
+        <span class="logo-text">CodePeek</span>
+      </div>
+      <nav class="nav">
+        <a href="#" class="nav-link active">Explore</a>
+        <a href="#" class="nav-link">Compare</a>
+        <a href="#" class="nav-link">Write Review</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-ghost">Sign In</button>
+        <button class="btn btn-primary">Write a Review</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Would you write code there again?</h1>
+    <p class="hero-sub">The one question that matters. Anonymous engineering culture reviews with structured scores — not complaints about the cafeteria.</p>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search companies... (e.g. Stripe, Netflix, your next offer)" class="search-input" id="searchInput">
+      <button class="btn btn-primary" id="searchBtn">Search</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><strong>12,847</strong> reviews</div>
+      <div class="stat"><strong>3,241</strong> companies</div>
+      <div class="stat"><strong>28K+</strong> developers</div>
+    </div>
+  </section>
+
+  <!-- Filter Bar -->
+  <section class="filters">
+    <div class="filter-chips">
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="top">Top Rated</button>
+      <button class="chip" data-filter="remote">Remote Friendly</button>
+      <button class="chip" data-filter="startup">Startups</button>
+      <button class="chip" data-filter="faang">FAANG+</button>
+    </div>
+  </section>
+
+  <!-- Company Cards -->
+  <section class="companies" id="companyList">
+    <!-- Cards injected by JS -->
+  </section>
+
+  <!-- Company Detail Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="companyModal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Compare Section -->
+  <section class="compare-section" id="compareSection">
+    <h2>Compare Engineering Cultures</h2>
+    <p class="section-sub">Stack two companies side by side on what actually matters</p>
+    <div class="compare-grid" id="compareGrid">
+      <!-- Injected by JS -->
+    </div>
+  </section>
+
+  <!-- Categories Explainer -->
+  <section class="categories-section">
+    <h2>We Rate What Developers Actually Care About</h2>
+    <div class="category-grid">
+      <div class="category-card">
+        <div class="cat-icon">🧱</div>
+        <h3>Code Quality</h3>
+        <p>Standards, architecture, tech debt level</p>
+      </div>
+      <div class="category-card">
+        <div class="cat-icon">👀</div>
+        <h3>Review Culture</h3>
+        <p>PR thoroughness, time to review, quality</p>
+      </div>
+      <div class="category-card">
+        <div class="cat-icon">🚀</div>
+        <h3>CI/CD Maturity</h3>
+        <p>Deploy frequency, rollback ease, pipelines</p>
+      </div>
+      <div class="category-card">
+        <div class="cat-icon">🧪</div>
+        <h3>Testing Standards</h3>
+        <p>Coverage expectations, TDD, testing culture</p>
+      </div>
+      <div class="category-card">
+        <div class="cat-icon">🔔</div>
+        <h3>On-Call Burden</h3>
+        <p>Rotation frequency, alert quality, burnout</p>
+      </div>
+      <div class="category-card">
+        <div class="cat-icon">👨‍💻</div>
+        <h3>Manager Competence</h3>
+        <p>Does your manager understand technical tradeoffs?</p>
+      </div>
+      <div class="category-card">
+        <div class="cat-icon">📚</div>
+        <h3>Learning & Growth</h3>
+        <p>Tech talks, conferences, mentorship</p>
+      </div>
+      <div class="category-card">
+        <div class="cat-icon">🛠</div>
+        <h3>Tooling & DX</h3>
+        <p>Dev laptop, setup time, internal tools</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Your experience could save someone from a bad job</h2>
+    <p>Write an anonymous review in 5 minutes. Help 28M developers make better career decisions.</p>
+    <button class="btn btn-primary btn-lg">Write a Review →</button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-icon">{}</span> CodePeek
+      </div>
+      <p>Anonymous engineering culture reviews. Not affiliated with Glassdoor.</p>
+    </div>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
