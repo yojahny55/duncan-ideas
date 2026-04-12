@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DraftCoach - AI Writing Feedback That Tells You What Readers Will Think</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="8" fill="#6366f1"/>
+                    <path d="M8 16L13 21L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="logo-text">DraftCoach</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-ghost">Templates</button>
+                <button class="btn btn-primary">Get Pro</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1 class="hero-title">
+                    AI writing feedback that tells you<br/>
+                    <span class="gradient-text">what readers will actually think</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Not grammar checking. Real feedback on tone, clarity, and persuasion.
+                    Paste any text and get honest feedback from a tough-but-fair friend.
+                </p>
+            </section>
+
+            <!-- Editor Section -->
+            <section class="editor-section">
+                <div class="editor-container">
+                    <!-- Input Panel -->
+                    <div class="panel input-panel">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Your Draft</h2>
+                            <div class="panel-actions">
+                                <button class="icon-btn" title="Clear" onclick="clearEditor()">🗑️</button>
+                                <button class="icon-btn" title="Paste">📋</button>
+                            </div>
+                        </div>
+                        <div class="goal-selector">
+                            <label for="goal">What's your goal?</label>
+                            <select id="goal" onchange="updateGoal()">
+                                <option value="general">General feedback</option>
+                                <option value="request">Request something</option>
+                                <option value="negotiate">Negotiate (raise, salary, deal)</option>
+                                <option value="apologize">Apologize</option>
+                                <option value="follow-up">Follow up on something</option>
+                                <option value="introduce">Introduce yourself</option>
+                            </select>
+                        </div>
+                        <textarea
+                            id="input-text"
+                            class="editor-textarea"
+                            placeholder="Paste your email, cover letter, Slack message, or anything you want feedback on...
+
+Example:
+Hi Sarah,
+
+I was wondering if you might have a moment to maybe look at my project? I know you're super busy so no worries if not. Just thought I'd ask. It would be really great if you could.
+
+Thanks!
+John"
+                            oninput="autoAnalyze()"></textarea>
+                        <div class="panel-footer">
+                            <span class="word-count">0 words</span>
+                            <button class="btn btn-analyze" onclick="analyzeText()">
+                                <span class="btn-text">Analyze</span>
+                                <span class="btn-loader" style="display: none;">⏳</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Panel -->
+                    <div class="panel feedback-panel" id="feedback-panel">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Feedback</h2>
+                            <div class="panel-actions">
+                                <button class="icon-btn" title="Export">📤</button>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="empty-state" id="empty-state">
+                            <div class="empty-icon">✨</div>
+                            <p class="empty-text">Paste your text and hit Analyze to get feedback</p>
+                            <p class="empty-hint">Tone · Clarity · Persuasion · Length · Impact</p>
+                        </div>
+
+                        <!-- Analysis Results (Hidden by default) -->
+                        <div class="analysis-results" id="analysis-results" style="display: none;">
+                            <!-- Overall Score -->
+                            <div class="overall-score">
+                                <div class="score-circle">
+                                    <span class="score-value" id="overall-score-value">7.2</span>
+                                    <span class="score-label">out of 10</span>
+                                </div>
+                                <div class="score-summary">
+                                    <p class="score-title">Good, but can be stronger</p>
+                                    <p class="score-detail">You're buried in qualifiers. Speak with more confidence.</p>
+                                </div>
+                            </div>
+
+                            <!-- Dimension Scores -->
+                            <div class="dimension-scores">
+                                <div class="dimension-score" data-score="6">
+                                    <div class="dimension-header">
+                                        <span class="dimension-icon">🎭</span>
+                                        <span class="dimension-name">Tone</span>
+                                        <span class="dimension-value">6/10</span>
+                                    </div>
+                                    <div class="dimension-bar">
+                                        <div class="dimension-fill" style="width: 60%"></div>
+                                    </div>
+                                    <p class="dimension-feedback">Too passive and apologetic. You sound unsure of yourself.</p>
+                                </div>
+
+                                <div class="dimension-score" data-score="5">
+                                    <div class="dimension-header">
+                                        <span class="dimension-icon">🔍</span>
+                                        <span class="dimension-name">Clarity</span>
+                                        <span class="dimension-value">5/10</span>
+                                    </div>
+                                    <div class="dimension-bar">
+                                        <div class="dimension-fill" style="width: 50%"></div>
+                                    </div>
+                                    <p class="dimension-feedback">Your ask is hidden in the last sentence. Move it to line 2.</p>
+                                </div>
+
+                                <div class="dimension-score" data-score="4">
+                                    <div class="dimension-header">
+                                        <span class="dimension-icon">🎯</span>
+                                        <span class="dimension-name">Persuasion</span>
+                                        <span class="dimension-value">4/10</span>
+                                    </div>
+                                    <div class="dimension-bar">
+                                        <div class="dimension-fill" style="width: 40%"></div>
+                                    </div>
+                                    <p class="dimension-feedback">You're asking for a favor but not explaining what's in it for Sarah.</p>
+                                </div>
+
+                                <div class="dimension-score" data-score="8">
+                                    <div class="dimension-header">
+                                        <span class="dimension-icon">📏</span>
+                                        <span class="dimension-name">Length</span>
+                                        <span class="dimension-value">8/10</span>
+                                    </div>
+                                    <div class="dimension-bar">
+                                        <div class="dimension-fill" style="width: 80%"></div>
+                                    </div>
+                                    <p class="dimension-feedback">Perfect length — not too long, not too short.</p>
+                                </div>
+
+                                <div class="dimension-score" data-score="5">
+                                    <div class="dimension-header">
+                                        <span class="dimension-icon">💪</span>
+                                        <span class="dimension-name">Impact</span>
+                                        <span class="dimension-value">5/10</span>
+                                    </div>
+                                    <div class="dimension-bar">
+                                        <div class="dimension-fill" style="width: 50%"></div>
+                                    </div>
+                                    <p class="dimension-feedback">Sarah might say "maybe" — but she won't feel excited to help.</p>
+                                </div>
+                            </div>
+
+                            <!-- Line-by-Line Feedback -->
+                            <div class="line-feedback-section">
+                                <h3 class="section-title">Line-by-Line Feedback</h3>
+                                <div class="line-feedback">
+                                    <div class="feedback-item warning">
+                                        <div class="feedback-marker">⚠️</div>
+                                        <div class="feedback-content">
+                                            <p class="feedback-quote">"Hi Sarah,"</p>
+                                            <p class="feedback-text">Too casual for a work email. Use "Dear Sarah," or just start with your message.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="feedback-item warning">
+                                        <div class="feedback-marker">⚠️</div>
+                                        <div class="feedback-content">
+                                            <p class="feedback-quote">"I was wondering if you might have a moment to maybe look at my project?"</p>
+                                            <p class="feedback-text">"Wondering if you might" + "maybe" = double qualifier. You sound unsure. Try: "Could you review my project?"</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="feedback-item error">
+                                        <div class="feedback-marker">🚩</div>
+                                        <div class="feedback-content">
+                                            <p class="feedback-quote">"I know you're super busy so no worries if not."</</p>
+                                            <p class="feedback-text">You're giving Sarah an out before she even responds. Don't apologize for asking.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="feedback-item info">
+                                        <div class="feedback-marker">💡</div>
+                                        <div class="feedback-content">
+                                            <p class="feedback-quote">"It would be really great if you could."</p>
+                                            <p class="feedback-text">What's in it for Sarah? How will this help her? Add context.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rewrite Suggestions -->
+                            <div class="rewrite-section">
+                                <h3 class="section-title">Better Versions</h3>
+
+                                <div class="rewrite-option">
+                                    <div class="rewrite-header">
+                                        <span class="rewrite-badge confident">Confident</span>
+                                        <button class="btn-copy" onclick="copyRewrite('rewrite-1')">Copy</button>
+                                    </div>
+                                    <p class="rewrite-text" id="rewrite-1">Hi Sarah,
+
+Could you spare 15 minutes to review my project? I'd value your feedback on the technical approach.
+
+Thanks,
+John</p>
+                                </div>
+
+                                <div class="rewrite-option">
+                                    <div class="rewrite-header">
+                                        <span class="rewrite-badge persuasive">Persuasive</span>
+                                        <button class="btn-copy" onclick="copyRewrite('rewrite-2')">Copy</button>
+                                    </div>
+                                    <p class="rewrite-text" id="rewrite-2">Hi Sarah,
+
+I've been working on a project that ties into your team's recent work on X. Would you have time to review it? Your input would be incredibly valuable for the next phase.
+
+Best,
+John</p>
+                                </div>
+
+                                <div class="rewrite-option">
+                                    <div class="rewrite-header">
+                                        <span class="rewrite-badge direct">Direct</span>
+                                        <button class="btn-copy" onclick="copyRewrite('rewrite-3')">Copy</button>
+                                    </div>
+                                    <p class="rewrite-text" id="rewrite-3">Hi Sarah,
+
+I'd like your feedback on my project. When are you available this week for a 15-minute review?
+
+Thanks,
+John</p>
+                                </div>
+                            </div>
+
+                            <!-- Quick Fixes -->
+                            <div class="quick-fixes-section">
+                                <h3 class="section-title">Quick Fixes</h3>
+                                <div class="quick-fixes">
+                                    <div class="quick-fix">
+                                        <span class="fix-icon">🔄</span>
+                                        <span class="fix-text">Remove 3 qualifiers</span>
+                                        <button class="btn-apply">Apply</button>
+                                    </div>
+                                    <div class="quick-fix">
+                                        <span class="fix-icon">✂️</span>
+                                        <span class="fix-text">Move ask to line 2</span>
+                                        <button class="btn-apply">Apply</button>
+                                    </div>
+                                    <div class="quick-fix">
+                                        <span class="fix-icon">➕</span>
+                                        <span class="fix-text">Add "what's in it for them"</span>
+                                        <button class="btn-apply">Apply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="features-section">
+                <h2 class="section-heading">What makes DraftCoach different</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎭</div>
+                        <h3 class="feature-title">Tone Analysis</h3>
+                        <p class="feature-text">"This sounds passive-aggressive" or "You're burying your confidence" — plain English feedback on how you sound.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3 class="feature-title">Clarity Scoring</h3>
+                        <p class="feature-text">"Your ask is hidden in paragraph 3" — we tell you where your message gets lost.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">Persuasion Coach</h3>
+                        <p class="feature-text">"You're asking but not explaining what's in it for them" — make your requests impossible to ignore.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3 class="feature-title">Goal-Aware</h3>
+                        <p class="feature-text">Tell us "I want a raise" and get feedback specific to that goal — not generic advice.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3 class="feature-title">Rewrite Suggestions</h3>
+                        <p class="feature-text">2-3 concrete alternatives with explanations — see exactly what to change and why.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <h3 class="feature-title">Pattern Tracking</h3>
+                        <p class="feature-text">"You apologize in 67% of your emails" — learn your communication patterns over time.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <div class="cta-card">
+                    <h2 class="cta-title">Stop second-guessing every email</h2>
+                    <p class="cta-text">Join 50,000+ professionals who write with confidence</p>
+                    <div class="cta-buttons">
+                        <button class="btn btn-large btn-primary">Start Free</button>
+                        <button class="btn btn-large btn-ghost">See Examples</button>
+                    </div>
+                    <p class="cta-note">Free plan: 5 analyses/month · No credit card required</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span class="footer-logo">DraftCoach</span>
+                    <p class="footer-tagline">Because the world doesn't need more grammar checkers</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="#" class="footer-link">Terms</a>
+                    <a href="#" class="footer-link">Pricing</a>
+                    <a href="#" class="footer-link">Blog</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
