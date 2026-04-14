@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WasteWise ♻️ — Your Local Recycling Answer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- Onboarding / Location Setup -->
+    <div id="screen-onboarding" class="screen active">
+      <div class="onboarding-hero">
+        <div class="logo-large">♻️</div>
+        <h1>WasteWise</h1>
+        <p class="tagline">Scan any item.<br>Get exact instructions for <strong>your</strong> town.</p>
+      </div>
+      <div class="onboarding-steps">
+        <div class="step-card">
+          <span class="step-icon">📸</span>
+          <span class="step-text">Scan or search any item</span>
+        </div>
+        <div class="step-card">
+          <span class="step-icon">📍</span>
+          <span class="step-text">Set your city once</span>
+        </div>
+        <div class="step-card">
+          <span class="step-icon">📋</span>
+          <span class="step-text">Get exact disposal steps</span>
+        </div>
+      </div>
+      <div class="onboarding-form">
+        <label for="zip-input">Enter your ZIP code to start</label>
+        <div class="zip-row">
+          <input type="text" id="zip-input" placeholder="33601" maxlength="5" inputmode="numeric">
+          <button id="btn-set-location" class="btn-primary">Let's Go</button>
+        </div>
+        <button class="btn-link" id="btn-use-gps">📍 Use my current location</button>
+      </div>
+      <p class="onboarding-stat">78% of people are confused by recycling labels. Not you, anymore.</p>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="screen-main" class="screen">
+      <header class="app-header">
+        <div class="header-left">
+          <h1 class="app-title">♻️ WasteWise</h1>
+          <span class="location-badge" id="location-badge">
+            <span class="location-dot"></span>
+            Tampa, FL 33601
+          </span>
+        </div>
+        <button class="btn-icon" id="btn-impact" title="Your Impact">🌱</button>
+      </header>
+
+      <!-- Search / Scan -->
+      <div class="search-section">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search any item... (pizza box, batteries, #5 plastic)">
+          <button class="scan-btn" id="btn-scan" title="Scan item">📷</button>
+        </div>
+      </div>
+
+      <!-- Quick Categories -->
+      <div class="quick-cats">
+        <button class="cat-pill" data-query="plastic bottle">🧴 Plastic</button>
+        <button class="cat-pill" data-query="cardboard box">📦 Cardboard</button>
+        <button class="cat-pill" data-query="glass jar">🫙 Glass</button>
+        <button class="cat-pill" data-query="aluminum can">🥫 Metal</button>
+        <button class="cat-pill" data-query="pizza box">🍕 Food Waste</button>
+        <button class="cat-pill" data-query="batteries">🔋 E-Waste</button>
+        <button class="cat-pill" data-query="styrofoam">🧊 Foam</button>
+        <button class="cat-pill" data-query="clothing">👕 Textiles</button>
+      </div>
+
+      <!-- Result Area -->
+      <div id="result-area" class="result-area hidden">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Recent Scans -->
+      <div class="recent-section" id="recent-section">
+        <h3 class="section-title">Recent Lookups</h3>
+        <div class="recent-list" id="recent-list">
+          <div class="recent-item" data-query="plastic bottle #1 PET">
+            <span class="recent-icon">🧴</span>
+            <div class="recent-info">
+              <span class="recent-name">Plastic Bottle (#1 PET)</span>
+              <span class="recent-bin bin-recycle">♻️ Blue Bin</span>
+            </div>
+            <span class="recent-arrow">›</span>
+          </div>
+          <div class="recent-item" data-query="pizza box">
+            <span class="recent-icon">🍕</span>
+            <div class="recent-info">
+              <span class="recent-name">Pizza Box (Greasy)</span>
+              <span class="recent-bin bin-compost">🍂 Compost</span>
+            </div>
+            <span class="recent-arrow">›</span>
+          </div>
+          <div class="recent-item" data-query="styrofoam">
+            <span class="recent-icon">🧊</span>
+            <div class="recent-info">
+              <span class="recent-name">Styrofoam (#6 PS)</span>
+              <span class="recent-bin bin-trash">🗑️ Trash</span>
+            </div>
+            <span class="recent-arrow">›</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confusion Buster -->
+      <div class="buster-section">
+        <h3 class="section-title">🤔 Confusion Buster</h3>
+        <div class="buster-card" id="buster-card">
+          <p class="buster-question" id="buster-question">Can I recycle coffee cups?</p>
+          <p class="buster-answer" id="buster-answer">Most paper coffee cups have a plastic lining and are NOT recyclable in curbside. Compost if your city accepts, otherwise trash.</p>
+          <button class="btn-link" id="btn-next-buster">Next myth →</button>
+        </div>
+      </div>
+
+      <!-- Bottom Nav -->
+      <nav class="bottom-nav">
+        <button class="nav-btn active" data-screen="main">🔍<span>Search</span></button>
+        <button class="nav-btn" data-screen="dropoff">📍<span>Drop-Off</span></button>
+        <button class="nav-btn" data-screen="schedule">📅<span>Schedule</span></button>
+        <button class="nav-btn" data-screen="profile">👤<span>Profile</span></button>
+      </nav>
+    </div>
+
+    <!-- Impact Screen (overlay) -->
+    <div id="screen-impact" class="screen overlay">
+      <div class="impact-content">
+        <button class="btn-close" id="btn-close-impact">✕</button>
+        <h2>🌱 Your Impact</h2>
+        <div class="impact-stats">
+          <div class="impact-stat">
+            <span class="impact-number" id="impact-lookups">3</span>
+            <span class="impact-label">Items Looked Up</span>
+          </div>
+          <div class="impact-stat">
+            <span class="impact-number">100%</span>
+            <span class="impact-label">Correctly Sorted</span>
+          </div>
+          <div class="impact-stat">
+            <span class="impact-number">2.1<span class="impact-unit">lbs</span></span>
+            <span class="impact-label">Diverted from Landfill</span>
+          </div>
+        </div>
+        <div class="streak-card">
+          <span class="streak-flame">🔥</span>
+          <div>
+            <span class="streak-count">3-day streak!</span>
+            <span class="streak-sub">Keep checking items before tossing</span>
+          </div>
+        </div>
+        <p class="impact-fact">If everyone in your ZIP sorted correctly, it would save <strong>$42K/yr</strong> in contamination processing costs.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
