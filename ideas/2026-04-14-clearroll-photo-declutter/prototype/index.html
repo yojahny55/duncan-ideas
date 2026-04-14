@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearRoll — Smart Photo Declutter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">🧹</span>
+      <span class="logo-text">ClearRoll</span>
+    </div>
+    <div class="streak-badge">🔥 7-day streak</div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="home">Home</button>
+    <button class="tab" data-tab="swipe">Clean</button>
+    <button class="tab" data-tab="health">Health</button>
+  </nav>
+
+  <!-- Home Tab -->
+  <section class="tab-content active" id="tab-home">
+    <!-- Score Hero -->
+    <div class="score-hero">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="#1e293b" stroke-width="8"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="url(#scoreGrad)" stroke-width="8" 
+                  stroke-dasharray="326.7" stroke-dashoffset="98" stroke-linecap="round"/>
+          <defs><linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#6366f1"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="score-number">42</div>
+        <div class="score-label">Health Score</div>
+      </div>
+      <div class="score-stats">
+        <div class="stat"><span class="stat-num">31,847</span><span class="stat-lbl">Total Photos</span></div>
+        <div class="stat"><span class="stat-num">14.2 GB</span><span class="stat-lbl">Recoverable</span></div>
+        <div class="stat accent"><span class="stat-num">3.1 GB</span><span class="stat-lbl">Freed Today</span></div>
+      </div>
+    </div>
+
+    <!-- Category Cards -->
+    <h2 class="section-title">Quick Clean</h2>
+    <div class="categories">
+      <div class="cat-card" onclick="startSwipe('bursts')">
+        <div class="cat-icon">📸</div>
+        <div class="cat-info">
+          <div class="cat-name">Burst Cleanup</div>
+          <div class="cat-desc">1,247 photos → keep ~210</div>
+        </div>
+        <div class="cat-badge">1.0 GB</div>
+        <div class="cat-arrow">›</div>
+      </div>
+      <div class="cat-card" onclick="startSwipe('screenshots')">
+        <div class="cat-icon">📱</div>
+        <div class="cat-info">
+          <div class="cat-name">Screenshot Graveyard</div>
+          <div class="cat-desc">3,891 screenshots older than 6mo</div>
+        </div>
+        <div class="cat-badge">4.8 GB</div>
+        <div class="cat-arrow">›</div>
+      </div>
+      <div class="cat-card" onclick="startSwipe('forgotten')">
+        <div class="cat-icon">🫥</div>
+        <div class="cat-info">
+          <div class="cat-name">Forgotten Photos</div>
+          <div class="cat-desc">8,234 not viewed in 12+ months</div>
+        </div>
+        <div class="cat-badge">5.2 GB</div>
+        <div class="cat-arrow">›</div>
+      </div>
+      <div class="cat-card" onclick="startSwipe('blurry')">
+        <div class="cat-icon">🌫️</div>
+        <div class="cat-info">
+          <div class="cat-name">Blurry & Dark</div>
+          <div class="cat-desc">412 low-quality shots detected</div>
+        </div>
+        <div class="cat-badge">0.8 GB</div>
+        <div class="cat-arrow">›</div>
+      </div>
+      <div class="cat-card" onclick="startSwipe('duplicates')">
+        <div class="cat-icon">🔄</div>
+        <div class="cat-info">
+          <div class="cat-name">Duplicates & Near-Dups</div>
+          <div class="cat-desc">2,156 similar photos found</div>
+        </div>
+        <div class="cat-badge">2.4 GB</div>
+        <div class="cat-arrow">›</div>
+      </div>
+    </div>
+
+    <!-- Daily Challenge -->
+    <div class="challenge-card">
+      <div class="challenge-header">
+        <span>⚡ Daily Challenge</span>
+        <span class="challenge-time">2 min</span>
+      </div>
+      <div class="challenge-body">
+        Delete 50 forgotten screenshots to keep your streak alive!
+      </div>
+      <div class="challenge-progress">
+        <div class="progress-bar"><div class="progress-fill" style="width: 64%"></div></div>
+        <span>32/50 done</span>
+      </div>
+      <button class="btn-primary" onclick="switchTab('swipe')">Continue Cleaning</button>
+    </div>
+  </section>
+
+  <!-- Swipe Tab -->
+  <section class="tab-content" id="tab-swipe">
+    <div class="swipe-header">
+      <button class="back-btn" onclick="switchTab('home')">← Back</button>
+      <span class="swipe-category">📸 Burst Cleanup</span>
+      <span class="swipe-count">1 of 1,247</span>
+    </div>
+    <div class="swipe-area" id="swipeArea">
+      <div class="photo-card" id="photoCard">
+        <div class="photo-placeholder">
+          <div class="photo-grid">
+            <div class="mock-photo" style="background: linear-gradient(135deg, #667eea, #764ba2);">🌅<br><small>Sunset burst 1/8</small></div>
+          </div>
+        </div>
+        <div class="photo-meta">
+          <span>📅 March 15, 2025</span>
+          <span>📍 Clearwater Beach</span>
+          <span>📁 Burst (8 photos)</span>
+        </div>
+        <div class="ai-suggest">
+          <span class="ai-badge">✨ AI Pick</span> This is the sharpest of the 8. Keep this one?
+        </div>
+      </div>
+    </div>
+    <div class="swipe-actions">
+      <button class="swipe-btn delete" onclick="swipe('left')">
+        <span class="swipe-icon">🗑️</span>
+        <span>Delete</span>
+      </button>
+      <button class="swipe-btn maybe" onclick="swipe('maybe')">
+        <span class="swipe-icon">🤔</span>
+        <span>Maybe</span>
+      </button>
+      <button class="swipe-btn keep" onclick="swipe('right')">
+        <span class="swipe-icon">❤️</span>
+        <span>Keep</span>
+      </button>
+    </div>
+    <div class="batch-actions">
+      <button class="btn-secondary" onclick="batchAction('delete-all')">Delete all in this group (7)</button>
+      <button class="btn-ghost" onclick="batchAction('keep-best')">Keep best only</button>
+    </div>
+  </section>
+
+  <!-- Health Tab -->
+  <section class="tab-content" id="tab-health">
+    <h2 class="section-title">Photo Health Report</h2>
+    
+    <div class="health-overview">
+      <div class="health-big-score">
+        <span class="big-num">42</span>
+        <span class="big-grade">/100 — Needs Work</span>
+      </div>
+      <p class="health-summary">Your camera roll is bloated. You could free 14.2 GB and find photos 3x faster with a clean session.</p>
+    </div>
+
+    <div class="health-breakdown">
+      <div class="health-row">
+        <span class="health-label">📸 Bursts</span>
+        <div class="health-bar"><div class="health-fill" style="width: 85%; background: #ef4444;"></div></div>
+        <span class="health-grade bad">D</span>
+      </div>
+      <div class="health-row">
+        <span class="health-label">📱 Screenshots</span>
+        <div class="health-bar"><div class="health-fill" style="width: 92%; background: #ef4444;"></div></div>
+        <span class="health-grade bad">F</span>
+      </div>
+      <div class="health-row">
+        <span class="health-label">🔄 Duplicates</span>
+        <div class="health-bar"><div class="health-fill" style="width: 60%; background: #f59e0b;"></div></div>
+        <span class="health-grade mid">C</span>
+      </div>
+      <div class="health-row">
+        <span class="health-label">🌫️ Quality</span>
+        <div class="health-bar"><div class="health-fill" style="width: 25%; background: #22c55e;"></div></div>
+        <span class="health-grade good">A</span>
+      </div>
+      <div class="health-row">
+        <span class="health-label">📂 Organization</span>
+        <div class="health-bar"><div class="health-fill" style="width: 70%; background: #f59e0b;"></div></div>
+        <span class="health-grade mid">C-</span>
+      </div>
+    </div>
+
+    <div class="monthly-report">
+      <h3>📊 This Month</h3>
+      <div class="report-stats">
+        <div class="rpt-stat"><span class="rpt-num">+847</span><span class="rpt-lbl">Added</span></div>
+        <div class="rpt-stat"><span class="rpt-num">-312</span><span class="rpt-lbl">Deleted</span></div>
+        <div class="rpt-stat"><span class="rpt-num">3.1 GB</span><span class="rpt-lbl">Freed</span></div>
+        <div class="rpt-stat"><span class="rpt-num">$2.99</span><span class="rpt-lbl">Saved/mo</span></div>
+      </div>
+    </div>
+
+    <div class="ai-insight">
+      <div class="ai-badge">🧠 AI Insight</div>
+      <p>You always keep photos of your dog 🐕 and delete QR code screenshots. Want me to auto-delete future QR screenshots?</p>
+      <div class="insight-actions">
+        <button class="btn-primary small">Yes, auto-delete</button>
+        <button class="btn-ghost small">No thanks</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchTab('home')">
+      <span>🏠</span><span>Home</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('swipe')">
+      <span>🧹</span><span>Clean</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('health')">
+      <span>📊</span><span>Health</span>
+    </button>
+  </nav>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
