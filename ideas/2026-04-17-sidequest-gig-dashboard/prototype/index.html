@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SideQuest — Gig Earnings Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <span class="logo-icon">🎮</span>
+      <div>
+        <h1>SideQuest</h1>
+        <p class="tagline">Multi-App Gig Dashboard</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="notifBtn">🔔</button>
+      <div class="avatar">JM</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Today's Earnings Hero -->
+    <section class="hero">
+      <div class="hero-label">Today's Earnings</div>
+      <div class="hero-amount" id="todayTotal">$0.00</div>
+      <div class="hero-meta">
+        <span class="meta-item">⏱ <span id="todayHours">0.0</span> hrs</span>
+        <span class="meta-item">📊 <span id="todayRate">$0.00</span>/hr</span>
+        <span class="meta-item green">↑ 12% vs avg</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-primary" id="startTimer">▶ Start Earning</button>
+        <button class="btn-secondary" id="addManual">+ Add Earnings</button>
+      </div>
+    </section>
+
+    <!-- Active Apps -->
+    <section class="section">
+      <h2>Connected Apps</h2>
+      <div class="app-grid" id="appGrid">
+        <div class="app-card uber active">
+          <div class="app-icon" style="background:#000">🚗</div>
+          <div class="app-info">
+            <span class="app-name">Uber</span>
+            <span class="app-earn">$87.40</span>
+            <span class="app-hours">3.2 hrs · $27.31/hr</span>
+          </div>
+          <div class="app-status live">LIVE</div>
+        </div>
+        <div class="app-card doordash active">
+          <div class="app-icon" style="background:#FF3008">🍔</div>
+          <div class="app-info">
+            <span class="app-name">DoorDash</span>
+            <span class="app-earn">$62.80</span>
+            <span class="app-hours">2.8 hrs · $22.43/hr</span>
+          </div>
+          <div class="app-status live">LIVE</div>
+        </div>
+        <div class="app-card lyft">
+          <div class="app-icon" style="background:#FF00BF"> Lyft</div>
+          <div class="app-info">
+            <span class="app-name">Lyft</span>
+            <span class="app-earn">$34.20</span>
+            <span class="app-hours">1.5 hrs · $22.80/hr</span>
+          </div>
+          <div class="app-status off">OFF</div>
+        </div>
+        <div class="app-card instacart">
+          <div class="app-icon" style="background:#43B02A">🛒</div>
+          <div class="app-info">
+            <span class="app-name">Instacart</span>
+            <span class="app-earn">$0.00</span>
+            <span class="app-hours">Not active today</span>
+          </div>
+          <div class="app-status off">OFF</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- True Rate Calculator -->
+    <section class="section">
+      <h2>True Hourly Rate</h2>
+      <div class="rate-card">
+        <div class="rate-main">
+          <span class="rate-gross">Gross: $24.18/hr</span>
+          <span class="rate-arrow">→</span>
+          <span class="rate-net highlight">$16.42/hr</span>
+        </div>
+        <p class="rate-label">After expenses & estimated taxes</p>
+        <div class="rate-breakdown">
+          <div class="rate-row"><span>Gross earnings</span><span>$184.40</span></div>
+          <div class="rate-row neg"><span>Self-employment tax (15.3%)</span><span>-$28.21</span></div>
+          <div class="rate-row neg"><span>Gas & mileage (67¢/mi × 82mi)</span><span>-$54.94</span></div>
+          <div class="rate-row neg"><span>Phone plan portion</span><span>-$2.50</span></div>
+          <div class="rate-row total"><span>Net take-home</span><span>$98.75</span></div>
+        </div>
+        <div class="rate-hours">Based on 6.0 hours active · <strong>5-day avg: $15.80/hr</strong></div>
+      </div>
+    </section>
+
+    <!-- Weekly Overview -->
+    <section class="section">
+      <h2>This Week</h2>
+      <div class="week-chart" id="weekChart"></div>
+      <div class="week-stats">
+        <div class="stat-box">
+          <div class="stat-value">$682</div>
+          <div class="stat-label">Weekly Total</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">28.5h</div>
+          <div class="stat-label">Hours Active</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">$15.90</div>
+          <div class="stat-label">Avg True Rate</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">$172</div>
+          <div class="stat-label">Est. Tax Owed</div>
+        </div>
+      </div>
+      <div class="goal-bar">
+        <div class="goal-label">Weekly Goal: $682 / $800</div>
+        <div class="goal-track"><div class="goal-fill" style="width:85%"></div></div>
+        <div class="goal-sub">$118 to go · ~7.2 hrs at avg rate</div>
+      </div>
+    </section>
+
+    <!-- Smart Heatmap -->
+    <section class="section">
+      <h2>🔥 Your Best Hours</h2>
+      <p class="section-sub">Based on your last 30 days</p>
+      <div class="heatmap" id="heatmap"></div>
+      <div class="heatmap-legend">
+        <span>Low</span>
+        <div class="legend-gradient"></div>
+        <span>High</span>
+      </div>
+      <div class="insight-card">
+        <strong>💡 Best shift:</strong> Thu 5-8pm on DoorDash — you average $28.40/hr
+      </div>
+    </section>
+
+    <!-- Tax Estimator -->
+    <section class="section">
+      <h2>Quarterly Tax Estimate</h2>
+      <div class="tax-card">
+        <div class="tax-quarter">Q1 2026 (Due April 15)</div>
+        <div class="tax-amount">$1,847</div>
+        <div class="tax-meta">Based on $12,090 Q1 net earnings</div>
+        <div class="tax-progress">
+          <div class="tax-row"><span>Saved so far</span><span class="green">$1,200</span></div>
+          <div class="tax-row"><span>Still need</span><span class="red">$647</span></div>
+        </div>
+        <button class="btn-secondary small">📁 Export Schedule C Data</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Add Earnings Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3>Add Earnings</h3>
+      <div class="form-group">
+        <label>Platform</label>
+        <select id="platformSelect">
+          <option>Uber</option>
+          <option>DoorDash</option>
+          <option>Lyft</option>
+          <option>Instacart</option>
+          <option>Amazon Flex</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number" id="amountInput" placeholder="0.00" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Hours worked</label>
+        <input type="number" id="hoursInput" placeholder="0.0" step="0.1">
+      </div>
+      <div class="form-group">
+        <label>Miles driven</label>
+        <input type="number" id="milesInput" placeholder="0" step="1">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelModal">Cancel</button>
+        <button class="btn-primary" id="saveEarnings">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item active">📊<span>Dashboard</span></div>
+    <div class="nav-item">🔥<span>Heatmap</span></div>
+    <div class="nav-item">💰<span>Taxes</span></div>
+    <div class="nav-item">⚙️<span>Settings</span></div>
+  </nav>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
