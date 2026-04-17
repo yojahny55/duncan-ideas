@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubAudit — Know What You're Paying For</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0f0f13;
+  --card: #1a1a24;
+  --card-hover: #22222e;
+  --accent: #7c5cfc;
+  --accent-light: #a78bfa;
+  --red: #ef4444;
+  --green: #22c55e;
+  --yellow: #eab308;
+  --text: #e4e4e7;
+  --text-dim: #71717a;
+  --border: #2a2a3a;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #0f0f13 100%); border-bottom: 1px solid var(--border); padding: 1.5rem; }
+.header h1 { font-size: 1.5rem; font-weight: 700; }
+.header h1 span { color: var(--accent); }
+.header p { color: var(--text-dim); font-size: 0.85rem; margin-top: 0.25rem; }
+.container { max-width: 480px; margin: 0 auto; padding: 1rem; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1rem 0; }
+.stat { background: var(--card); border-radius: 12px; padding: 1rem; text-align: center; border: 1px solid var(--border); }
+.stat .value { font-size: 1.5rem; font-weight: 700; }
+.stat .label { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
+.stat.red .value { color: var(--red); }
+.stat.green .value { color: var(--green); }
+.stat.accent .value { color: var(--accent); }
+.alert-banner { background: linear-gradient(135deg, #3b1a1a, #1a1a24); border: 1px solid #5c2020; border-radius: 12px; padding: 1rem; margin: 1rem 0; display: flex; align-items: center; gap: 0.75rem; }
+.alert-banner .icon { font-size: 1.5rem; }
+.alert-banner .text { flex: 1; }
+.alert-banner .text strong { color: var(--red); font-size: 0.9rem; }
+.alert-banner .text p { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.15rem; }
+.alert-banner button { background: var(--red); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; font-weight: 600; }
+.section-title { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.25rem 0 0.75rem; }
+.sub-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.sub-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: background 0.15s; }
+.sub-item:hover { background: var(--card-hover); }
+.sub-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+.sub-info { flex: 1; }
+.sub-info .name { font-weight: 600; font-size: 0.9rem; }
+.sub-info .meta { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.1rem; }
+.sub-price { text-align: right; }
+.sub-price .amount { font-weight: 700; font-size: 0.95rem; }
+.sub-price .cycle { font-size: 0.7rem; color: var(--text-dim); }
+.badge { display: inline-block; font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 999px; font-weight: 600; margin-left: 0.5rem; }
+.badge.waste { background: #3b1a1a; color: var(--red); }
+.badge.increased { background: #3b2a0a; color: var(--yellow); }
+.tab-bar { display: flex; background: var(--card); border-radius: 12px; padding: 0.25rem; margin: 1rem 0; border: 1px solid var(--border); }
+.tab { flex: 1; padding: 0.6rem; text-align: center; border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--text-dim); transition: all 0.15s; }
+.tab.active { background: var(--accent); color: white; }
+.donut-chart { width: 160px; height: 160px; border-radius: 50%; margin: 1rem auto; position: relative; }
+.donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.donut-center .total { font-size: 1.4rem; font-weight: 700; }
+.donut-center .label { font-size: 0.7rem; color: var(--text-dim); }
+.legend { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-bottom: 1rem; }
+.legend-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; color: var(--text-dim); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 1rem; background: linear-gradient(transparent, var(--bg) 30%); }
+.cta button { width: 100%; max-width: 480px; display: block; margin: 0 auto; padding: 0.85rem; background: var(--accent); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.footer-space { height: 5rem; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Sub<span>Audit</span></h1>
+  <p>Your subscription intelligence dashboard</p>
+</div>
+
+<div class="container">
+  <div class="stats">
+    <div class="stat accent">
+      <div class="value">8</div>
+      <div class="label">Active Subs</div>
+    </div>
+    <div class="stat red">
+      <div class="value">$87.94</div>
+      <div class="label">Monthly</div>
+    </div>
+    <div class="stat green">
+      <div class="value">$24.99</div>
+      <div class="label">Potential Savings</div>
+    </div>
+  </div>
+
+  <div class="alert-banner">
+    <div class="icon">⚠️</div>
+    <div class="text">
+      <strong>Spotify price hike detected!</strong>
+      <p>$9.99 → $11.99/mo (+$24/yr)</p>
+    </div>
+    <button>Review</button>
+  </div>
+
+  <div class="alert-banner" style="border-color: #5c4a0a; background: linear-gradient(135deg, #3b2a0a, #1a1a24);">
+    <div class="text">
+      <strong style="color: var(--yellow);">🔄 Overlap detected</strong>
+      <p>Spotify + Apple Music + YouTube Premium — pick one?</p>
+    </div>
+    <button style="background: var(--yellow); color: #000;">Fix</button>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active" onclick="showTab(this, 'subs')">Subscriptions</div>
+    <div class="tab" onclick="showTab(this, 'spend')">Spend Breakdown</div>
+  </div>
+
+  <div id="subs-view">
+    <div class="section-title">This month</div>
+    <div class="sub-list">
+      <div class="sub-item">
+        <div class="sub-icon" style="background: #1db954;">🎵</div>
+        <div class="sub-info">
+          <div class="name">Spotify Premium <span class="badge waste">unused 3mo</span></div>
+          <div class="meta">Next billing: Apr 22</div>
+        </div>
+        <div class="sub-price">
+          <div class="amount">$11.99</div>
+          <div class="cycle">/month</div>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-icon" style="background: #fc3c44;">📺</div>
+        <div class="sub-info">
+          <div class="name">YouTube Premium <span class="badge waste">overlap</span></div>
+          <div class="meta">Next billing: Apr 28</div>
+        </div>
+        <div class="sub-price">
+          <div class="amount">$13.99</div>
+          <div class="cycle">/month</div>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-icon" style="background: #333;">🍎</div>
+        <div class="sub-info">
+          <div class="name">Apple Music</div>
+          <div class="meta">Next billing: May 1</div>
+        </div>
+        <div class="sub-price">
+          <div class="amount">$10.99</div>
+          <div class="cycle">/month</div>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-icon" style="background: #e50914;">🎬</div>
+        <div class="sub-info">
+          <div class="name">Netflix Standard</div>
+          <div class="meta">Next billing: May 3</div>
+        </div>
+        <div class="sub-price">
+          <div class="amount">$15.49</div>
+          <div class="cycle">/month</div>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-icon" style="background: #0071f3;">💻</div>
+        <div class="sub-info">
+          <div class="name">iCloud+ 200GB</div>
+          <div class="meta">Next billing: Apr 30</div>
+        </div>
+        <div class="sub-price">
+          <div class="amount">$2.99</div>
+          <div class="cycle">/month</div>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-icon" style="background: #6366f1;">📧</div>
+        <div class="sub-info">
+          <div class="name">ChatGPT Plus</div>
+          <div class="meta">Next billing: May 15</div>
+        </div>
+        <div class="sub-price">
+          <div class="amount">$20.00</div>
+          <div class="cycle">/month</div>
+        </div>
+      </div>
+      <div class="sub-item">
+        <div class="sub-icon" style="background: #00a8e1;">🏋️</div>
+        <div class="sub-info">
+          <div class="name">Peloton App <span class="badge increased">+ $2</span></div>
+          <div class="meta">Next billing: May 10</div>
+        </div>
+        <div class="sub-price">
+          <div class="amount">$12.99</div>
+          <div class="cycle">/month</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="spend-view" style="display:none; text-align: center;">
+    <div class="donut-chart" style="background: conic-gradient(#e50914 0% 18%, #fc3c44 18% 34%, #1db954 34% 48%, #333 48% 60%, #6366f1 60% 83%, #0071f3 83% 86%, #00a8e1 86% 100%); position: relative;">
+      <div style="position:absolute;top:20px;left:20px;right:20px;bottom:20px;background:var(--bg);border-radius:50%;"></div>
+      <div class="donut-center">
+        <div class="total">$87.94</div>
+        <div class="label">/month</div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#e50914"></div>Netflix</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fc3c44"></div>YouTube</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#1db954"></div>Spotify</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#333"></div>Apple Music</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>ChatGPT</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0071f3"></div>iCloud</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00a8e1"></div>Peloton</div>
+    </div>
+  </div>
+
+  <div class="footer-space"></div>
+</div>
+
+<div class="cta">
+  <button onclick="alert('SubAudit — Coming soon! 🚀')">Start Your Free Audit →</button>
+</div>
+
+<script>
+function showTab(el, view) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('subs-view').style.display = view === 'subs' ? 'block' : 'none';
+  document.getElementById('spend-view').style.display = view === 'spend' ? 'block' : 'none';
+}
+
+document.querySelectorAll('.sub-item').forEach(item => {
+  item.addEventListener('click', () => {
+    item.style.opacity = item.style.opacity === '0.4' ? '1' : '0.4';
+  });
+});
+</script>
+</body>
+</html>
