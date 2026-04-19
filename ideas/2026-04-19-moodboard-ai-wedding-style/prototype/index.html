@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoodBoard AI — Wedding Style Board</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="logo">💍</span>
+      <span class="brand-name">MoodBoard <span class="ai-badge">AI</span></span>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab active" data-tab="board">My Board</button>
+      <button class="tab" data-tab="harmony">Harmony Check</button>
+      <button class="tab" data-tab="palette">Palette</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-share">Share ↗</button>
+      <div class="avatar">S</div>
+    </div>
+  </nav>
+
+  <!-- BOARD TAB -->
+  <section id="tab-board" class="tab-content active">
+    <div class="board-header">
+      <div>
+        <h1>Emma & James — June 2026</h1>
+        <p class="subtitle">Garden Wedding · Rose Gold & Sage · 128 guests</p>
+      </div>
+      <div class="board-header-actions">
+        <div class="harmony-badge good">
+          <span class="harmony-score">87</span>
+          <span class="harmony-label">Harmony Score</span>
+        </div>
+        <button class="btn-primary" id="addItemBtn">+ Add Item</button>
+      </div>
+    </div>
+
+    <div class="board-sections">
+      <!-- Bride Section -->
+      <div class="board-section">
+        <div class="section-header">
+          <h2>👰 Bride</h2>
+          <span class="item-count">3 items</span>
+        </div>
+        <div class="mood-grid">
+          <div class="mood-item" data-colors="#F5E6D3,#FFFFFF,#D4AF37">
+            <div class="item-img" style="background: linear-gradient(135deg, #F5E6D3 0%, #FFFFFF 50%, #F5E6D3 100%);">
+              <div class="dress-silhouette">👗</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">A-Line Lace Gown</span>
+              <span class="item-source">Vera Wang</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#F5E6D3"></span>
+              <span style="background:#FFFFFF"></span>
+              <span style="background:#D4AF37"></span>
+            </div>
+          </div>
+          <div class="mood-item" data-colors="#C9B99A,#F5E6D3">
+            <div class="item-img" style="background: linear-gradient(135deg, #C9B99A, #F5E6D3);">
+              <div class="dress-silhouette">💇‍♀️</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">Low Chignon Updo</span>
+              <span class="item-source">Pinterest Save</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#C9B99A"></span>
+              <span style="background:#F5E6D3"></span>
+            </div>
+          </div>
+          <div class="mood-item" data-colors="#F5E6D3,#D4AF37">
+            <div class="item-img" style="background: linear-gradient(135deg, #F5E6D3, #D4AF37);">
+              <div class="dress-silhouette">💎</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">Rose Gold Hair Vine</span>
+              <span class="item-source">Etsy — $85</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#F5E6D3"></span>
+              <span style="background:#D4AF37"></span>
+            </div>
+          </div>
+          <div class="mood-item add-new" id="addBrideItem">
+            <div class="add-icon">+</div>
+            <span>Add Item</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bridesmaids Section -->
+      <div class="board-section">
+        <div class="section-header">
+          <h2>👯 Bridesmaids</h2>
+          <span class="item-count">2 items</span>
+        </div>
+        <div class="mood-grid">
+          <div class="mood-item" data-colors="#9CAF88,#B5C99A,#7D8E6E">
+            <div class="item-img" style="background: linear-gradient(135deg, #9CAF88, #B5C99A);">
+              <div class="dress-silhouette">👗</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">Sage Midi Dress</span>
+              <span class="item-source">Azazie — $138</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#9CAF88"></span>
+              <span style="background:#B5C99A"></span>
+              <span style="background:#7D8E6E"></span>
+            </div>
+          </div>
+          <div class="mood-item" data-colors="#D4AF37,#F5E6D3">
+            <div class="item-img" style="background: linear-gradient(135deg, #D4AF37, #F5E6D3);">
+              <div class="dress-silhouette">💐</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">Eucalyptus & White Rose Bouquet</span>
+              <span class="item-source">Florist Quote $65/bouquet</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#D4AF37"></span>
+              <span style="background:#F5E6D3"></span>
+            </div>
+          </div>
+          <div class="mood-item add-new">
+            <div class="add-icon">+</div>
+            <span>Add Item</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Venue & Decor Section -->
+      <div class="board-section">
+        <div class="section-header">
+          <h2>🌿 Venue & Décor</h2>
+          <span class="item-count">3 items</span>
+        </div>
+        <div class="mood-grid">
+          <div class="mood-item" data-colors="#9CAF88,#F5E6D3,#87CEEB">
+            <div class="item-img" style="background: linear-gradient(135deg, #87CEEB 0%, #9CAF88 60%, #F5E6D3 100%);">
+              <div class="dress-silhouette">🏡</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">Botanical Garden Pavilion</span>
+              <span class="item-source">Booked · $4,200</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#9CAF88"></span>
+              <span style="background:#F5E6D3"></span>
+              <span style="background:#87CEEB"></span>
+            </div>
+          </div>
+          <div class="mood-item" data-colors="#D4AF37,#F5E6D3,#9CAF88">
+            <div class="item-img" style="background: linear-gradient(135deg, #D4AF37, #F5E6D3);">
+              <div class="dress-silhouette">🕯️</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">Gold Mercury Glass Candle Holders</span>
+              <span class="item-source">Amazon — Set of 12, $45</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#D4AF37"></span>
+              <span style="background:#F5E6D3"></span>
+              <span style="background:#9CAF88"></span>
+            </div>
+          </div>
+          <div class="mood-item" data-colors="#FFFFFF,#9CAF88,#D4AF37">
+            <div class="item-img" style="background: linear-gradient(135deg, #FFFFFF 0%, #9CAF88 100%);">
+              <div class="dress-silhouette">🍽️</div>
+            </div>
+            <div class="item-info">
+              <span class="item-name">Sage Napkins + Gold Charger</span>
+              <span class="item-source">Rental — $3.50/setting</span>
+            </div>
+            <div class="item-colors">
+              <span style="background:#FFFFFF"></span>
+              <span style="background:#9CAF88"></span>
+              <span style="background:#D4AF37"></span>
+            </div>
+          </div>
+          <div class="mood-item add-new">
+            <div class="add-icon">+</div>
+            <span>Add Item</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HARMONY TAB -->
+  <section id="tab-harmony" class="tab-content">
+    <div class="harmony-page">
+      <h1>AI Harmony Analysis</h1>
+      <p class="subtitle">Analyzing how your wedding elements work together</p>
+
+      <div class="harmony-overview">
+        <div class="harmony-circle">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#E8E0D8" stroke-width="8"/>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#9CAF88" stroke-width="8" 
+              stroke-dasharray="339.29" stroke-dashoffset="44.1" stroke-linecap="round" 
+              transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="harmony-circle-text">
+            <span class="big-score">87</span>
+            <span class="score-label">/ 100</span>
+          </div>
+        </div>
+        <div class="harmony-summary">
+          <h3>Beautiful cohesion! 🌿</h3>
+          <p>Your rose gold & sage palette flows consistently across bride, bridesmaids, and venue. The earthy tones complement the garden setting perfectly.</p>
+          <div class="harmony-details">
+            <div class="detail-row">
+              <span class="detail-label">Color Harmony</span>
+              <div class="detail-bar"><div class="detail-fill" style="width:92%"></div></div>
+              <span class="detail-value">92</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Formality Match</span>
+              <div class="detail-bar"><div class="detail-fill" style="width:88%"></div></div>
+              <span class="detail-value">88</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Season Fit</span>
+              <div class="detail-bar"><div class="detail-fill" style="width:85%"></div></div>
+              <span class="detail-value">85</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Venue Cohesion</span>
+              <div class="detail-bar"><div class="detail-fill" style="width:83%"></div></div>
+              <span class="detail-value">83</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="harmony-alerts">
+        <div class="alert warning">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>Minor color clash detected</strong>
+            <p>The white rose bouquet may look stark against the sage bridesmaid dresses. Consider cream or blush roses instead for a softer transition.</p>
+          </div>
+          <button class="btn-small">See Alternatives</button>
+        </div>
+        <div class="alert good">
+          <span class="alert-icon">✨</span>
+          <div>
+            <strong>Hair vine matches perfectly</strong>
+            <p>Rose gold hair vine bridges the white gown and gold décor beautifully. Great choice!</p>
+          </div>
+        </div>
+        <div class="alert tip">
+          <span class="alert-icon">💡</span>
+          <div>
+            <strong>Add a texture element</strong>
+            <p>Your board is mostly smooth fabrics and glass. Consider adding macramé, burlap runners, or woven placemats for visual depth.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PALETTE TAB -->
+  <section id="tab-palette" class="tab-content">
+    <div class="palette-page">
+      <h1>Wedding Color Palette</h1>
+      <p class="subtitle">Auto-extracted from your mood board items</p>
+
+      <div class="palette-primary">
+        <h3>Primary Palette</h3>
+        <div class="palette-row">
+          <div class="swatch-card">
+            <div class="swatch" style="background:#D4AF37"></div>
+            <div class="swatch-info">
+              <span class="swatch-name">Rose Gold</span>
+              <span class="swatch-hex">#D4AF37</span>
+              <span class="swatch-rgb">RGB 212, 175, 55</span>
+            </div>
+          </div>
+          <div class="swatch-card">
+            <div class="swatch" style="background:#9CAF88"></div>
+            <div class="swatch-info">
+              <span class="swatch-name">Sage</span>
+              <span class="swatch-hex">#9CAF88</span>
+              <span class="swatch-rgb">RGB 156, 175, 136</span>
+            </div>
+          </div>
+          <div class="swatch-card">
+            <div class="swatch" style="background:#F5E6D3"></div>
+            <div class="swatch-info">
+              <span class="swatch-name">Champagne</span>
+              <span class="swatch-hex">#F5E6D3</span>
+              <span class="swatch-rgb">RGB 245, 230, 211</span>
+            </div>
+          </div>
+          <div class="swatch-card">
+            <div class="swatch" style="background:#FFFFFF; border:1px solid #E8E0D8"></div>
+            <div class="swatch-info">
+              <span class="swatch-name">Ivory</span>
+              <span class="swatch-hex">#FFFFFF</span>
+              <span class="swatch-rgb">RGB 255, 255, 255</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-accent">
+        <h3>Accent Colors</h3>
+        <div class="palette-row small">
+          <div class="swatch-mini">
+            <div class="swatch-sm" style="background:#7D8E6E"></div>
+            <span>Deep Sage</span>
+            <span class="hex">#7D8E6E</span>
+          </div>
+          <div class="swatch-mini">
+            <div class="swatch-sm" style="background:#B5C99A"></div>
+            <span>Soft Sage</span>
+            <span class="hex">#B5C99A</span>
+          </div>
+          <div class="swatch-mini">
+            <div class="swatch-sm" style="background:#C9B99A"></div>
+            <span>Wheat</span>
+            <span class="hex">#C9B99A</span>
+          </div>
+          <div class="swatch-mini">
+            <div class="swatch-sm" style="background:#87CEEB"></div>
+            <span>Sky Blue</span>
+            <span class="hex">#87CEEB</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-export">
+        <button class="btn-primary">📋 Copy All Color Codes</button>
+        <button class="btn-secondary">📧 Email to Florist</button>
+        <button class="btn-secondary">🖨️ Print Palette Card</button>
+      </div>
+
+      <div class="palette-combos">
+        <h3>Approved Combinations</h3>
+        <div class="combo-grid">
+          <div class="combo-card">
+            <div class="combo-colors">
+              <div style="background:#D4AF37"></div>
+              <div style="background:#F5E6D3"></div>
+              <div style="background:#FFFFFF"></div>
+            </div>
+            <span>Bride Accents</span>
+            <span class="combo-score good">✓ Excellent</span>
+          </div>
+          <div class="combo-card">
+            <div class="combo-colors">
+              <div style="background:#9CAF88"></div>
+              <div style="background:#D4AF37"></div>
+              <div style="background:#F5E6D3"></div>
+            </div>
+            <span>Bridesmaid + Décor</span>
+            <span class="combo-score good">✓ Excellent</span>
+          </div>
+          <div class="combo-card">
+            <div class="combo-colors">
+              <div style="background:#9CAF88"></div>
+              <div style="background:#FFFFFF"></div>
+            </div>
+            <span>Bouquet Contrast</span>
+            <span class="combo-score warn">⚠ Slightly stark</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Add Item Modal -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add to Board</h2>
+        <button class="modal-close" id="closeModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="upload-zone">
+          <div class="upload-icon">📷</div>
+          <p>Drop a photo or click to upload</p>
+          <span>Dress, hair, flowers, décor — anything!</span>
+        </div>
+        <div class="form-group">
+          <label>Section</label>
+          <select>
+            <option>👰 Bride</option>
+            <option>👯 Bridesmaids</option>
+            <option>🤵 Groom</option>
+            <option>🌿 Venue & Décor</option>
+            <option>💐 Flowers</option>
+            <option>🎂 Cake</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" placeholder="e.g., Cathedral Veil">
+        </div>
+        <div class="form-group">
+          <label>Source / Price</label>
+          <input type="text" placeholder="e.g., BHLDN — $350">
+        </div>
+        <div class="ai-suggest">
+          <span class="ai-badge">AI</span>
+          <p>AI will auto-extract colors and check harmony when you upload</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelModal">Cancel</button>
+        <button class="btn-primary" id="saveItem">Add to Board</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
