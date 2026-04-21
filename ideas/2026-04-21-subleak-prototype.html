@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubLeak — Subscription Leak Detector</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+
+  .app { max-width: 480px; margin: 0 auto; padding: 20px; }
+
+  header { text-align: center; padding: 30px 0 20px; }
+  header h1 { font-size: 28px; font-weight: 800; }
+  header h1 span { color: #ff4757; }
+  header p { color: #888; font-size: 14px; margin-top: 4px; }
+
+  .score-ring { width: 200px; height: 200px; margin: 20px auto; position: relative; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring circle { fill: none; stroke-width: 12; }
+  .score-ring .bg { stroke: #1a1a2e; }
+  .score-ring .fg { stroke-linecap: round; transition: stroke-dashoffset 1s ease, stroke 0.5s; }
+  .score-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .score-value .number { font-size: 48px; font-weight: 900; }
+  .score-value .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 2px; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; }
+  .stat { background: #12121a; border-radius: 12px; padding: 16px; text-align: center; }
+  .stat .amount { font-size: 20px; font-weight: 700; color: #fff; }
+  .stat .sublabel { font-size: 11px; color: #666; margin-top: 4px; }
+
+  .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #666; margin: 24px 0 12px; }
+
+  .sub-card { background: #12121a; border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; }
+  .sub-card:hover { background: #1a1a28; }
+  .sub-card .left { display: flex; align-items: center; gap: 12px; }
+  .sub-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .sub-name { font-weight: 600; font-size: 15px; }
+  .sub-category { font-size: 11px; color: #555; }
+  .sub-price { font-weight: 700; font-size: 16px; }
+  .sub-price .period { font-size: 11px; color: #555; font-weight: 400; }
+  .sub-status { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600; margin-left: 8px; }
+  .status-unused { background: #ff475722; color: #ff4757; }
+  .status-active { background: #2ed57322; color: #2ed573; }
+  .status-overlap { background: #ffa50222; color: #ffa502; }
+
+  .overlap-alert { background: linear-gradient(135deg, #1a1520, #201520); border: 1px solid #ffa502aa; border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+  .overlap-alert .title { color: #ffa502; font-weight: 700; font-size: 14px; }
+  .overlap-alert .desc { font-size: 13px; color: #aaa; margin-top: 6px; line-height: 1.5; }
+  .overlap-alert .savings { color: #2ed573; font-weight: 700; margin-top: 8px; }
+
+  .add-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: transform 0.1s; }
+  .add-btn:hover { transform: scale(1.02); }
+
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.active { display: flex; }
+  .modal { background: #12121a; border-radius: 16px; padding: 24px; width: 90%; max-width: 420px; }
+  .modal h2 { font-size: 20px; margin-bottom: 16px; }
+  .modal input, .modal select { width: 100%; padding: 12px; background: #1a1a2e; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; margin-bottom: 12px; }
+  .modal input:focus, .modal select:focus { outline: none; border-color: #6c5ce7; }
+  .modal select option { background: #1a1a2e; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+  .modal-actions button { flex: 1; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; }
+  .btn-cancel { background: #1a1a2e; color: #888; }
+  .btn-save { background: #6c5ce7; color: white; }
+
+  .tip-bar { background: #1a1520; border-radius: 12px; padding: 14px; margin-top: 16px; font-size: 13px; color: #aaa; line-height: 1.5; }
+  .tip-bar strong { color: #fff; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Sub<span>Leak</span> 💧</h1>
+    <p>Find where your money's leaking</p>
+  </header>
+
+  <div class="score-ring">
+    <svg width="200" height="200">
+      <circle class="bg" cx="100" cy="100" r="88"/>
+      <circle class="fg" id="scoreArc" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="553"/>
+    </svg>
+    <div class="score-value">
+      <div class="number" id="scoreNum">--</div>
+      <div class="label">Leak Score</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="amount" id="totalSpend">$0</div><div class="sublabel">Monthly</div></div>
+    <div class="stat"><div class="amount" id="subCount">0</div><div class="sublabel">Active</div></div>
+    <div class="stat"><div class="amount" id="wasted">$0</div><div class="sublabel">Wasted</div></div>
+  </div>
+
+  <div class="section-title">⚠️ Overlap Detected</div>
+  <div id="overlapAlerts"></div>
+
+  <div class="section-title">Your Subscriptions</div>
+  <div id="subList"></div>
+
+  <button class="add-btn" onclick="openModal()">+ Add Subscription</button>
+
+  <div class="tip-bar" id="tipBar">
+    <strong>Tip:</strong> Add your subscriptions to see your Leak Score and find hidden overlaps.
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>Add Subscription</h2>
+    <input id="subName" placeholder="Name (e.g. Netflix)" />
+    <input id="subPrice" type="number" step="0.01" placeholder="Price ($)" />
+    <select id="subPeriod">
+      <option value="monthly">Monthly</option>
+      <option value="yearly">Yearly</option>
+    </select>
+    <select id="subCategory">
+      <option value="streaming">Streaming</option>
+      <option value="music">Music</option>
+      <option value="cloud">Cloud Storage</option>
+      <option value="productivity">Productivity</option>
+      <option value="fitness">Fitness</option>
+      <option value="gaming">Gaming</option>
+      <option value="news">News/Media</option>
+      <option value="other">Other</option>
+    </select>
+    <select id="subUsage">
+      <option value="active">Using regularly</option>
+      <option value="rarely">Barely using</option>
+      <option value="unused">Haven't used in 30+ days</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="addSub()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = {
+  streaming: { icon: '📺', color: '#e74c3c' },
+  music: { icon: '🎵', color: '#9b59b6' },
+  cloud: { icon: '☁️', color: '#3498db' },
+  productivity: { icon: '⚡', color: '#f39c12' },
+  fitness: { icon: '💪', color: '#2ecc71' },
+  gaming: { icon: '🎮', color: '#e67e22' },
+  news: { icon: '📰', color: '#1abc9c' },
+  other: { icon: '📦', color: '#95a5a6' }
+};
+
+const OVERLAP_GROUPS = [
+  { cats: ['streaming'], label: 'streaming services', min: 3 },
+  { cats: ['music'], label: 'music services', min: 2 },
+  { cats: ['cloud'], label: 'cloud storage plans', min: 2 },
+  { cats: ['productivity'], label: 'productivity tools', min: 3 },
+];
+
+let subs = [
+  { name: 'Netflix', price: 15.99, period: 'monthly', category: 'streaming', usage: 'active' },
+  { name: 'Max', price: 16.99, period: 'monthly', category: 'streaming', usage: 'active' },
+  { name: 'Disney+', price: 13.99, period: 'monthly', category: 'streaming', usage: 'rarely' },
+  { name: 'Hulu', price: 17.99, period: 'monthly', category: 'streaming', usage: 'rarely' },
+  { name: 'Spotify', price: 11.99, period: 'monthly', category: 'music', usage: 'active' },
+  { name: 'Apple Music', price: 10.99, period: 'monthly', category: 'music', usage: 'unused' },
+  { name: 'iCloud+', price: 2.99, period: 'monthly', category: 'cloud', usage: 'active' },
+  { name: 'Google One', price: 2.99, period: 'monthly', category: 'cloud', usage: 'active' },
+  { name: 'Notion', price: 10.00, period: 'monthly', category: 'productivity', usage: 'active' },
+  { name: 'Adobe CC', price: 54.99, period: 'monthly', category: 'productivity', usage: 'active' },
+  { name: 'Gym', price: 45.00, period: 'monthly', category: 'fitness', usage: 'unused' },
+];
+
+function monthlyTotal(s) { return s.period === 'yearly' ? s.price / 12 : s.price; }
+
+function calcLeakScore() {
+  if (subs.length === 0) return 0;
+  let score = 0;
+  const total = subs.reduce((a, s) => a + monthlyTotal(s), 0);
+  // Unused penalty
+  const unusedPct = subs.filter(s => s.usage === 'unused').length / subs.length;
+  score += unusedPct * 40;
+  // Rarely used penalty
+  const rarelyPct = subs.filter(s => s.usage === 'rarely').length / subs.length;
+  score += rarelyPct * 20;
+  // Overlap penalty
+  let overlaps = 0;
+  OVERLAP_GROUPS.forEach(g => {
+    const count = subs.filter(s => g.cats.includes(s.category)).length;
+    if (count >= g.min) overlaps += count - g.min + 1;
+  });
+  score += Math.min(overlaps * 8, 30);
+  // High total penalty
+  if (total > 100) score += 10;
+  if (total > 200) score += 10;
+  return Math.min(Math.round(score), 100);
+}
+
+function render() {
+  const score = calcLeakScore();
+  const total = subs.reduce((a, s) => a + monthlyTotal(s), 0);
+  const wasted = subs.filter(s => s.usage === 'unused' || s.usage === 'rarely').reduce((a, s) => a + monthlyTotal(s), 0);
+
+  // Score ring
+  const arc = document.getElementById('scoreArc');
+  const offset = 553 - (553 * score / 100);
+  arc.style.strokeDashoffset = offset;
+  const color = score > 60 ? '#ff4757' : score > 30 ? '#ffa502' : '#2ed573';
+  arc.style.stroke = color;
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('scoreNum').style.color = color;
+
+  // Stats
+  document.getElementById('totalSpend').textContent = '$' + total.toFixed(0);
+  document.getElementById('subCount').textContent = subs.length;
+  document.getElementById('wasted').textContent = '$' + wasted.toFixed(0);
+
+  // Overlap alerts
+  const alerts = document.getElementById('overlapAlerts');
+  alerts.innerHTML = '';
+  OVERLAP_GROUPS.forEach(g => {
+    const group = subs.filter(s => g.cats.includes(s.category));
+    if (group.length >= g.min) {
+      const names = group.map(s => s.name).join(', ');
+      const potentialSave = group.filter(s => s.usage !== 'active').reduce((a, s) => a + monthlyTotal(s), 0);
+      alerts.innerHTML += `<div class="overlap-alert">
+        <div class="title">🔄 ${group.length} ${g.label} found</div>
+        <div class="desc">${names}</div>
+        ${potentialSave > 0 ? `<div class="savings">Save $${potentialSave.toFixed(0)}/mo by dropping the ones you don't use</div>` : ''}
+      </div>`;
+    }
+  });
+
+  // Sub list
+  const list = document.getElementById('subList');
+  list.innerHTML = '';
+  subs.sort((a, b) => monthlyTotal(b) - monthlyTotal(a)).forEach((s, i) => {
+    const cat = CATEGORIES[s.category];
+    const statusClass = s.usage === 'unused' ? 'status-unused' : s.usage === 'rarely' ? 'status-overlap' : 'status-active';
+    const statusLabel = s.usage === 'unused' ? 'UNUSED' : s.usage === 'rarely' ? 'RARELY USED' : 'ACTIVE';
+    list.innerHTML += `<div class="sub-card">
+      <div class="left">
+        <div class="sub-icon" style="background:${cat.color}22;color:${cat.color}">${cat.icon}</div>
+        <div><div class="sub-name">${s.name}</div><div class="sub-category">${s.category}</div></div>
+      </div>
+      <div>
+        <span class="sub-price">$${s.price.toFixed(2)} <span class="period">/${s.period === 'yearly' ? 'yr' : 'mo'}</span></span>
+        <span class="sub-status ${statusClass}">${statusLabel}</span>
+      </div>
+    </div>`;
+  });
+
+  // Tip
+  const tipBar = document.getElementById('tipBar');
+  if (score > 60) tipBar.innerHTML = `<strong>🚨 Critical leak!</strong> You're wasting ~$${wasted.toFixed(0)}/mo. Drop unused subscriptions immediately.`;
+  else if (score > 30) tipBar.innerHTML = `<strong>⚠️ Moderate leak.</strong> Check overlapping services — you could save $${wasted.toFixed(0)}/mo.`;
+  else if (subs.length > 0) tipBar.innerHTML = `<strong>✅ Looking good!</strong> Your subscriptions are lean. Keep reviewing monthly.`;
+}
+
+function openModal() { document.getElementById('modal').classList.add('active'); }
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+  document.getElementById('subName').value = '';
+  document.getElementById('subPrice').value = '';
+}
+function addSub() {
+  const name = document.getElementById('subName').value.trim();
+  const price = parseFloat(document.getElementById('subPrice').value);
+  if (!name || isNaN(price)) return;
+  subs.push({
+    name, price,
+    period: document.getElementById('subPeriod').value,
+    category: document.getElementById('subCategory').value,
+    usage: document.getElementById('subUsage').value,
+  });
+  closeModal();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
