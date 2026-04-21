@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CookSub — Ingredient Substitution Engine</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">🧑‍🍳 <span>CookSub</span></div>
+    <p class="tagline">Don't have it? Swap it.</p>
+  </header>
+
+  <div class="diet-bar">
+    <button class="diet-btn active" data-diet="none">All</button>
+    <button class="diet-btn" data-diet="vegan">🌱 Vegan</button>
+    <button class="diet-btn" data-diet="gluten-free">🌾 GF</button>
+    <button class="diet-btn" data-diet="keto">🥑 Keto</button>
+    <button class="diet-btn" data-diet="nut-free">🥜 Nut-Free</button>
+    <button class="diet-btn" data-diet="dairy-free">🥛 DF</button>
+  </div>
+
+  <div class="search-section">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="ingredientInput" placeholder="What are you missing? e.g. buttermilk, eggs, butter..." autocomplete="off">
+      <button id="micBtn" class="mic-btn" title="Voice input">🎤</button>
+    </div>
+    <div id="suggestions" class="suggestions hidden"></div>
+  </div>
+
+  <div id="results" class="results"></div>
+
+  <div class="examples">
+    <p class="examples-label">Try tapping:</p>
+    <div class="example-chips">
+      <button class="chip" data-ingredient="buttermilk">Buttermilk</button>
+      <button class="chip" data-ingredient="eggs">Eggs</button>
+      <button class="chip" data-ingredient="brown sugar">Brown Sugar</button>
+      <button class="chip" data-ingredient="heavy cream">Heavy Cream</button>
+      <button class="chip" data-ingredient="all-purpose flour">AP Flour</button>
+      <button class="chip" data-ingredient="butter">Butter</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>500+ ingredients · Ratio-precise · Diet-aware</p>
+  </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
