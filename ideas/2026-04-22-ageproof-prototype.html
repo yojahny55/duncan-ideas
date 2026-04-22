@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgeProof — Local-First Age Verification</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-2: #1a1a26;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text-muted: #8888a0;
+    --accent: #6c5ce7;
+    --accent-light: #a29bfe;
+    --success: #00cec9;
+    --success-dim: rgba(0,206,201,0.12);
+    --warning: #fdcb6e;
+    --danger: #ff6b6b;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .phone-frame {
+    max-width: 390px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    background: var(--bg);
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .status-bar .time { font-weight: 700; color: var(--text); }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+
+  /* Header */
+  .header {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header .logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--success));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .header .logo svg { color: white; }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .header .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+  /* Screens */
+  .screen {
+    display: none;
+    padding: 0 24px 32px;
+    animation: fadeUp 0.4s ease;
+  }
+  .screen.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Step indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px 24px;
+  }
+  .step-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border: 2px solid var(--border);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .step-dot.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(108,92,231,0.4);
+  }
+  .step-dot.done {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+  }
+  .step-line {
+    flex: 1; height: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .step-line.done { background: var(--success); }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ID Scan area */
+  .scan-area {
+    width: 100%;
+    aspect-ratio: 1.586;
+    border: 2px dashed var(--accent);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(108,92,231,0.06);
+    margin: 16px 0;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .scan-area.scanning {
+    border-color: var(--success);
+    background: rgba(0,206,201,0.06);
+  }
+  .scan-area .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--success), transparent);
+    opacity: 0;
+    animation: none;
+  }
+  .scan-area.scanning .scan-line {
+    opacity: 1;
+    animation: scanMove 1.8s ease-in-out infinite;
+  }
+  @keyframes scanMove {
+    0% { top: 10%; }
+    50% { top: 85%; }
+    100% { top: 10%; }
+  }
+  .scan-area svg { color: var(--text-muted); }
+  .scan-area .label { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+  .scan-area.complete { border-style: solid; border-color: var(--success); background: var(--success-dim); }
+
+  /* Liveness */
+  .face-circle {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: rgba(108,92,231,0.05);
+  }
+  .face-circle.active {
+    border-color: var(--success);
+    box-shadow: 0 0 30px rgba(0,206,201,0.3);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .face-circle.done {
+    border-color: var(--success);
+    background: var(--success-dim);
+    animation: none;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,206,201,0.2); }
+    50% { box-shadow: 0 0 40px rgba(0,206,201,0.5); }
+  }
+  .face-instruction {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .face-challenge {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent-light);
+    margin-top: 4px;
+    min-height: 22px;
+  }
+
+  /* Attestation */
+  .attestation-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .attestation-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(108,92,231,0.1), transparent 50%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 12px 0;
+  }
+  .badge-success {
+    background: var(--success-dim);
+    color: var(--success);
+    border: 1px solid rgba(0,206,201,0.3);
+  }
+  .key-hash {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    word-break: break-all;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: var(--radius-sm);
+  }
+
+  /* QR */
+  .qr-container {
+    width: 200px; height: 200px;
+    margin: 20px auto;
+    background: white;
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .qr-grid {
+    display: grid;
+    grid-template-columns: repeat(15,1fr);
+    gap: 1px;
+    width: 100%;
+    aspect-ratio: 1;
+  }
+  .qr-cell {
+    background: #1a1a2e;
+    border-radius: 1px;
+  }
+  .qr-cell.empty { background: transparent; }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #7c6cf0);
+    color: white;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(108,92,231,0.4); }
+  .btn-success {
+    background: linear-gradient(135deg, var(--success), #00b3ae);
+    color: white;
+  }
+  .btn-success:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,206,201,0.4); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* Privacy badges */
+  .privacy-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .privacy-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .privacy-tag i { width: 14px; height: 14px; }
+
+  /* Site view */
+  .site-view {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 16px;
+    text-align: center;
+  }
+  .site-url-bar {
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .site-url-bar .lock { color: var(--success); }
+
+  /* Transition overlay */
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--surface-2);
+    border-radius: 2px;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  /* Typography helpers */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .hero-text {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .hero-text .highlight {
+    background: linear-gradient(135deg, var(--accent-light), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Confirmation check */
+  .confirm-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--success-dim);
+    border: 3px solid var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    animation: scaleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+  }
+  @keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .timer-ring {
+    width: 60px; height: 60px;
+    position: relative;
+    margin: 0 auto;
+  }
+  .timer-ring svg { transform: rotate(-90deg); }
+  .timer-ring .value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+  }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">11:04</span>
+    <div class="status-icons">
+      <i data-lucide="wifi" style="width:14px;height:14px"></i>
+      <i data-lucide="signal" style="width:14px;height:14px"></i>
+      <i data-lucide="battery-full" style="width:14px;height:14px"></i>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo"><i data-lucide="shield-check" style="width:20px;height:20px"></i></div>
+    <div>
+      <h1>AgeProof</h1>
+      <div class="subtitle">Verify once. Share everywhere. Zero PII.</div>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps" id="steps">
+    <div class="step-dot active" data-step="0">1</div>
+    <div class="step-line" data-line="0"></div>
+    <div class="step-dot" data-step="1">2</div>
+    <div class="step-line" data-line="1"></div>
+    <div class="step-dot" data-step="2">3</div>
+    <div class="step-line" data-line="2"></div>
+    <div class="step-dot" data-step="3">4</div>
+    <div class="step-line" data-line="3"></div>
+    <div class="step-dot" data-step="4">5</div>
+  </div>
+
+  <!-- Screen 1: ID Scan -->
+  <div class="screen active" id="screen-0">
+    <div class="section-label">Step 1 — Identity Document</div>
+    <div class="hero-text">Scan your <span class="highlight">government ID</span></div>
+    <div class="card-desc" style="margin-bottom:16px">Your ID never leaves this device. All processing happens locally using on-device ML.</div>
+
+    <div class="scan-area" id="scan-area" onclick="startScan()">
+      <div class="scan-line"></div>
+      <i data-lucide="credit-card" style="width:40px;height:40px"></i>
+      <span class="label" id="scan-label">Tap to scan ID</span>
+    </div>
+
+    <div class="privacy-row">
+      <span class="privacy-tag"><i data-lucide="lock" style="width:12px;height:12px"></i> Local only</span>
+      <span class="privacy-tag"><i data-lucide="eye-off" style="width:12px;height:12px"></i> No cloud</span>
+      <span class="privacy-tag"><i data-lucide="trash-2" style="width:12px;height:12px"></i> Deleted after</span>
+    </div>
+
+    <button class="btn btn-primary" id="btn-scan" onclick="startScan()">
+      <i data-lucide="scan" style="width:18px;height:18px"></i>
+      Begin ID Scan
+    </button>
+  </div>
+
+  <!-- Screen 2: Liveness -->
+  <div class="screen" id="screen-1">
+    <div class="section-label">Step 2 — Liveness Check</div>
+    <div class="hero-text">Prove you're <span class="highlight">really you</span></div>
+    <div class="card-desc" style="margin-bottom:8px">Follow the on-screen prompt. Selfie is compared locally and immediately deleted.</div>
+
+    <div class="face-circle" id="face-circle">
+      <i data-lucide="user" style="width:64px;height:64px;color:var(--text-muted)"></i>
+    </div>
+    <div class="face-instruction" id="face-instruction">Position your face in the circle</div>
+    <div class="face-challenge" id="face-challenge"></div>
+
+    <div class="progress-bar"><div class="fill" id="liveness-progress" style="width:0%"></div></div>
+
+    <button class="btn btn-primary" id="btn-liveness" onclick="startLiveness()">
+      <i data-lucide="camera" style="width:18px;height:18px"></i>
+      Start Liveness Check
+    </button>
+  </div>
+
+  <!-- Screen 3: Attestation -->
+  <div class="screen" id="screen-2">
+    <div class="section-label">Step 3 — Age Attestation</div>
+    <div class="hero-text">Your proof is <span class="highlight">ready</span></div>
+
+    <div class="attestation-card">
+      <i data-lucide="shield-check" style="width:32px;height:32px;color:var(--success);margin-bottom:8px"></i>
+      <div style="font-size:13px;color:var(--text-muted)">Age Bracket Verified</div>
+      <div class="badge badge-success">
+        <i data-lucide="check-circle" style="width:16px;height:16px"></i>
+        25 — 34
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">
+        Confirms: Over 18 and Over 21
+      </div>
+      <div class="key-hash">
+        att:ed25519:pk=<span id="pk-hash">7f3a..c9d2</span><br>
+        sig=<span id="sig-hash">a1b2..f8e9</span><br>
+        iat=2026-04-22T15:04:00Z &nbsp; exp=2026-07-22T15:04:00Z
+      </div>
+    </div>
+
+    <div class="privacy-row">
+      <span class="privacy-tag"><i data-lucide="fingerprint" style="width:12px;height:12px"></i> Ed25519 signed</span>
+      <span class="privacy-tag"><i data-lucide="clock" style="width:12px;height:12px"></i> 90-day expiry</span>
+      <span class="privacy-tag"><i data-lucide="ban" style="width:12px;height:12px"></i> No birthdate</span>
+    </div>
+
+    <button class="btn btn-success" onclick="goToScreen(3)">
+      <i data-lucide="share-2" style="width:18px;height:18px"></i>
+      Share AgeProof
+    </button>
+    <button class="btn btn-outline" onclick="goToScreen(4)" style="margin-top:8px">
+      <i data-lucide="globe" style="width:18px;height:18px"></i>
+      Simulate Website Verification
+    </button>
+  </div>
+
+  <!-- Screen 4: QR Share -->
+  <div class="screen" id="screen-3">
+    <div class="section-label">Share — QR Code</div>
+    <div class="hero-text">Let the site <span class="highlight">scan this</span></div>
+    <div class="card-desc" style="margin-bottom:8px">The website scans this QR to receive your age attestation. No personal data is transmitted.</div>
+
+    <div class="qr-container">
+      <div class="qr-grid" id="qr-grid"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:12px">
+      <div class="timer-ring">
+        <svg width="60" height="60">
+          <circle cx="30" cy="30" r="26" fill="none" stroke="var(--border)" stroke-width="4"/>
+          <circle cx="30" cy="30" r="26" fill="none" stroke="var(--accent)" stroke-width="4"
+            stroke-dasharray="163.36" stroke-dashoffset="40" stroke-linecap="round" id="timer-arc"/>
+        </svg>
+        <div class="value" id="timer-val">48</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px">seconds remaining</div>
+    </div>
+
+    <div class="card" style="text-align:center;margin-top:16px">
+      <div class="card-title" style="justify-content:center">
+        <i data-lucide="puzzle" style="width:16px;height:16px;color:var(--accent)"></i>
+        Browser Extension Available
+      </div>
+      <div class="card-desc">Install the AgeProof extension for one-click verification on any website — no QR needed.</div>
+    </div>
+
+    <button class="btn btn-outline" onclick="goToScreen(4)">
+      <i data-lucide="monitor" style="width:18px;height:18px"></i>
+      See Website Side
+    </button>
+  </div>
+
+  <!-- Screen 5: Site Confirmation -->
+  <div class="screen" id="screen-4">
+    <div class="section-label">Website View</div>
+    <div class="hero-text" style="margin-bottom:16px">Age verification <span class="highlight">complete</span></div>
+
+    <div class="site-view">
+      <div class="site-url-bar">
+        <i data-lucide="lock" class="lock" style="width:14px;height:14px"></i>
+        <span>example-store.com/age-restricted</span>
+      </div>
+
+      <div class="confirm-circle">
+        <i data-lucide="check" style="width:36px;height:36px;color:var(--success)"></i>
+      </div>
+
+      <div style="font-size:18px;font-weight:800;margin-bottom:4px">Age Verified</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Attestation received and validated</div>
+
+      <div style="background:var(--surface-2);border-radius:var(--radius-sm);padding:14px;text-align:left">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--text-muted)">Status</span>
+          <span style="font-size:12px;font-weight:700;color:var(--success)">Valid</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--text-muted)">Age Bracket</span>
+          <span style="font-size:12px;font-weight:700">25-34</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--text-muted)">Confirms</span>
+          <span style="font-size:12px;font-weight:700">18+, 21+</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--text-muted)">PII Received</span>
+          <span style="font-size:12px;font-weight:700;color:var(--success)">None</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:12px;color:var(--text-muted)">Expires</span>
+          <span style="font-size:12px;font-weight:700">Jul 22, 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;border-color:rgba(0,206,201,0.3)">
+      <div class="card-title">
+        <i data-lucide="shield" style="width:16px;height:16px;color:var(--success)"></i>
+        Privacy Summary
+      </div>
+      <div class="card-desc">
+        This website received a cryptographic proof that you are over 21. No name, birthdate, photo, or ID number was shared. Your attestation cannot be traced back to you.
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="goToScreen(0)">
+      <i data-lucide="rotate-ccw" style="width:18px;height:18px"></i>
+      Restart Demo
+    </button>
+  </div>
+</div>
+
+<script>
+let currentScreen = 0;
+
+function goToScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`screen-${n}`).classList.add('active');
+  currentScreen = n;
+  updateSteps(n);
+  lucide.createIcons();
+}
+
+function updateSteps(n) {
+  document.querySelectorAll('.step-dot').forEach(dot => {
+    const s = parseInt(dot.dataset.step);
+    dot.classList.remove('active','done');
+    if (s < n) dot.classList.add('done');
+    else if (s === n) dot.classList.add('active');
+  });
+  document.querySelectorAll('.step-line').forEach(line => {
+    const l = parseInt(line.dataset.line);
+    line.classList.toggle('done', l < n);
+  });
+}
+
+// ID Scan simulation
+function startScan() {
+  const area = document.getElementById('scan-area');
+  const label = document.getElementById('scan-label');
+  const btn = document.getElementById('btn-scan');
+  area.classList.add('scanning');
+  label.textContent = 'Scanning document...';
+  btn.disabled = true;
+  btn.style.opacity = 0.5;
+
+  setTimeout(() => {
+    area.classList.remove('scanning');
+    area.classList.add('complete');
+    label.textContent = 'ID scanned successfully';
+    btn.style.opacity = 1;
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="arrow-right" style="width:18px;height:18px"></i> Continue to Liveness Check';
+    btn.onclick = () => goToScreen(1);
+    btn.className = 'btn btn-success';
+    lucide.createIcons();
+  }, 3000);
+}
+
+// Liveness simulation
+function startLiveness() {
+  const circle = document.getElementById('face-circle');
+  const instruction = document.getElementById('face-instruction');
+  const challenge = document.getElementById('face-challenge');
+  const progress = document.getElementById('liveness-progress');
+  const btn = document.getElementById('btn-liveness');
+
+  circle.classList.add('active');
+  btn.disabled = true;
+  btn.style.opacity = 0.5;
+
+  const challenges = [
+    { text: 'Look left', pct: 25 },
+    { text: 'Smile', pct: 50 },
+    { text: 'Look up', pct: 75 },
+    { text: 'Blink slowly', pct: 100 },
+  ];
+
+  challenges.forEach((c, i) => {
+    setTimeout(() => {
+      challenge.textContent = c.text;
+      progress.style.width = c.pct + '%';
+    }, (i + 1) * 1200);
+  });
+
+  setTimeout(() => {
+    circle.classList.remove('active');
+    circle.classList.add('done');
+    instruction.textContent = 'Liveness confirmed';
+    challenge.textContent = '';
+    btn.style.opacity = 1;
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="arrow-right" style="width:18px;height:18px"></i> View Attestation';
+    btn.onclick = () => {
+      generateAttestation();
+      goToScreen(2);
+    };
+    btn.className = 'btn btn-success';
+    lucide.createIcons();
+  }, 5500);
+}
+
+// Generate fake attestation hashes
+function generateAttestation() {
+  const rand = (n) => [...Array(n)].map(()=>Math.floor(Math.random()*16).toString(16)).join('');
+  document.getElementById('pk-hash').textContent = rand(4) + '..' + rand(4);
+  document.getElementById('sig-hash').textContent = rand(4) + '..' + rand(4);
+}
+
+// Generate fake QR
+function generateQR() {
+  const grid = document.getElementById('qr-grid');
+  grid.innerHTML = '';
+  // Fixed corners + random middle
+  for (let i = 0; i < 225; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'qr-cell';
+    const row = Math.floor(i / 15);
+    const col = i % 15;
+    // Corner patterns (top-left, top-right, bottom-left)
+    const inCorner = (r, c) =>
+      (r < 5 && c < 5) || (r < 5 && c > 9) || (r > 9 && c < 5);
+    const isCornerBorder = (r, c, sr, sc) =>
+      (r === sr || r === sr+4 || c === sc || c === sc+4) &&
+      (r >= sr && r <= sr+4 && c >= sc && c <= sc+4);
+    const isCornerFill = (r, c, sr, sc) =>
+      r >= sr+1 && r <= sr+3 && c >= sc+1 && c <= sc+3;
+
+    if (inCorner(row, col)) {
+      let sr, sc;
+      if (row < 5 && col < 5) { sr = 0; sc = 0; }
+      else if (row < 5 && col > 9) { sr = 0; sc = 10; }
+      else { sr = 10; sc = 0; }
+      if (isCornerBorder(row, col, sr, sc) || isCornerFill(row, col, sr, sc)) {
+        cell.classList.remove('empty');
+      } else {
+        cell.classList.add('empty');
+      }
+    } else {
+      cell.classList.toggle('empty', Math.random() > 0.5);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+// Timer countdown
+let timerInterval;
+function startTimer() {
+  clearInterval(timerInterval);
+  let seconds = 60;
+  const val = document.getElementById('timer-val');
+  const arc = document.getElementById('timer-arc');
+  const totalDash = 163.36;
+  timerInterval = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) { clearInterval(timerInterval); seconds = 0; }
+    val.textContent = seconds;
+    arc.setAttribute('stroke-dashoffset', totalDash * (1 - seconds / 60));
+  }, 1000);
+}
+
+// Watch for screen changes to generate QR and start timer
+const observer = new MutationObserver(() => {
+  if (document.getElementById('screen-3').classList.contains('active')) {
+    generateQR();
+    startTimer();
+  }
+});
+observer.observe(document.getElementById('screen-3'), { attributes: true, attributeFilter: ['class'] });
+
+// Init
+lucide.createIcons();
+</script>
+</body>
+</html>
