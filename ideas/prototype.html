@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubAudit — Subscription Intelligence</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --text: #e4e4ed;
+    --text-dim: #8888a0;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00d68f;
+    --red: #ff6b6b;
+    --orange: #ffa502;
+    --blue: #54a0ff;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo span { color: var(--accent); }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .badge {
+    background: var(--accent);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Layout */
+  .app {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 57px);
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 16px 0;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+  .nav-item:hover, .nav-item.active {
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .nav-item.active {
+    border-left: 3px solid var(--accent);
+    color: var(--accent2);
+  }
+  .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+  /* Main */
+  .main {
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .page-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  /* Score Ring */
+  .score-section {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .score-ring {
+    width: 120px;
+    height: 120px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring circle {
+    fill: none;
+    stroke-width: 8;
+  }
+  .score-ring .bg { stroke: var(--surface2); }
+  .score-ring .fg { 
+    stroke: var(--green); 
+    stroke-linecap: round;
+    stroke-dasharray: 339.292;
+    stroke-dashoffset: 339.292;
+    transition: stroke-dashoffset 1.5s ease;
+  }
+  .score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--green);
+  }
+  .score-label {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* Stat cards */
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    flex: 1;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .stat-change {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .stat-change.up { color: var(--red); }
+  .stat-change.down { color: var(--green); }
+
+  /* Charts */
+  .chart-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .chart-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 160px;
+    padding-top: 16px;
+  }
+  .bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .bar {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    transition: height 1s ease;
+    position: relative;
+    cursor: pointer;
+  }
+  .bar:hover { opacity: 0.8; }
+  .bar-label {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .bar-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    margin-bottom: 4px;
+  }
+  .bar:hover .bar-tooltip { display: block; }
+
+  /* Subscription list */
+  .sub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sub-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sub-item:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+  .sub-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .sub-info { flex: 1; }
+  .sub-name { font-weight: 600; font-size: 14px; }
+  .sub-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .sub-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .sub-price { font-weight: 700; font-size: 16px; }
+  .sub-usage {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+  .usage-high { background: rgba(0,214,143,0.15); color: var(--green); }
+  .usage-low { background: rgba(255,165,2,0.15); color: var(--orange); }
+  .usage-zero { background: rgba(255,107,107,0.15); color: var(--red); }
+  .sub-cancel {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+  .sub-cancel:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  /* Overlap alert */
+  .alert-card {
+    background: linear-gradient(135deg, rgba(108,92,231,0.15), rgba(162,155,254,0.05));
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .alert-icon { font-size: 24px; }
+  .alert-title { font-weight: 600; margin-bottom: 4px; }
+  .alert-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+  .alert-action {
+    margin-top: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+  .alert-action:hover { opacity: 0.85; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--surface);
+    padding: 4px;
+    border-radius: 10px;
+    width: fit-content;
+  }
+  .tab {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    border: none;
+    background: none;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: white;
+  }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .score-section { flex-direction: column; }
+    .stats-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">⚡ <span>Sub</span>Audit</div>
+  <div class="header-right">
+    <span style="font-size:13px; color:var(--text-dim)">Last synced 2 min ago</span>
+    <div class="badge">PRO</div>
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">Y</div>
+  </div>
+</div>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="nav-item active"><span class="nav-icon">📊</span> Dashboard</div>
+    <div class="nav-item"><span class="nav-icon">📋</span> Subscriptions</div>
+    <div class="nav-item"><span class="nav-icon">🔍</span> Overlaps</div>
+    <div class="nav-item"><span class="nav-icon">💡</span> Optimizations</div>
+    <div class="nav-item"><span class="nav-icon">🚫</span> Cancel Helper</div>
+    <div class="nav-item"><span class="nav-icon">👥</span> Team</div>
+    <div class="nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+  </div>
+
+  <div class="main">
+    <div class="page-title">Dashboard</div>
+
+    <!-- Score + Stats -->
+    <div class="score-section">
+      <div class="score-card">
+        <div class="score-ring">
+          <svg width="120" height="120">
+            <circle class="bg" cx="60" cy="60" r="54"/>
+            <circle class="fg" cx="60" cy="60" r="54" id="scoreArc"/>
+          </svg>
+          <div class="score-value" id="scoreNum">0</div>
+        </div>
+        <div class="score-label">Subscription Score</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Monthly Spend</div>
+          <div class="stat-value">$247</div>
+          <div class="stat-change up">↑ $18 from last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Subs</div>
+          <div class="stat-value">19</div>
+          <div class="stat-change up">↑ 3 new this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Wasted</div>
+          <div class="stat-value" style="color:var(--red)">$64</div>
+          <div class="stat-change down">3 unused subs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Potential Savings</div>
+          <div class="stat-value" style="color:var(--green)">$89</div>
+          <div class="stat-change down">5 optimizations found</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlap Alert -->
+    <div class="alert-card">
+      <div class="alert-icon">🧠</div>
+      <div>
+        <div class="alert-title">3 overlapping subscriptions detected</div>
+        <div class="alert-desc">
+          You're paying for <strong>ChatGPT Plus ($20)</strong>, <strong> Claude Pro ($20)</strong>, and <strong>Gemini Advanced ($20)</strong>. 
+          Based on your usage, Claude handles 68% of your AI tasks. Consider downgrading ChatGPT and Gemini to free tiers — 
+          <strong>save $40/month</strong>.
+        </div>
+        <button class="alert-action">Review Optimizations →</button>
+      </div>
+    </div>
+
+    <!-- Spending Chart -->
+    <div class="chart-section">
+      <div class="chart-title">Monthly Spending Trend</div>
+      <div class="bar-chart" id="chart"></div>
+    </div>
+
+    <!-- Subscription List -->
+    <div class="tabs">
+      <button class="tab active" data-filter="all">All (19)</button>
+      <button class="tab" data-filter="unused">Unused (3)</button>
+      <button class="tab" data-filter="low">Low Usage (4)</button>
+      <button class="tab" data-filter="overlap">Overlapping (3)</button>
+    </div>
+
+    <div class="sub-list" id="subList"></div>
+  </div>
+</div>
+
+<script>
+// Subscription data
+const subscriptions = [
+  { name: 'Claude Pro', price: 20, icon: '🟣', color: '#6c5ce7', usage: 'high', category: 'AI', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'ChatGPT Plus', price: 20, icon: '🟢', color: '#00d68f', usage: 'low', category: 'AI', lastUsed: '5 days ago', freq: 'Weekly' },
+  { name: 'Gemini Advanced', price: 20, icon: '🔵', color: '#54a0ff', usage: 'zero', category: 'AI', lastUsed: '23 days ago', freq: 'Rarely' },
+  { name: 'Spotify Family', price: 17, icon: '🎵', color: '#1db954', usage: 'high', category: 'Streaming', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'Netflix', price: 15, icon: '🎬', color: '#e50914', usage: 'low', category: 'Streaming', lastUsed: '12 days ago', freq: 'Monthly' },
+  { name: 'YouTube Premium', price: 14, icon: '▶️', color: '#ff0000', usage: 'high', category: 'Streaming', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'iCloud+', price: 3, icon: '☁️', color: '#54a0ff', usage: 'high', category: 'Storage', lastUsed: 'Today', freq: 'Always' },
+  { name: 'GitHub Copilot', price: 10, icon: '🐙', color: '#888', usage: 'high', category: 'Dev', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'Cursor Pro', price: 20, icon: '💻', color: '#6c5ce7', usage: 'high', category: 'Dev', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'Figma', price: 15, icon: '🎨', color: '#a259ff', usage: 'low', category: 'Design', lastUsed: '9 days ago', freq: 'Biweekly' },
+  { name: 'Notion Team', price: 10, icon: '📝', color: '#eee', usage: 'high', category: 'Productivity', lastUsed: 'Today', freq: 'Daily' },
+  { name: '1Password', price: 3, icon: '🔑', color: '#54a0ff', usage: 'high', category: 'Security', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'Adobe CC', price: 55, icon: '🅰️', color: '#ff0000', usage: 'low', category: 'Design', lastUsed: '18 days ago', freq: 'Rarely' },
+  { name: 'Midjourney', price: 10, icon: '🖼️', color: '#fff', usage: 'zero', category: 'AI', lastUsed: '45 days ago', freq: 'Never' },
+  { name: 'Vercel Pro', price: 20, icon: '▲', color: '#eee', usage: 'high', category: 'Dev', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'Railway', price: 5, icon: '🚂', color: '#fff', usage: 'high', category: 'Dev', lastUsed: 'Today', freq: 'Daily' },
+  { name: 'Canva Pro', price: 13, icon: '🖌️', color: '#00c4cc', usage: 'zero', category: 'Design', lastUsed: '60 days ago', freq: 'Never' },
+  { name: 'Linear', price: 8, icon: '📐', color: '#5e6ad2', usage: 'low', category: 'Productivity', lastUsed: '7 days ago', freq: 'Weekly' },
+  { name: 'Disney+', price: 11, icon: '🏰', color: '#113ccf', usage: 'zero', category: 'Streaming', lastUsed: '30 days ago', freq: 'Never' },
+];
+
+// Animate score
+const SCORE = 67;
+const circumference = 2 * Math.PI * 54;
+setTimeout(() => {
+  const arc = document.getElementById('scoreArc');
+  const offset = circumference - (SCORE / 100) * circumference;
+  arc.style.strokeDashoffset = offset;
+  
+  let current = 0;
+  const interval = setInterval(() => {
+    current++;
+    document.getElementById('scoreNum').textContent = current;
+    if (current >= SCORE) clearInterval(interval);
+  }, 20);
+}, 300);
+
+// Render chart
+const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
+const values = [189, 195, 210, 229, 247, 247, 247];
+const chart = document.getElementById('chart');
+const maxVal = Math.max(...values);
+
+months.forEach((m, i) => {
+  const pct = (values[i] / maxVal) * 100;
+  const color = i === months.length - 1 ? 'var(--accent)' : 'var(--surface2)';
+  const group = document.createElement('div');
+  group.className = 'bar-group';
+  group.innerHTML = `
+    <div class="bar" style="height:${pct}%;background:${color};min-height:4px">
+      <div class="bar-tooltip">$${values[i]}/mo</div>
+    </div>
+    <div class="bar-label">${m}</div>
+  `;
+  chart.appendChild(group);
+});
+
+// Render subscriptions
+const list = document.getElementById('subList');
+function renderSubs(filter = 'all') {
+  list.innerHTML = '';
+  let filtered = subscriptions;
+  if (filter === 'unused') filtered = subscriptions.filter(s => s.usage === 'zero');
+  else if (filter === 'low') filtered = subscriptions.filter(s => s.usage === 'low');
+  else if (filter === 'overlap') filtered = subscriptions.filter(s => ['ChatGPT Plus','Gemini Advanced','Claude Pro'].includes(s.name));
+
+  filtered.sort((a, b) => {
+    const order = { zero: 0, low: 1, high: 2 };
+    return order[a.usage] - order[b.usage];
+  });
+
+  filtered.forEach(sub => {
+    const usageClass = `usage-${sub.usage}`;
+    const usageText = sub.usage === 'high' ? `Last: ${sub.lastUsed}` : 
+                      sub.usage === 'low' ? `Last: ${sub.lastUsed}` : 
+                      `Last: ${sub.lastUsed} ⚠️`;
+    
+    const item = document.createElement('div');
+    item.className = 'sub-item';
+    item.innerHTML = `
+      <div class="sub-icon" style="background:${sub.color}22;font-size:24px">${sub.icon}</div>
+      <div class="sub-info">
+        <div class="sub-name">${sub.name}</div>
+        <div class="sub-desc">${sub.category} · ${sub.freq}</div>
+      </div>
+      <div class="sub-meta">
+        <span class="sub-usage ${usageClass}">${usageText}</span>
+        <span class="sub-price">$${sub.price}/mo</span>
+        <button class="sub-cancel" onclick="this.textContent=this.textContent==='Cancel'?'Keep':'Cancel';this.style.borderColor=this.textContent==='Cancel'?'var(--red)':'var(--border)'">Cancel</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+renderSubs();
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderSubs(tab.dataset.filter);
+  });
+});
+</script>
+</body>
+</html>
