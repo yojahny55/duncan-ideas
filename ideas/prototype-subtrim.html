@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubTrim — Subscription Waste Detector</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --text: #e4e4ef;
+    --muted: #7a7a8f;
+    --red: #ff4d6a;
+    --red-dim: rgba(255,77,106,0.12);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,0.12);
+    --yellow: #fbbf24;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  
+  /* Header */
+  .header { padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--red), var(--purple)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-text span { color: var(--red); }
+  .header-right { display: flex; align-items: center; gap: 16px; color: var(--muted); font-size: 13px; }
+  .badge { background: var(--red-dim); color: var(--red); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+  /* Summary Cards */
+  .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 24px 32px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .card-value { font-size: 28px; font-weight: 700; }
+  .card-sub { font-size: 12px; margin-top: 4px; }
+  .card-sub.up { color: var(--red); }
+  .card-sub.down { color: var(--green); }
+
+  /* Main Content */
+  .main { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; padding: 0 32px 32px; }
+
+  /* Subscription List */
+  .section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .section-title .count { background: var(--surface2); color: var(--muted); padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+  
+  .sub-list { display: flex; flex-direction: column; gap: 8px; }
+  .sub-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; display: grid; grid-template-columns: 40px 1fr auto auto auto; align-items: center; gap: 14px; transition: border-color 0.2s; }
+  .sub-item:hover { border-color: #3a3a4f; }
+  .sub-item.waste { border-left: 3px solid var(--red); }
+  .sub-item.dupe { border-left: 3px solid var(--yellow); }
+  .sub-item.ok { border-left: 3px solid var(--green); }
+  
+  .sub-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .sub-name { font-weight: 600; font-size: 14px; }
+  .sub-category { font-size: 12px; color: var(--muted); }
+  .sub-price { font-weight: 600; font-size: 15px; text-align: right; }
+  .sub-frequency { font-size: 11px; color: var(--muted); text-align: right; }
+  .sub-status { font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; text-align: center; }
+  .status-waste { background: var(--red-dim); color: var(--red); }
+  .status-dupe { background: rgba(251,191,36,0.12); color: var(--yellow); }
+  .status-ok { background: var(--green-dim); color: var(--green); }
+
+  /* Side Panel */
+  .side-panel { display: flex; flex-direction: column; gap: 16px; }
+  .insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .insight-title { font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .insight-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .insight-item:last-child { border: none; }
+  .insight-item .label { color: var(--muted); }
+  .insight-item .value { font-weight: 600; }
+
+  .alert-card { background: linear-gradient(135deg, rgba(255,77,106,0.08), rgba(167,139,250,0.08)); border: 1px solid rgba(255,77,106,0.2); border-radius: 12px; padding: 18px; }
+  .alert-title { font-size: 14px; font-weight: 700; color: var(--red); margin-bottom: 6px; }
+  .alert-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .alert-text strong { color: var(--text); }
+
+  .savings-card { background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(96,165,250,0.08)); border: 1px solid rgba(52,211,153,0.2); border-radius: 12px; padding: 18px; }
+  .savings-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+  .savings-amount { font-size: 32px; font-weight: 800; color: var(--green); margin: 8px 0; }
+  .savings-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* Chart area */
+  .chart-bar { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin: 4px 0 8px; }
+  .chart-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+  /* Cancel button */
+  .btn-cancel { background: var(--red-dim); color: var(--red); border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-cancel:hover { background: var(--red); color: white; }
+  
+  .btn-save { background: var(--green-dim); color: var(--green); border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 12px; transition: all 0.2s; }
+  .btn-save:hover { background: var(--green); color: white; }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .sub-item { animation: fadeIn 0.3s ease forwards; opacity: 0; }
+  .sub-item:nth-child(1) { animation-delay: 0.05s; }
+  .sub-item:nth-child(2) { animation-delay: 0.1s; }
+  .sub-item:nth-child(3) { animation-delay: 0.15s; }
+  .sub-item:nth-child(4) { animation-delay: 0.2s; }
+  .sub-item:nth-child(5) { animation-delay: 0.25s; }
+  .sub-item:nth-child(6) { animation-delay: 0.3s; }
+  .sub-item:nth-child(7) { animation-delay: 0.35s; }
+  .sub-item:nth-child(8) { animation-delay: 0.4s; }
+  .sub-item:nth-child(9) { animation-delay: 0.45s; }
+  .sub-item:nth-child(10) { animation-delay: 0.5s; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .main { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .summary { grid-template-columns: 1fr; padding: 16px; }
+    .main { padding: 0 16px 16px; }
+    .header { padding: 16px; }
+    .sub-item { grid-template-columns: 36px 1fr auto; gap: 10px; }
+    .sub-frequency, .sub-status { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">✂️</div>
+    <div class="logo-text">Sub<span>Trim</span></div>
+  </div>
+  <div class="header-right">
+    <span>Last synced: 2 min ago</span>
+    <div class="badge">3 issues found</div>
+  </div>
+</div>
+
+<div class="summary">
+  <div class="card">
+    <div class="card-label">Monthly Spend</div>
+    <div class="card-value">$487</div>
+    <div class="card-sub up">↑ 23% from last month</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Annual Projection</div>
+    <div class="card-value">$5,844</div>
+    <div class="card-sub up">↑ $1,092 vs last year</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Active Subscriptions</div>
+    <div class="card-value">14</div>
+    <div class="card-sub" style="color:var(--muted)">3 unused, 2 duplicates</div>
+  </div>
+  <div class="card">
+    <div class="card-label">AI/API Spend</div>
+    <div class="card-value">$162</div>
+    <div class="card-sub up">↑ 89% — on pace to exceed budget</div>
+  </div>
+</div>
+
+<div class="main">
+  <div>
+    <div class="section-title">⚠️ Needs Attention <span class="count">5</span></div>
+    <div class="sub-list" id="attention-list"></div>
+
+    <div class="section-title" style="margin-top:24px;">✅ Healthy <span class="count">5</span></div>
+    <div class="sub-list" id="healthy-list"></div>
+  </div>
+
+  <div class="side-panel">
+    <div class="alert-card">
+      <div class="alert-title">🔥 AI Budget Alert</div>
+      <div class="alert-text">Your AI/API spend hit <strong>$162/mo</strong> — <strong>108%</strong> of your $150/mo budget. OpenAI is your biggest cost at <strong>$68/mo</strong>. Consider switching some GPT-4 calls to Gemini Flash.</div>
+    </div>
+
+    <div class="savings-card">
+      <div class="savings-title">Potential Savings</div>
+      <div class="savings-amount">$196/mo</div>
+      <div class="savings-text">Cancel 3 unused subscriptions and 2 duplicate tools. That's <strong>$2,352/year</strong> back in your pocket.</div>
+      <button class="btn-save" onclick="alert('This would generate cancelation emails for the flagged subscriptions.')">Trim Now →</button>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">📊 Spend by Category</div>
+      <div class="insight-item"><span class="label">AI / APIs</span><span class="value" style="color:var(--purple)">$162</span></div>
+      <div class="chart-bar"><div class="chart-fill" style="width:33%;background:var(--purple)"></div></div>
+      <div class="insight-item"><span class="label">Dev Tools</span><span class="value" style="color:var(--blue)">$124</span></div>
+      <div class="chart-bar"><div class="chart-fill" style="width:25%;background:var(--blue)"></div></div>
+      <div class="insight-item"><span class="label">Cloud / Hosting</span><span class="value" style="color:var(--green)">$89</span></div>
+      <div class="chart-bar"><div class="chart-fill" style="width:18%;background:var(--green)"></div></div>
+      <div class="insight-item"><span class="label">Productivity</span><span class="value" style="color:var(--yellow)">$62</span></div>
+      <div class="chart-bar"><div class="chart-fill" style="width:13%;background:var(--yellow)"></div></div>
+      <div class="insight-item"><span class="label">Streaming</span><span class="value">$50</span></div>
+      <div class="chart-bar"><div class="chart-fill" style="width:10%;background:var(--muted)"></div></div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">💡 Smart Swap</div>
+      <div class="alert-text" style="margin-bottom:8px;">You're paying for <strong>ChatGPT Plus ($20)</strong> + <strong>GitHub Copilot ($19)</strong> + <strong>Cursor Pro ($20)</strong>. Cursor includes AI chat — drop ChatGPT Plus and save <strong>$240/yr</strong>.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const attention = [
+  { name: 'ChatGPT Plus', cat: 'AI Tool', price: 20, freq: '/mo', icon: '🤖', color: '#10a37f', status: 'dupe', statusText: 'Duplicate', note: 'Overlaps with Cursor Pro' },
+  { name: 'Notion AI', cat: 'Productivity', price: 22, freq: '/mo', icon: '📝', color: '#fff', status: 'waste', statusText: 'Unused 47 days', note: 'Last login: Mar 12' },
+  { name: 'Midjourney', cat: 'AI Tool', price: 30, freq: '/mo', icon: '🎨', color: '#fff', status: 'waste', statusText: 'Unused 62 days', note: 'Last login: Feb 25' },
+  { name: 'OpenAI API', cat: 'AI / API', price: 68, freq: '/mo', icon: '⚡', color: '#412991', status: 'dupe', statusText: 'Budget Exceeded', note: '108% of $150/mo budget' },
+  { name: 'Adobe Creative Cloud', cat: 'Design', price: 55, freq: '/mo', icon: '🎭', color: '#ff0000', status: 'waste', statusText: 'Unused 30 days', note: 'Only using Photoshop' },
+];
+
+const healthy = [
+  { name: 'GitHub Copilot', cat: 'Dev Tool', price: 19, freq: '/mo', icon: '🐙', color: '#fff', status: 'ok', statusText: 'Active' },
+  { name: 'Cursor Pro', cat: 'Dev Tool', price: 20, freq: '/mo', icon: '💻', color: '#7c6aef', status: 'ok', statusText: 'Active' },
+  { name: 'Vercel Pro', cat: 'Cloud', price: 20, freq: '/mo', icon: '▲', color: '#fff', status: 'ok', statusText: 'Active' },
+  { name: 'Anthropic API', cat: 'AI / API', price: 45, freq: '/mo', icon: '🧠', color: '#d4a574', status: 'ok', statusText: 'Under budget' },
+  { name: 'YouTube Premium', cat: 'Streaming', price: 14, freq: '/mo', icon: '▶️', color: '#ff0000', status: 'ok', statusText: 'Active' },
+];
+
+function renderList(items, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = items.map(s => `
+    <div class="sub-item ${s.status}">
+      <div class="sub-icon" style="background:${s.color}22;color:${s.color === '#fff' ? 'var(--text)' : s.color}">${s.icon}</div>
+      <div>
+        <div class="sub-name">${s.name}</div>
+        <div class="sub-category">${s.cat}${s.note ? ' — ' + s.note : ''}</div>
+      </div>
+      <div>
+        <div class="sub-price">$${s.price}</div>
+        <div class="sub-frequency">${s.freq}</div>
+      </div>
+      <div class="sub-status status-${s.status}">${s.statusText}</div>
+      ${s.status !== 'ok' ? `<button class="btn-cancel" onclick="this.textContent='Email ready ✓';this.style.background='var(--green-dim)';this.style.color='var(--green)'">Cancel</button>` : ''}
+    </div>
+  `).join('');
+}
+
+renderList(attention, 'attention-list');
+renderList(healthy, 'healthy-list');
+</script>
+</body>
+</html>
