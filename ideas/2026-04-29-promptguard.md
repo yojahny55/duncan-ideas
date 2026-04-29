@@ -1,0 +1,114 @@
+# PromptGuard — AI Data Leak Prevention
+
+**Date:** 2026-04-29
+**Source Inspiration:** r/sysadmin (2.8k upvotes) — "Asked our head of sales if putting client addresses in ChatGPT was data sharing. She looked at me like I was the idiot."
+**Category:** Security / Enterprise SaaS
+
+---
+
+## Problem Statement
+
+Employees are copy-pasting sensitive data (PII, pricing, client addresses, internal strategy) into public AI tools like ChatGPT without realizing they're sharing data. Training doesn't stick because people genuinely don't perceive it as data sharing — they think they're just "asking for help with wording."
+
+Existing solutions (DLP tools, policy posters, training modules) fail because:
+1. They're **reactive** — detect leaks after they happen
+2. They **block workflows** — people just switch to personal devices
+3. They **assume malicious intent** — when the real issue is naivety
+
+## Solution
+
+**PromptGuard** is a browser extension + API gateway that intercepts AI prompts in real-time, detects sensitive data (PII, credentials, internal identifiers, financial data), and **rewrites the prompt** to remove sensitive details before it reaches the AI — while preserving the user's intent.
+
+### How It Works
+1. User types a prompt in ChatGPT/Claude/Gemini (or any AI tool)
+2. PromptGuard intercepts before submission
+3. Local ML model (or cloud API) detects sensitive entities
+4. Prompt is **auto-redacted** with placeholder tokens: `Hi [CLIENT_NAME], regarding the [DEAL_AMOUNT] proposal...`
+5. User sees a clean diff of what was redacted — one click to approve or edit
+6. Response comes back with placeholders that the user mentally maps back
+
+### Key Differentiator
+It doesn't **block** — it **enables safe use**. People keep their workflow. Security teams get audit logs.
+
+## Target Users
+
+### Primary
+- **Security teams / CISO** at mid-market companies (50-500 employees) who can't afford enterprise DLP but have real exposure
+- **IT admins** frustrated by training that doesn't work (literally the r/sysadmin poster)
+
+### Secondary
+- **Compliance officers** (HIPAA, SOC2, GDPR contexts)
+- **Managed Service Providers** who can resell to their client base
+
+### End Users (not buyers, but must not hate it)
+- Sales, marketing, support teams who use AI daily and don't want friction
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Browser Extension** | TypeScript + WXT framework (Chrome, Firefox, Edge) |
+| **Sensitive Data Detection** | Presidio (Microsoft) for PII + custom regex for business entities |
+| **Prompt Redaction Engine** | TypeScript library, LLM-assisted rewriting (optional) |
+| **Backend API** | Go (fast, low memory) — audit logging, policy management |
+| **Database** | PostgreSQL (audit logs, policies) + Redis (caching) |
+| **Dashboard** | React + Tailwind — for security teams to review incidents, set policies |
+| **Deployment** | Docker, deployable on-premise or cloud |
+| **CI/CD** | GitHub Actions |
+
+### Architecture
+```
+Browser Extension ←→ Local Proxy (optional) ←→ PromptGuard API ←→ Dashboard
+                                                           ↕
+                                                    Audit Log Store
+```
+
+## Monetization
+
+| Tier | Price | Features |
+|------|-------|----------|
+| **Free** | $0 | Browser extension, basic PII detection (email, phone, SSN), 100 prompts/month |
+| **Team** | $5/user/month | Custom entity detection, unlimited prompts, team dashboard, Slack alerts |
+| **Business** | $12/user/month | API gateway mode, SSO, SOC2 reports, on-premise option, custom redaction rules |
+| **Enterprise** | Custom | Full DLP integration, SIEM connectors, dedicated support, SLA |
+
+### Revenue Projections (Year 1)
+- 500 free users → 50 convert to Team ($2,500/mo)
+- 20 Business customers avg 25 seats ($6,000/mo)
+- **MRR target:** $8,500 by month 12
+
+## Competitive Landscape
+
+| Competitor | Weakness We Exploit |
+|-----------|-------------------|
+| Nightfall | Enterprise-focused, expensive, no browser extension |
+| Cyberhaven | Heavy agent-based, overkill for mid-market |
+| Prompt Security | New, VC-funded, likely to be expensive |
+| Native Copilot | Only works in MS ecosystem |
+
+## MVP Scope (4 weeks)
+
+1. **Week 1:** Browser extension scaffold + ChatGPT DOM interception
+2. **Week 2:** PII detection with Presidio + redaction logic
+3. **Week 3:** Simple dashboard (React) — prompt logs, redaction stats
+4. **Week 4:** Landing page + waitlist launch on r/sysadmin, r/cybersecurity
+
+## Name Ideas
+
+- PromptGuard ✅ (clear, professional)
+- RedactAI
+- SafePrompt
+- ScrubChat
+
+---
+
+## Reddit Thread Quotes (Validation)
+
+> "She looked at me like I was slow and said no, she's just asking for help with wording."
+> "Training clearly isnt landing. People genuinely dont see it as data sharing. Policy posters arent fixing this one"
+
+This confirms the core insight: **the problem isn't policy, it's UX**. Meet users where they are.
+
+---
+
+*Generated by Duncan ⚔️ — Daily App Ideas (Reddit-inspired)*

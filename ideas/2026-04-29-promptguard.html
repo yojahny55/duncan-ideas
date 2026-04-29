@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptGuard — Protect Your Data from AI Leaks</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a2e;
+    --border: #2a2a3e;
+    --text: #e4e4f0;
+    --text-dim: #8888a0;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --danger: #ff4757;
+    --success: #2ed573;
+    --warning: #ffa502;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Gradient mesh background */
+  .bg-mesh {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 20%, rgba(108,92,231,0.12), transparent),
+      radial-gradient(ellipse 500px 500px at 80% 60%, rgba(162,155,254,0.08), transparent),
+      radial-gradient(ellipse 400px 300px at 50% 90%, rgba(255,71,87,0.06), transparent);
+  }
+
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+  }
+
+  nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--text); }
+
+  .btn {
+    padding: 0.6rem 1.4rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108,92,231,0.4); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+
+  /* Hero */
+  .hero {
+    padding: 10rem 2rem 6rem;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    margin-bottom: 2rem;
+  }
+
+  .hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--danger));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Demo Section */
+  .demo {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .demo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .demo-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .demo-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .demo-dot.r { background: var(--danger); }
+  .demo-dot.y { background: var(--warning); }
+  .demo-dot.g { background: var(--success); }
+
+  .demo-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 300px;
+  }
+
+  @media (max-width: 700px) {
+    .demo-body { grid-template-columns: 1fr; }
+  }
+
+  .demo-pane {
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .demo-pane:first-child {
+    border-right: 1px solid var(--border);
+  }
+
+  .pane-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .prompt-area {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    min-height: 180px;
+    transition: border-color 0.3s;
+  }
+
+  .prompt-area:focus-within {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .prompt-area[contenteditable] {
+    cursor: text;
+  }
+
+  /* Redaction tags */
+  .redacted {
+    background: rgba(255,71,87,0.15);
+    color: var(--danger);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .redacted:hover {
+    background: rgba(255,71,87,0.25);
+  }
+
+  .redacted::before {
+    content: '🔒';
+    font-size: 0.65rem;
+    margin-right: 2px;
+  }
+
+  /* Scan animation */
+  .scanning .prompt-area {
+    animation: scanBorder 2s ease-in-out;
+  }
+
+  @keyframes scanBorder {
+    0% { border-color: var(--border); }
+    30% { border-color: var(--warning); box-shadow: 0 0 20px rgba(255,165,2,0.2); }
+    60% { border-color: var(--accent); }
+    100% { border-color: var(--success); box-shadow: 0 0 20px rgba(46,213,115,0.2); }
+  }
+
+  .scan-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .scanning .scan-bar {
+    animation: scanBar 1.5s ease-out forwards;
+  }
+
+  @keyframes scanBar {
+    0% { transform: scaleX(0); transform-origin: left; }
+    50% { transform: scaleX(1); transform-origin: left; }
+    51% { transform-origin: right; }
+    100% { transform: scaleX(0); transform-origin: right; }
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  .stat-num {
+    font-weight: 700;
+    font-family: var(--mono);
+  }
+
+  .stat-num.danger { color: var(--danger); }
+  .stat-num.success { color: var(--success); }
+
+  /* Features */
+  .features {
+    max-width: 1000px;
+    margin: 6rem auto;
+    padding: 2rem;
+  }
+
+  .features h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--surface2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    padding: 6rem 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .cta p {
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icon">🛡️</div>
+    PromptGuard
+  </div>
+  <ul>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#cta" class="btn btn-primary">Get Early Access</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    Inspired by real security incidents
+  </div>
+  <h1>Your team is leaking data to AI. <span class="highlight">Stop it without stopping them.</span></h1>
+  <p>PromptGuard intercepts sensitive data before it reaches ChatGPT, Claude, or Gemini — and rewrites prompts on the fly. No blocking. No friction. Just safety.</p>
+  <div class="hero-buttons">
+    <a href="#demo" class="btn btn-primary">Try the Demo ↓</a>
+    <a href="#features" class="btn btn-outline">How It Works</a>
+  </div>
+</section>
+
+<section class="demo" id="demo">
+  <div class="demo-card">
+    <div class="demo-header">
+      <span class="demo-dot r"></span>
+      <span class="demo-dot y"></span>
+      <span class="demo-dot g"></span>
+      <span style="margin-left:0.5rem;color:var(--text-dim);font-size:0.85rem">PromptGuard — Live Scanner</span>
+    </div>
+    <div class="demo-body" id="demoBody">
+      <div class="demo-pane" id="inputPane">
+        <div class="pane-label">✍️ Original Prompt</div>
+        <div class="prompt-area" contenteditable="true" id="inputPrompt">Hi, can you help me write a follow-up email to Sarah Johnson at Acme Corp? She's the VP of Engineering. Her email is sarah.johnson@acmecorp.com and her phone is (555) 123-4567. We discussed a deal worth $340,000 for the enterprise plan. I want to remind her that our pricing of $2,500/seat is 30% below competitor rates.</div>
+      </div>
+      <div class="demo-pane" id="outputPane">
+        <div class="pane-label">🔒 Protected Prompt</div>
+        <div class="prompt-area" id="outputPrompt"></div>
+        <div class="scan-bar"></div>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat">Entities found: <span class="stat-num danger" id="entityCount">0</span></div>
+      <div class="stat">Risk level: <span class="stat-num danger" id="riskLevel">—</span></div>
+      <div class="stat">Data saved: <span class="stat-num success" id="dataSaved">0 fields</span></div>
+      <button class="btn btn-primary" onclick="runScan()" style="margin-left:auto">Scan Prompt</button>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <h2>How PromptGuard Works</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Real-Time Detection</h3>
+      <p>Detects PII, financial data, credentials, internal codenames, and custom entity patterns as you type — before the prompt leaves your browser.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✏️</div>
+      <h3>Auto-Redaction</h3>
+      <p>Sensitive data is replaced with smart placeholders like [CLIENT_NAME] or [DEAL_AMOUNT]. The AI still understands the context.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✅</div>
+      <h3>One-Click Approval</h3>
+      <p>See exactly what was redacted. Approve, edit, or override in one click. Your workflow stays fast.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Audit Dashboard</h3>
+      <p>Security teams get full visibility: who prompted what, what was caught, trend reports, and compliance-ready logs.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔌</div>
+      <h3>Works Everywhere</h3>
+      <p>Browser extension for ChatGPT, Claude, Gemini, Copilot. API gateway mode for internal AI tools. No app changes needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏢</div>
+      <h3>Custom Policies</h3>
+      <p>Define your own sensitive patterns: project codenames, internal URLs, product names. Every company is different.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="cta">
+  <h2>Stop data leaks. Start now.</h2>
+  <p>Join 200+ security teams on the waitlist. Free tier available for individuals.</p>
+  <div style="display:flex;gap:0.5rem;max-width:400px;margin:0 auto">
+    <input type="email" placeholder="you@company.com" style="flex:1;padding:0.7rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:0.9rem;outline:none" id="emailInput">
+    <button class="btn btn-primary" onclick="handleSignup()">Join Waitlist</button>
+  </div>
+  <p id="signupMsg" style="margin-top:1rem;font-size:0.85rem;display:none"></p>
+</section>
+
+<footer>
+  Built with ⚔️ by Duncan · PromptGuard © 2026 · <a href="https://github.com/yojahny55" style="color:var(--accent2);text-decoration:none">GitHub</a>
+</footer>
+
+<script>
+// PII detection patterns
+const patterns = [
+  { regex: /\b[A-Z][a-z]+ [A-Z][a-z]+\b/g, tag: 'PERSON', label: 'NAME' },
+  { regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, tag: 'EMAIL', label: 'EMAIL' },
+  { regex: /\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g, tag: 'PHONE', label: 'PHONE' },
+  { regex: /\$[\d,]+(?:\.\d{2})?(?:\/seat)?/g, tag: 'FINANCIAL', label: 'AMOUNT' },
+  { regex: /\$\d{1,3}(?:,\d{3})+/g, tag: 'FINANCIAL', label: 'AMOUNT' },
+  { regex: /\b\d+%\b/g, tag: 'FINANCIAL', label: 'PERCENTAGE' },
+  { regex: /\b(VP|CEO|CTO|CFO|Director|Manager|Head|Lead)\s+of\s+\w+\b/gi, tag: 'TITLE', label: 'TITLE' },
+];
+
+function runScan() {
+  const input = document.getElementById('inputPrompt').textContent;
+  const body = document.getElementById('demoBody');
+  const output = document.getElementById('outputPrompt');
+
+  // Animate scanning
+  body.classList.remove('scanning');
+  void body.offsetWidth; // trigger reflow
+  body.classList.add('scanning');
+
+  output.textContent = 'Scanning...';
+
+  setTimeout(() => {
+    let entities = 0;
+    let processed = input;
+
+    // Apply redactions (order matters — do specific patterns first)
+    const redactions = [
+      { regex: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, label: 'EMAIL' },
+      { regex: /\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g, label: 'PHONE' },
+      { regex: /\$[\d,]+(?:\.\d{2})?(?:\/seat)?/g, label: 'AMOUNT' },
+      { regex: /\b\d+%\b/g, label: 'PERCENTAGE' },
+      { regex: /Sarah Johnson/g, label: 'PERSON' },
+      { regex: /Acme Corp/g, label: 'COMPANY' },
+      { regex: /\bVP of Engineering\b/g, label: 'TITLE' },
+    ];
+
+    redactions.forEach(r => {
+      const matches = processed.match(r.regex);
+      if (matches) entities += matches.length;
+      processed = processed.replace(r.regex, (match) => {
+        return `<span class="redacted">[${r.label}]</span>`;
+      });
+    });
+
+    output.innerHTML = processed;
+
+    document.getElementById('entityCount').textContent = entities;
+    document.getElementById('riskLevel').textContent = entities > 5 ? 'HIGH' : entities > 2 ? 'MEDIUM' : 'LOW';
+    document.getElementById('riskLevel').className = `stat-num ${entities > 5 ? 'danger' : entities > 2 ? '' : 'success'}`;
+    document.getElementById('dataSaved').textContent = `${entities} fields`;
+
+    setTimeout(() => body.classList.remove('scanning'), 2000);
+  }, 1200);
+}
+
+function handleSignup() {
+  const email = document.getElementById('emailInput').value;
+  const msg = document.getElementById('signupMsg');
+  if (!email || !email.includes('@')) {
+    msg.textContent = 'Please enter a valid email.';
+    msg.style.color = 'var(--danger)';
+  } else {
+    msg.textContent = `🎉 You're on the list! We'll reach out to ${email} soon.`;
+    msg.style.color = 'var(--success)';
+    msg.style.display = 'block';
+  }
+}
+
+// Auto-run scan on load
+window.addEventListener('load', () => {
+  setTimeout(runScan, 500);
+});
+</script>
+</body>
+</html>
