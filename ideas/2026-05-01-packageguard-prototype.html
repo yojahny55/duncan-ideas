@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PackageGuard — AI Dependency Validator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a3a;
+    --text: #e4e4ef;
+    --muted: #7a7a9a;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --orange: #f97316;
+    --blue: #3b82f6;
+  }
+  body { font-family: 'SF Mono', 'Fira Code', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
+  
+  header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
+  header .logo { font-size: 1.25rem; font-weight: 700; }
+  header .logo span { color: var(--green); }
+  header .badge { background: var(--surface2); color: var(--muted); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.7rem; }
+  
+  .container { max-width: 960px; margin: 2rem auto; padding: 0 2rem; }
+  
+  .input-section { margin-bottom: 2rem; }
+  .input-section label { display: block; color: var(--muted); font-size: 0.8rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  textarea {
+    width: 100%; height: 140px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem; color: var(--text); font-family: inherit; font-size: 0.85rem;
+    resize: vertical; outline: none; transition: border 0.2s;
+  }
+  textarea:focus { border-color: var(--blue); }
+  
+  .actions { display: flex; gap: 0.75rem; margin-top: 0.75rem; }
+  button {
+    padding: 0.6rem 1.2rem; border: none; border-radius: 6px; font-family: inherit;
+    font-size: 0.85rem; cursor: pointer; font-weight: 600; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--green); color: #000; }
+  .btn-primary:hover { filter: brightness(1.15); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--muted); }
+  
+  .results { margin-top: 1.5rem; }
+  .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .results-header h2 { font-size: 1rem; font-weight: 600; }
+  .summary { display: flex; gap: 1rem; }
+  .summary span { font-size: 0.8rem; }
+  .summary .safe { color: var(--green); }
+  .summary .warn { color: var(--yellow); }
+  .summary .danger { color: var(--red); }
+  
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.25rem; margin-bottom: 0.5rem; display: grid;
+    grid-template-columns: auto 1fr auto auto; align-items: center; gap: 1rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--muted); }
+  .card.danger { border-left: 3px solid var(--red); }
+  .card.warn { border-left: 3px solid var(--yellow); }
+  .card.safe { border-left: 3px solid var(--green); }
+  
+  .status-icon { font-size: 1.2rem; }
+  .card-info { min-width: 0; }
+  .card-info .name { font-weight: 600; font-size: 0.9rem; }
+  .card-info .detail { color: var(--muted); font-size: 0.75rem; margin-top: 0.15rem; }
+  .card-info .suggestion { color: var(--blue); font-size: 0.75rem; margin-top: 0.25rem; }
+  
+  .trust-score { text-align: center; min-width: 60px; }
+  .trust-score .score { font-size: 1.1rem; font-weight: 700; }
+  .trust-score .label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; }
+  
+  .registry-badge { font-size: 0.65rem; padding: 0.15rem 0.4rem; border-radius: 3px; background: var(--surface2); color: var(--muted); }
+  
+  .empty-state { text-align: center; padding: 3rem; color: var(--muted); }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  
+  .sample-btns { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+  .sample-btn { font-size: 0.7rem; padding: 0.3rem 0.6rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--muted); cursor: pointer; }
+  .sample-btn:hover { color: var(--text); border-color: var(--muted); }
+  
+  @media (max-width: 640px) {
+    .container { padding: 0 1rem; }
+    .card { grid-template-columns: auto 1fr auto; }
+    .registry-badge { display: none; }
+    .summary { flex-direction: column; gap: 0.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Package<span>Guard</span></div>
+  <span class="badge">v0.1 MVP</span>
+</header>
+
+<div class="container">
+  <div class="input-section">
+    <label>Paste AI-generated code, package.json, or requirements.txt</label>
+    <textarea id="input" placeholder="import reacth from 'react-hyperscriptive'
+const axios2 = require('axois')
+from fastapi_utils import camelcase
+import { createStor } from 'redax'"></textarea>
+    <div class="sample-btns">
+      <button class="sample-btn" onclick="loadSample('node')">Node.js sample</button>
+      <button class="sample-btn" onclick="loadSample('python')">Python sample</button>
+      <button class="sample-btn" onclick="loadSample('mixed')">Mixed AI output</button>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" onclick="scan()">⚔️ Scan Dependencies</button>
+      <button class="btn-secondary" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+  
+  <div class="results" id="results">
+    <div class="empty-state">
+      <div class="icon">🛡️</div>
+      <p>Paste code and scan to validate dependencies</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Simulated package database
+const DB = {
+  // Real packages
+  'react': { exists: true, downloads: '25M/week', age: '10 years', trust: 98, registry: 'npm' },
+  'express': { exists: true, downloads: '30M/week', age: '11 years', trust: 97, registry: 'npm' },
+  'axios': { exists: true, downloads: '45M/week', age: '8 years', trust: 95, registry: 'npm' },
+  'lodash': { exists: true, downloads: '50M/week', age: '12 years', trust: 96, registry: 'npm' },
+  'next': { exists: true, downloads: '7M/week', age: '7 years', trust: 96, registry: 'npm' },
+  'typescript': { exists: true, downloads: '40M/week', age: '12 years', trust: 99, registry: 'npm' },
+  'fastapi': { exists: true, downloads: '15M/month', age: '5 years', trust: 97, registry: 'pypi' },
+  'requests': { exists: true, downloads: '200M/month', age: '13 years', trust: 98, registry: 'pypi' },
+  'numpy': { exists: true, downloads: '100M/month', age: '18 years', trust: 99, registry: 'pypi' },
+  'pandas': { exists: true, downloads: '80M/month', age: '16 years', trust: 98, registry: 'pypi' },
+  'django': { exists: true, downloads: '12M/month', age: '19 years', trust: 97, registry: 'pypi' },
+  'flask': { exists: true, downloads: '25M/month', age: '14 years', trust: 96, registry: 'pypi' },
+  'redis': { exists: true, downloads: '5M/week', age: '10 years', trust: 94, registry: 'pypi' },
+  'redux': { exists: true, downloads: '8M/week', age: '9 years', trust: 95, registry: 'npm' },
+  'vue': { exists: true, downloads: '5M/week', age: '10 years', trust: 96, registry: 'npm' },
+  'tailwindcss': { exists: true, downloads: '10M/week', age: '7 years', trust: 96, registry: 'npm' },
+  'prisma': { exists: true, downloads: '3M/week', age: '6 years', trust: 94, registry: 'npm' },
+  'zod': { exists: true, downloads: '12M/week', age: '5 years', trust: 95, registry: 'npm' },
+  
+  // Known fake/hallucinated packages (based on real AI hallucination patterns)
+  'react-hyperscriptive': { exists: false, closest: 'react', note: 'Hallucinated — no such package' },
+  'axois': { exists: false, closest: 'axios', note: 'Typosquat — AI hallucinated spelling' },
+  'fastapi-utils': { exists: false, closest: 'fastapi', note: 'Hallucinated submodule' },
+  'redax': { exists: false, closest: 'redux', note: 'Typosquat — AI misspelling' },
+  'node-orm3': { exists: false, closest: 'prisma', note: 'Hallucinated ORM package' },
+  'python-graphql-client': { exists: false, closest: 'gql', note: 'Hallucinated — multiple similar fakes reported' },
+  'express-middleware-utils': { exists: false, closest: 'express', note: 'Hallucinated utility package' },
+  'react-server-components': { exists: false, closest: 'next', note: 'Hallucinated — not a real package' },
+  'ai-prompts': { exists: false, closest: 'langchain', note: 'Hallucinated AI helper' },
+  'cloud-storage-sync': { exists: false, closest: '@google-cloud/storage', note: 'Hallucinated cloud util' },
+};
+
+const samples = {
+  node: `import { createServer } from 'express-middleware-utils';
+const axios2 = require('axois');
+import { createStore } from 'redax';
+import aiPrompts from 'ai-prompts';
+require('react-hyperscriptive');`,
+  python: `from fastapi_utils import camelcase
+import python_graphql_client
+from clod_storage_sync import sync_bucket
+import requestss`,
+  mixed: `import express from 'express';
+import { validate } from 'zod';
+const fake = require('axois');
+from fastapi_utils import camelcase
+import { createStor } from 'redax';
+import prisma from 'prisma';
+import aiPrompts from 'ai-prompts';`
+};
+
+function loadSample(type) {
+  document.getElementById('input').value = samples[type];
+}
+
+function extractDeps(text) {
+  const deps = new Set();
+  // JS/TS patterns
+  text.match(/(?:import|require)\s*(?:[\w{}\s,]*\s+from\s+)?['"]([^'"]+)['"]/g)?.forEach(m => {
+    const pkg = m.match(/['"]([^'"]+)['"]/)?.[1];
+    if (pkg) deps.add(pkg.replace(/^@[^/]+\//, '').split('/')[0]); // strip scope and subpath
+  });
+  // Python patterns
+  text.match(/(?:from|import)\s+([a-zA-Z_][\w-]*)/g)?.forEach(m => {
+    const mod = m.match(/(?:from|import)\s+([a-zA-Z_][\w-]*)/)?.[1];
+    if (mod && !['from','import','const','let','var','true','false','null','undefined'].includes(mod)) deps.add(mod);
+  });
+  return [...deps];
+}
+
+function scan() {
+  const text = document.getElementById('input').value.trim();
+  if (!text) return;
+  
+  const deps = extractDeps(text);
+  const resultsEl = document.getElementById('results');
+  
+  let safe = 0, warn = 0, danger = 0;
+  let cards = '';
+  
+  deps.forEach(dep => {
+    const lower = dep.toLowerCase();
+    const info = DB[lower];
+    
+    if (info?.exists) {
+      safe++;
+      const scoreColor = info.trust >= 95 ? 'var(--green)' : info.trust >= 80 ? 'var(--yellow)' : 'var(--orange)';
+      cards += `
+        <div class="card safe">
+          <div class="status-icon">✅</div>
+          <div class="card-info">
+            <div class="name">${dep}</div>
+            <div class="detail">${info.downloads} · ${info.age} old</div>
+          </div>
+          <div class="trust-score">
+            <div class="score" style="color:${scoreColor}">${info.trust}</div>
+            <div class="label">Trust</div>
+          </div>
+          <span class="registry-badge">${info.registry}</span>
+        </div>`;
+    } else {
+      const fakeInfo = info || { closest: '?', note: 'Unknown package — verify manually' };
+      danger++;
+      cards += `
+        <div class="card danger">
+          <div class="status-icon">🚫</div>
+          <div class="card-info">
+            <div class="name">${dep}</div>
+            <div class="detail">${fakeInfo.note}</div>
+            ${fakeInfo.closest !== '?' ? `<div class="suggestion">💡 Did you mean: <strong>${fakeInfo.closest}</strong>?</div>` : ''}
+          </div>
+          <div class="trust-score">
+            <div class="score" style="color:var(--red)">0</div>
+            <div class="label">Trust</div>
+          </div>
+          <span class="registry-badge">${info ? (info.note.includes('Typosquat') ? 'npm/pypi' : 'npm/pypi') : '?'}</span>
+        </div>`;
+    }
+  });
+  
+  resultsEl.innerHTML = `
+    <div class="results-header">
+      <h2>Scan Results</h2>
+      <div class="summary">
+        <span class="safe">${safe} verified</span>
+        <span class="warn">${warn} uncertain</span>
+        <span class="danger">${danger} hallucinated</span>
+      </div>
+    </div>
+    ${cards}
+    ${danger > 0 ? `<div class="card warn" style="margin-top:1rem; grid-template-columns: auto 1fr;">
+      <div class="status-icon">⚠️</div>
+      <div class="card-info">
+        <div class="name">AI Hallucination Detected</div>
+        <div class="detail">${danger} package(s) likely hallucinated by AI. Fix before committing.</div>
+      </div>
+    </div>` : ''}
+  `;
+}
+
+function clearAll() {
+  document.getElementById('input').value = '';
+  document.getElementById('results').innerHTML = '<div class="empty-state"><div class="icon">🛡️</div><p>Paste code and scan to validate dependencies</p></div>';
+}
+</script>
+</body>
+</html>
