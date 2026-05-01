@@ -32,6 +32,9 @@ ideas/
 
 ## Ideas Index
 
+| 2026-04-30 | [RecallShield](ideas/2026-04-30-recallshield-product-recalls/) | Personal product recall monitor — register what you own (barcode scan, photo, email import), get matched recall alerts from CPSC/FDA/NHTSA/USDA/EPA. 400+ recalls/month in the US, only 15-20% of recalled products are ever returned. Severity-rated alerts (🔴 Critical → 🟢 Info), step-by-step remedy wizard with deadline tracking, vehicle VIN lookup, pantry scan mode for food recalls, household sharing. Nobody aggregates all recall sources and matches to your inventory — everything else is either a firehose, single-category, or single-retailer. Free 20 products, $3.99/mo Shield, $6.99/mo Family. $0-7/mo | Web (CPSC, FDA, Product Hunt, Reddit) | ✅ [Demo](https://yojahny55.github.io/duncan-ideas/ideas/2026-04-30-recallshield-product-recalls/prototype/index.html) |
+|------|------|-------------|--------|-----------|
+
 | 2026-04-27 | [PacePal](ideas/2026-04-27-pacepal-run-buddy/) | Find running partners at your exact pace — pace-first matching for 60M+ US runners who run alone. Set your pace (8:45–9:15/mi), your schedule (Tue/Thu 6am, Sat 8am), your vibe (silent/chatty/intervals/recovery), and get matched with runners nearby. Travel mode for finding buddies in new cities. Group runs (3–5 people at similar pace). Strava/Garmin/Apple Health sync for real pace data. Safety features: verified phone, live location sharing, "home by" check-in. 70% of runners go solo, 88% want a buddy, zero apps match by pace. Free 3 matches/week, $4.99/mo Pro, $9.99/mo Premium. $0-10/mo | Web (Product Hunt, Reddit r/running) | ✅ [Demo](https://yojahny55.github.io/duncan-ideas/ideas/2026-04-27-pacepal-run-buddy/prototype/index.html) |
 |------|------|-------------|--------|-----------|
 

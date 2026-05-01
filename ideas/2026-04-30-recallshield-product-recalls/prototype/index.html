@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecallShield — Personal Product Recall Monitor</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1e293b;
+    --border: #2d3748;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --primary: #f59e0b;
+    --primary-dim: rgba(245,158,11,0.15);
+    --danger: #ef4444;
+    --danger-dim: rgba(239,68,68,0.12);
+    --warning: #f59e0b;
+    --success: #10b981;
+    --success-dim: rgba(16,185,129,0.12);
+    --info: #3b82f6;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--primary), #d97706);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .icon-btn:hover { background: var(--border); color: var(--text); }
+  .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 18px;
+    height: 18px;
+    background: var(--danger);
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    padding: 0 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* Content */
+  .content { padding: 16px 20px 100px; max-width: 600px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Stats Bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-num.danger { color: var(--danger); }
+  .stat-num.warning { color: var(--warning); }
+  .stat-num.success { color: var(--success); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  /* Alert Banner */
+  .alert-banner {
+    background: var(--danger-dim);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    50% { box-shadow: 0 0 20px rgba(239,68,68,0.15); }
+  }
+  .alert-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .alert-content h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--danger);
+    margin-bottom: 4px;
+  }
+  .alert-content p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+  .alert-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .btn-sm {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-danger {
+    background: var(--danger);
+    color: white;
+  }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface2); }
+
+  /* Section */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .section-link {
+    font-size: 13px;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* Recall Card */
+  .recall-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .recall-card:hover { border-color: var(--primary); transform: translateY(-1px); }
+  .recall-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .severity {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .severity.critical { background: var(--danger-dim); color: var(--danger); }
+  .severity.advisory { background: var(--primary-dim); color: var(--warning); }
+  .severity.info { background: var(--success-dim); color: var(--success); }
+  .recall-date {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .recall-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .recall-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+  .recall-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .recall-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  .recall-remedy {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Product Card */
+  .product-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .product-card:hover { border-color: var(--primary); }
+  .product-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .product-info { flex: 1; min-width: 0; }
+  .product-name {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .product-brand {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .product-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .status-safe { background: var(--success-dim); color: var(--success); }
+  .status-flagged { background: var(--danger-dim); color: var(--danger); }
+
+  /* Add Product Button */
+  .add-btn {
+    width: 100%;
+    padding: 14px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .add-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-dim);
+  }
+
+  /* FAB */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #d97706);
+    color: #000;
+    font-size: 28px;
+    font-weight: 300;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s;
+    z-index: 50;
+  }
+  .fab:hover { transform: scale(1.1); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius) var(--radius) 0 0;
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 20px;
+    animation: slide-up 0.2s ease-out;
+  }
+  @keyframes slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .modal h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .input-group { margin-bottom: 14px; }
+  .input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .input:focus { border-color: var(--primary); }
+  .input::placeholder { color: var(--text-dim); }
+  .scan-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .scan-option {
+    padding: 16px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .scan-option:hover { border-color: var(--primary); background: var(--primary-dim); }
+  .scan-option .icon { font-size: 28px; margin-bottom: 6px; }
+  .scan-option .label { font-size: 12px; font-weight: 600; }
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary), #d97706);
+    color: #000;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+
+  /* Remedy Tracker */
+  .remedy-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .remedy-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+  .progress-fill.complete { background: var(--success); }
+  .progress-fill.pending { background: var(--warning); }
+  .progress-fill.overdue { background: var(--danger); }
+  .progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 50px;
+    text-align: right;
+  }
+  .remedy-steps {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .step {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface2);
+  }
+  .step.done { background: var(--success); }
+  .step.current { background: var(--primary); }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+  }
+  .empty .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+  .empty h3 { font-size: 16px; color: var(--text); margin-bottom: 6px; }
+  .empty p { font-size: 13px; line-height: 1.5; }
+
+  /* Vin lookup */
+  .vin-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .vin-result {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    display: none;
+  }
+  .vin-result.show { display: block; }
+  .vehicle-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .vehicle-icon { font-size: 36px; }
+  .vehicle-details h4 { font-size: 14px; font-weight: 700; }
+  .vehicle-details p { font-size: 12px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🛡️</div>
+    RecallShield
+  </div>
+  <div class="header-actions">
+    <div class="icon-btn" onclick="showSearch()">🔍</div>
+    <div class="icon-btn" onclick="showNotifications()">
+      🔔
+      <span class="badge">3</span>
+    </div>
+    <div class="icon-btn" onclick="toggleSettings()">⚙️</div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('alerts')">Alerts</div>
+  <div class="tab" onclick="switchTab('products')">My Products</div>
+  <div class="tab" onclick="switchTab('remedies')">Remedies</div>
+  <div class="tab" onclick="switchTab('vehicle')">Vehicle</div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Alerts Panel -->
+  <div class="panel active" id="panel-alerts">
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-num danger">2</div>
+        <div class="stat-label">Active</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num warning">87</div>
+        <div class="stat-label">Products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num success">14</div>
+        <div class="stat-label">Resolved</div>
+      </div>
+    </div>
+
+    <div class="alert-banner">
+      <div class="alert-icon">🚨</div>
+      <div class="alert-content">
+        <h3>URGENT: Fire Hazard</h3>
+        <p>Your De'Longhi PACEX340 Pinguino portable AC has been recalled due to internal condensation causing fire risk. 7 injuries reported.</p>
+        <div class="alert-actions">
+          <button class="btn-sm btn-danger" onclick="openRemedy('delonghi')">View Remedy →</button>
+          <button class="btn-sm btn-ghost">Dismiss</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Recent Recalls</div>
+      <div class="section-link">View all →</div>
+    </div>
+
+    <div class="recall-card" onclick="openRecallDetail('purina')">
+      <div class="recall-card-header">
+        <span class="severity critical">🔴 Critical</span>
+        <span class="recall-date">2 days ago</span>
+      </div>
+      <div class="recall-title">Purina Pro Plan Veterinary Diets — Salmonella Contamination</div>
+      <div class="recall-desc">Specific lot numbers of PPVD EL Elemental formula. Affects products with specific date codes. Your registered bag may be affected.</div>
+      <div class="recall-meta">
+        <span class="recall-tag">🐾 Pet Food</span>
+        <span class="recall-tag">FDA</span>
+        <span class="recall-remedy">→ Full refund available</span>
+      </div>
+    </div>
+
+    <div class="recall-card" onclick="openRecallDetail('ikea')">
+      <div class="recall-card-header">
+        <span class="severity advisory">🟡 Advisory</span>
+        <span class="recall-date">5 days ago</span>
+      </div>
+      <div class="recall-title">IKEA KALLAX Shelf Unit — Wall Mount Hardware Failure</div>
+      <div class="recall-desc">Wall anchoring hardware included with units sold Jan 2024–Mar 2026 may fail. Replacement kit available.</div>
+      <div class="recall-meta">
+        <span class="recall-tag">🏠 Furniture</span>
+        <span class="recall-tag">CPSC</span>
+        <span class="recall-remedy">→ Free repair kit</span>
+      </div>
+    </div>
+
+    <div class="recall-card">
+      <div class="recall-card-header">
+        <span class="severity info">🟢 Informational</span>
+        <span class="recall-date">1 week ago</span>
+      </div>
+      <div class="recall-title">2024–2025 Honda Civic — Rearview Camera Display Intermittent Failure</div>
+      <div class="recall-desc">Software update available at dealerships. Camera may display blank screen when reversing.</div>
+      <div class="recall-meta">
+        <span class="recall-tag">🚗 Vehicle</span>
+        <span class="recall-tag">NHTSA</span>
+        <span class="recall-remedy">→ Free software update</span>
+      </div>
+    </div>
+
+    <div class="recall-card">
+      <div class="recall-card-header">
+        <span class="severity info">🟢 Informational</span>
+        <span class="recall-date">2 weeks ago</span>
+      </div>
+      <div class="recall-title">Trader Joe's Organic Acai Bowls — Listeria Risk</div>
+      <div class="recall-desc">Specific lot numbers pulled from shelves. No illnesses reported. Check your freezer.</div>
+      <div class="recall-meta">
+        <span class="recall-tag">🍎 Food</span>
+        <span class="recall-tag">FDA</span>
+        <span class="recall-remedy">→ Full refund (receipt not needed)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Panel -->
+  <div class="panel" id="panel-products">
+    <button class="add-btn" onclick="openAddProduct()">
+      <span>+</span> Add Product
+    </button>
+
+    <div class="section-header">
+      <div class="section-title">Flagged Products</div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">❄️</div>
+      <div class="product-info">
+        <div class="product-name">De'Longhi PACEX340 Pinguino</div>
+        <div class="product-brand">Portable AC · Added Mar 2025</div>
+      </div>
+      <span class="product-status status-flagged">2 RECALLS</span>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">🐾</div>
+      <div class="product-info">
+        <div class="product-name">Purina Pro Plan Vet Diets EL</div>
+        <div class="product-brand">Pet Food · Added Jan 2026</div>
+      </div>
+      <span class="product-status status-flagged">1 RECALL</span>
+    </div>
+
+    <div class="section-header" style="margin-top: 16px;">
+      <div class="section-title">Monitored Products</div>
+      <div class="section-link">85 items</div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">🚗</div>
+      <div class="product-info">
+        <div class="product-name">2024 Honda Civic EX</div>
+        <div class="product-brand">Vehicle · VIN: 2HG...7241</div>
+      </div>
+      <span class="product-status status-safe">CLEAR</span>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">🛋️</div>
+      <div class="product-info">
+        <div class="product-name">IKEA KALLAX 4×2</div>
+        <div class="product-brand">Shelf Unit · Added Aug 2025</div>
+      </div>
+      <span class="product-status status-flagged">1 RECALL</span>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">📱</div>
+      <div class="product-info">
+        <div class="product-name">Samsung Galaxy S25 Ultra</div>
+        <div class="product-brand">Phone · Added Feb 2026</div>
+      </div>
+      <span class="product-status status-safe">CLEAR</span>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">🍳</div>
+      <div class="product-info">
+        <div class="product-name">Instant Pot Duo Plus 8Qt</div>
+        <div class="product-brand">Kitchen · Added Jun 2025</div>
+      </div>
+      <span class="product-status status-safe">CLEAR</span>
+    </div>
+  </div>
+
+  <!-- Remedies Panel -->
+  <div class="panel" id="panel-remedies">
+    <div class="section-header">
+      <div class="section-title">Active Claims</div>
+    </div>
+
+    <div class="remedy-card">
+      <div class="recall-card-header">
+        <span class="severity critical">🔴 Active</span>
+        <span class="recall-date">Deadline: Jun 15, 2026</span>
+      </div>
+      <div class="recall-title">De'Longhi PACEX340 — Full Refund</div>
+      <div class="recall-desc">Submitted claim on Apr 28. Awaiting confirmation.</div>
+      <div class="remedy-progress">
+        <div class="progress-bar">
+          <div class="progress-fill pending" style="width: 60%"></div>
+        </div>
+        <span class="progress-label" style="color: var(--warning);">In Progress</span>
+      </div>
+      <div class="remedy-steps">
+        <div class="step done"></div>
+        <div class="step done"></div>
+        <div class="step current"></div>
+        <div class="step"></div>
+      </div>
+      <div style="font-size: 11px; color: var(--text-dim); margin-top: 6px;">
+        Step 3 of 4: Awaiting manufacturer confirmation
+      </div>
+    </div>
+
+    <div class="remedy-card">
+      <div class="recall-card-header">
+        <span class="severity advisory">🟡 Pending</span>
+        <span class="recall-date">Deadline: Jul 30, 2026</span>
+      </div>
+      <div class="recall-title">IKEA KALLAX — Free Repair Kit</div>
+      <div class="recall-desc">Request replacement anchoring hardware.</div>
+      <div class="remedy-progress">
+        <div class="progress-bar">
+          <div class="progress-fill pending" style="width: 30%"></div>
+        </div>
+        <span class="progress-label" style="color: var(--warning);">Pending</span>
+      </div>
+      <div class="remedy-steps">
+        <div class="step done"></div>
+        <div class="step current"></div>
+        <div class="step"></div>
+        <div class="step"></div>
+      </div>
+      <div style="font-size: 11px; color: var(--text-dim); margin-top: 6px;">
+        Step 2 of 4: Verify product serial number
+      </div>
+    </div>
+
+    <div class="section-header" style="margin-top: 16px;">
+      <div class="section-title">Completed</div>
+    </div>
+
+    <div class="remedy-card" style="opacity: 0.7;">
+      <div class="recall-card-header">
+        <span class="severity info">🟢 Resolved</span>
+        <span class="recall-date">Completed Apr 10, 2026</span>
+      </div>
+      <div class="recall-title">Trader Joe's Frozen Rice — Full Refund</div>
+      <div class="recall-desc">$4.99 refund received via store credit.</div>
+      <div class="remedy-progress">
+        <div class="progress-bar">
+          <div class="progress-fill complete" style="width: 100%"></div>
+        </div>
+        <span class="progress-label" style="color: var(--success);">Done</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vehicle Panel -->
+  <div class="panel" id="panel-vehicle">
+    <div class="vin-section">
+      <div class="section-title" style="margin-bottom: 12px;">VIN Lookup</div>
+      <div class="input-group">
+        <input class="input" id="vin-input" placeholder="Enter 17-digit VIN (e.g. 2HGFC2F59RH...)" maxlength="17">
+      </div>
+      <button class="btn-primary" onclick="lookupVIN()" style="margin-top: 8px;">Check Recalls</button>
+      <div class="vin-result" id="vin-result">
+        <div class="vehicle-info">
+          <div class="vehicle-icon">🚗</div>
+          <div class="vehicle-details">
+            <h4>2024 Honda Civic EX</h4>
+            <p>VIN: 2HGFC2F5••••7241</p>
+          </div>
+        </div>
+        <div style="margin-top: 12px;">
+          <div class="recall-card" style="padding: 12px;">
+            <div class="recall-card-header">
+              <span class="severity info">🟢 Open Recall</span>
+            </div>
+            <div class="recall-title" style="font-size: 13px;">Rearview Camera Display — Software Update</div>
+            <div class="recall-remedy" style="margin-top: 6px;">→ Schedule free dealer visit</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">My Vehicles</div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">🚗</div>
+      <div class="product-info">
+        <div class="product-name">2024 Honda Civic EX</div>
+        <div class="product-brand">1 open recall · 3 resolved</div>
+      </div>
+      <span class="product-status status-flagged">1 OPEN</span>
+    </div>
+
+    <div class="product-card">
+      <div class="product-icon">🚙</div>
+      <div class="product-info">
+        <div class="product-name">2021 Toyota RAV4 XLE</div>
+        <div class="product-brand">0 open recalls · 2 resolved</div>
+      </div>
+      <span class="product-status status-safe">CLEAR</span>
+    </div>
+
+    <button class="add-btn" style="margin-top: 12px;">
+      <span>+</span> Add Vehicle
+    </button>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openAddProduct()">+</button>
+
+<!-- Add Product Modal -->
+<div class="modal-overlay" id="modal-add" onclick="closeModal('modal-add')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2>Add Product</h2>
+
+    <div class="scan-options">
+      <div class="scan-option" onclick="selectScan('barcode')">
+        <div class="icon">📷</div>
+        <div class="label">Scan Barcode</div>
+      </div>
+      <div class="scan-option" onclick="selectScan('photo')">
+        <div class="icon">📸</div>
+        <div class="label">Take Photo</div>
+      </div>
+      <div class="scan-option" onclick="selectScan('email')">
+        <div class="icon">📧</div>
+        <div class="label">Import Email</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Or enter manually</label>
+      <input class="input" placeholder="Product name (e.g. De'Longhi PACEX340)">
+    </div>
+    <div class="input-group">
+      <label>Brand</label>
+      <input class="input" placeholder="Brand name">
+    </div>
+    <div class="input-group">
+      <label>Category</label>
+      <select class="input">
+        <option>Select category...</option>
+        <option>🏠 Appliances</option>
+        <option>🚗 Vehicle</option>
+        <option>📱 Electronics</option>
+        <option>🍳 Kitchen</option>
+        <option>🛋️ Furniture</option>
+        <option>👶 Baby & Kids</option>
+        <option>🐾 Pet Products</option>
+        <option>🍎 Food & Beverage</option>
+        <option>💊 Health & Medicine</option>
+        <option>🔧 Tools & Hardware</option>
+        <option>🎮 Toys & Games</option>
+        <option>👕 Clothing</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Date Purchased (optional)</label>
+      <input class="input" type="date">
+    </div>
+
+    <button class="btn-primary" onclick="closeModal('modal-add')">Add & Monitor</button>
+  </div>
+</div>
+
+<!-- Recall Detail Modal -->
+<div class="modal-overlay" id="modal-recall" onclick="closeModal('modal-recall')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="severity critical" style="margin-bottom: 12px;">🔴 Critical</div>
+    <h2 style="margin-bottom: 8px;">Purina Pro Plan Veterinary Diets</h2>
+    <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 16px; line-height: 1.5;">
+      Nestlé Purina PetCare is recalling specific lots of Purina Pro Plan Veterinary Diets EL Elemental (HP) dry cat food due to potential Salmonella contamination. The affected products were distributed nationwide.
+    </p>
+
+    <div style="background: var(--surface2); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 16px;">
+      <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Your Registered Product</div>
+      <div style="font-size: 13px; color: var(--text-dim); display: flex; flex-direction: column; gap: 4px;">
+        <span>📦 Product: PPVD EL Elemental 6lb</span>
+        <span>📅 Purchased: Jan 15, 2026</span>
+        <span>🏷️ Lot: 3370 (⚠️ AFFECTED)</span>
+      </div>
+    </div>
+
+    <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px;">What To Do</div>
+    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px;">
+      1. Stop feeding this product immediately<br>
+      2. Dispose of remaining food in sealed bag<br>
+      3. Clean all bowls and storage containers<br>
+      4. Request full refund below (no receipt needed)<br>
+      5. Monitor your cat for symptoms (lethargy, diarrhea)
+    </div>
+
+    <button class="btn-primary" onclick="closeModal('modal-recall')">Request Full Refund →</button>
+    <div style="text-align: center; margin-top: 10px;">
+      <a href="#" style="font-size: 12px; color: var(--text-dim);">View on FDA.gov ↗</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const panels = ['alerts', 'products', 'remedies', 'vehicle'];
+    t.classList.toggle('active', panels[i] === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelector('.fab').style.display = name === 'alerts' ? 'none' : 'flex';
+}
+
+function openAddProduct() {
+  document.getElementById('modal-add').classList.add('open');
+}
+
+function openRecallDetail(id) {
+  document.getElementById('modal-recall').classList.add('open');
+}
+
+function openRemedy(id) {
+  switchTab('remedies');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function selectScan(type) {
+  // In real app: open camera for barcode/photo, or email picker
+  console.log('Selected scan type:', type);
+}
+
+function lookupVIN() {
+  document.getElementById('vin-result').classList.add('show');
+}
+
+function showNotifications() {
+  switchTab('alerts');
+}
+
+function showSearch() {
+  openAddProduct();
+}
+
+function toggleSettings() {}
+</script>
+</body>
+</html>
