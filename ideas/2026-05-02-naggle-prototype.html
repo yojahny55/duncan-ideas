@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naggle — One thing at a time</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --card: #242424;
+    --accent: #ff6b35;
+    --accent2: #ffd166;
+    --text: #f0f0f0;
+    --muted: #777;
+    --done: #4ecdc4;
+    --skip: #555;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app {
+    max-width: 420px;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #222;
+  }
+  .header h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .header .streak {
+    font-size: 0.85rem;
+    color: var(--accent2);
+  }
+
+  /* Screen switcher */
+  .screens { flex: 1; display: flex; flex-direction: column; }
+  .screen { display: none; flex: 1; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* Dump screen */
+  .dump-screen { padding: 20px; }
+  .dump-input {
+    width: 100%;
+    background: var(--card);
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 16px;
+    color: var(--text);
+    font-size: 1rem;
+    resize: none;
+    height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .dump-input:focus { border-color: var(--accent); }
+  .dump-input::placeholder { color: var(--muted); }
+  .dump-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .dump-btn:active { transform: scale(0.97); }
+  .task-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .task-item {
+    background: var(--card);
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+  .task-item .age { color: var(--muted); font-size: 0.75rem; }
+  .task-delete {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 1.1rem; padding: 0 4px;
+  }
+  .task-delete:hover { color: #e55; }
+
+  /* Focus screen */
+  .focus-screen { padding: 20px; align-items: center; justify-content: center; }
+  .energy-question {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .energy-question h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .energy-buttons {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+  .energy-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 20px;
+    border: 2px solid #333;
+    background: var(--card);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: border-color 0.2s, transform 0.1s;
+  }
+  .energy-btn:hover { border-color: var(--accent); }
+  .energy-btn:active { transform: scale(0.95); }
+  .energy-btn .emoji { font-size: 2rem; }
+  .energy-btn .label { font-size: 0.7rem; color: var(--muted); }
+  .time-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .time-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .time-btn.selected {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(255,107,53,0.1);
+  }
+
+  /* The Card */
+  .task-card {
+    width: 100%;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 30px 24px;
+    text-align: center;
+    border: 2px solid #333;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .task-card .task-text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .task-card .task-meta {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-bottom: 24px;
+  }
+  .card-actions {
+    display: flex;
+    gap: 12px;
+  }
+  .card-actions button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .card-actions button:active { transform: scale(0.96); }
+  .do-btn { background: var(--done); color: #000; }
+  .skip-btn { background: var(--skip); color: #ccc; }
+  .done-msg {
+    text-align: center;
+    animation: slideUp 0.3s ease;
+  }
+  .done-msg .big-emoji { font-size: 4rem; margin-bottom: 12px; }
+  .done-msg h3 { font-size: 1.2rem; margin-bottom: 4px; }
+  .done-msg p { color: var(--muted); font-size: 0.9rem; }
+  .next-btn {
+    margin-top: 20px;
+    padding: 12px 28px;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* No tasks */
+  .no-tasks {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 20px;
+  }
+  .no-tasks .big { font-size: 3rem; margin-bottom: 12px; }
+
+  /* Bottom nav */
+  .nav {
+    display: flex;
+    border-top: 1px solid #222;
+    background: var(--surface);
+  }
+  .nav button {
+    flex: 1;
+    padding: 14px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav button .nav-icon { font-size: 1.3rem; }
+  .nav button.active { color: var(--accent); }
+
+  /* Purge */
+  .purge-screen { padding: 20px; }
+  .purge-screen h2 { margin-bottom: 16px; font-size: 1.1rem; }
+  .purge-item {
+    background: var(--card);
+    padding: 14px 16px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .purge-item .old { color: var(--muted); font-size: 0.75rem; }
+  .purge-keep, .purge-nuke {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .purge-keep { background: #2a2a2a; color: var(--done); }
+  .purge-nuke { background: #3a1a1a; color: #e55; }
+
+  .empty-state { color: var(--muted); text-align: center; padding: 40px 20px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <h1>⚔️ Naggle</h1>
+    <span class="streak" id="streak"></span>
+  </div>
+
+  <div class="screens">
+    <!-- DUMP SCREEN -->
+    <div class="screen active" id="dump-screen">
+      <div class="dump-screen">
+        <textarea class="dump-input" id="task-input" placeholder="Brain dump — type anything..."></textarea>
+        <button class="dump-btn" onclick="addTask()">Dump it</button>
+        <div class="task-list" id="task-list"></div>
+        <div class="empty-state" id="empty-dump">No tasks yet. Dump your brain above.</div>
+      </div>
+    </div>
+
+    <!-- FOCUS SCREEN -->
+    <div class="screen" id="focus-screen">
+      <div class="focus-screen" id="focus-content"></div>
+    </div>
+
+    <!-- PURGE SCREEN -->
+    <div class="screen" id="purge-screen">
+      <div class="purge-screen">
+        <h2>🧹 The Purge</h2>
+        <p style="color:var(--muted);margin-bottom:16px;font-size:0.85rem">Tasks older than 7 days. Still relevant?</p>
+        <div id="purge-list"></div>
+        <div class="empty-state" id="empty-purge">Nothing to purge. You're clean.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="active" onclick="showScreen('dump')">
+      <span class="nav-icon">🧠</span>Dump
+    </button>
+    <button onclick="showScreen('focus')">
+      <span class="nav-icon">🎯</span>Focus
+    </button>
+    <button onclick="showScreen('purge')">
+      <span class="nav-icon">🧹</span>Purge
+    </button>
+  </div>
+</div>
+
+<script>
+const TASKS_KEY = 'naggle_tasks';
+const STREAK_KEY = 'naggle_streak';
+
+function getTasks() {
+  return JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+}
+function saveTasks(tasks) {
+  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+}
+function getStreak() {
+  const data = JSON.parse(localStorage.getItem(STREAK_KEY) || '{"count":0,"lastDate":null}');
+  const today = new Date().toDateString();
+  if (data.lastDate !== today) {
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (data.lastDate !== yesterday) data.count = 0;
+  }
+  return data;
+}
+function incrementStreak() {
+  const data = getStreak();
+  const today = new Date().toDateString();
+  if (data.lastDate !== today) { data.count++; data.lastDate = today; }
+  localStorage.setItem(STREAK_KEY, JSON.stringify(data));
+  renderStreak();
+}
+function renderStreak() {
+  const s = getStreak();
+  document.getElementById('streak').textContent = s.count > 0 ? `🔥 ${s.count} day streak` : '';
+}
+
+function addTask() {
+  const input = document.getElementById('task-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const tasks = getTasks();
+  tasks.push({ id: Date.now(), text, created: Date.now(), done: false });
+  saveTasks(tasks);
+  input.value = '';
+  renderDump();
+}
+
+document.getElementById('task-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addTask(); }
+});
+
+function deleteTask(id) {
+  saveTasks(getTasks().filter(t => t.id !== id));
+  renderDump();
+}
+
+function renderDump() {
+  const tasks = getTasks().filter(t => !t.done);
+  const list = document.getElementById('task-list');
+  const empty = document.getElementById('empty-dump');
+  if (tasks.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  list.innerHTML = tasks.map(t => {
+    const age = Math.floor((Date.now() - t.created) / 86400000);
+    const ageText = age === 0 ? 'today' : age === 1 ? '1 day old' : `${age} days old`;
+    return `<div class="task-item">
+      <span>${t.text}</span>
+      <span style="display:flex;align-items:center;gap:8px">
+        <span class="age">${ageText}</span>
+        <button class="task-delete" onclick="deleteTask(${t.id})">✕</button>
+      </span>
+    </div>`;
+  }).join('');
+}
+
+let selectedEnergy = null;
+let selectedTime = 60;
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  if (name === 'dump') {
+    document.getElementById('dump-screen').classList.add('active');
+    document.querySelectorAll('.nav button')[0].classList.add('active');
+    renderDump();
+  } else if (name === 'focus') {
+    document.getElementById('focus-screen').classList.add('active');
+    document.querySelectorAll('.nav button')[1].classList.add('active');
+    renderFocus();
+  } else if (name === 'purge') {
+    document.getElementById('purge-screen').classList.add('active');
+    document.querySelectorAll('.nav button')[2].classList.add('active');
+    renderPurge();
+  }
+}
+
+function renderFocus() {
+  const tasks = getTasks().filter(t => !t.done);
+  const el = document.getElementById('focus-content');
+
+  if (tasks.length === 0) {
+    el.innerHTML = `<div class="no-tasks"><div class="big">🎉</div><h3>All clear</h3><p>Go dump some tasks first.</p></div>`;
+    return;
+  }
+
+  if (!selectedEnergy) {
+    el.innerHTML = `
+      <div class="energy-question">
+        <h2>How's your energy right now?</h2>
+      </div>
+      <div class="energy-buttons">
+        <button class="energy-btn" onclick="pickEnergy('low')">
+          <span class="emoji">🧟</span><span class="label">Running on fumes</span>
+        </button>
+        <button class="energy-btn" onclick="pickEnergy('mid')">
+          <span class="emoji">😐</span><span class="label">Could go either way</span>
+        </button>
+        <button class="energy-btn" onclick="pickEnergy('high')">
+          <span class="emoji">🔥</span><span class="label">Let's do this</span>
+        </button>
+      </div>
+      <div class="time-selector">
+        <button class="time-btn" onclick="pickTime(5,this)">5 min</button>
+        <button class="time-btn" onclick="pickTime(15,this)">15 min</button>
+        <button class="time-btn selected" onclick="pickTime(60,this)">1 hour</button>
+        <button class="time-btn" onclick="pickTime(240,this)">Half day</button>
+      </div>`;
+    return;
+  }
+
+  // Score and pick one task
+  const scored = tasks.map(t => {
+    const age = (Date.now() - t.created) / 86400000;
+    let score = age * 10; // staleness
+    if (selectedEnergy === 'low') score += Math.random() * 20; // random for low energy = easy win
+    if (selectedEnergy === 'high') score += age * 5; // high energy = tackle old stuff
+    return { ...t, score };
+  }).sort((a, b) => b.score - a.score);
+  const task = scored[0];
+  const age = Math.floor((Date.now() - task.created) / 86400000);
+
+  el.innerHTML = `
+    <div class="task-card">
+      <div class="task-text">${task.text}</div>
+      <div class="task-meta">${age === 0 ? 'Added today' : age + ' days old'} · ${selectedTime} min available · ${selectedEnergy === 'low' ? '🧟' : selectedEnergy === 'mid' ? '😐' : '🔥'} energy</div>
+      <div class="card-actions">
+        <button class="do-btn" onclick="doTask(${task.id})">✓ Did it</button>
+        <button class="skip-btn" onclick="skipTask()">Skip</button>
+      </div>
+    </div>`;
+}
+
+function pickEnergy(level) {
+  selectedEnergy = level;
+  renderFocus();
+}
+
+function pickTime(mins, btn) {
+  selectedTime = mins;
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function doTask(id) {
+  const tasks = getTasks().filter(t => t.id !== id);
+  saveTasks(tasks);
+  incrementStreak();
+  const el = document.getElementById('focus-content');
+  el.innerHTML = `
+    <div class="done-msg">
+      <div class="big-emoji">💪</div>
+      <h3>One down.</h3>
+      <p>That's all that mattered.</p>
+      <button class="next-btn" onclick="selectedEnergy=null;renderFocus()">Another one?</button>
+    </div>`;
+}
+
+function skipTask() {
+  selectedEnergy = null;
+  renderFocus();
+}
+
+function renderPurge() {
+  const cutoff = Date.now() - 7 * 86400000;
+  const tasks = getTasks().filter(t => !t.done && t.created < cutoff);
+  const list = document.getElementById('purge-list');
+  const empty = document.getElementById('empty-purge');
+  if (tasks.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  list.innerHTML = tasks.map(t => {
+    const age = Math.floor((Date.now() - t.created) / 86400000);
+    return `<div class="purge-item">
+      <div><div>${t.text}</div><div class="old">${age} days old</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="purge-keep" onclick="keepTask(${t.id})">Keep</button>
+        <button class="purge-nuke" onclick="nukeTask(${t.id})">Nuke</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function keepTask(id) {
+  const tasks = getTasks().map(t => t.id === id ? { ...t, created: Date.now() } : t);
+  saveTasks(tasks);
+  renderPurge();
+}
+function nukeTask(id) {
+  saveTasks(getTasks().filter(t => t.id !== id));
+  renderPurge();
+}
+
+// Init
+renderStreak();
+renderDump();
+</script>
+</body>
+</html>
