@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeetHalfway — Find Your Perfect Meeting Spot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C0F0A;--surface:#161B14;--card:#1E2419;--border:#2A3326;
+  --text:#E8E4DB;--muted:#8B9178;--accent:#D4A843;--accent2:#7BC47F;
+  --coral:#E07A5F;--radius:16px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400}
+
+/* Background atmosphere */
+body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 20%,rgba(212,168,67,.06) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(123,196,127,.04) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.container{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* Header */
+header{padding:48px 0 32px;text-align:center}
+.logo{display:inline-flex;align-items:center;gap:12px;margin-bottom:16px}
+.logo-icon{width:48px;height:48px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+header h1{font-size:clamp(2rem,5vw,3.2rem);letter-spacing:-.02em;line-height:1.1}
+header h1 span{color:var(--accent)}
+header p{color:var(--muted);font-size:1.05rem;max-width:520px;margin:12px auto 0;line-height:1.6}
+
+/* Input section */
+.input-section{margin:40px 0}
+.locations-grid{display:grid;gap:16px;margin-bottom:24px}
+.location-row{display:flex;gap:12px;align-items:center;animation:slideUp .4s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.loc-badge{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.loc-badge.a{background:rgba(212,168,67,.15);color:var(--accent)}
+.loc-badge.b{background:rgba(123,196,127,.15);color:var(--accent2)}
+.loc-badge.c{background:rgba(224,122,95,.15);color:var(--coral)}
+.loc-input{flex:1;padding:14px 18px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s}
+.loc-input:focus{border-color:var(--accent)}
+.loc-input::placeholder{color:var(--muted)}
+.remove-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.remove-btn:hover{border-color:var(--coral);color:var(--coral)}
+
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{padding:12px 24px;border-radius:var(--radius);border:none;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:600;transition:all .25s}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(212,168,67,.25)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+.btn-secondary:hover{border-color:var(--muted)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+.travel-modes{display:flex;gap:8px;margin-left:auto}
+.travel-mode{width:42px;height:42px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.travel-mode.active{border-color:var(--accent);color:var(--accent);background:rgba(212,168,67,.08)}
+
+/* Map area */
+.map-section{margin:40px 0;position:relative}
+.map-container{width:100%;height:420px;background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden;position:relative}
+.map-canvas{width:100%;height:100%}
+.map-overlay{position:absolute;bottom:20px;left:20px;background:rgba(12,15,10,.85);backdrop-filter:blur(12px);padding:16px 20px;border-radius:12px;border:1px solid var(--border)}
+.map-overlay h3{font-size:.95rem;margin-bottom:4px}
+.map-overlay .midpoint-name{color:var(--accent);font-size:1.1rem;font-weight:600}
+
+/* Spots section */
+.spots-section{margin:48px 0 80px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.section-header h2{font-size:1.6rem}
+.vibe-filters{display:flex;gap:8px;flex-wrap:wrap}
+.vibe-chip{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.8rem;font-weight:600;transition:all .2s;font-family:inherit}
+.vibe-chip.active{border-color:var(--accent2);color:var(--accent2);background:rgba(123,196,127,.08)}
+.vibe-chip:hover{border-color:var(--muted)}
+
+.spots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.spot-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.spot-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);opacity:0;transition:opacity .3s}
+.spot-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.spot-card:hover::before{opacity:1}
+.spot-card.best{border-color:var(--accent2)}
+.spot-card.best::before{background:var(--accent2);opacity:1}
+.best-tag{position:absolute;top:12px;right:12px;background:var(--accent2);color:var(--bg);font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:8px;text-transform:uppercase;letter-spacing:.05em}
+.spot-type{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.spot-name{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:6px}
+.spot-meta{display:flex;gap:16px;color:var(--muted);font-size:.85rem;margin-bottom:12px}
+.spot-meta span{display:flex;align-items:center;gap:4px}
+.stars{color:var(--accent);font-size:.85rem}
+.spot-tags{display:flex;gap:6px;flex-wrap:wrap}
+.spot-tag{padding:4px 10px;border-radius:6px;background:rgba(212,168,67,.08);color:var(--accent);font-size:.72rem;font-weight:600}
+.spot-travel{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:16px}
+.spot-travel .travel-item{font-size:.8rem;color:var(--muted)}
+.spot-travel .travel-item strong{color:var(--text)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:80px 24px;color:var(--muted)}
+.empty-state .icon{font-size:3rem;margin-bottom:16px;opacity:.4}
+.empty-state p{font-size:1rem}
+
+/* Results badge */
+.results-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(123,196,127,.1);color:var(--accent2);padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:600}
+
+/* Responsive */
+@media(max-width:640px){
+  .travel-modes{margin-left:0;margin-top:8px}
+  .controls{flex-direction:column}
+  .map-container{height:300px}
+  .spots-grid{grid-template-columns:1fr}
+  .section-header{flex-direction:column;align-items:flex-start;gap:12px}
+}
+
+/* Animations */
+.fade-in{animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<header class="container">
+  <div class="logo">
+    <div class="logo-icon">📍</div>
+  </div>
+  <h1>Meet<span>Halfway</span></h1>
+  <p>Enter everyone's location. We'll find the perfect meeting spot — fair travel time for all.</p>
+</header>
+
+<main class="container">
+  <!-- Input -->
+  <section class="input-section">
+    <div class="locations-grid" id="locations">
+      <div class="location-row" data-idx="0">
+        <div class="loc-badge a">A</div>
+        <input class="loc-input" placeholder="Your location (e.g. Tampa, FL)" id="loc-a">
+      </div>
+      <div class="location-row" data-idx="1">
+        <div class="loc-badge b">B</div>
+        <input class="loc-input" placeholder="Their location (e.g. Orlando, FL)" id="loc-b">
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-secondary" onclick="addLocation()">+ Add Person</button>
+      <button class="btn btn-primary" id="findBtn" onclick="findMidpoint()">Find Meeting Spot</button>
+      <div class="travel-modes">
+        <button class="travel-mode active" title="Driving" onclick="setMode(this,'drive')">🚗</button>
+        <button class="travel-mode" title="Transit" onclick="setMode(this,'transit')">🚆</button>
+        <button class="travel-mode" title="Walking" onclick="setMode(this,'walk')">🚶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map -->
+  <section class="map-section" id="mapSection" style="display:none">
+    <div class="map-container">
+      <canvas class="map-canvas" id="mapCanvas"></canvas>
+      <div class="map-overlay">
+        <h3>Midpoint</h3>
+        <div class="midpoint-name" id="midpointName">Calculating...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spots -->
+  <section class="spots-section" id="spotsSection" style="display:none">
+    <div class="section-header">
+      <div>
+        <h2>Meeting Spots</h2>
+        <span class="results-badge" id="resultsBadge">5 spots found</span>
+      </div>
+      <div class="vibe-filters">
+        <button class="vibe-chip active" onclick="filterSpots(this,'all')">All</button>
+        <button class="vibe-chip" onclick="filterSpots(this,'coffee')">☕ Coffee</button>
+        <button class="vibe-chip" onclick="filterSpots(this,'food')">🍕 Food</button>
+        <button class="vibe-chip" onclick="filterSpots(this,'drinks')">🍺 Drinks</button>
+        <button class="vibe-chip" onclick="filterSpots(this,'park')">🌳 Park</button>
+        <button class="vibe-chip" onclick="filterSpots(this,'cowork')">💻 Cowork</button>
+      </div>
+    </div>
+    <div class="spots-grid" id="spotsGrid"></div>
+  </section>
+
+  <!-- Empty state -->
+  <div class="empty-state" id="emptyState">
+    <div class="icon">🗺️</div>
+    <p>Add two or more locations and hit <strong>Find Meeting Spot</strong></p>
+  </div>
+</main>
+
+<script>
+const BADGES = ['a','b','c','d','e','f','g','h'];
+const BADGE_LABELS = ['A','B','C','D','E','F','G','H'];
+let locCount = 2;
+let travelMode = 'drive';
+
+const SPOT_DATA = [
+  {name:"The Copper Kettle",type:"Coffee Shop",cat:"coffee",rating:4.7,reviews:342,price:"$$",tags:["Quiet","WiFi","Parking"],travelA:"22 min",travelB:"24 min",img:"☕"},
+  {name:"Rosa's Cantina",type:"Mexican Restaurant",cat:"food",rating:4.5,reviews:518,price:"$$",tags:["Lively","Outdoor","Kid-Friendly"],travelA:"18 min",travelB:"19 min",img:"🌮"},
+  {name:"Halfway Haus Brewery",type:"Craft Brewery",cat:"drinks",rating:4.8,reviews:276,price:"$$",tags:["Dog-Friendly","Outdoor","Food Trucks"],travelA:"21 min",travelB:"21 min",img:"🍺"},
+  {name:"Greenleaf Park",type:"Public Park",cat:"park",rating:4.6,reviews:189,price:"Free",tags:["Playground","Trails","Picnic Tables"],travelA:"15 min",travelB:"17 min",img:"🌳"},
+  {name:"The Hive Workspace",type:"Coworking Space",cat:"cowork",rating:4.4,reviews:127,price:"$12/day",tags:["WiFi","Quiet","Coffee"],travelA:"23 min",travelB:"22 min",img:"💻"},
+  {name:"Sunrise Bakery & Café",type:"Bakery",cat:"coffee",rating:4.9,reviews:423,price:"$",tags:["Fresh Pastries","Cozy","Breakfast"],travelA:"20 min",travelB:"22 min",img:"🥐"},
+  {name:"Oishi Ramen",type:"Japanese Restaurant",cat:"food",rating:4.6,reviews:301,price:"$$",tags:["Counter Seating","Quick","Date Night"],travelA:"19 min",travelB:"20 min",img:"🍜"},
+  {name:"The Velvet Lounge",type:"Cocktail Bar",cat:"drinks",rating:4.7,reviews:198,price:"$$$",tags:["Speakeasy Vibe","Craft Cocktails","No Kids"],travelA:"24 min",travelB:"23 min",img:"🍸"},
+];
+
+function addLocation(){
+  if(locCount>=8)return;
+  const grid=document.getElementById('locations');
+  const row=document.createElement('div');
+  row.className='location-row';
+  row.dataset.idx=locCount;
+  const b=BADGES[locCount];
+  const bl=BADGE_LABELS[locCount];
+  row.innerHTML=`<div class="loc-badge ${b}">${bl}</div><input class="loc-input" placeholder="Person ${bl}'s location" id="loc-${b}"><button class="remove-btn" onclick="removeLocation(this)">×</button>`;
+  grid.appendChild(row);
+  locCount++;
+  row.querySelector('input').focus();
+}
+
+function removeLocation(btn){
+  const row=btn.parentElement;
+  row.style.animation='fadeIn .3s ease reverse';
+  setTimeout(()=>{row.remove();locCount--},250);
+}
+
+function setMode(el,mode){
+  travelMode=mode;
+  document.querySelectorAll('.travel-mode').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function findMidpoint(){
+  const inputs=document.querySelectorAll('.loc-input');
+  const filled=[...inputs].filter(i=>i.value.trim());
+  if(filled.length<2){inputs[0].focus();return}
+
+  const btn=document.getElementById('findBtn');
+  btn.disabled=true;
+  btn.textContent='Finding...';
+
+  // Simulate loading
+  setTimeout(()=>{
+    btn.disabled=false;
+    btn.textContent='Find Meeting Spot';
+    showResults();
+  },1200);
+}
+
+function showResults(){
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('mapSection').style.display='block';
+  document.getElementById('spotsSection').style.display='block';
+  document.getElementById('mapSection').classList.add('fade-in');
+  document.getElementById('spotsSection').classList.add('fade-in');
+
+  // Midpoint name
+  const names=["Lakeland, FL","Kissimmee, FL","Davenport, FL","Plant City, FL"];
+  document.getElementById('midpointName').textContent=names[Math.floor(Math.random()*names.length)];
+
+  drawMap();
+  renderSpots('all');
+}
+
+function drawMap(){
+  const canvas=document.getElementById('mapCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=canvas.offsetHeight*dpr;
+  ctx.scale(dpr,dpr);
+  const w=canvas.offsetWidth,h=canvas.offsetHeight;
+
+  // Dark map background
+  ctx.fillStyle='#161B14';
+  ctx.fillRect(0,0,w,h);
+
+  // Grid lines
+  ctx.strokeStyle='#1E2419';
+  ctx.lineWidth=1;
+  for(let i=0;i<w;i+=40){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke()}
+  for(let i=0;i<h;i+=40){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(w,i);ctx.stroke()}
+
+  // Roads
+  ctx.strokeStyle='#2A3326';
+  ctx.lineWidth=3;
+  // Horizontal
+  ctx.beginPath();ctx.moveTo(0,h*0.4);ctx.lineTo(w,h*0.4);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,h*0.7);ctx.lineTo(w,h*0.7);ctx.stroke();
+  // Vertical
+  ctx.beginPath();ctx.moveTo(w*0.3,0);ctx.lineTo(w*0.3,h);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(w*0.65,0);ctx.lineTo(w*0.65,h);ctx.stroke();
+  // Diagonal
+  ctx.strokeStyle='#222A1E';
+  ctx.beginPath();ctx.moveTo(w*0.1,h*0.8);ctx.lineTo(w*0.9,h*0.2);ctx.stroke();
+
+  // Get location count
+  const locs=document.querySelectorAll('.loc-input');
+  const n=Math.min(locs.length,4);
+  const positions=[];
+  const cx=w/2,cy=h/2;
+  const radius=Math.min(w,h)*0.32;
+
+  for(let i=0;i<n;i++){
+    const angle=-Math.PI/2+(2*Math.PI*i/n);
+    positions.push({x:cx+radius*Math.cos(angle),y:cy+radius*Math.sin(angle)});
+  }
+
+  // Route lines to center
+  positions.forEach((p,i)=>{
+    const grad=ctx.createLinearGradient(p.x,p.y,cx,cy);
+    const colors=['#D4A843','#7BC47F','#E07A5F','#5BA4CF'];
+    grad.addColorStop(0,colors[i]);
+    grad.addColorStop(1,'rgba(255,255,255,0.1)');
+    ctx.strokeStyle=grad;
+    ctx.lineWidth=2;
+    ctx.setLineDash([8,6]);
+    ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(cx,cy);ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Distance label
+    const mx=(p.x+cx)/2,my=(p.y+cy)/2;
+    const dist=(15+Math.floor(Math.random()*12))+' min';
+    ctx.fillStyle='rgba(12,15,10,0.8)';
+    ctx.beginPath();ctx.roundRect(mx-22,my-10,44,20,6);ctx.fill();
+    ctx.fillStyle=colors[i];
+    ctx.font='600 11px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(dist,mx,my);
+  });
+
+  // Midpoint pulse
+  const pulse=(t)=>{
+    ctx.clearRect(cx-20,cy-20,40,40);
+    // Redraw center area
+    ctx.fillStyle='#161B14';
+    ctx.fillRect(cx-20,cy-20,40,40);
+    const s=(Math.sin(t/400)+1)/2;
+    ctx.beginPath();ctx.arc(cx,cy,8+s*12,0,Math.PI*2);
+    ctx.fillStyle=`rgba(123,196,127,${0.1+s*0.1})`;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);
+    ctx.fillStyle='#7BC47F';ctx.fill();
+    ctx.strokeStyle='#0C0F0A';ctx.lineWidth=2;ctx.stroke();
+  };
+
+  // Location pins
+  positions.forEach((p,i)=>{
+    const colors=['#D4A843','#7BC47F','#E07A5F','#5BA4CF'];
+    // Pin shadow
+    ctx.beginPath();ctx.arc(p.x,p.y+2,10,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,0.3)';ctx.fill();
+    // Pin
+    ctx.beginPath();ctx.arc(p.x,p.y,10,0,Math.PI*2);
+    ctx.fillStyle=colors[i];ctx.fill();
+    ctx.strokeStyle='#0C0F0A';ctx.lineWidth=2;ctx.stroke();
+    // Label
+    ctx.fillStyle='#0C0F0A';ctx.font='bold 10px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(BADGE_LABELS[i],p.x,p.y);
+  });
+
+  // Animate pulse
+  let t=0;
+  const animate=()=>{
+    t+=16;
+    pulse(t);
+    requestAnimationFrame(animate);
+  };
+  if(!window._mapAnim){window._mapAnim=true;animate()}
+}
+
+function renderSpots(filter){
+  const grid=document.getElementById('spotsGrid');
+  let spots=SPOT_DATA;
+  if(filter!=='all')spots=spots.filter(s=>s.cat===filter);
+
+  document.getElementById('resultsBadge').textContent=`${spots.length} spot${spots.length!==1?'s':''} found`;
+
+  grid.innerHTML=spots.map((s,i)=>`
+    <div class="spot-card ${i===0?'best':''}" style="animation-delay:${i*80}ms" onclick="selectSpot(this)">
+      ${i===0?'<div class="best-tag">Best Match</div>':''}
+      <div class="spot-type">${s.img} ${s.type}</div>
+      <div class="spot-name">${s.name}</div>
+      <div class="spot-meta">
+        <span class="stars">${'★'.repeat(Math.floor(s.rating))}${'☆'.repeat(5-Math.floor(s.rating))}</span>
+        <span>${s.rating} (${s.reviews})</span>
+        <span>${s.price}</span>
+      </div>
+      <div class="spot-tags">${s.tags.map(t=>`<span class="spot-tag">${t}</span>`).join('')}</div>
+      <div class="spot-travel">
+        <div class="travel-item">🚗 A: <strong>${s.travelA}</strong></div>
+        <div class="travel-item">🚗 B: <strong>${s.travelB}</strong></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterSpots(el,cat){
+  document.querySelectorAll('.vibe-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderSpots(cat);
+}
+
+function selectSpot(card){
+  document.querySelectorAll('.spot-card').forEach(c=>c.style.borderColor='');
+  card.style.borderColor='var(--accent)';
+}
+
+// Resize handler
+window.addEventListener('resize',()=>{
+  if(document.getElementById('mapSection').style.display!=='none')drawMap();
+});
+</script>
+</body>
+</html>
