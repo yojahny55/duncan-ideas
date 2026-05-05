@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubSherpa — Kill Your Zombie Subscriptions</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0b; --surface: #141416; --surface2: #1c1c1f;
+    --border: #2a2a2e; --text: #e8e8ec; --muted: #8a8a96;
+    --red: #ff4757; --red-dim: rgba(255,71,87,.12);
+    --green: #2ed573; --green-dim: rgba(46,213,115,.12);
+    --orange: #ffa502; --orange-dim: rgba(255,165,2,.12);
+    --blue: #3b82f6; --purple: #a855f7;
+  }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+  
+  .app { max-width: 420px; margin: 0 auto; padding: 20px 16px; }
+  
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--blue), var(--purple)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-text span { color: var(--muted); font-weight: 400; font-size: 13px; display: block; }
+  
+  .burn-card { background: linear-gradient(135deg, #1a1040, #0f172a); border: 1px solid #2d1f5e; border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; }
+  .burn-label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .burn-amount { font-size: 48px; font-weight: 800; letter-spacing: -2px; background: linear-gradient(135deg, var(--red), var(--orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .burn-period { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .burn-bar { display: flex; gap: 3px; margin-top: 16px; height: 6px; border-radius: 3px; overflow: hidden; }
+  .burn-bar div { border-radius: 3px; }
+
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .section-title { font-size: 15px; font-weight: 600; }
+  .section-badge { font-size: 12px; padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+  .badge-red { background: var(--red-dim); color: var(--red); }
+  .badge-green { background: var(--green-dim); color: var(--green); }
+
+  .sub-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+  .sub-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; transition: all .2s; cursor: pointer; }
+  .sub-card:hover { border-color: #3a3a40; }
+  .sub-card.zombie { border-color: rgba(255,71,87,.3); background: linear-gradient(135deg, var(--surface), rgba(255,71,87,.04)); }
+  .sub-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .sub-info { flex: 1; min-width: 0; }
+  .sub-name { font-size: 14px; font-weight: 600; }
+  .sub-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .sub-price { text-align: right; }
+  .sub-amount { font-size: 15px; font-weight: 700; }
+  .sub-cycle { font-size: 11px; color: var(--muted); }
+
+  .zombie-tag { font-size: 10px; background: var(--red-dim); color: var(--red); padding: 2px 6px; border-radius: 4px; margin-top: 4px; display: inline-block; font-weight: 600; }
+  .trial-tag { font-size: 10px; background: var(--orange-dim); color: var(--orange); padding: 2px 6px; border-radius: 4px; margin-top: 4px; display: inline-block; font-weight: 600; }
+
+  .stars { display: flex; gap: 2px; margin-top: 4px; }
+  .star { font-size: 12px; color: #333; }
+  .star.active { color: var(--orange); }
+
+  .cta-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--red), #e8384f); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+  .cta-btn:hover { opacity: .9; }
+
+  .savings-banner { background: var(--green-dim); border: 1px solid rgba(46,213,115,.2); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px; }
+  .savings-amount { font-size: 28px; font-weight: 800; color: var(--green); }
+  .savings-label { font-size: 13px; color: var(--green); opacity: .8; }
+
+  .tab-bar { display: flex; gap: 4px; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+  .tab { flex: 1; text-align: center; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .2s; }
+  .tab.active { background: var(--surface2); color: var(--text); }
+
+  .trial-card { background: var(--surface); border: 1px solid rgba(255,165,2,.25); border-radius: 12px; padding: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .trial-left { display: flex; align-items: center; gap: 12px; }
+  .trial-countdown { font-size: 13px; color: var(--orange); font-weight: 600; }
+  .cancel-btn { padding: 6px 12px; background: var(--orange-dim); color: var(--orange); border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .cancel-btn:hover { background: rgba(255,165,2,.2); }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🧗</div>
+      <div class="logo-text">SubSherpa<span>your subscription guide</span></div>
+    </div>
+  </header>
+
+  <div class="burn-card">
+    <div class="burn-label">Monthly Burn Rate</div>
+    <div class="burn-amount">$347</div>
+    <div class="burn-period">across 12 subscriptions</div>
+    <div class="burn-bar">
+      <div style="flex:3; background:#e50914;"></div>
+      <div style="flex:2.5; background:#1db954;"></div>
+      <div style="flex:2; background:#6366f1;"></div>
+      <div style="flex:1.5; background:#f97316;"></div>
+      <div style="flex:1; background:#8b5cf6;"></div>
+      <div style="flex:.5; background:#3a3a40;"></div>
+    </div>
+  </div>
+
+  <div class="savings-banner">
+    <div class="savings-label">You could save by killing zombies</div>
+    <div class="savings-amount">$89/mo</div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('all')">All (12)</div>
+    <div class="tab" onclick="switchTab('zombies')">🧟 Zombies (3)</div>
+    <div class="tab" onclick="switchTab('trials')">⏳ Trials (2)</div>
+  </div>
+
+  <div id="tab-all">
+    <div class="sub-list">
+      <div class="sub-card zombie">
+        <div class="sub-icon" style="background:#1c1c2e;">🏋️</div>
+        <div class="sub-info">
+          <div class="sub-name">Planet Fitness</div>
+          <div class="sub-meta">Last visited 47 days ago</div>
+          <div class="stars"><span class="star">☆</span><span class="star">☆</span><span class="star active">★</span><span class="star">☆</span><span class="star">☆</span></div>
+          <span class="zombie-tag">ZOMBIE</span>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$24.99</div><div class="sub-cycle">/month</div></div>
+      </div>
+      <div class="sub-card zombie">
+        <div class="sub-icon" style="background:#2d1f1f;">📰</div>
+        <div class="sub-info">
+          <div class="sub-name">NYT Cooking</div>
+          <div class="sub-meta">Last used 62 days ago</div>
+          <div class="stars"><span class="star active">★</span><span class="star">☆</span><span class="star">☆</span><span class="star">☆</span><span class="star">☆</span></div>
+          <span class="zombie-tag">ZOMBIE</span>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$6.99</div><div class="sub-cycle">/month</div></div>
+      </div>
+      <div class="sub-card zombie">
+        <div class="sub-icon" style="background:#1f2d1f;">🧘</div>
+        <div class="sub-info">
+          <div class="sub-name">Calm</div>
+          <div class="sub-meta">Last opened 33 days ago</div>
+          <div class="stars"><span class="star">☆</span><span class="star active">★</span><span class="star">☆</span><span class="star">☆</span><span class="star">☆</span></div>
+          <span class="zombie-tag">ZOMBIE</span>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$14.99</div><div class="sub-cycle">/month</div></div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-icon" style="background:#2d1f1f;">🎬</div>
+        <div class="sub-info">
+          <div class="sub-name">Netflix</div>
+          <div class="sub-meta">Used 4x this week</div>
+          <div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star">☆</span></div>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$22.99</div><div class="sub-cycle">/month</div></div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-icon" style="background:#1f2d1f;">🎵</div>
+        <div class="sub-info">
+          <div class="sub-name">Spotify</div>
+          <div class="sub-meta">Used daily</div>
+          <div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span></div>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$10.99</div><div class="sub-cycle">/month</div></div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-icon" style="background:#1f1f2d;">💻</div>
+        <div class="sub-info">
+          <div class="sub-name">GitHub Copilot</div>
+          <div class="sub-meta">Used daily</div>
+          <div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span></div>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$19.00</div><div class="sub-cycle">/month</div></div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-icon" style="background:#2d2d1f;">☁️</div>
+        <div class="sub-info">
+          <div class="sub-name">iCloud+</div>
+          <div class="sub-meta">Auto-sync, used 2x this week</div>
+          <div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star">☆</span><span class="star">☆</span></div>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$9.99</div><div class="sub-cycle">/month</div></div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-icon" style="background:#1f2d2d;">📦</div>
+        <div class="sub-info">
+          <div class="sub-name">Amazon Prime</div>
+          <div class="sub-meta">Used 3x this month</div>
+          <div class="stars"><span class="star active">★</span><span class="star active">★</span><span class="star active">★</span><span class="star">☆</span><span class="star">☆</span></div>
+        </div>
+        <div class="sub-price"><div class="sub-amount">$14.99</div><div class="sub-cycle">/month</div></div>
+      </div>
+    </div>
+    <button class="cta-btn" onclick="showCancel()">🪓 Kill 3 Zombie Subs → Save $89/mo</button>
+  </div>
+
+  <div id="tab-zombies" class="hidden">
+    <div class="section-header"><span class="section-title">These subs are dead to you</span><span class="section-badge badge-red">-$89/mo potential savings</span></div>
+    <div class="sub-list" id="zombie-list"></div>
+    <button class="cta-btn" onclick="showCancel()">🪓 Kill All Zombies →</button>
+  </div>
+
+  <div id="tab-trials" class="hidden">
+    <div class="section-header"><span class="section-title">Expiring Trials</span><span class="section-badge badge-red">2 expiring soon</span></div>
+    <div class="trial-card">
+      <div class="trial-left">
+        <div class="sub-icon" style="background:#1f1f2d;">🎨</div>
+        <div><div class="sub-name" style="font-size:14px;font-weight:600;">Figma Pro</div><div class="trial-countdown">Expires in 2 days</div></div>
+      </div>
+      <button class="cancel-btn" onclick="cancelTrial('Figma Pro')">Cancel →</button>
+    </div>
+    <div class="trial-card">
+      <div class="trial-left">
+        <div class="sub-icon" style="background:#2d1f2d;">🤖</div>
+        <div><div class="sub-name" style="font-size:14px;font-weight:600;">Midjourney</div><div class="trial-countdown">Expires in 5 days</div></div>
+      </div>
+      <button class="cancel-btn" onclick="cancelTrial('Midjourney')">Cancel →</button>
+    </div>
+  </div>
+</div>
+
+<div id="cancel-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:340px;text-align:center;margin:20px;">
+    <div style="font-size:48px;margin-bottom:12px;">🪓</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Cancel Instructions Ready</div>
+    <div id="cancel-text" style="color:var(--muted);font-size:14px;margin-bottom:20px;"></div>
+    <button onclick="document.getElementById('cancel-modal').style.display='none'" style="padding:10px 24px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;">Got it</button>
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-all').classList.toggle('hidden', tab !== 'all');
+  document.getElementById('tab-zombies').classList.toggle('hidden', tab !== 'zombies');
+  document.getElementById('tab-trials').classList.toggle('hidden', tab !== 'trials');
+}
+
+function showCancel() {
+  document.getElementById('cancel-text').textContent = "We've prepared cancel links for Planet Fitness, NYT Cooking, and Calm. You'll be redirected to each cancellation page.";
+  document.getElementById('cancel-modal').style.display = 'flex';
+}
+
+function cancelTrial(name) {
+  document.getElementById('cancel-text').textContent = `Opening ${name} cancellation page. We'll confirm when it's done.`;
+  document.getElementById('cancel-modal').style.display = 'flex';
+}
+</script>
+</body>
+</html>
