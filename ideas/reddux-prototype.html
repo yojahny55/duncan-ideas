@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Redux - Clean Reddit Reader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d0d0d;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #ff4500;
+            --accent-hover: #ff5722;
+            --border: #333333;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding-bottom: 70px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .header-btn {
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: background 0.2s;
+        }
+
+        .header-btn:hover {
+            background: var(--border);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            padding: 1rem;
+            background: var(--bg-primary);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--bg-tertiary);
+        }
+
+        /* Feed */
+        .feed {
+            padding: 1rem;
+        }
+
+        .post {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .post:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .post-header {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .subreddit {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .post-content {
+            padding: 0 1rem 1rem;
+        }
+
+        .post-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            background: var(--bg-tertiary);
+        }
+
+        .post-preview {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            margin-top: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-footer {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .post-stats {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .stat svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            z-index: 10;
+        }
+
+        .modal-close {
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .modal-content {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .comment {
+            padding: 1rem;
+            border-left: 2px solid var(--border);
+            margin-bottom: 1rem;
+            margin-left: 1rem;
+        }
+
+        .comment-author {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .comment-text {
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            padding: 0.75rem 1rem;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Badge */
+        .badge {
+            background: var(--accent);
+            color: white;
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+
+        /* Pro Banner */
+        .pro-banner {
+            background: linear-gradient(135deg, #ff4500, #ff6b35);
+            padding: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .pro-banner.show {
+            display: block;
+        }
+
+        .pro-banner h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .pro-banner p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .feed {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .modal {
+                max-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">R</div>
+            Redux
+        </div>
+        <div class="header-actions">
+            <button class="header-btn" onclick="toggleSubscriptions()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                <span class="badge">3</span>
+            </button>
+            <button class="header-btn" onclick="toggleSettings()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="pro-banner" id="proBanner">
+        <h3>🔥 Pro Feature Unlocked</h3>
+        <p>Unlimited saved threads & offline mode</p>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Search Reddit..." id="searchInput" onkeyup="handleSearch(event)">
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('hot')">🔥 Hot</button>
+        <button class="tab" onclick="switchTab('new')">✨ New</button>
+        <button class="tab" onclick="switchTab('top')">🏆 Top</button>
+        <button class="tab" onclick="switchTab('rising')">📈 Rising</button>
+    </div>
+
+    <div class="feed" id="feed">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading Reddit...</p>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchNav('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="switchNav('explore')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+            </svg>
+            <span>Explore</span>
+        </button>
+        <button class="nav-item" onclick="switchNav('saved')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Saved</span>
+            <span class="badge">2</span>
+        </button>
+        <button class="nav-item" onclick="switchNav('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Profile</span>
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="postModal" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="logo">
+                    <div class="logo-icon">R</div>
+                    Redux
+                </div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const posts = [
+            {
+                id: 1,
+                subreddit: 'r/privacy',
+                author: 'privacy_fan',
+                time: '2h',
+                title: 'Reddit now blocks mobile web to force app downloads - here\'s how to bypass it',
+                content: 'Just hit a new pop-up that completely blocks navigation on mobile. No X button, no dismiss - just "Get the app to keep using Reddit." This is incredibly aggressive.',
+                upvotes: 15420,
+                comments: 892,
+                image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&h=400&fit=crop'
+            },
+            {
+                id: 2,
+                subreddit: 'r/technology',
+                author: 'tech_watch',
+                time: '4h',
+                title: 'AI-generated content now accounts for 30% of all new apps on App Store',
+                content: 'Analysis shows a massive surge in AI-generated app submissions. Quality concerns emerge as many clones flood the store.',
+                upvotes: 8234,
+                comments: 456,
+                image: null
+            },
+            {
+                id: 3,
+                subreddit: 'r/programming',
+                author: 'code_life',
+                time: '5h',
+                title: 'TIL: You can run a full web server in 100 lines of Rust',
+                content: 'Miniature http server implementation showcasing Rust\'s zero-cost abstractions and safety guarantees.',
+                upvotes: 3421,
+                comments: 234,
+                image: null
+            },
+            {
+                id: 4,
+                subreddit: 'r/ProductHunt',
+                author: 'founder_life',
+                time: '6h',
+                title: 'Built a Reddit reader that respects privacy - Day 1',
+                content: 'Tired of app nags and tracking. Built something lightweight that just works. Would love feedback from this community!',
+                upvotes: 567,
+                comments: 89,
+                image: null
+            },
+            {
+                id: 5,
+                subreddit: 'r/webdev',
+                author: 'frontend_ninja',
+                time: '7h',
+                title: 'CSS Grid vs Flexbox: When to use which in 2026',
+                content: 'Quick guide with examples and real-world use cases. TL;DR: Use Grid for layout, Flexbox for alignment.',
+                upvotes: 2891,
+                comments: 312,
+                image: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=800&h=400&fit=crop'
+            }
+        ];
+
+        const comments = [
+            {
+                author: 'reddit_veteran',
+                text: 'Been saying this for months. The mobile site is getting worse every update.'
+            },
+            {
+                author: 'privacy_advocate',
+                text: 'The tracking in the official app is insane. Location, contacts, search history - all collected.'
+            },
+            {
+                author: 'casual_browser',
+                text: 'I literally just click links from Google. Why do I need an app for that?'
+            },
+            {
+                author: 'dev_mindset',
+                text: 'Someone should build a clean PWA reader. Open source, privacy-first. Would use it immediately.'
+            }
+        ];
+
+        let currentTab = 'hot';
+        let savedPosts = [1, 4];
+
+        function renderFeed(filteredPosts = posts) {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = filteredPosts.map(post => `
+                <div class="post" onclick="openPost(${post.id})">
+                    <div class="post-header">
+                        <span class="subreddit">${post.subreddit}</span>
+                        <span>•</span>
+                        <span>u/${post.author}</span>
+                        <span>•</span>
+                        <span>${post.time}</span>
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title">${post.title}</h3>
+                        ${post.content ? `<p class="post-preview">${post.content}</p>` : ''}
+                        ${post.image ? `<img src="${post.image}" alt="" class="post-image" loading="lazy">` : ''}
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-stats">
+                            <div class="stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                                </svg>
+                                ${formatNumber(post.upvotes)}
+                            </div>
+                            <div class="stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                ${formatNumber(post.comments)}
+                            </div>
+                            <div class="stat" onclick="event.stopPropagation(); toggleSave(${post.id})">
+                                <svg viewBox="0 0 24 24" fill="${savedPosts.includes(post.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                ${savedPosts.includes(post.id) ? 'Saved' : 'Save'}
+                            </div>
+                            <div class="stat" onclick="event.stopPropagation(); sharePost(${post.id})">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="18" cy="5" r="3"/>
+                                    <circle cx="6" cy="12" r="3"/>
+                                    <circle cx="18" cy="19" r="3"/>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                </svg>
+                                Share
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('postModal');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = `
+                <div class="modal-title">${post.title}</div>
+                <div class="post-header">
+                    <span class="subreddit">${post.subreddit}</span>
+                    <span>•</span>
+                    <span>u/${post.author}</span>
+                    <span>•</span>
+                    <span>${post.time}</span>
+                </div>
+                ${post.content ? `<p class="modal-content">${post.content}</p>` : ''}
+                ${post.image ? `<img src="${post.image}" alt="" style="width:100%;border-radius:8px;margin-bottom:1rem;">` : ''}
+                <div style="display:flex;gap:1rem;margin-bottom:1.5rem;">
+                    <div class="stat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                        </svg>
+                        ${formatNumber(post.upvotes)} upvotes
+                    </div>
+                </div>
+                <h4 style="margin-bottom:1rem;color:var(--text-secondary);">Top Comments</h4>
+                ${comments.map(comment => `
+                    <div class="comment">
+                        <div class="comment-author">u/${comment.author}</div>
+                        <div class="comment-text">${comment.text}</div>
+                    </div>
+                `).join('')}
+            `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(event) {
+            if (event && event.target !== document.getElementById('postModal')) return;
+            const modal = document.getElementById('postModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Simulate loading
+            const feed = document.getElementById('feed');
+            feed.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading ${tab.charAt(0).toUpperCase() + tab.slice(1)} posts...</p>
+                </div>
+            `;
+
+            setTimeout(() => renderFeed(), 500);
+        }
+
+        function switchNav(nav) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if (nav === 'saved') {
+                const saved = posts.filter(p => savedPosts.includes(p.id));
+                renderFeed(saved);
+            } else {
+                renderFeed();
+            }
+        }
+
+        function toggleSave(postId) {
+            const index = savedPosts.indexOf(postId);
+            if (index > -1) {
+                savedPosts.splice(index, 1);
+            } else {
+                savedPosts.push(postId);
+                // Show pro banner as demo
+                document.getElementById('proBanner').classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('proBanner').classList.remove('show');
+                }, 3000);
+            }
+            renderFeed();
+        }
+
+        function sharePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (navigator.share) {
+                navigator.share({
+                    title: post.title,
+                    text: post.content || post.title,
+                    url: window.location.href
+                });
+            } else {
+                alert('Link copied to clipboard! (Demo)');
+            }
+        }
+
+        function handleSearch(event) {
+            const query = event.target.value.toLowerCase();
+            const filtered = posts.filter(p =>
+                p.title.toLowerCase().includes(query) ||
+                p.content.toLowerCase().includes(query) ||
+                p.subreddit.toLowerCase().includes(query)
+            );
+            renderFeed(filtered);
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function toggleSubscriptions() {
+            alert('Subscriptions (Pro Feature)\n\nUnlock: Unlimited subreddits, custom filters, offline mode');
+        }
+
+        function toggleSettings() {
+            alert('Settings\n\n• Dark Mode: Auto\n• NSFW Filter: On\n• Data Collection: Off (Privacy-first)');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => renderFeed(), 1000);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
