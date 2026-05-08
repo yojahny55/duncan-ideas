@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubShelf — Your Subscription Graveyard Manager</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a24;
+    --surface2: #24243a;
+    --accent: #7c5cfc;
+    --accent-glow: #7c5cfc33;
+    --green: #34d399;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --text: #e8e8f0;
+    --text2: #9898b0;
+    --shelf: #2a1f14;
+    --shelf-edge: #4a3520;
+    --book-shadow: rgba(0,0,0,0.4);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+    border-bottom: 1px solid #ffffff10;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #6d4fe0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid #ffffff15;
+  }
+
+  .btn-ghost:hover {
+    background: #ffffff08;
+    color: var(--text);
+  }
+
+  /* Stats Bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #ffffff08;
+    transition: transform 0.2s;
+  }
+
+  .stat-card:hover { transform: translateY(-2px); }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+
+  .stat-sub {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .stat-sub.up { color: var(--red); }
+  .stat-sub.down { color: var(--green); }
+
+  /* Shelf Section */
+  .shelf-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  .shelf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .shelf-title {
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .shelf-count {
+    background: var(--surface2);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .shelf-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .shelf-tab {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid #ffffff08;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .shelf-tab.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .shelf-tab:hover:not(.active) {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  /* The Bookshelf */
+  .bookshelf {
+    background: linear-gradient(180deg, var(--shelf) 0%, #1a1208 100%);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--shelf-edge);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bookshelf::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: linear-gradient(180deg, var(--shelf-edge), #2a1a08);
+    border-radius: 0 0 16px 16px;
+  }
+
+  .books-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    padding-bottom: 16px;
+    min-height: 140px;
+    overflow-x: auto;
+    padding-right: 8px;
+  }
+
+  .book {
+    width: 52px;
+    min-width: 52px;
+    border-radius: 4px 8px 8px 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 8px var(--book-shadow), inset -2px 0 4px rgba(0,0,0,0.2);
+  }
+
+  .book:hover {
+    transform: translateY(-16px) rotate(-2deg);
+    z-index: 10;
+    box-shadow: 2px 8px 20px rgba(0,0,0,0.6);
+  }
+
+  .book-spine {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: rgba(255,255,255,0.9);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    max-height: 90%;
+    overflow: hidden;
+    padding: 6px 0;
+  }
+
+  .book-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 20px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface2);
+    padding: 12px 16px;
+    border-radius: 10px;
+    white-space: nowrap;
+    font-size: 13px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    z-index: 20;
+    border: 1px solid #ffffff15;
+  }
+
+  .book:hover .book-tooltip { display: block; }
+
+  .tooltip-name { font-weight: 700; margin-bottom: 4px; }
+  .tooltip-price { color: var(--yellow); }
+  .tooltip-cycle { color: var(--text2); font-size: 11px; }
+
+  .add-book {
+    width: 52px;
+    min-width: 52px;
+    height: 100px;
+    border-radius: 4px 8px 8px 4px;
+    border: 2px dashed #ffffff20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text2);
+    font-size: 24px;
+  }
+
+  .add-book:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  /* Usage Check-in */
+  .checkin-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  .checkin-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #ffffff08;
+  }
+
+  .checkin-prompt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .checkin-icon {
+    font-size: 28px;
+  }
+
+  .checkin-title {
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .checkin-sub {
+    color: var(--text2);
+    font-size: 13px;
+  }
+
+  .checkin-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .checkin-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+
+  .checkin-item:hover { background: #2a2a44; }
+
+  .checkin-service {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .checkin-service-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .checkin-service-name { font-weight: 600; }
+  .checkin-service-price { color: var(--text2); font-size: 12px; }
+
+  .checkin-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .checkin-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .checkin-yes {
+    background: #34d39920;
+    color: var(--green);
+  }
+
+  .checkin-yes:hover { background: #34d39940; }
+
+  .checkin-no {
+    background: #f8717120;
+    color: var(--red);
+  }
+
+  .checkin-no:hover { background: #f8717140; }
+
+  /* Upcoming Payments */
+  .upcoming-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  .upcoming-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .upcoming-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid #ffffff08;
+  }
+
+  .upcoming-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .upcoming-date {
+    background: var(--surface2);
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 50px;
+  }
+
+  .upcoming-date-day {
+    font-weight: 800;
+    font-size: 16px;
+  }
+
+  .upcoming-date-month {
+    font-size: 10px;
+    color: var(--text2);
+    text-transform: uppercase;
+  }
+
+  .upcoming-name { font-weight: 600; }
+  .upcoming-price { font-weight: 700; color: var(--yellow); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 28px;
+    width: 420px;
+    max-width: 90vw;
+    border: 1px solid #ffffff15;
+    animation: modalIn 0.3s ease;
+  }
+
+  @keyframes modalIn {
+    from { transform: scale(0.95) translateY(10px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .form-input, .form-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid #ffffff15;
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .modal-actions .btn { flex: 1; padding: 12px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-bar {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .stat-value { font-size: 22px; }
+    .shelf-section, .checkin-section, .upcoming-section { padding: 0 16px 24px; }
+    .header { padding: 14px 16px; }
+  }
+
+  /* Color palette for books */
+  .book-netflix { background: linear-gradient(180deg, #e50914, #b20710); }
+  .book-spotify { background: linear-gradient(180deg, #1db954, #158a3e); }
+  .book-icloud { background: linear-gradient(180deg, #3693f5, #2175d6); }
+  .book-chatgpt { background: linear-gradient(180deg, #10a37f, #0d8a6a); }
+  .book-github { background: linear-gradient(180deg, #6e40c9, #5530a0); }
+  .book-youtube { background: linear-gradient(180deg, #ff0000, #cc0000); }
+  .book-adobe { background: linear-gradient(180deg, #ff0000, #d40000); }
+  .book-notion { background: linear-gradient(180deg, #ffffff, #e0e0e0); }
+  .book-notion .book-spine { color: #333; }
+  .book-amazon { background: linear-gradient(180deg, #ff9900, #e68a00); }
+  .book-disney { background: linear-gradient(180deg, #113ccf, #0e2fa8); }
+  .book-figma { background: linear-gradient(180deg, #a259ff, #8040e0); }
+  .book-vercel { background: linear-gradient(180deg, #333, #111); }
+  .book-default { background: linear-gradient(180deg, var(--accent), #5a3fc0); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">📚</div>
+    <div class="logo-text">Sub<span>Shelf</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="exportCSV()">Export</button>
+    <button class="btn btn-primary" onclick="openModal()">+ Add Subscription</button>
+  </div>
+</header>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-label">Monthly Spend</div>
+    <div class="stat-value" id="stat-monthly">$0</div>
+    <div class="stat-sub up">+$12 vs last month</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Annual Total</div>
+    <div class="stat-value" id="stat-annual">$0</div>
+    <div class="stat-sub down">Save $180 by cancelling unused</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Active Subs</div>
+    <div class="stat-value" id="stat-count">0</div>
+    <div class="stat-sub">3 unused this month</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg per Sub</div>
+    <div class="stat-value" id="stat-avg">$0</div>
+    <div class="stat-sub">Highest: Netflix $22.99</div>
+  </div>
+</div>
+
+<!-- Bookshelf -->
+<section class="shelf-section">
+  <div class="shelf-header">
+    <div class="shelf-title">
+      📖 Your Bookshelf <span class="shelf-count" id="shelf-count">0 subscriptions</span>
+    </div>
+    <div class="shelf-tabs">
+      <button class="shelf-tab active" onclick="filterShelf('all', this)">All</button>
+      <button class="shelf-tab" onclick="filterShelf('active', this)">Active</button>
+      <button class="shelf-tab" onclick="filterShelf('unused', this)">⚠️ Unused</button>
+    </div>
+  </div>
+
+  <div class="bookshelf">
+    <div class="books-row" id="books-row">
+      <!-- Books rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Usage Check-in -->
+<section class="checkin-section">
+  <div class="checkin-card">
+    <div class="checkin-prompt">
+      <div class="checkin-icon">👋</div>
+      <div>
+        <div class="checkin-title">Weekly Check-in</div>
+        <div class="checkin-sub">Did you use these services this week?</div>
+      </div>
+    </div>
+    <div class="checkin-items" id="checkin-items">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Upcoming Payments -->
+<section class="upcoming-section">
+  <div class="shelf-header">
+    <div class="shelf-title">📅 Upcoming Payments</div>
+  </div>
+  <div class="upcoming-list" id="upcoming-list">
+    <!-- Rendered by JS -->
+  </div>
+</section>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">📚 Add Subscription</div>
+    <div class="form-group">
+      <label class="form-label">Service Name</label>
+      <input class="form-input" id="form-name" placeholder="e.g. Netflix, Spotify, ChatGPT...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Monthly Price ($)</label>
+        <input class="form-input" id="form-price" type="number" step="0.01" placeholder="14.99">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Billing Cycle</label>
+        <select class="form-select" id="form-cycle">
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+          <option value="weekly">Weekly</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="form-category">
+          <option value="streaming">🎬 Streaming</option>
+          <option value="music">🎵 Music</option>
+          <option value="productivity">⚡ Productivity</option>
+          <option value="dev">💻 Developer Tools</option>
+          <option value="fitness">💪 Fitness</option>
+          <option value="cloud">☁️ Cloud / Storage</option>
+          <option value="gaming">🎮 Gaming</option>
+          <option value="news">📰 News / Reading</option>
+          <option value="other">📦 Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Next Billing</label>
+        <input class="form-input" id="form-date" type="date">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addSubscription()">Add to Shelf</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Data ──
+const DEFAULT_SUBS = [
+  { id: 1, name: 'Netflix', price: 22.99, cycle: 'monthly', category: 'streaming', color: 'netflix', icon: '🎬', nextBill: '2026-05-15', usedCount: 3 },
+  { id: 2, name: 'Spotify', price: 10.99, cycle: 'monthly', category: 'music', color: 'spotify', icon: '🎵', nextBill: '2026-05-18', usedCount: 6 },
+  { id: 3, name: 'iCloud+', price: 2.99, cycle: 'monthly', category: 'cloud', color: 'icloud', icon: '☁️', nextBill: '2026-05-22', usedCount: 7 },
+  { id: 4, name: 'ChatGPT Pro', price: 20.00, cycle: 'monthly', category: 'productivity', color: 'chatgpt', icon: '🤖', nextBill: '2026-05-12', usedCount: 7 },
+  { id: 5, name: 'GitHub Pro', price: 4.00, cycle: 'monthly', category: 'dev', color: 'github', icon: '💻', nextBill: '2026-05-20', usedCount: 5 },
+  { id: 6, name: 'YouTube Premium', price: 13.99, cycle: 'monthly', category: 'streaming', color: 'youtube', icon: '▶️', nextBill: '2026-05-25', usedCount: 0 },
+  { id: 7, name: 'Notion', price: 8.00, cycle: 'monthly', category: 'productivity', color: 'notion', icon: '📝', nextBill: '2026-05-28', usedCount: 4 },
+  { id: 8, name: 'Amazon Prime', price: 14.99, cycle: 'monthly', category: 'streaming', color: 'amazon', icon: '📦', nextBill: '2026-06-01', usedCount: 1 },
+  { id: 9, name: 'Disney+', price: 13.99, cycle: 'monthly', category: 'streaming', color: 'disney', icon: '🏰', nextBill: '2026-05-30', usedCount: 0 },
+  { id: 10, name: 'Figma', price: 15.00, cycle: 'monthly', category: 'dev', color: 'figma', icon: '🎨', nextBill: '2026-05-16', usedCount: 4 },
+];
+
+let subscriptions = JSON.parse(localStorage.getItem('subshelf-data')) || DEFAULT_SUBS;
+let currentFilter = 'all';
+
+function save() {
+  localStorage.setItem('subshelf-data', JSON.stringify(subscriptions));
+}
+
+// ── Render ──
+function render() {
+  renderStats();
+  renderBooks();
+  renderCheckins();
+  renderUpcoming();
+}
+
+function renderStats() {
+  const monthly = subscriptions.reduce((sum, s) => {
+    if (s.cycle === 'yearly') return sum + s.price / 12;
+    if (s.cycle === 'weekly') return sum + s.price * 4.33;
+    return sum + s.price;
+  }, 0);
+
+  document.getElementById('stat-monthly').textContent = `$${monthly.toFixed(2)}`;
+  document.getElementById('stat-annual').textContent = `$${(monthly * 12).toFixed(0)}`;
+  document.getElementById('stat-count').textContent = subscriptions.length;
+  document.getElementById('stat-avg').textContent = `$${(monthly / Math.max(subscriptions.length, 1)).toFixed(2)}`;
+  document.getElementById('shelf-count').textContent = `${subscriptions.length} subscriptions`;
+}
+
+function renderBooks() {
+  const row = document.getElementById('books-row');
+  let filtered = subscriptions;
+
+  if (currentFilter === 'active') {
+    filtered = subscriptions.filter(s => s.usedCount > 0);
+  } else if (currentFilter === 'unused') {
+    filtered = subscriptions.filter(s => s.usedCount === 0);
+  }
+
+  const bookHeights = [100, 110, 95, 120, 105, 115, 90, 125, 108, 98];
+
+  row.innerHTML = filtered.map((sub, i) => {
+    const h = bookHeights[i % bookHeights.length];
+    const colorClass = `book-${sub.color}` || 'book-default';
+    const statusDot = sub.usedCount === 0 ? '🔴' : sub.usedCount <= 2 ? '🟡' : '🟢';
+    return `
+      <div class="book ${colorClass}" style="height:${h}px" onclick="markUsed(${sub.id})">
+        <div class="book-spine">${sub.name.substring(0, 10)}</div>
+        <div class="book-tooltip">
+          <div class="tooltip-name">${statusDot} ${sub.name}</div>
+          <div class="tooltip-price">$${sub.price.toFixed(2)}/${sub.cycle === 'monthly' ? 'mo' : sub.cycle === 'yearly' ? 'yr' : 'wk'}</div>
+          <div class="tooltip-cycle">Used ${sub.usedCount}x this week · Next: ${formatDate(sub.nextBill)}</div>
+        </div>
+      </div>
+    `;
+  }).join('') + `<div class="add-book" onclick="openModal()">+</div>`;
+}
+
+function renderCheckins() {
+  const container = document.getElementById('checkin-items');
+  const checkinSubs = subscriptions.slice(0, 4);
+
+  container.innerHTML = checkinSubs.map(sub => `
+    <div class="checkin-item">
+      <div class="checkin-service">
+        <div class="checkin-service-icon">${sub.icon}</div>
+        <div>
+          <div class="checkin-service-name">${sub.name}</div>
+          <div class="checkin-service-price">$${sub.price.toFixed(2)}/${sub.cycle === 'monthly' ? 'mo' : 'yr'}</div>
+        </div>
+      </div>
+      <div class="checkin-buttons">
+        <button class="checkin-btn checkin-yes" onclick="markUsed(${sub.id})">👍 Used</button>
+        <button class="checkin-btn checkin-no" onclick="markUnused(${sub.id})">👎 Nope</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderUpcoming() {
+  const container = document.getElementById('upcoming-list');
+  const sorted = [...subscriptions].sort((a, b) => new Date(a.nextBill) - new Date(b.nextBill)).slice(0, 5);
+
+  container.innerHTML = sorted.map(sub => {
+    const d = new Date(sub.nextBill);
+    return `
+      <div class="upcoming-item">
+        <div class="upcoming-left">
+          <div class="upcoming-date">
+            <div class="upcoming-date-day">${d.getDate()}</div>
+            <div class="upcoming-date-month">${d.toLocaleString('en', { month: 'short' })}</div>
+          </div>
+          <div>
+            <div class="upcoming-name">${sub.icon} ${sub.name}</div>
+          </div>
+        </div>
+        <div class="upcoming-price">$${sub.price.toFixed(2)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Actions ──
+function markUsed(id) {
+  const sub = subscriptions.find(s => s.id === id);
+  if (sub) { sub.usedCount = Math.min(sub.usedCount + 1, 7); save(); render(); }
+}
+
+function markUnused(id) {
+  const sub = subscriptions.find(s => s.id === id);
+  if (sub) { sub.usedCount = Math.max(sub.usedCount - 1, 0); save(); render(); }
+}
+
+function filterShelf(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.shelf-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderBooks();
+}
+
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('active');
+  document.getElementById('form-name').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+function addSubscription() {
+  const name = document.getElementById('form-name').value.trim();
+  const price = parseFloat(document.getElementById('form-price').value);
+  const cycle = document.getElementById('form-cycle').value;
+  const category = document.getElementById('form-category').value;
+  const nextBill = document.getElementById('form-date').value || new Date(Date.now() + 30*86400000).toISOString().split('T')[0];
+
+  if (!name || isNaN(price)) return;
+
+  subscriptions.push({
+    id: Date.now(),
+    name,
+    price,
+    cycle,
+    category,
+    color: 'default',
+    icon: categoryIcons[category] || '📦',
+    nextBill,
+    usedCount: 0
+  });
+
+  save();
+  render();
+  closeModal();
+  document.getElementById('form-name').value = '';
+  document.getElementById('form-price').value = '';
+}
+
+const categoryIcons = {
+  streaming: '🎬', music: '🎵', productivity: '⚡', dev: '💻',
+  fitness: '💪', cloud: '☁️', gaming: '🎮', news: '📰', other: '📦'
+};
+
+function formatDate(dateStr) {
+  return new Date(dateStr).toLocaleDateString('en', { month: 'short', day: 'numeric' });
+}
+
+function exportCSV() {
+  const csv = 'Name,Price,Cycle,Category,Used This Week,Next Bill\n' +
+    subscriptions.map(s => `"${s.name}",${s.price},${s.cycle},${s.category},${s.usedCount},${s.nextBill}`).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'subshelf-export.csv';
+  a.click();
+}
+
+// ── Init ──
+render();
+</script>
+</body>
+</html>
