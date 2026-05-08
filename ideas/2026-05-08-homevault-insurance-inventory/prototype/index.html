@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeVault — AI Home Inventory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  
+  :root {
+    --bg: #0a0c10;
+    --surface: #12151c;
+    --surface2: #1a1e28;
+    --surface3: #222836;
+    --border: #2a3040;
+    --text: #e8ecf4;
+    --text2: #8892a6;
+    --text3: #5a6478;
+    --accent: #4f8cff;
+    --accent2: #6c5ce7;
+    --green: #00d68f;
+    --green2: #00b377;
+    --orange: #ff9f43;
+    --red: #ff6b6b;
+    --pink: #ee5a9f;
+    --cyan: #0abde3;
+    --yellow: #feca57;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { 
+    font-family:'Inter',system-ui,sans-serif; 
+    background:var(--bg); 
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0f1218 0%, #161b26 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,140,255,0.3); }
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface3); color: var(--text); }
+  .btn-danger {
+    background: rgba(255,107,107,0.15);
+    color: var(--red);
+    border: 1px solid rgba(255,107,107,0.2);
+  }
+  .btn-claim {
+    background: linear-gradient(135deg, var(--green2), var(--green));
+    color: #000;
+    font-weight: 700;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  /* Navigation tabs */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { color: var(--text2); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  
+  /* Main content */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .stat-card:nth-child(1)::before { background: var(--accent); }
+  .stat-card:nth-child(2)::before { background: var(--green); }
+  .stat-card:nth-child(3)::before { background: var(--orange); }
+  .stat-card:nth-child(4)::before { background: var(--pink); }
+  .stat-label { font-size: 12px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 28px; font-weight: 800; margin-top: 4px; letter-spacing: -1px; }
+  .stat-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+  
+  /* Room grid */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .room-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .room-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .room-icon { font-size: 32px; margin-bottom: 12px; }
+  .room-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .room-items { font-size: 13px; color: var(--text2); }
+  .room-value { font-size: 20px; font-weight: 800; margin-top: 12px; color: var(--green); }
+  .room-scan-badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-scanned { background: rgba(0,214,143,0.15); color: var(--green); }
+  .badge-partial { background: rgba(255,159,67,0.15); color: var(--orange); }
+  .badge-new { background: rgba(79,140,255,0.15); color: var(--accent); }
+  
+  /* Items table */
+  .items-section { margin-bottom: 32px; }
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .items-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .items-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .items-table tr:hover td { background: var(--surface2); }
+  .item-cell { display: flex; align-items: center; gap: 12px; }
+  .item-thumb {
+    width: 40px; height: 40px;
+    background: var(--surface3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .item-name { font-weight: 600; }
+  .item-brand { font-size: 12px; color: var(--text3); }
+  .value-pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .category-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .cat-electronics { background: rgba(79,140,255,0.12); color: var(--accent); }
+  .cat-furniture { background: rgba(0,214,143,0.12); color: var(--green); }
+  .cat-appliances { background: rgba(255,159,67,0.12); color: var(--orange); }
+  .cat-clothing { background: rgba(238,90,159,0.12); color: var(--pink); }
+  .cat-art { background: rgba(108,92,231,0.12); color: var(--accent2); }
+  .cat-tools { background: rgba(10,189,227,0.12); color: var(--cyan); }
+  
+  /* Scan modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 540px;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-body { padding: 24px; }
+  
+  /* Scan animation */
+  .scan-view {
+    width: 100%;
+    height: 280px;
+    background: linear-gradient(135deg, #0d1117, #161b22);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .scan-room-preview {
+    font-size: 60px;
+    opacity: 0.3;
+  }
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    box-shadow: 0 0 20px var(--green);
+    animation: scanMove 2s ease-in-out infinite;
+  }
+  @keyframes scanMove {
+    0% { top: 10%; }
+    50% { top: 90%; }
+    100% { top: 10%; }
+  }
+  .scan-items-found {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .scan-item-tag {
+    background: rgba(0,214,143,0.2);
+    color: var(--green);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .scan-progress {
+    margin-bottom: 16px;
+  }
+  .scan-progress-bar {
+    height: 6px;
+    background: var(--surface3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .scan-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+  .scan-progress-text {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 6px;
+  }
+  
+  /* Claim report preview */
+  .claim-preview {
+    background: white;
+    color: #1a1a1a;
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-top: 16px;
+  }
+  .claim-preview h2 { font-size: 20px; color: #111; margin-bottom: 4px; }
+  .claim-preview h3 { font-size: 14px; color: #666; margin-bottom: 20px; }
+  .claim-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  .claim-table th { 
+    text-align: left; padding: 8px 12px; font-size: 11px; 
+    text-transform: uppercase; color: #999; border-bottom: 2px solid #eee;
+  }
+  .claim-table td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+  .claim-total { 
+    background: #f8f9fa; padding: 12px; border-radius: 8px; 
+    display: flex; justify-content: space-between; font-weight: 700; font-size: 16px;
+  }
+  
+  /* Coverage alert */
+  .coverage-alert {
+    background: rgba(255,107,107,0.08);
+    border: 1px solid rgba(255,107,107,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .coverage-alert-icon { font-size: 20px; }
+  .coverage-alert-text { font-size: 14px; line-height: 1.5; }
+  .coverage-alert-text strong { color: var(--red); }
+  
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    z-index: 300;
+    animation: slideUp 0.3s ease;
+    display: none;
+  }
+  .toast.active { display: flex; }
+  
+  /* Page sections */
+  .page { display: none; }
+  .page.active { display: block; }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .rooms-grid { grid-template-columns: 1fr; }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🏠</div>
+    <span>HomeVault</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="showPage('rooms')">Rooms</button>
+    <button class="btn btn-ghost" onclick="showPage('items')">All Items</button>
+    <button class="btn btn-ghost" onclick="showPage('claim')">Claims</button>
+    <button class="btn btn-primary" onclick="openScanModal()">📸 Scan Room</button>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">Total Value</div>
+      <div class="stat-value" style="color:var(--green)">$147,850</div>
+      <div class="stat-sub">247 items cataloged</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Rooms Scanned</div>
+      <div class="stat-value">8 / 10</div>
+      <div class="stat-sub">2 rooms remaining</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Last Scan</div>
+      <div class="stat-value" style="font-size:22px">2 days ago</div>
+      <div class="stat-sub">Living Room refreshed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Coverage Gap</div>
+      <div class="stat-value" style="color:var(--red)">$12.5K</div>
+      <div class="stat-sub">Jewelry over policy limit</div>
+    </div>
+  </div>
+
+  <!-- Coverage Alert -->
+  <div class="coverage-alert">
+    <div class="coverage-alert-icon">⚠️</div>
+    <div class="coverage-alert-text">
+      <strong>Coverage gap detected:</strong> Your jewelry collection is valued at <strong>$15,200</strong> but your policy's jewelry sub-limit is <strong>$2,500</strong>. 
+      Consider scheduling individual items or increasing your personal property rider. 
+      <span style="color:var(--accent);cursor:pointer;text-decoration:underline;">Learn how →</span>
+    </div>
+  </div>
+
+  <!-- Rooms Page -->
+  <div class="page active" id="page-rooms">
+    <div class="section-header">
+      <div class="section-title">Your Rooms</div>
+      <button class="btn btn-ghost" onclick="openScanModal()">+ Add Room</button>
+    </div>
+    <div class="rooms-grid" id="rooms-grid">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- Items Page -->
+  <div class="page" id="page-items">
+    <div class="section-header">
+      <div class="section-title">All Items (247)</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" placeholder="Search items..." style="
+          padding:8px 14px;background:var(--surface2);border:1px solid var(--border);
+          border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;width:220px;
+        ">
+        <button class="btn btn-ghost">Filter</button>
+        <button class="btn btn-ghost">Sort by Value ↓</button>
+      </div>
+    </div>
+    <table class="items-table" id="items-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Room</th>
+          <th>Category</th>
+          <th>Est. Value</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody id="items-body">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Claim Page -->
+  <div class="page" id="page-claim">
+    <div class="section-header">
+      <div class="section-title">Insurance Claim Report</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-claim" onclick="showToast('📄 Claim report PDF generated!')">📋 Generate Claim PDF</button>
+        <button class="btn btn-ghost">📧 Share with Agent</button>
+      </div>
+    </div>
+    <p style="color:var(--text2);font-size:14px;margin-bottom:16px;">
+      This report is ready to submit to your insurance adjuster. Includes all documented items with photos, estimated values, and supporting documentation.
+    </p>
+    <div class="claim-preview">
+      <h2>HomeVault — Personal Property Inventory</h2>
+      <h3>Policyholder: John Smith | Policy #HO-2026-448791 | Prepared: May 8, 2026</h3>
+      <table class="claim-table">
+        <thead>
+          <tr><th>Item</th><th>Room</th><th>Brand/Model</th><th>Est. Replacement Value</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>MacBook Pro 16"</td><td>Home Office</td><td>Apple M4 Max</td><td>$3,499</td></tr>
+          <tr><td>Samsung 65" OLED TV</td><td>Living Room</td><td>S95D</td><td>$2,599</td></tr>
+          <tr><td>Sofa Sectional</td><td>Living Room</td><td>West Elm Haven</td><td>$3,890</td></tr>
+          <tr><td>Herman Miller Aeron</td><td>Home Office</td><td>Size B, Remastered</td><td>$1,695</td></tr>
+          <tr><td>Dyson V15 Detect</td><td>Utility Closet</td><td>Absolute</td><td>$749</td></tr>
+          <tr><td>KitchenAid Stand Mixer</td><td>Kitchen</td><td>Artisan 5qt</td><td>$449</td></tr>
+          <tr><td>... 241 more items</td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+      <div class="claim-total">
+        <span>Total Estimated Replacement Value</span>
+        <span style="color:#00b377">$147,850</span>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:12px">
+      <button class="btn btn-primary" onclick="showToast('📄 PDF downloaded!')">⬇ Download PDF</button>
+      <button class="btn btn-ghost" onclick="showToast('📊 Excel exported!')">📊 Export Excel</button>
+      <button class="btn btn-ghost">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scan Modal -->
+<div class="modal-overlay" id="scan-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📸 Room Scan</div>
+      <button class="modal-close" onclick="closeScanModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="scan-view">
+        <div class="scan-room-preview">🛋️</div>
+        <div class="scan-line"></div>
+        <div class="scan-items-found" id="scan-tags"></div>
+      </div>
+      <div class="scan-progress">
+        <div class="scan-progress-bar">
+          <div class="scan-progress-fill" id="scan-fill" style="width:0%"></div>
+        </div>
+        <div class="scan-progress-text" id="scan-text">Analyzing room...</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <select style="
+          flex:1;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);
+          border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;
+        ">
+          <option>Living Room</option>
+          <option>Bedroom</option>
+          <option>Kitchen</option>
+          <option>Home Office</option>
+          <option>Bathroom</option>
+          <option>Garage</option>
+          <option>Dining Room</option>
+          <option>+ New Room</option>
+        </select>
+        <button class="btn btn-primary" onclick="runScan()" id="scan-btn">Start Scan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+const rooms = [
+  { name:'Living Room', icon:'🛋️', items:42, value:'$28,450', badge:'scanned' },
+  { name:'Kitchen', icon:'🍳', items:38, value:'$12,800', badge:'scanned' },
+  { name:'Home Office', icon:'💻', items:31, value:'$18,200', badge:'scanned' },
+  { name:'Master Bedroom', icon:'🛏️', items:35, value:'$15,600', badge:'scanned' },
+  { name:'Garage', icon:'🚗', items:44, value:'$22,300', badge:'partial' },
+  { name:'Bathroom', icon:'🚿', items:18, value:'$4,200', badge:'scanned' },
+  { name:'Dining Room', icon:'🍽️', items:15, value:'$14,800', badge:'scanned' },
+  { name:'Guest Room', icon:'🚪', items:12, value:'$5,500', badge:'scanned' },
+  { name:'Backyard', icon:'🌳', items:8, value:'$3,200', badge:'partial' },
+  { name:'Attic', icon:'📦', items:4, value:'$800', badge:'new' },
+];
+
+const items = [
+  { name:'MacBook Pro 16"', brand:'Apple M4 Max', room:'Home Office', cat:'Electronics', catClass:'cat-electronics', value:'$3,499', icon:'💻' },
+  { name:'Samsung 65" OLED', brand:'S95D', room:'Living Room', cat:'Electronics', catClass:'cat-electronics', value:'$2,599', icon:'📺' },
+  { name:'Herman Miller Aeron', brand:'Remastered Size B', room:'Home Office', cat:'Furniture', catClass:'cat-furniture', value:'$1,695', icon:'💺' },
+  { name:'Sofa Sectional', brand:'West Elm Haven', room:'Living Room', cat:'Furniture', catClass:'cat-furniture', value:'$3,890', icon:'🛋️' },
+  { name:'KitchenAid Mixer', brand:'Artisan 5qt', room:'Kitchen', cat:'Appliances', catClass:'cat-appliances', value:'$449', icon:'🎂' },
+  { name:'Dyson V15', brand:'Detect Absolute', room:'Utility', cat:'Appliances', catClass:'cat-appliances', value:'$749', icon:'🧹' },
+  { name:'Patagonia Down Jacket', brand:'Nano Puff', room:'Master BR', cat:'Clothing', catClass:'cat-clothing', value:'$259', icon:'🧥' },
+  { name:'Original Painting', brand:'Unsigned, 24x36', room:'Living Room', cat:'Art', catClass:'cat-art', value:'$2,800', icon:'🎨' },
+  { name:'DeWalt Drill Set', brand:'20V MAX', room:'Garage', cat:'Tools', catClass:'cat-tools', value:'$399', icon:'🔩' },
+  { name:'Sony PS5', brand:'Disc Edition', room:'Living Room', cat:'Electronics', catClass:'cat-electronics', value:'$499', icon:'🎮' },
+];
+
+const scanItems = ['Sofa','TV Stand','Coffee Table','Bookshelf','Floor Lamp','Throw Pillows','Rug','Side Table','Remote Control','Picture Frames'];
+
+function renderRooms() {
+  const grid = document.getElementById('rooms-grid');
+  grid.innerHTML = rooms.map(r => `
+    <div class="room-card">
+      <span class="room-scan-badge badge-${r.badge}">${r.badge === 'scanned' ? '✓ Scanned' : r.badge === 'partial' ? '◐ Partial' : '○ New'}</span>
+      <div class="room-icon">${r.icon}</div>
+      <div class="room-name">${r.name}</div>
+      <div class="room-items">${r.items} items</div>
+      <div class="room-value">${r.value}</div>
+    </div>
+  `).join('');
+}
+
+function renderItems() {
+  const tbody = document.getElementById('items-body');
+  tbody.innerHTML = items.map(i => `
+    <tr>
+      <td>
+        <div class="item-cell">
+          <div class="item-thumb">${i.icon}</div>
+          <div>
+            <div class="item-name">${i.name}</div>
+            <div class="item-brand">${i.brand}</div>
+          </div>
+        </div>
+      </td>
+      <td style="color:var(--text2)">${i.room}</td>
+      <td><span class="category-badge ${i.catClass}">${i.cat}</span></td>
+      <td><span class="value-pill" style="background:rgba(0,214,143,0.1);color:var(--green)">${i.value}</span></td>
+      <td style="color:var(--text3);font-size:13px">2 days ago</td>
+    </tr>
+  `).join('');
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+}
+
+function openScanModal() { document.getElementById('scan-modal').classList.add('active'); }
+function closeScanModal() { 
+  document.getElementById('scan-modal').classList.remove('active');
+  document.getElementById('scan-tags').innerHTML = '';
+  document.getElementById('scan-fill').style.width = '0%';
+  document.getElementById('scan-text').textContent = 'Analyzing room...';
+}
+
+function runScan() {
+  const fill = document.getElementById('scan-fill');
+  const text = document.getElementById('scan-text');
+  const tags = document.getElementById('scan-tags');
+  const btn = document.getElementById('scan-btn');
+  
+  btn.textContent = 'Scanning...';
+  btn.disabled = true;
+  tags.innerHTML = '';
+  
+  let progress = 0;
+  let itemIdx = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15 + 5;
+    if (progress > 100) progress = 100;
+    fill.style.width = progress + '%';
+    text.textContent = `Scanning... ${Math.round(progress)}% — ${itemIdx} items found`;
+    
+    if (itemIdx < scanItems.length && Math.random() > 0.3) {
+      const tag = document.createElement('span');
+      tag.className = 'scan-item-tag';
+      tag.textContent = scanItems[itemIdx];
+      tags.appendChild(tag);
+      itemIdx++;
+    }
+    
+    if (progress >= 100) {
+      clearInterval(interval);
+      text.textContent = `✅ Scan complete! ${itemIdx} items detected.`;
+      btn.textContent = 'Save Items';
+      btn.disabled = false;
+      btn.onclick = () => {
+        closeScanModal();
+        showToast(`✅ ${itemIdx} items added to Living Room`);
+      };
+    }
+  }, 400);
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.classList.add('active');
+  setTimeout(() => toast.classList.remove('active'), 3000);
+}
+
+renderRooms();
+renderItems();
+</script>
+</body>
+</html>
