@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subtract — Subscription Tracker</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0f;
+    --card: #14141f;
+    --card-hover: #1a1a2e;
+    --accent: #6c5ce7;
+    --accent-glow: rgba(108, 92, 231, 0.3);
+    --green: #00d68f;
+    --yellow: #ffc048;
+    --red: #ff6b6b;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --border: #2a2a3e;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  
+  .app { max-width: 420px; margin: 0 auto; padding: 20px 16px; }
+  
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .logo { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: var(--accent); }
+  .header-btn { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 13px; }
+
+  .score-card { background: linear-gradient(135deg, var(--accent), #a855f7); border-radius: 20px; padding: 24px; margin-bottom: 24px; position: relative; overflow: hidden; }
+  .score-card::after { content: ''; position: absolute; top: -50%; right: -30%; width: 200px; height: 200px; background: rgba(255,255,255,0.08); border-radius: 50%; }
+  .score-label { font-size: 13px; opacity: 0.85; margin-bottom: 4px; }
+  .score-amount { font-size: 42px; font-weight: 800; letter-spacing: -1px; }
+  .score-sub { font-size: 13px; opacity: 0.75; margin-top: 6px; }
+  .score-savings { background: rgba(255,255,255,0.15); display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; margin-top: 12px; }
+
+  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .section-title span { color: var(--muted); font-size: 13px; font-weight: 400; }
+
+  .sub-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s; }
+  .sub-card:hover { background: var(--card-hover); border-color: var(--accent); transform: translateY(-1px); }
+  .sub-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .sub-info { flex: 1; min-width: 0; }
+  .sub-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+  .sub-meta { color: var(--muted); font-size: 12px; }
+  .sub-price { font-weight: 700; font-size: 15px; text-align: right; }
+  .sub-cycle { color: var(--muted); font-size: 11px; text-align: right; }
+
+  .health-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .health-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .health-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  .health-red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  .actions { display: flex; gap: 8px; margin-top: 20px; margin-bottom: 24px; }
+  .action-btn { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .action-btn:hover { border-color: var(--accent); }
+  .action-btn.primary { background: var(--accent); border-color: var(--accent); }
+
+  .cancel-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .cancel-modal.show { display: flex; }
+  .modal-content { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; max-width: 380px; width: 100%; }
+  .modal-content h3 { font-size: 18px; margin-bottom: 8px; }
+  .modal-content p { color: var(--muted); font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+  .email-template { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-size: 12px; line-height: 1.6; color: var(--text); font-family: monospace; margin-bottom: 16px; white-space: pre-wrap; }
+  .modal-actions { display: flex; gap: 8px; }
+  .modal-actions button { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .btn-cancel { background: transparent; border: 1px solid var(--border) !important; color: var(--text); }
+  .btn-confirm { background: var(--red); color: white; }
+
+  .challenge-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 24px; }
+  .challenge-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .challenge-desc { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+  .progress-bar { height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--green)); width: 33%; transition: width 0.5s; }
+  .progress-label { color: var(--muted); font-size: 11px; margin-top: 6px; }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--green); color: #000; padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 13px; transition: transform 0.3s; z-index: 200; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">Sub<span>tract</span></div>
+    <button class="header-btn">⚙️ Settings</button>
+  </header>
+
+  <div class="score-card">
+    <div class="score-label">Monthly Spend</div>
+    <div class="score-amount">$187.94</div>
+    <div class="score-sub">across 9 subscriptions</div>
+    <div class="score-savings">↓ You saved $23.98 last month by canceling 2</div>
+  </div>
+
+  <div class="challenge-card">
+    <div class="challenge-title">🎯 May Challenge: Cut $50/mo</div>
+    <div class="challenge-desc">Cancel 3 subscriptions this month. You've canceled 1 so far.</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
+    <div class="progress-label">$17 saved of $50 target</div>
+  </div>
+
+  <div class="section-title">Subscriptions <span>Sorted by health</span></div>
+
+  <div class="sub-card" onclick="openModal('Netflix', '$15.99/mo')">
+    <div class="sub-icon" style="background:#1a1a2e">🎬</div>
+    <div class="sub-info">
+      <div class="sub-name"><span class="health-dot health-green"></span>Netflix</div>
+      <div class="sub-meta">Used 4x this week · Next billing May 15</div>
+    </div>
+    <div><div class="sub-price">$15.99</div><div class="sub-cycle">/month</div></div>
+  </div>
+
+  <div class="sub-card" onclick="openModal('Spotify', '$10.99/mo')">
+    <div class="sub-icon" style="background:#1a1a2e">🎵</div>
+    <div class="sub-info">
+      <div class="sub-name"><span class="health-dot health-green"></span>Spotify</div>
+      <div class="sub-meta">Used daily · Next billing May 22</div>
+    </div>
+    <div><div class="sub-price">$10.99</div><div class="sub-cycle">/month</div></div>
+  </div>
+
+  <div class="sub-card" onclick="openModal('Adobe CC', '$54.99/mo')">
+    <div class="sub-icon" style="background:#1a1a2e">🎨</div>
+    <div class="sub-info">
+      <div class="sub-name"><span class="health-dot health-yellow"></span>Adobe Creative Cloud</div>
+      <div class="sub-meta">Last used 12 days ago · Next billing May 11</div>
+    </div>
+    <div><div class="sub-price">$54.99</div><div class="sub-cycle">/month</div></div>
+  </div>
+
+  <div class="sub-card" onclick="openModal('Gym', '$49.99/mo')">
+    <div class="sub-icon" style="background:#1a1a2e">💪</div>
+    <div class="sub-info">
+      <div class="sub-name"><span class="health-dot health-red"></span>Gym Membership</div>
+      <div class="sub-meta">Not used in 34 days · Next billing May 10</div>
+    </div>
+    <div><div class="sub-price">$49.99</div><div class="sub-cycle">/month</div></div>
+  </div>
+
+  <div class="sub-card" onclick="openModal('iCloud+', '$2.99/mo')">
+    <div class="sub-icon" style="background:#1a1a2e">☁️</div>
+    <div class="sub-info">
+      <div class="sub-name"><span class="health-dot health-green"></span>iCloud+</div>
+      <div class="sub-meta">85% used · Next billing May 18</div>
+    </div>
+    <div><div class="sub-price">$2.99</div><div class="sub-cycle">/month</div></div>
+  </div>
+
+  <div class="sub-card" onclick="openModal('ChatGPT', '$20.00/mo')">
+    <div class="sub-icon" style="background:#1a1a2e">🤖</div>
+    <div class="sub-info">
+      <div class="sub-name"><span class="health-dot health-green"></span>ChatGPT Plus</div>
+      <div class="sub-meta">Used daily · Next billing May 14</div>
+    </div>
+    <div><div class="sub-price">$20.00</div><div class="sub-cycle">/month</div></div>
+  </div>
+
+  <div class="actions">
+    <button class="action-btn">+ Add Manual</button>
+    <button class="action-btn primary">🔗 Sync Bank</button>
+  </div>
+</div>
+
+<div class="cancel-modal" id="cancelModal">
+  <div class="modal-content">
+    <h3 id="modalTitle">Cancel Subscription</h3>
+    <p id="modalDesc">We'll generate a cancellation email you can send directly.</p>
+    <div class="email-template" id="emailTemplate"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Keep</button>
+      <button class="btn-confirm" onclick="confirmCancel()">📋 Copy Email</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Cancellation email copied!</div>
+
+<script>
+  function openModal(name, price) {
+    document.getElementById('modalTitle').textContent = `Cancel ${name}?`;
+    document.getElementById('modalDesc').textContent = `You're paying ${price}. Here's a ready-to-send cancellation email:`;
+    document.getElementById('emailTemplate').textContent = 
+`Subject: Subscription Cancellation — ${name}
+
+Dear ${name} Support,
+
+I am writing to request the cancellation of my subscription effective immediately.
+
+Service: ${name}
+Amount: ${price}
+Reason: No longer using the service regularly.
+
+Please confirm the cancellation and ensure no further charges are applied.
+
+Thank you,
+[Your Name]`;
+    document.getElementById('cancelModal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('cancelModal').classList.remove('show');
+  }
+
+  function confirmCancel() {
+    const text = document.getElementById('emailTemplate').textContent;
+    navigator.clipboard.writeText(text).catch(() => {});
+    closeModal();
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  document.getElementById('cancelModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+</script>
+</body>
+</html>
