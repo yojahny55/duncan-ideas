@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocialBattery — Know Your Charge</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --surface2: #222240;
+  --purple: #7c5cfc;
+  --purple-glow: rgba(124,92,252,0.3);
+  --teal: #4ecdc4;
+  --teal-glow: rgba(78,205,196,0.2);
+  --red: #ff6b6b;
+  --orange: #ffa502;
+  --green: #7bed9f;
+  --text: #e8e8f0;
+  --text2: #9898b0;
+  --text3: #6868a0;
+  --radius: 16px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--purple), var(--teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header-actions { display: flex; gap: 12px; }
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid rgba(124,92,252,0.15);
+  color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+.icon-btn:hover { background: var(--surface2); color: var(--text); }
+
+/* Battery Display */
+.battery-hero {
+  background: linear-gradient(145deg, var(--surface), var(--surface2));
+  border-radius: 24px;
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(124,92,252,0.1);
+  margin-bottom: 24px;
+}
+.battery-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 50% 80%, var(--purple-glow), transparent 50%);
+  pointer-events: none;
+}
+.battery-label {
+  font-size: 13px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+.battery-gauge {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 16px;
+}
+.battery-gauge svg { transform: rotate(-90deg); }
+.battery-gauge .bg-ring {
+  fill: none;
+  stroke: rgba(124,92,252,0.1);
+  stroke-width: 12;
+}
+.battery-gauge .charge-ring {
+  fill: none;
+  stroke: url(#chargeGrad);
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-dasharray: 565;
+  stroke-dashoffset: 565;
+  transition: stroke-dashoffset 1.5s ease;
+}
+.battery-percent {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.battery-percent .num {
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--purple), var(--teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.battery-percent .unit {
+  font-size: 18px;
+  color: var(--text3);
+}
+.battery-status {
+  font-size: 15px;
+  color: var(--text2);
+  margin-top: 4px;
+}
+.battery-face {
+  font-size: 32px;
+  margin-top: 8px;
+}
+
+/* Forecast strip */
+.forecast {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 16px;
+  scrollbar-width: none;
+}
+.forecast::-webkit-scrollbar { display: none; }
+.forecast-card {
+  flex-shrink: 0;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+  min-width: 80px;
+  border: 1px solid rgba(124,92,252,0.08);
+}
+.forecast-card.today {
+  border-color: var(--purple);
+  background: linear-gradient(145deg, rgba(124,92,252,0.15), var(--surface));
+}
+.forecast-day { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+.forecast-battery { font-size: 20px; font-weight: 700; margin: 4px 0; }
+.forecast-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(124,92,252,0.15);
+  overflow: hidden;
+}
+.forecast-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--purple), var(--teal));
+}
+
+/* Section title */
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Quick log */
+.quick-log {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(124,92,252,0.08);
+}
+.log-options {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.log-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.log-btn:hover { border-color: rgba(124,92,252,0.3); }
+.log-btn.active-green { border-color: var(--green); color: var(--green); background: rgba(123,237,159,0.1); }
+.log-btn.active-yellow { border-color: var(--orange); color: var(--orange); background: rgba(255,165,2,0.1); }
+.log-btn.active-red { border-color: var(--red); color: var(--red); background: rgba(255,107,107,0.1); }
+.log-row {
+  display: flex;
+  gap: 8px;
+}
+.log-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid rgba(124,92,252,0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+.log-input:focus { border-color: var(--purple); }
+.log-submit {
+  background: linear-gradient(135deg, var(--purple), #9b7cfc);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.log-submit:hover { opacity: 0.9; }
+
+/* Events */
+.event-list { margin-bottom: 24px; }
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(124,92,252,0.06);
+  transition: all 0.2s;
+}
+.event-item:hover { border-color: rgba(124,92,252,0.2); }
+.event-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.event-icon.energizing { background: rgba(123,237,159,0.15); }
+.event-icon.neutral { background: rgba(255,165,2,0.15); }
+.event-icon.draining { background: rgba(255,107,107,0.15); }
+.event-info { flex: 1; }
+.event-name { font-size: 14px; font-weight: 500; }
+.event-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.event-drain { font-size: 13px; font-weight: 600; text-align: right; }
+.event-drain.gain { color: var(--green); }
+.event-drain.loss { color: var(--red); }
+
+/* Insights */
+.insight-card {
+  background: linear-gradient(145deg, rgba(124,92,252,0.1), var(--surface));
+  border: 1px solid rgba(124,92,252,0.15);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.insight-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.insight-text {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.insight-highlight {
+  color: var(--teal);
+  font-weight: 500;
+}
+
+/* Share */
+.share-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(78,205,196,0.15);
+}
+.share-preview {
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  margin: 12px 0;
+}
+.share-status {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.share-level {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.share-actions {
+  display: flex;
+  gap: 8px;
+}
+.share-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(78,205,196,0.2);
+  background: rgba(78,205,196,0.08);
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.share-btn:hover { background: rgba(78,205,196,0.15); }
+.share-btn.primary {
+  background: linear-gradient(135deg, var(--teal), #6ee7de);
+  color: var(--bg);
+  border: none;
+  font-weight: 600;
+}
+
+/* Social budget */
+.budget-bar {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(124,92,252,0.08);
+}
+.budget-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.budget-track {
+  height: 8px;
+  background: rgba(124,92,252,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.budget-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--purple));
+  transition: width 1s ease;
+}
+.budget-label { font-size: 12px; color: var(--text3); }
+
+/* Bottom nav */
+.bottom-nav {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 6px;
+  position: sticky;
+  bottom: 16px;
+  border: 1px solid rgba(124,92,252,0.1);
+}
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 4px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-item.active {
+  background: rgba(124,92,252,0.15);
+  color: var(--purple);
+}
+.nav-icon { font-size: 18px; margin-bottom: 2px; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--surface2);
+  border: 1px solid var(--teal);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--teal);
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.pulse { animation: pulse 2s ease infinite; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">⚡ SocialBattery</div>
+    <div class="header-actions">
+      <button class="icon-btn">🔔</button>
+      <button class="icon-btn">⚙️</button>
+    </div>
+  </div>
+
+  <!-- Battery Hero -->
+  <div class="battery-hero">
+    <div class="battery-label">Social Battery</div>
+    <div class="battery-gauge">
+      <svg viewBox="0 0 200 200" width="200" height="200">
+        <defs>
+          <linearGradient id="chargeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#7c5cfc"/>
+            <stop offset="100%" style="stop-color:#4ecdc4"/>
+          </linearGradient>
+        </defs>
+        <circle class="bg-ring" cx="100" cy="100" r="90"/>
+        <circle class="charge-ring" id="chargeRing" cx="100" cy="100" r="90"/>
+      </svg>
+      <div class="battery-percent">
+        <div class="num" id="batteryNum">0</div>
+        <div class="unit">%</div>
+      </div>
+    </div>
+    <div class="battery-face" id="batteryFace">😊</div>
+    <div class="battery-status" id="batteryStatus">Fully charged — ready to socialize</div>
+  </div>
+
+  <!-- Week Forecast -->
+  <div class="section-title">📅 Energy Forecast</div>
+  <div class="forecast" id="forecast"></div>
+
+  <!-- Social Budget -->
+  <div class="budget-bar">
+    <div class="budget-header">
+      <span>📊 Weekly Social Budget</span>
+      <span id="budgetUsed">4.5 / 8 hrs</span>
+    </div>
+    <div class="budget-track">
+      <div class="budget-fill" id="budgetFill" style="width:56%"></div>
+    </div>
+    <div class="budget-label">3.5 hours of socializing left this week — use wisely</div>
+  </div>
+
+  <!-- Quick Log -->
+  <div class="section-title">⚡ Quick Log</div>
+  <div class="quick-log">
+    <div class="log-options">
+      <button class="log-btn" data-type="energize" onclick="selectType(this, 'active-green')">🟢 Energizing</button>
+      <button class="log-btn" data-type="neutral" onclick="selectType(this, 'active-yellow')">🟡 Neutral</button>
+      <button class="log-btn" data-type="drain" onclick="selectType(this, 'active-red')">🔴 Draining</button>
+    </div>
+    <div class="log-row">
+      <input class="log-input" id="logInput" placeholder="Coffee with Sarah (1hr)"/>
+      <button class="log-submit" onclick="logEvent()">Log</button>
+    </div>
+  </div>
+
+  <!-- Today's Events -->
+  <div class="section-title">📋 Today</div>
+  <div class="event-list" id="eventList"></div>
+
+  <!-- Insight -->
+  <div class="insight-card">
+    <div class="insight-header">🧠 Battery Insight</div>
+    <div class="insight-text">
+      Phone calls with <span class="insight-highlight">Mom</span> drain you 40% faster than average. 
+      You recharge <span class="insight-highlight">2x faster</span> after solo walks vs. watching TV. 
+      Consider scheduling recovery walks after high-drain events.
+    </div>
+  </div>
+
+  <!-- Share Card -->
+  <div class="share-card">
+    <div class="section-title">🔗 Share Your Battery</div>
+    <div class="share-preview">
+      <div class="share-status">Alex's social battery is at</div>
+      <div class="share-level" id="shareLevel">65%</div>
+      <div class="battery-face" id="shareFace" style="font-size:24px">😐</div>
+    </div>
+    <div class="share-actions">
+      <button class="share-btn primary" onclick="shareLink()">Share Link</button>
+      <button class="share-btn" onclick="sendDecline()">🪫 Gentle Decline</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active"><div class="nav-icon">🔋</div>Battery</div>
+    <div class="nav-item"><div class="nav-icon">📋</div>Log</div>
+    <div class="nav-item"><div class="nav-icon">📊</div>Insights</div>
+    <div class="nav-item"><div class="nav-icon">👥</div>Share</div>
+    <div class="nav-item"><div class="nav-icon">⚙️</div>Settings</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// State
+let battery = 65;
+let selectedType = null;
+
+// Events data
+const events = [
+  { name: 'Morning walk (solo)', time: '7:00 AM', duration: '30 min', type: 'energizing', drain: '+8%', emoji: '🚶' },
+  { name: 'Team standup (Zoom)', time: '9:30 AM', duration: '15 min', type: 'neutral', drain: '-5%', emoji: '💻' },
+  { name: 'Lunch with Jake', time: '12:30 PM', duration: '1 hr', type: 'draining', drain: '-15%', emoji: '🍕' },
+  { name: 'Deep work (solo)', time: '2:00 PM', duration: '3 hrs', type: 'energizing', drain: '+12%', emoji: '🎯' },
+  { name: 'Call with Mom', time: '6:00 PM', duration: '45 min', type: 'draining', drain: '-20%', emoji: '📱' },
+];
+
+// Forecast data
+const forecast = [
+  { day: 'Today', val: 65 },
+  { day: 'Mon', val: 45 },
+  { day: 'Tue', val: 72 },
+  { day: 'Wed', val: 38 },
+  { day: 'Thu', val: 60 },
+  { day: 'Fri', val: 80 },
+  { day: 'Sat', val: 90 },
+];
+
+function getFace(v) {
+  if (v >= 80) return '😊';
+  if (v >= 60) return '🙂';
+  if (v >= 40) return '😐';
+  if (v >= 20) return '😫';
+  return '🪫';
+}
+
+function getStatus(v) {
+  if (v >= 80) return 'Fully charged — go be social!';
+  if (v >= 60) return 'Good energy — you\'ve got room for more';
+  if (v >= 40) return 'Halfway there — choose wisely';
+  if (v >= 20) return 'Running low — protect your energy';
+  return 'Critical — recharge ASAP';
+}
+
+function updateBattery(val) {
+  battery = Math.max(0, Math.min(100, val));
+  const ring = document.getElementById('chargeRing');
+  const circumference = 2 * Math.PI * 90;
+  const offset = circumference - (battery / 100) * circumference;
+  ring.style.strokeDashoffset = offset;
+  
+  document.getElementById('batteryNum').textContent = battery;
+  document.getElementById('batteryFace').textContent = getFace(battery);
+  document.getElementById('batteryStatus').textContent = getStatus(battery);
+  document.getElementById('shareLevel').textContent = battery + '%';
+  document.getElementById('shareFace').textContent = getFace(battery);
+}
+
+function renderForecast() {
+  const el = document.getElementById('forecast');
+  el.innerHTML = forecast.map((f, i) => `
+    <div class="forecast-card${i === 0 ? ' today' : ''}">
+      <div class="forecast-day">${f.day}</div>
+      <div class="forecast-battery">${f.val}%</div>
+      <div class="forecast-bar"><div class="forecast-bar-fill" style="width:${f.val}%"></div></div>
+    </div>
+  `).join('');
+}
+
+function renderEvents() {
+  const el = document.getElementById('eventList');
+  el.innerHTML = events.map(e => {
+    const cls = e.type === 'energizing' ? 'energizing' : e.type === 'neutral' ? 'neutral' : 'draining';
+    const drainCls = e.type === 'energizing' ? 'gain' : 'loss';
+    return `
+      <div class="event-item">
+        <div class="event-icon ${cls}">${e.emoji}</div>
+        <div class="event-info">
+          <div class="event-name">${e.name}</div>
+          <div class="event-meta">${e.time} · ${e.duration}</div>
+        </div>
+        <div class="event-drain ${drainCls}">${e.drain}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectType(btn, cls) {
+  document.querySelectorAll('.log-btn').forEach(b => b.className = 'log-btn');
+  btn.classList.add(cls);
+  selectedType = btn.dataset.type;
+}
+
+function logEvent() {
+  const input = document.getElementById('logInput');
+  const name = input.value.trim();
+  if (!name || !selectedType) {
+    showToast('Pick a type and describe the event');
+    return;
+  }
+  
+  const drainMap = { energize: '+10%', neutral: '-8%', drain: '-18%' };
+  const emojiMap = { energize: '⚡', neutral: '💬', drain: '😤' };
+  const drain = drainMap[selectedType];
+  const emoji = emojiMap[selectedType];
+  const type = selectedType === 'energize' ? 'energizing' : selectedType === 'drain' ? 'draining' : 'neutral';
+  
+  events.unshift({
+    name, time: 'Just now', duration: '—', type, drain, emoji
+  });
+  
+  // Update battery
+  const delta = selectedType === 'energize' ? 10 : selectedType === 'neutral' ? -8 : -18;
+  updateBattery(battery + delta);
+  
+  input.value = '';
+  selectedType = null;
+  document.querySelectorAll('.log-btn').forEach(b => b.className = 'log-btn');
+  renderEvents();
+  showToast(`Logged: ${name} (${drain})`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function shareLink() {
+  showToast('📋 Battery link copied to clipboard!');
+}
+
+function sendDecline() {
+  showToast('🪫 "My social battery is low today — can we reschedule?" sent!');
+}
+
+// Init
+renderForecast();
+renderEvents();
+setTimeout(() => updateBattery(65), 300);
+</script>
+</body>
+</html>
