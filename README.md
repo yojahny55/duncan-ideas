@@ -32,6 +32,9 @@ ideas/
 
 ## Ideas Index
 
+| 2026-05-11 | [MedEffect](ideas/2026-05-11-medefect-side-effect-journal/) | Medication side effect journal with community insights — when you start a new med, log symptoms daily, see anonymized community data ("42% of Lexapro users report insomnia week 1, resolves by week 6 for 78%"), generate doctor-ready PDF reports. 175M+ US adults on prescriptions, 50M starting new ones annually. GLP-1 explosion (15M+ users) demanding "is this normal?" answers. Penn/Nature April 2026 study validated Reddit side effect data exceeds clinical trials. Pill trackers remind, interaction checkers warn — nobody owns the personal side effect experience. Free 1 med, $4.99/mo Plus, $9.99/mo Family. $0-10/mo | Web (Penn/Nature study, Product Hunt) | ✅ [Demo](https://yojahny55.github.io/duncan-ideas/ideas/2026-05-11-medefect-side-effect-journal/prototype/index.html) |
+|------|------|-------------|--------|-----------|
+
 | 2026-05-07 | [ChargeFuel](ideas/2026-05-07-chargefuel-ev-cost-tracker/) | Unified EV charging cost tracker — aggregate all charging spend from Tesla, ChargePoint, Electrify America, EVgo, home charger into one dashboard. Real cost per mile vs gas comparison, home vs public split, TOU rate optimizer ("charge 11pm-6am to save $47/mo"), monthly savings reports, trip cost calculator, carbon counter. 4.5M+ US EV owners juggling 5-15 charging apps with zero total cost visibility. Reddit threads with 100+ upvotes asking for this. Nobody owns the "show me my total EV fuel cost" position. Free basic, $3.99/mo Plus, $7.99/mo Premium. $0-8/mo | Web (Reddit r/electricvehicles, Product Hunt) | ✅ [Demo](https://yojahny55.github.io/duncan-ideas/ideas/2026-05-07-chargefuel-ev-cost-tracker/prototype/index.html) |
 |------|------|-------------|--------|-----------|
 
