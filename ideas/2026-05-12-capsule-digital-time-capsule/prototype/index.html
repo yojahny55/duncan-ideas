@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capsule 🎁 — Digital Time Capsule</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --amber: #F5A623;
+  --amber-light: #FFD580;
+  --cream: #FFF8F0;
+  --navy: #1A2332;
+  --navy-light: #2A3A52;
+  --coral: #FF6B6B;
+  --sage: #7CB69D;
+  --lavender: #B8A9C9;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--navy);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* Animated background particles */
+.bg-particles {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--amber);
+  opacity: 0.15;
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.1); }
+}
+
+/* Nav */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(26,35,50,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(245,166,35,0.15);
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo span { font-size: 1.2rem; }
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--amber); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: var(--amber);
+  color: var(--navy);
+}
+
+.btn-primary:hover {
+  background: var(--amber-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(245,166,35,0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--amber);
+  border: 1.5px solid var(--amber);
+}
+
+.btn-outline:hover {
+  background: rgba(245,166,35,0.1);
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245,166,35,0.12);
+  border: 1px solid rgba(245,166,35,0.25);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  color: var(--amber);
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.65);
+  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Demo capsule */
+.capsule-demo {
+  position: relative;
+  z-index: 1;
+  padding: 80px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 48px;
+  max-width: 500px;
+}
+
+/* The capsule card */
+.capsule-card {
+  background: linear-gradient(135deg, rgba(255,248,240,0.08), rgba(245,166,35,0.06));
+  border: 1px solid rgba(245,166,35,0.2);
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.capsule-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(245,166,35,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.capsule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.capsule-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--amber), #FF8A00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 8px 24px rgba(245,166,35,0.3);
+}
+
+.capsule-meta {
+  text-align: right;
+}
+
+.capsule-meta .label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 4px;
+}
+
+.capsule-meta .value {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.capsule-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.capsule-subtitle {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  margin-bottom: 28px;
+}
+
+/* Countdown */
+.countdown {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.countdown-unit {
+  text-align: center;
+  min-width: 72px;
+}
+
+.countdown-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 4px;
+}
+
+/* Contents preview */
+.contents-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.content-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.content-item:hover {
+  border-color: rgba(245,166,35,0.3);
+  background: rgba(245,166,35,0.05);
+}
+
+.content-item .icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.content-item .text {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.locked-overlay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.4);
+  font-size: 0.85rem;
+}
+
+/* Flow section */
+.flow-section {
+  position: relative;
+  z-index: 1;
+  padding: 80px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.flow-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+  margin-top: 48px;
+}
+
+.flow-step {
+  position: relative;
+  padding: 32px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.flow-step:hover {
+  border-color: rgba(245,166,35,0.3);
+  transform: translateY(-4px);
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.step-icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+
+.flow-step h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.flow-step p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.6;
+}
+
+/* Use cases */
+.use-cases {
+  position: relative;
+  z-index: 1;
+  padding: 80px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.case-card {
+  padding: 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+  transition: all 0.3s;
+}
+
+.case-card:hover {
+  border-color: rgba(245,166,35,0.3);
+}
+
+.case-emoji {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.case-card h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.case-card p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.6;
+}
+
+.case-card .quote {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--amber);
+  line-height: 1.6;
+}
+
+/* Pricing */
+.pricing {
+  position: relative;
+  z-index: 1;
+  padding: 80px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 48px;
+}
+
+.price-card {
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.price-card.featured {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, rgba(245,166,35,0.08), rgba(245,166,35,0.02));
+}
+
+.price-card.featured::before {
+  content: 'Most Popular';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--amber);
+  color: var(--navy);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 50px;
+}
+
+.price-tier {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+}
+
+.price-amount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.price-amount .period {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.4);
+}
+
+.price-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 20px;
+}
+
+.price-features {
+  list-style: none;
+  margin-bottom: 24px;
+}
+
+.price-features li {
+  font-size: 0.85rem;
+  padding: 6px 0;
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-features li::before {
+  content: '✓';
+  color: var(--sage);
+  font-weight: 700;
+}
+
+/* CTA */
+.final-cta {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 100px 24px;
+}
+
+.final-cta h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 16px;
+}
+
+.final-cta h2 em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.final-cta p {
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 32px;
+  font-size: 1.1rem;
+}
+
+/* Footer */
+footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 32px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.3);
+}
+
+/* Unboxing modal */
+.unbox-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1000;
+  background: rgba(26,35,50,0.95);
+  backdrop-filter: blur(30px);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 24px;
+}
+
+.unbox-modal.active {
+  display: flex;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.unbox-modal .gift-icon {
+  font-size: 5rem;
+  animation: pulse 2s ease-in-out infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.unbox-modal h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.unbox-modal p {
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 32px;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.unbox-modal .letter {
+  background: var(--cream);
+  color: var(--navy);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
+  text-align: left;
+  display: none;
+  animation: revealLetter 0.8s ease;
+}
+
+.unbox-modal .letter.active {
+  display: block;
+}
+
+@keyframes revealLetter {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.letter-header {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--navy);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(26,35,50,0.1);
+}
+
+.letter-body {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(26,35,50,0.8);
+}
+
+.letter-signature {
+  margin-top: 20px;
+  font-style: italic;
+  color: var(--amber);
+}
+
+.close-modal {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-modal:hover { color: #fff; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  nav { padding: 12px 16px; }
+  .nav-links a:not(.btn) { display: none; }
+  .capsule-card { padding: 24px; }
+  .capsule-header { flex-direction: column; gap: 16px; }
+  .capsule-meta { text-align: left; }
+  .countdown { justify-content: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-particles" id="particles"></div>
+
+<nav>
+  <div class="logo"><span>🎁</span> Capsule</div>
+  <div class="nav-links">
+    <a href="#how">How it Works</a>
+    <a href="#cases">Use Cases</a>
+    <a href="#pricing">Pricing</a>
+    <button class="btn btn-primary" onclick="openUnbox()">Create a Capsule</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">✨ Messages that matter, delivered at the perfect moment</div>
+  <h1>Send a message to <em>future them</em></h1>
+  <p>Record letters, photos, videos, and voice notes — locked until the date you choose. Give the gift of a moment frozen in time.</p>
+  <div class="hero-ctas">
+    <button class="btn btn-primary" onclick="openUnbox()">Create Your First Capsule →</button>
+    <button class="btn btn-outline" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">See a Demo</button>
+  </div>
+</section>
+
+<section class="capsule-demo" id="demo">
+  <div class="section-label">Live Preview</div>
+  <div class="section-title">This is what your recipient sees</div>
+  
+  <div class="capsule-card">
+    <div class="capsule-header">
+      <div class="capsule-icon">🎁</div>
+      <div class="capsule-meta">
+        <div class="label">DELIVERS ON</div>
+        <div class="value">June 15, 2031 — Her 18th Birthday</div>
+      </div>
+    </div>
+    <div class="capsule-title">To My Dearest Sofia</div>
+    <div class="capsule-subtitle">From Mom & Dad · Created May 12, 2026</div>
+    
+    <div class="countdown" id="countdown">
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cd-years">5</div>
+        <div class="countdown-label">Years</div>
+      </div>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cd-days">29</div>
+        <div class="countdown-label">Days</div>
+      </div>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cd-hours">14</div>
+        <div class="countdown-label">Hours</div>
+      </div>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cd-mins">42</div>
+        <div class="countdown-label">Minutes</div>
+      </div>
+    </div>
+
+    <div class="contents-preview">
+      <div class="content-item">
+        <div class="icon">💌</div>
+        <div class="text">Letter</div>
+      </div>
+      <div class="content-item">
+        <div class="icon">📸</div>
+        <div class="text">12 Photos</div>
+      </div>
+      <div class="content-item">
+        <div class="icon">🎬</div>
+        <div class="text">3 Videos</div>
+      </div>
+      <div class="content-item">
+        <div class="icon">🎙️</div>
+        <div class="text">Voice Note</div>
+      </div>
+      <div class="content-item">
+        <div class="icon">🎵</div>
+        <div class="text">Song</div>
+      </div>
+    </div>
+
+    <div class="locked-overlay">
+      🔒 Encrypted & locked · Opens in 1,854 days
+    </div>
+  </div>
+</section>
+
+<section class="flow-section" id="how">
+  <div class="section-label">How It Works</div>
+  <div class="section-title">Three steps to a moment they'll never forget</div>
+
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-icon">📝</div>
+      <h3>Create Your Capsule</h3>
+      <p>Write a letter, add photos, record a video, leave a voice note. Use our AI assistant to find the right words when they matter most.</p>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-icon">⏰</div>
+      <h3>Set the Date</h3>
+      <p>Choose when it opens — tomorrow, next year, their 18th birthday, your 10th anniversary. The countdown begins.</p>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-icon">✨</div>
+      <h3>The Unboxing</h3>
+      <p>On the big day, they get a beautiful reveal — your words, your voice, your face, exactly as you were. Pure emotion.</p>
+    </div>
+  </div>
+</section>
+
+<section class="use-cases" id="cases">
+  <div class="section-label">Use Cases</div>
+  <div class="section-title">Moments worth preserving</div>
+
+  <div class="cases-grid">
+    <div class="case-card">
+      <div class="case-emoji">👶</div>
+      <h3>New Parents</h3>
+      <p>Record a video every birthday. She gets all of them on her 18th — 18 videos from the parent she was at every age.</p>
+      <div class="quote">"Dear Sofia, today you turned 3 and you love dinosaurs. I hope you still do."</div>
+    </div>
+    <div class="case-card">
+      <div class="case-emoji">💍</div>
+      <h3>Couples</h3>
+      <p>Record how you feel right now. Open it on your 10th anniversary. Laugh, cry, remember who you were.</p>
+      <div class="quote">"Right now we're in our tiny apartment eating ramen. And I wouldn't trade it for anything."</div>
+    </div>
+    <div class="case-card">
+      <div class="case-emoji">🎓</div>
+      <h3>Graduates</h3>
+      <p>Write a letter to your future self. Open it in 5 years. See how far you've come — or how right you were.</p>
+      <div class="quote">"Dear 31-year-old me, I hope you finally learned to cook."</div>
+    </div>
+    <div class="case-card">
+      <div class="case-emoji">👴</div>
+      <h3>Grandparents</h3>
+      <p>Record stories, wisdom, and love. Your grandkids receive them when they're old enough to truly appreciate it.</p>
+      <div class="quote">"Your abuela used to make the best flan. Here's the recipe and the story behind it."</div>
+    </div>
+    <div class="case-card">
+      <div class="case-emoji">🎖️</div>
+      <h3>Military Families</h3>
+      <p>Send daily capsules during deployment. They open them all when you're home — a timeline of love across the distance.</p>
+      <div class="quote">"Day 47. Missing you. The dog is pretending he doesn't care but he does."</div>
+    </div>
+    <div class="case-card">
+      <div class="case-emoji">🤝</div>
+      <h3>Collaborative</h3>
+      <p>Everyone records a message. The birthday person opens one capsule with 20 messages from everyone who loves them.</p>
+      <div class="quote">"From all of us — happy 40th. We chipped in on something bigger than a gift."</div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="section-label">Pricing</div>
+  <div class="section-title">Start for free. Upgrade when it matters.</div>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Free</div>
+      <div class="price-amount">$0</div>
+      <div class="price-desc">Try it out</div>
+      <ul class="price-features">
+        <li>3 capsules</li>
+        <li>Text + 5 photos each</li>
+        <li>Email delivery</li>
+        <li>Basic themes</li>
+      </ul>
+      <button class="btn btn-outline" style="width:100%;justify-content:center">Get Started</button>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tier">Capsule Plus</div>
+      <div class="price-amount">$3.99<span class="period">/mo</span></div>
+      <div class="price-desc">For people who mean it</div>
+      <ul class="price-features">
+        <li>Unlimited capsules</li>
+        <li>Video + voice notes</li>
+        <li>Collaborative capsules</li>
+        <li>Premium themes + music</li>
+        <li>Push notifications</li>
+        <li>AI writing assistant</li>
+      </ul>
+      <button class="btn btn-primary" style="width:100%;justify-content:center">Start Free Trial</button>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Legacy</div>
+      <div class="price-amount">$7.99<span class="period">/mo</span></div>
+      <div class="price-desc">For forever</div>
+      <ul class="price-features">
+        <li>Everything in Plus</li>
+        <li>Memorial mode</li>
+        <li>End-to-end encryption</li>
+        <li>Priority delivery</li>
+        <li>Backup contacts</li>
+        <li>Estate integration</li>
+      </ul>
+      <button class="btn btn-outline" style="width:100%;justify-content:center">Coming Soon</button>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <h2>Don't let this moment <em>slip away</em></h2>
+  <p>The right words, at the right time, from the right person. That's Capsule.</p>
+  <button class="btn btn-primary" onclick="openUnbox()" style="font-size:1.05rem;padding:14px 36px">Create Your First Capsule →</button>
+</section>
+
+<footer>
+  <p>🎁 Capsule — Send messages to the future. Built with love.</p>
+</footer>
+
+<!-- Unboxing Demo Modal -->
+<div class="unbox-modal" id="unbox-modal">
+  <button class="close-modal" onclick="closeUnbox()">✕</button>
+  <div class="gift-icon" id="gift-icon">🎁</div>
+  <h2 id="unbox-title">You've received a Capsule!</h2>
+  <p id="unbox-desc">Tap to open and reveal what's inside...</p>
+  <button class="btn btn-primary" id="unbox-btn" onclick="revealLetter()" style="font-size:1.05rem;padding:14px 36px">Open Capsule ✨</button>
+  <div class="letter" id="unbox-letter">
+    <div class="letter-header">Dear Future Me,</div>
+    <div class="letter-body">
+      If you're reading this, five years have passed. I'm writing this from our small apartment in Tampa at 1 AM, building something I believe in.
+      <br><br>
+      Right now, you're scared. Scared it won't work. Scared you're not good enough. Scared the effort is for nothing.
+      <br><br>
+      But you kept going. That's the thing about you — you always keep going.
+      <br><br>
+      I hope you're proud of where you ended up. I hope you still build things. I hope you still stay up too late because the code is flowing.
+      <br><br>
+      Whatever happened, you earned it.
+    </div>
+    <div class="letter-signature">— You, May 2026 💛</div>
+  </div>
+</div>
+
+<script>
+// Particles
+const particles = document.getElementById('particles');
+for (let i = 0; i < 20; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.width = p.style.height = Math.random() * 6 + 2 + 'px';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.top = Math.random() * 100 + '%';
+  p.style.animationDelay = Math.random() * 8 + 's';
+  p.style.animationDuration = Math.random() * 4 + 6 + 's';
+  particles.appendChild(p);
+}
+
+// Live countdown to June 15, 2031
+function updateCountdown() {
+  const target = new Date('2031-06-15T00:00:00');
+  const now = new Date();
+  const diff = target - now;
+  
+  const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+  const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  
+  document.getElementById('cd-years').textContent = years;
+  document.getElementById('cd-days').textContent = days;
+  document.getElementById('cd-hours').textContent = hours;
+  document.getElementById('cd-mins').textContent = mins;
+}
+updateCountdown();
+setInterval(updateCountdown, 60000);
+
+// Unbox modal
+function openUnbox() {
+  document.getElementById('unbox-modal').classList.add('active');
+  document.getElementById('unbox-letter').classList.remove('active');
+  document.getElementById('gift-icon').style.display = 'block';
+  document.getElementById('unbox-title').textContent = "You've received a Capsule!";
+  document.getElementById('unbox-desc').textContent = 'Tap to open and reveal what\'s inside...';
+  document.getElementById('unbox-btn').style.display = 'inline-flex';
+}
+
+function closeUnbox() {
+  document.getElementById('unbox-modal').classList.remove('active');
+}
+
+function revealLetter() {
+  document.getElementById('gift-icon').style.display = 'none';
+  document.getElementById('unbox-title').style.display = 'none';
+  document.getElementById('unbox-desc').style.display = 'none';
+  document.getElementById('unbox-btn').style.display = 'none';
+  document.getElementById('unbox-letter').classList.add('active');
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+  });
+});
+</script>
+
+</body>
+</html>
