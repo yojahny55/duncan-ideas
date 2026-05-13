@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainDump — Your Thought Combustor 🔥</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--bg:#0a0a0b;--surface:#141416;--surface2:#1c1c1f;--accent:#f97316;--accent2:#fb923c;--text:#e4e4e7;--muted:#71717a;--danger:#ef4444;--success:#22c55e;--radius:16px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+  .app{max-width:420px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative}
+  
+  /* Header */
+  .header{padding:20px 24px;display:flex;justify-content:space-between;align-items:center}
+  .logo{font-size:20px;font-weight:700;letter-spacing:-0.5px}.logo span{color:var(--accent)}
+  .header-right{display:flex;gap:12px;align-items:center}
+  .streak{font-size:13px;color:var(--muted);background:var(--surface);padding:4px 10px;border-radius:20px}
+  .streak b{color:var(--accent)}
+  
+  /* Screen transitions */
+  .screen{display:none;flex:1;flex-direction:column;padding:0 24px 24px;animation:fadeUp .3s ease}
+  .screen.active{display:flex}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  
+  /* Dump screen */
+  .dump-prompt{text-align:center;padding:40px 0 20px}
+  .dump-prompt h2{font-size:24px;font-weight:600;margin-bottom:8px}
+  .dump-prompt p{color:var(--muted);font-size:14px;line-height:1.5}
+  
+  .record-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+  
+  .btn-record{width:120px;height:120px;border-radius:50%;border:none;background:linear-gradient(135deg,#f97316,#ea580c);cursor:pointer;position:relative;transition:transform .15s,box-shadow .3s}
+  .btn-record:hover{transform:scale(1.05)}
+  .btn-record:active{transform:scale(0.95)}
+  .btn-record.recording{animation:pulse 1.5s ease infinite;box-shadow:0 0 0 0 rgba(249,115,22,0.4)}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,0.4)}50%{box-shadow:0 0 0 24px rgba(249,115,22,0)}}
+  .btn-record svg{width:36px;height:36px;fill:white}
+  .btn-record .stop-icon{display:none}
+  .btn-record.recording .mic-icon{display:none}
+  .btn-record.recording .stop-icon{display:block}
+  
+  .timer{font-size:32px;font-weight:300;font-variant-numeric:tabular-nums;color:var(--muted);min-height:40px}
+  .timer.active{color:var(--accent)}
+  
+  .waveform{display:flex;gap:3px;align-items:center;height:40px;opacity:0;transition:opacity .3s}
+  .waveform.active{opacity:1}
+  .waveform span{width:4px;border-radius:2px;background:var(--accent);animation:wave 1.2s ease-in-out infinite}
+  .waveform span:nth-child(1){animation-delay:0s;height:12px}
+  .waveform span:nth-child(2){animation-delay:.1s;height:24px}
+  .waveform span:nth-child(3){animation-delay:.2s;height:36px}
+  .waveform span:nth-child(4){animation-delay:.3s;height:20px}
+  .waveform span:nth-child(5){animation-delay:.15s;height:28px}
+  .waveform span:nth-child(6){animation-delay:.25s;height:16px}
+  .waveform span:nth-child(7){animation-delay:.05s;height:32px}
+  .waveform span:nth-child(8){animation-delay:.35s;height:10px}
+  @keyframes wave{0%,100%{transform:scaleY(0.4)}50%{transform:scaleY(1)}}
+  
+  .hint{font-size:13px;color:var(--muted);text-align:center}
+  
+  /* Processing screen */
+  .processing-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center}
+  .spinner{width:48px;height:48px;border:3px solid var(--surface2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .processing-area h3{font-size:18px;font-weight:500}
+  .processing-area p{color:var(--muted);font-size:14px}
+  .step-list{text-align:left;width:100%;max-width:280px}
+  .step{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;color:var(--muted);transition:color .3s}
+  .step.done{color:var(--success)}
+  .step.active{color:var(--text)}
+  .step .icon{width:20px;text-align:center;font-size:14px}
+  
+  /* Release Note screen */
+  .release{flex:1;display:flex;flex-direction:column;gap:20px;padding-top:20px}
+  .release-card{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid rgba(249,115,22,0.15);border-radius:var(--radius);padding:24px;position:relative;overflow:hidden}
+  .release-card::before{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(249,115,22,0.06),transparent);pointer-events:none}
+  .release-card .label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:12px;font-weight:600}
+  .release-card .note{font-size:16px;line-height:1.6;font-weight:400}
+  .release-card .note em{color:var(--accent2);font-style:normal;font-weight:500}
+  
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{background:var(--surface);border:1px solid var(--surface2);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--muted)}
+  .tag.highlight{border-color:rgba(249,115,22,0.3);color:var(--accent2)}
+  
+  .loop-alert{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start}
+  .loop-alert .icon{font-size:18px;margin-top:1px}
+  .loop-alert .content{font-size:13px;line-height:1.5}
+  .loop-alert .content strong{color:var(--danger)}
+  .loop-alert .content span{color:var(--muted)}
+  
+  .mood-bar{display:flex;gap:4px;align-items:end;height:60px;padding:0 4px}
+  .mood-bar .bar{flex:1;border-radius:4px 4px 0 0;background:var(--surface2);position:relative;transition:height .5s ease}
+  .mood-bar .bar.today{background:var(--accent)}
+  .mood-bar .bar::after{content:attr(data-label);position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap}
+  .mood-section .label{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .mood-section{padding-bottom:20px}
+  
+  .actions{display:flex;gap:12px;margin-top:auto;padding-top:16px}
+  .btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;transition:transform .1s}
+  .btn:active{transform:scale(0.97)}
+  .btn-primary{background:var(--accent);color:#000}
+  .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--surface2)}
+  
+  /* History */
+  .history-list{display:flex;flex-direction:column;gap:12px;padding-top:12px}
+  .history-item{background:var(--surface);border-radius:12px;padding:16px;cursor:pointer;transition:background .2s;border:1px solid transparent}
+  .history-item:hover{background:var(--surface2);border-color:var(--surface2)}
+  .history-item .meta{display:flex;justify-content:space-between;margin-bottom:6px}
+  .history-item .date{font-size:12px;color:var(--muted)}
+  .history-item .themes{display:flex;gap:4px}
+  .history-item .mini-tag{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(249,115,22,0.1);color:var(--accent2)}
+  .history-item .preview{font-size:14px;color:var(--text);line-height:1.4}
+  .history-item .preview span{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="logo">Brain<span>Dump</span> 🔥</div>
+    <div class="header-right">
+      <div class="streak"><b>7</b> day streak</div>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: Record -->
+  <div class="screen active" id="screen-record">
+    <div class="dump-prompt">
+      <h2>What's on your mind?</h2>
+      <p>Talk it out. No structure needed.<br>Just dump it.</p>
+    </div>
+    <div class="record-area">
+      <div class="waveform" id="waveform">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="timer" id="timer">0:00</div>
+      <button class="btn-record" id="btn-record" onclick="toggleRecord()">
+        <svg class="mic-icon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="23" x2="16" y2="23" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="stop-icon" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+      </button>
+      <p class="hint">Tap to start · 30s – 5 min</p>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Processing -->
+  <div class="screen" id="screen-process">
+    <div class="processing-area">
+      <div class="spinner"></div>
+      <h3>Processing your dump...</h3>
+      <div class="step-list">
+        <div class="step" id="step1"><span class="icon">○</span> Transcribing audio</div>
+        <div class="step" id="step2"><span class="icon">○</span> Identifying themes</div>
+        <div class="step" id="step3"><span class="icon">○</span> Generating Release Note</div>
+        <div class="step" id="step4"><span class="icon">○</span> Checking for loops</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Release Note -->
+  <div class="screen" id="screen-release">
+    <div class="release">
+      <div class="release-card">
+        <div class="label">✨ Release Note</div>
+        <div class="note">You're not falling behind — you're <em>carrying three deadlines nobody prioritized for you</em>. The anxiety isn't about capability. It's about unclear expectations. One conversation with your lead fixes more than three all-nighters.</div>
+      </div>
+
+      <div class="tags">
+        <span class="tag highlight">💼 work stress</span>
+        <span class="tag">😰 anxiety</span>
+        <span class="tag">😴 sleep</span>
+        <span class="tag highlight">⏰ deadlines</span>
+      </div>
+
+      <div class="loop-alert">
+        <div class="icon">🔄</div>
+        <div class="content">
+          <strong>Loop detected:</strong> You've mentioned <strong>your boss</strong> in 4 of your last 7 dumps. <span>This theme is intensifying — consider addressing it directly this week.</span>
+        </div>
+      </div>
+
+      <div class="mood-section">
+        <div class="label">This week's emotional arc</div>
+        <div class="mood-bar">
+          <div class="bar" style="height:60%" data-label="Mon"></div>
+          <div class="bar" style="height:45%" data-label="Tue"></div>
+          <div class="bar" style="height:75%" data-label="Wed"></div>
+          <div class="bar" style="height:80%" data-label="Thu"></div>
+          <div class="bar" style="height:55%" data-label="Fri"></div>
+          <div class="bar" style="height:40%" data-label="Sat"></div>
+          <div class="bar today" style="height:70%" data-label="Today"></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="showScreen('screen-record')">New Dump</button>
+        <button class="btn btn-primary" onclick="alert('Exported to your therapist\\'s dashboard!')">Share ✉️</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let recording=false,seconds=0,interval;
+const timer=document.getElementById('timer');
+const waveform=document.getElementById('waveform');
+const btnRec=document.getElementById('btn-record');
+
+function toggleRecord(){
+  if(!recording){
+    recording=true;seconds=0;
+    btnRec.classList.add('recording');
+    waveform.classList.add('active');
+    timer.classList.add('active');
+    interval=setInterval(()=>{
+      seconds++;
+      const m=Math.floor(seconds/60),s=seconds%60;
+      timer.textContent=m+':'+(s<10?'0':'')+s;
+      if(seconds>=300)toggleRecord();
+    },1000);
+  }else{
+    recording=false;
+    clearInterval(interval);
+    btnRec.classList.remove('recording');
+    waveform.classList.remove('active');
+    timer.classList.remove('active');
+    processDump();
+  }
+}
+
+function processDump(){
+  showScreen('screen-process');
+  const steps=['step1','step2','step3','step4'];
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i>0){const prev=document.getElementById(steps[i-1]);prev.classList.remove('active');prev.classList.add('done');prev.querySelector('.icon').textContent='✓';}
+    if(i<steps.length){document.getElementById(steps[i]).classList.add('active');i++;}
+    else{clearInterval(iv);setTimeout(()=>showScreen('screen-release'),400);}
+  },700);
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
