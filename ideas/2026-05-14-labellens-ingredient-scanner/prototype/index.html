@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LabelLens — AI Ingredient Scanner</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--surface:#14141f;--surface2:#1e1e2e;--border:#2a2a3a;--text:#e8e8f0;--text-dim:#8888a0;--green:#22c55e;--yellow:#eab308;--orange:#f97316;--red:#ef4444;--black-flag:#6b21a8;--blue:#3b82f6;--accent:#8b5cf6;--radius:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.app{max-width:420px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* Header */
+.header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:700}
+.logo span{background:linear-gradient(135deg,var(--green),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.badge{background:var(--surface2);padding:4px 10px;border-radius:20px;font-size:11px;color:var(--text-dim)}
+
+/* Scanner Area */
+.scanner{position:relative;background:var(--surface);margin:16px;border-radius:var(--radius);height:280px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid var(--border)}
+.scanner-frame{width:85%;height:85%;border:2px dashed var(--accent);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative}
+.scanner-line{position:absolute;top:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);animation:scan 2s ease-in-out infinite}
+@keyframes scan{0%,100%{top:10%}50%{top:88%}}
+.scanner-icon{font-size:48px;opacity:.7}
+.scanner-text{font-size:13px;color:var(--text-dim)}
+.scanner-btn{background:var(--green);color:#000;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:transform .1s}
+.scanner-btn:active{transform:scale(.95)}
+
+/* Product Card */
+.product-card{margin:0 16px;background:var(--surface);border-radius:var(--radius);padding:16px;border:1px solid var(--border);display:none}
+.product-card.visible{display:block}
+.product-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:12px}
+.product-name{font-size:18px;font-weight:700}
+.product-brand{font-size:12px;color:var(--text-dim);margin-top:2px}
+.product-score{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#000}
+.score-good{background:var(--green)}
+.score-mid{background:var(--yellow)}
+.score-bad{background:var(--orange)}
+
+/* Summary */
+.summary{background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;line-height:1.5}
+.summary .flag{display:inline-flex;align-items:center;gap:4px;margin-right:8px;margin-bottom:4px;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500}
+.flag-red{background:rgba(239,68,68,.15);color:var(--red)}
+.flag-yellow{background:rgba(234,179,8,.15);color:var(--yellow)}
+.flag-green{background:rgba(34,197,94,.15);color:var(--green)}
+
+/* Ingredient List */
+.ingredients-title{font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text-dim)}
+.ingredient{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;cursor:pointer;transition:background .15s}
+.ingredient:last-child{border:none}
+.ingredient:hover{background:var(--surface2);margin:0 -8px;padding:10px 8px;border-radius:8px}
+.ing-score{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ing-green{background:rgba(34,197,94,.2)}
+.ing-yellow{background:rgba(234,179,8,.2)}
+.ing-orange{background:rgba(239,68,68,.2)}
+.ing-red{background:rgba(239,68,68,.3)}
+.ing-info{flex:1;min-width:0}
+.ing-name{font-size:14px;font-weight:500}
+.ing-desc{font-size:12px;color:var(--text-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ing-bans{display:flex;gap:4px;flex-shrink:0}
+.ban-flag{font-size:14px;padding:2px;border-radius:4px;background:var(--surface2)}
+
+/* Detail Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.visible{display:flex}
+.modal{background:var(--surface);border-radius:16px 16px 0 0;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;padding:20px;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-close{background:none;border:none;color:var(--text-dim);font-size:24px;cursor:pointer;float:right}
+.modal h3{font-size:18px;margin-bottom:4px}
+.modal .pronunciation{color:var(--accent);font-size:13px;margin-bottom:12px}
+.detail-section{margin-bottom:16px}
+.detail-section h4{font-size:12px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;letter-spacing:.5px}
+.detail-section p{font-size:14px;line-height:1.6}
+.score-bar{height:6px;border-radius:3px;background:var(--surface2);overflow:hidden;margin-top:6px}
+.score-fill{height:100%;border-radius:3px;transition:width .5s}
+.ban-list{display:flex;flex-wrap:wrap;gap:6px}
+.ban-item{background:var(--surface2);padding:6px 12px;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:6px}
+
+/* Tabs */
+.tabs{display:flex;margin:0 16px;background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;border-bottom:1px solid var(--border);overflow:hidden}
+.tab{flex:1;padding:12px;text-align:center;font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* Profile pills */
+.profile-bar{display:flex;gap:6px;padding:8px 16px;overflow-x:auto}
+.pill{background:var(--surface2);padding:6px 12px;border-radius:20px;font-size:11px;white-space:nowrap;cursor:pointer;border:1px solid var(--border)}
+.pill.active{border-color:var(--accent);background:rgba(139,92,246,.1);color:var(--accent)}
+
+/* Footer */
+.footer{margin-top:auto;padding:12px 16px;text-align:center;font-size:11px;color:var(--text-dim)}
+
+/* Loading state */
+.loading{display:none;text-align:center;padding:40px 20px}
+.loading.visible{display:block}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">🔬 <span>LabelLens</span></div>
+    <div class="badge">✨ Free</div>
+  </div>
+
+  <div class="profile-bar">
+    <div class="pill active">🤰 Pregnancy Safe</div>
+    <div class="pill">🥜 Nut-Free</div>
+    <div class="pill">🌱 Vegan</div>
+    <div class="pill">🧒 Kid-Safe</div>
+    <div class="pill">⚠️ EU Standard</div>
+  </div>
+
+  <div class="scanner" id="scanner">
+    <div class="scanner-frame">
+      <div class="scanner-line"></div>
+      <div class="scanner-icon">📸</div>
+      <div class="scanner-text">Point camera at ingredient label</div>
+      <button class="scanner-btn" onclick="scanProduct()">Scan a Product</button>
+    </div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div style="font-size:14px;color:var(--text-dim)">Analyzing ingredients...</div>
+  </div>
+
+  <div class="product-card" id="productCard">
+    <div class="product-top">
+      <div>
+        <div class="product-name" id="productName">—</div>
+        <div class="product-brand" id="productBrand">—</div>
+      </div>
+      <div class="product-score score-mid" id="productScore">6.2</div>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'ingredients')">Ingredients</div>
+      <div class="tab" onclick="switchTab(this,'alternatives')">Alternatives</div>
+      <div class="tab" onclick="switchTab(this,'exposure')">Exposure</div>
+    </div>
+
+    <div id="ingredientsPanel">
+      <div style="padding-top:12px">
+        <div class="ingredients-title">14 ingredients detected</div>
+        <div id="ingredientList"></div>
+      </div>
+    </div>
+
+    <div id="alternativesPanel" style="display:none;padding-top:12px">
+      <div style="font-size:14px;margin-bottom:12px;color:var(--text-dim)">Similar products with cleaner labels:</div>
+      <div id="altList"></div>
+    </div>
+
+    <div id="exposurePanel" style="display:none;padding-top:12px">
+      <div style="font-size:14px;margin-bottom:12px;color:var(--text-dim)">Your cumulative exposure today:</div>
+      <div id="exposureInfo"></div>
+    </div>
+  </div>
+
+  <div class="footer">LabelLens • 100K+ ingredients in database<br>Tap any ingredient for details</div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const ingredients = [
+  {name:"Enriched Wheat Flour",score:"green",emoji:"🌾",desc:"Refined flour with added vitamins",purpose:"Main ingredient / base",safety:85,detail:"Wheat flour stripped of bran and germ, then fortified with B vitamins and iron. The most common flour in processed bread.",bans:[],origin:"🌾 Grain-derived"},
+  {name:"High Fructose Corn Syrup",score:"orange",emoji:"🍬",desc:"Liquid sweetener from corn starch",purpose:"Sweetener",safety:35,detail:"A highly processed sweetener made by converting corn starch to glucose then fructose. Linked to increased metabolic syndrome risk in multiple studies. Banned or restricted in several countries for infant products.",bans:["🇪🇺"],origin:"🌽 Corn-derived"},
+  {name:"Soybean Oil",score:"yellow",emoji:"🫘",desc:"Vegetable oil extracted from soybeans",purpose:"Fat / moisture",safety:60,detail:"One of the most widely used cooking oils. High in omega-6 fatty acids. Concerns about overconsumption of omega-6 vs omega-3 ratio. Often from GMO soybeans.",bans:[],origin:"🫘 Plant-derived"},
+  {name:"Salt",score:"green",emoji:"🧂",desc:"Sodium chloride",purpose:"Flavor enhancer / preservative",safety:90,detail:"Essential mineral in moderation. Average US adult consumes 3,400mg/day vs recommended 2,300mg. This product contributes ~12% daily value.",bans:[],origin:"🪨 Mineral"},
+  {name:"Yeast Extract",score:"yellow",emoji:"🔬",desc:"Flavor enhancer containing glutamate",purpose:"Flavor enhancer",safety:55,detail:"Contains naturally occurring glutamic acid (similar to MSG). Often used as a 'clean label' alternative to MSG. Can trigger reactions in glutamate-sensitive individuals.",bans:[],origin:"🧫 Fermented"},
+  {name:"Red 40 (Allura Red AC)",score:"red",emoji:"🔴",desc:"Synthetic food dye from petroleum",purpose:"Colorant",safety:20,detail:"The most widely used synthetic food dye in the US. Banned or carries warning labels in EU, UK, Norway, Austria. California Food Safety Act (2025) classifies it as requiring warning labels. Studies link to hyperactivity in children (Southampton study).",bans:["🇪🇺","🇳🇴","🇦🇹"],origin:"🛢️ Petroleum-derived"},
+  {name:"BHT (Butylated Hydroxytoluene)",score:"red",emoji:"⚠️",desc:"Synthetic preservative",purpose:"Preservative (prevents rancidity)",safety:25,detail:"Widely used synthetic antioxidant. California Food Safety Act (2025) bans it. EU limits to specific concentrations. Classified as 'reasonably anticipated to be a human carcinogen' by NTP. Also used in rubber and jet fuel.",bans:["🇯🇵","🇦🇺"],origin:"🛢️ Petroleum-derived"},
+  {name:"Sodium Stearoyl Lactylate",score:"green",emoji:"🍞",desc:"Dough conditioner and emulsifier",purpose:"Dough strengthener",safety:88,detail:"A safe, widely accepted emulsifier derived from lactic acid and stearic acid. Generally recognized as safe (GRAS) by FDA, EFSA, and most global agencies.",bans:[],origin:"🌿 Plant/synthetic"},
+  {name:"Calcium Propionate",score:"yellow",emoji:"🦴",desc:"Preservative to prevent mold",purpose:"Preservative (anti-mold)",safety:55,detail:"The most common bread preservative. While generally safe, some studies suggest links to behavioral changes in children and disruption of gut microbiome. Natural alternative: vinegar.",bans:[],origin:"🧪 Synthetic"},
+  {name:"Mono- and Diglycerides",score:"yellow",emoji:"💧",desc:"Emulsifiers from fatty acids",purpose:"Texture / softness",safety:65,detail:"Common emulsifiers that may be derived from animal, plant, or synthetic sources. Not always vegan. Help maintain softness and extend shelf life.",bans:[],origin:"❓ Mixed origin"},
+  {name:"Soy Lecithin",score:"green",emoji:"🫘",desc:"Natural emulsifier from soybeans",purpose:"Emulsifier",safety:90,detail:"A natural phospholipid extracted from soybeans. One of the most common food additives worldwide. Rarely causes allergic reactions despite soy origin.",bans:[],origin:"🫘 Plant-derived"},
+  {name:"Natural Flavors",score:"yellow",emoji:"🤷",desc:"Undefined blend of flavor compounds",purpose:"Flavoring",safety:50,detail:"FDA defines 'natural flavors' broadly — can include extracts from plants, animals, dairy, eggs processed in various ways. Origin is opaque. May contain trace allergens. The term covers 2,700+ approved substances.",bans:[],origin:"❓ Unknown"},
+  {name:"Citric Acid",score:"green",emoji:"🍋",desc:"Natural acid from citrus or fermentation",purpose:"Preservative / tangy flavor",safety:95,detail:"One of the safest and most widely used food additives. Naturally occurs in citrus fruits. Commercially produced by fermentation of sugars using mold (Aspergillus niger).",bans:[],origin:"🍄 Fermented"},
+  {name:"TBHQ (Tertiary Butylhydroquinone)",score:"red",emoji:"🚫",desc:"Synthetic preservative",purpose:"Preservative (prevents oxidation)",safety:18,detail:"California Food Safety Act (2025) bans this ingredient. Limited to 0.02% of oil content by FDA. At high doses, animal studies show nausea, vision disturbance, and potential neurotoxic effects. Also used in varnishes and lacquers.",bans:["🇯🇵","🇦🇺","🇪🇺"],origin:"🛢️ Petroleum-derived"}
+];
+
+const alternatives = [
+  {name:"Dave's Killer Bread — 21 Whole Grains",score:8.9,note:"No artificial dyes, no BHT, organic ingredients"},
+  {name:"Ezekiel 4:9 — Sprouted Grain",score:9.4,note:"No preservatives, no added sugars, whole sprouted grains"},
+  {name:"Silver Hills — Squirrelly Bread",score:8.7,note:"Sprouted grains, no synthetic preservatives"}
+];
+
+function scanProduct(){
+  document.getElementById('scanner').style.display='none';
+  document.getElementById('loading').classList.add('visible');
+  setTimeout(()=>{
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('productCard').classList.add('visible');
+    renderProduct();
+  },1500);
+}
+
+function renderProduct(){
+  document.getElementById('productName').textContent='Sunshine Classic White Bread';
+  document.getElementById('productBrand').textContent='Sunshine Bakery Co. • 20oz loaf';
+  const scoreEl=document.getElementById('productScore');
+  scoreEl.textContent='4.2';
+  scoreEl.className='product-score score-bad';
+  scoreEl.style.background='var(--orange)';
+
+  document.getElementById('summary').innerHTML=`
+    <span class="flag flag-red">🚫 3 EU-banned ingredients</span>
+    <span class="flag flag-red">⚠️ 2 California-banned additives</span>
+    <span class="flag flag-yellow">🍬 Hidden sugar source (HFCS)</span>
+    <span class="flag flag-yellow">❓ 2 ambiguous origins</span>
+    <span class="flag flag-green">✅ 7 clean ingredients</span>
+  `;
+
+  const list=document.getElementById('ingredientList');
+  list.innerHTML=ingredients.map((ing,i)=>`
+    <div class="ingredient" onclick="showDetail(${i})">
+      <div class="ing-score ing-${ing.score}">${ing.emoji}</div>
+      <div class="ing-info">
+        <div class="ing-name">${ing.name}</div>
+        <div class="ing-desc">${ing.desc}</div>
+      </div>
+      <div class="ing-bans">${ing.bans.map(b=>`<span class="ban-flag">${b}</span>`).join('')}</div>
+    </div>
+  `).join('');
+
+  const altList=document.getElementById('altList');
+  altList.innerHTML=alternatives.map(a=>`
+    <div style="background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:14px;font-weight:500">${a.name}</div>
+        <div style="background:rgba(34,197,94,.2);color:var(--green);padding:4px 10px;border-radius:12px;font-size:13px;font-weight:600">${a.score}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:4px">${a.note}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('exposureInfo').innerHTML=`
+    <div style="background:var(--surface2);border-radius:10px;padding:14px">
+      <div style="font-size:14px;margin-bottom:10px">Today's cumulative scan results:</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--text-dim)">Products scanned</span><span>1</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--text-dim)">Red flag ingredients</span><span style="color:var(--red)">3</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--text-dim)">Synthetic additives</span><span style="color:var(--orange)">4</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--text-dim)">Petroleum-derived</span><span style="color:var(--red)">3</span>
+      </div>
+      <div style="height:6px;border-radius:3px;background:var(--border);margin-top:12px">
+        <div style="height:100%;width:68%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red))"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:6px;text-align:center">Processing load: 68% — Moderate</div>
+    </div>
+  `;
+}
+
+function showDetail(i){
+  const ing=ingredients[i];
+  document.getElementById('modalBody').innerHTML=`
+    <h3>${ing.emoji} ${ing.name}</h3>
+    <div class="pronunciation">${ing.desc}</div>
+    <div class="detail-section">
+      <h4>What is it?</h4>
+      <p>${ing.detail}</p>
+    </div>
+    <div class="detail-section">
+      <h4>Function</h4>
+      <p>${ing.purpose}</p>
+    </div>
+    <div class="detail-section">
+      <h4>Origin</h4>
+      <p>${ing.origin}</p>
+    </div>
+    <div class="detail-section">
+      <h4>Safety Score</h4>
+      <p style="font-size:28px;font-weight:700;color:${ing.score==='green'?'var(--green)':ing.score==='yellow'?'var(--yellow)':ing.score==='orange'?'var(--orange)':'var(--red)'}">${ing.safety}/100</p>
+      <div class="score-bar"><div class="score-fill" style="width:${ing.safety}%;background:${ing.score==='green'?'var(--green)':ing.score==='yellow'?'var(--yellow)':ing.score==='orange'?'var(--orange)':'var(--red)'}"></div></div>
+    </div>
+    ${ing.bans.length?`
+    <div class="detail-section">
+      <h4>Banned / Restricted In</h4>
+      <div class="ban-list">${ing.bans.map(b=>`<div class="ban-item">${b} Restricted</div>`).join('')}</div>
+    </div>`:''}
+    <div class="detail-section">
+      <h4>Health Context</h4>
+      <p>🤰 <strong>Pregnancy:</strong> ${ing.safety>70?'Safe in moderation':ing.safety>40?'Limit exposure — consult doctor':'Avoid if possible'}<br>
+      🧒 <strong>Children:</strong> ${ing.safety>70?'Generally safe':ing.safety>40?'Some concerns noted':'Not recommended'}<br>
+      🌱 <strong>Vegan:</strong> ${ing.origin.includes('Animal')||ing.origin.includes('❓')?'May not be vegan — origin unclear':'Likely plant-based or synthetic'}</p>
+    </div>
+  `;
+  document.getElementById('modal').classList.add('visible');
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('visible')}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+
+function switchTab(el,panel){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['ingredientsPanel','alternativesPanel','exposurePanel'].forEach(p=>{
+    document.getElementById(p).style.display=p===panel+'Panel'?'block':'none';
+  });
+}
+
+// Pill toggle
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    p.classList.toggle('active');
+  });
+});
+</script>
+</body>
+</html>
