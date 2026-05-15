@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoiceGuard — AI Deepfake Voice Detector</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a25;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text-dim: #8888a0;
+    --green: #00e676;
+    --green-bg: rgba(0, 230, 118, 0.08);
+    --yellow: #ffd740;
+    --yellow-bg: rgba(255, 215, 64, 0.08);
+    --red: #ff5252;
+    --red-bg: rgba(255, 82, 82, 0.08);
+    --blue: #448aff;
+    --blue-bg: rgba(68, 138, 255, 0.08);
+    --purple: #b388ff;
+    --radius: 12px;
+    --radius-lg: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(68,138,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 20px 0 30px;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .tagline {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .status-chip {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    text-align: center;
+  }
+
+  .status-chip .value {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .status-chip .label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  /* Main analysis area */
+  .analyzer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .analyzer-title {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  /* Waveform */
+  .waveform-container {
+    height: 120px;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    border: 1px solid transparent;
+  }
+
+  .waveform-container:hover {
+    border-color: var(--blue);
+  }
+
+  .waveform-container.active {
+    border-color: var(--blue);
+    box-shadow: 0 0 20px rgba(68, 138, 255, 0.15);
+  }
+
+  .waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 2px;
+    padding: 20px;
+  }
+
+  .waveform .bar {
+    width: 3px;
+    background: var(--blue);
+    border-radius: 2px;
+    opacity: 0.4;
+    transition: height 0.15s, opacity 0.3s;
+  }
+
+  .waveform.active .bar {
+    opacity: 0.8;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .waveform.active .bar:nth-child(even) {
+    animation-delay: 0.1s;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scaleY(0.4); }
+    50% { transform: scaleY(1); }
+  }
+
+  .waveform-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 15, 0.7);
+    transition: opacity 0.3s;
+  }
+
+  .waveform-container.active .waveform-overlay {
+    opacity: 0;
+  }
+
+  .upload-prompt {
+    text-align: center;
+  }
+
+  .upload-prompt .icon {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+
+  .upload-prompt .text {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #5c9aff; }
+
+  .btn-primary.recording {
+    background: var(--red);
+    animation: rec-pulse 1.5s infinite;
+  }
+
+  @keyframes rec-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(255, 82, 82, 0); }
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--text-dim); }
+
+  /* Results */
+  .results {
+    display: none;
+    margin-top: 20px;
+  }
+
+  .results.visible { display: block; }
+
+  .verdict {
+    text-align: center;
+    padding: 20px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    animation: fadeSlideUp 0.5s ease-out;
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .verdict.human { background: var(--green-bg); border: 1px solid rgba(0, 230, 118, 0.2); }
+  .verdict.ai { background: var(--red-bg); border: 1px solid rgba(255, 82, 82, 0.2); }
+  .verdict.uncertain { background: var(--yellow-bg); border: 1px solid rgba(255, 215, 64, 0.2); }
+
+  .verdict-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+
+  .verdict-label {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .verdict.human .verdict-label { color: var(--green); }
+  .verdict.ai .verdict-label { color: var(--red); }
+  .verdict.uncertain .verdict-label { color: var(--yellow); }
+
+  .verdict-confidence {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  /* Analysis details */
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .analysis-card {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+
+  .analysis-card .metric {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .analysis-card .metric-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .analysis-card .bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .analysis-card .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease-out;
+  }
+
+  /* Spectrogram */
+  .spectrogram {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .spectrogram-title {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  .spectrogram-viz {
+    height: 80px;
+    display: flex;
+    gap: 1px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .spectrogram-viz .col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .spectrogram-viz .cell {
+    flex: 1;
+    border-radius: 1px;
+    transition: opacity 0.3s;
+  }
+
+  .artifact-marker {
+    position: absolute;
+    bottom: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--red);
+    opacity: 0.6;
+    border-radius: 2px;
+  }
+
+  /* Scam analysis */
+  .scam-section {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .scam-title {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .scam-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .scam-tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .scam-tag.clean { background: var(--green-bg); color: var(--green); }
+  .scam-tag.warning { background: var(--yellow-bg); color: var(--yellow); }
+  .scam-tag.danger { background: var(--red-bg); color: var(--red); }
+
+  /* Evidence button */
+  .btn-evidence {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-evidence:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  /* Voice Prints */
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .voice-prints {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .vp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .vp-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--surface2);
+    border-radius: var(--radius);
+  }
+
+  .vp-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: var(--blue-bg);
+  }
+
+  .vp-info { flex: 1; }
+
+  .vp-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .vp-detail {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .vp-badge {
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .vp-add {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+  }
+
+  .vp-add:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  /* History */
+  .history {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .history-item:last-child { border-bottom: none; }
+
+  .history-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .history-dot.green { background: var(--green); }
+  .history-dot.red { background: var(--red); }
+  .history-dot.yellow { background: var(--yellow); }
+
+  .history-info { flex: 1; }
+
+  .history-source {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .history-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .history-score {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    z-index: 100;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 0;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+
+  .nav-item.active { color: var(--blue); }
+  .nav-item:hover { color: var(--text); }
+
+  .nav-item .icon { font-size: 20px; }
+  .nav-item .label { font-size: 10px; font-weight: 600; }
+
+  /* Spacer for bottom nav */
+  .nav-spacer { height: 80px; }
+
+  /* Animations */
+  .analyzing .bar {
+    animation: analyze 0.4s ease-in-out infinite alternate;
+  }
+
+  @keyframes analyze {
+    from { transform: scaleY(0.3); }
+    to { transform: scaleY(1); }
+  }
+
+  /* Progress */
+  .progress-bar {
+    display: none;
+    margin-bottom: 16px;
+  }
+
+  .progress-bar.visible { display: block; }
+
+  .progress-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <span class="logo-text">VoiceGuard</span>
+    </div>
+    <p class="tagline">"Is this voice real or AI?"</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="status-bar">
+    <div class="status-chip">
+      <div class="value" style="color: var(--green)">47</div>
+      <div class="label">Analyzed</div>
+    </div>
+    <div class="status-chip">
+      <div class="value" style="color: var(--red)">3</div>
+      <div class="label">AI Detected</div>
+    </div>
+    <div class="status-chip">
+      <div class="value" style="color: var(--blue)">5</div>
+      <div class="label">Voice Prints</div>
+    </div>
+  </div>
+
+  <!-- Main Analyzer -->
+  <div class="analyzer">
+    <div class="analyzer-title">Analyze Audio</div>
+
+    <!-- Waveform -->
+    <div class="waveform-container" id="waveformBox" onclick="startRecording()">
+      <div class="waveform" id="waveform"></div>
+      <div class="waveform-overlay" id="waveformOverlay">
+        <div class="upload-prompt">
+          <div class="icon">🎙️</div>
+          <div class="text">Tap to record or drop audio file</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">Recording...</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn btn-primary" id="recordBtn" onclick="startRecording()">
+        <span>🎙️</span> Record
+      </button>
+      <button class="btn btn-secondary" id="uploadBtn" onclick="simulateUpload()">
+        <span>📁</span> Upload
+      </button>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results">
+      <!-- Verdict -->
+      <div class="verdict human" id="verdict">
+        <div class="verdict-icon">✅</div>
+        <div class="verdict-label">Likely Human</div>
+        <div class="verdict-confidence">92% confidence · 3.2s audio analyzed</div>
+      </div>
+
+      <!-- Analysis Grid -->
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <div class="metric" style="color: var(--green)">Low</div>
+          <div class="metric-label">Spectral Artifacts</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 12%; background: var(--green);"></div>
+          </div>
+        </div>
+        <div class="analysis-card">
+          <div class="metric" style="color: var(--green)">Natural</div>
+          <div class="metric-label">Prosody Score</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 88%; background: var(--green);"></div>
+          </div>
+        </div>
+        <div class="analysis-card">
+          <div class="metric" style="color: var(--green)">Real</div>
+          <div class="metric-label">Breathing Pattern</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 94%; background: var(--green);"></div>
+          </div>
+        </div>
+        <div class="analysis-card">
+          <div class="metric" style="color: var(--text-dim)">None</div>
+          <div class="metric-label">Model Match</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 0%; background: var(--purple);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spectrogram -->
+      <div class="spectrogram">
+        <div class="spectrogram-title">Frequency Spectrogram</div>
+        <div class="spectrogram-viz" id="spectrogram"></div>
+      </div>
+
+      <!-- Scam Analysis -->
+      <div class="scam-section">
+        <div class="scam-title">🛡️ Scam Pattern Analysis</div>
+        <div class="scam-tags">
+          <span class="scam-tag clean">✓ No urgency language</span>
+          <span class="scam-tag clean">✓ No financial request</span>
+          <span class="scam-tag clean">✓ Known voice print match</span>
+        </div>
+      </div>
+
+      <!-- Evidence -->
+      <button class="btn-evidence" onclick="alert('PDF report would be generated here')">
+        📄 Generate Evidence Report (PDF)
+      </button>
+    </div>
+  </div>
+
+  <!-- Voice Prints -->
+  <div class="voice-prints">
+    <div class="section-title">👥 Voice Print Vault</div>
+    <div class="vp-list">
+      <div class="vp-item">
+        <div class="vp-avatar">👩</div>
+        <div class="vp-info">
+          <div class="vp-name">Mom</div>
+          <div class="vp-detail">Registered Jan 15 · 4 samples</div>
+        </div>
+        <span class="vp-badge">Active</span>
+      </div>
+      <div class="vp-item">
+        <div class="vp-avatar">👨</div>
+        <div class="vp-info">
+          <div class="vp-name">Dad</div>
+          <div class="vp-detail">Registered Jan 15 · 3 samples</div>
+        </div>
+        <span class="vp-badge">Active</span>
+      </div>
+      <div class="vp-item">
+        <div class="vp-avatar">👦</div>
+        <div class="vp-info">
+          <div class="vp-name">Alex (brother)</div>
+          <div class="vp-detail">Registered Feb 3 · 2 samples</div>
+        </div>
+        <span class="vp-badge">Active</span>
+      </div>
+      <button class="vp-add">+ Add Family Member Voice Print</button>
+    </div>
+  </div>
+
+  <!-- Recent History -->
+  <div class="history">
+    <div class="section-title">📋 Recent Analyses</div>
+    <div class="history-item">
+      <div class="history-dot green"></div>
+      <div class="history-info">
+        <div class="history-source">Voicemail — Mom's iPhone</div>
+        <div class="history-meta">Today, 6:42 PM · 12s</div>
+      </div>
+      <div class="history-score" style="color: var(--green)">96%</div>
+    </div>
+    <div class="history-item">
+      <div class="history-dot red"></div>
+      <div class="history-info">
+        <div class="history-source">Unknown caller — "Your son..."</div>
+        <div class="history-meta">Yesterday, 2:15 PM · 8s</div>
+      </div>
+      <div class="history-score" style="color: var(--red)">AI</div>
+    </div>
+    <div class="history-item">
+      <div class="history-dot green"></div>
+      <div class="history-info">
+        <div class="history-source">WhatsApp voice — Alex</div>
+        <div class="history-meta">May 13, 9:30 AM · 24s</div>
+      </div>
+      <div class="history-score" style="color: var(--green)">91%</div>
+    </div>
+  </div>
+
+  <div class="nav-spacer"></div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-item active">
+    <span class="icon">🎙️</span>
+    <span class="label">Analyze</span>
+  </button>
+  <button class="nav-item">
+    <span class="icon">👥</span>
+    <span class="label">Voice Prints</span>
+  </button>
+  <button class="nav-item">
+    <span class="icon">📋</span>
+    <span class="label">History</span>
+  </button>
+  <button class="nav-item">
+    <span class="icon">⚙️</span>
+    <span class="label">Settings</span>
+  </button>
+</div>
+
+<script>
+// Generate waveform bars
+const waveform = document.getElementById('waveform');
+for (let i = 0; i < 60; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  bar.style.height = (Math.random() * 60 + 10) + 'px';
+  waveform.appendChild(bar);
+}
+
+// Generate spectrogram
+const spectrogram = document.getElementById('spectrogram');
+const colors = ['#1a237e', '#283593', '#3949ab', '#5c6bc0', '#7986cb', '#9fa8da', '#c5cae9'];
+for (let col = 0; col < 40; col++) {
+  const colDiv = document.createElement('div');
+  colDiv.className = 'col';
+  for (let row = 0; row < 8; row++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const intensity = Math.random();
+    const colorIdx = Math.floor(intensity * (colors.length - 1));
+    cell.style.background = colors[colorIdx];
+    cell.style.opacity = 0.3 + intensity * 0.7;
+    // Random AI artifact markers (rare)
+    if (Math.random() < 0.03) {
+      cell.style.background = 'var(--red)';
+      cell.style.opacity = '0.8';
+    }
+    colDiv.appendChild(cell);
+  }
+  spectrogram.appendChild(colDiv);
+}
+
+// Simulate recording + analysis
+let isRecording = false;
+
+function startRecording() {
+  if (isRecording) return;
+  isRecording = true;
+
+  const box = document.getElementById('waveformBox');
+  const overlay = document.getElementById('waveformOverlay');
+  const recordBtn = document.getElementById('recordBtn');
+  const progress = document.getElementById('progressBar');
+
+  // Start recording state
+  box.classList.add('active');
+  waveform.classList.add('active');
+  recordBtn.classList.add('recording');
+  recordBtn.innerHTML = '<span>⏹️</span> Stop';
+  overlay.style.opacity = '0';
+
+  // Show progress after 2s
+  setTimeout(() => {
+    box.classList.remove('active');
+    waveform.classList.remove('active');
+    recordBtn.classList.remove('recording');
+    recordBtn.innerHTML = '<span>🎙️</span> Record';
+
+    progress.classList.add('visible');
+    const fill = document.getElementById('progressFill');
+    const label = document.getElementById('progressLabel');
+
+    const stages = [
+      { width: '30%', text: 'Extracting spectral features...' },
+      { width: '55%', text: 'Analyzing prosody patterns...' },
+      { width: '75%', text: 'Checking breathing cadence...' },
+      { width: '90%', text: 'Matching known AI models...' },
+      { width: '100%', text: 'Complete!' }
+    ];
+
+    stages.forEach((stage, i) => {
+      setTimeout(() => {
+        fill.style.width = stage.width;
+        label.textContent = stage.text;
+      }, (i + 1) * 800);
+    });
+
+    setTimeout(() => {
+      progress.classList.remove('visible');
+      document.getElementById('results').classList.add('visible');
+      isRecording = false;
+    }, stages.length * 800 + 500);
+  }, 2000);
+}
+
+function simulateUpload() {
+  if (isRecording) return;
+  // Simulate immediate analysis of uploaded file
+  const progress = document.getElementById('progressBar');
+  progress.classList.add('visible');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  fill.style.width = '0%';
+
+  const stages = [
+    { width: '25%', text: 'Processing uploaded audio...' },
+    { width: '50%', text: 'Running spectral analysis...' },
+    { width: '80%', text: 'AI model fingerprinting...' },
+    { width: '100%', text: 'Complete!' }
+  ];
+
+  stages.forEach((stage, i) => {
+    setTimeout(() => {
+      fill.style.width = stage.width;
+      label.textContent = stage.text;
+    }, (i + 1) * 700);
+  });
+
+  setTimeout(() => {
+    progress.classList.remove('visible');
+    document.getElementById('results').classList.add('visible');
+  }, stages.length * 700 + 400);
+}
+
+// Cycle verdict for demo
+let verdictState = 0;
+const verdicts = [
+  { cls: 'human', icon: '✅', label: 'Likely Human', conf: '92% confidence · 3.2s audio analyzed' },
+  { cls: 'ai', icon: '🚨', label: 'Likely AI-Generated', conf: '87% confidence · 5.1s audio analyzed' },
+  { cls: 'uncertain', icon: '⚠️', label: 'Uncertain', conf: '54% confidence · 1.8s audio analyzed' }
+];
+
+// Click verdict to cycle (demo)
+document.getElementById('verdict').addEventListener('click', function() {
+  verdictState = (verdictState + 1) % verdicts.length;
+  const v = verdicts[verdictState];
+  this.className = 'verdict ' + v.cls;
+  this.querySelector('.verdict-icon').textContent = v.icon;
+  this.querySelector('.verdict-label').textContent = v.label;
+  this.querySelector('.verdict-confidence').textContent = v.conf;
+});
+</script>
+</body>
+</html>
