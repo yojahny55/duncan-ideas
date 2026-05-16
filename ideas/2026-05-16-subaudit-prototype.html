@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubAudit — Know What You Pay For</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0f;--surface:#12121a;--card:#1a1a26;--border:#2a2a3a;
+    --text:#e8e8f0;--muted:#8888a0;--accent:#6c5ce7;--accent2:#a29bfe;
+    --red:#ff6b6b;--yellow:#feca57;--green:#55efc4;--pink:#fd79a8;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  
+  /* Hero */
+  .hero{padding:60px 20px 40px;text-align:center;background:linear-gradient(180deg,#1a1040 0%,var(--bg) 100%)}
+  .hero h1{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+  .hero p{color:var(--muted);font-size:1.1rem;max-width:500px;margin:0 auto}
+  .hero .tagline{margin-top:16px;font-size:1.4rem;font-weight:700;color:var(--text)}
+  .hero .tagline span{color:var(--red)}
+  
+  /* Savings Banner */
+  .savings-banner{max-width:600px;margin:30px auto;padding:20px;background:linear-gradient(135deg,#1a0a2e,#0d1a2e);border:1px solid var(--accent);border-radius:16px;text-align:center}
+  .savings-banner .amount{font-size:3rem;font-weight:900;color:var(--green)}
+  .savings-banner .label{color:var(--muted);font-size:.9rem;margin-top:4px}
+  
+  /* Stats Row */
+  .stats{display:flex;justify-content:center;gap:30px;padding:20px;flex-wrap:wrap}
+  .stat{text-align:center}
+  .stat .num{font-size:1.8rem;font-weight:800}
+  .stat .lbl{color:var(--muted);font-size:.8rem}
+  
+  /* Subscription List */
+  .container{max-width:600px;margin:0 auto;padding:0 20px 40px}
+  .section-title{font-size:1.1rem;font-weight:700;margin:30px 0 16px;display:flex;align-items:center;gap:8px}
+  .section-title .badge{background:var(--card);padding:2px 10px;border-radius:20px;font-size:.75rem;color:var(--muted)}
+  
+  .sub-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px;transition:all .2s;cursor:pointer}
+  .sub-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .sub-card .icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+  .sub-card .info{flex:1;min-width:0}
+  .sub-card .name{font-weight:600;font-size:.95rem}
+  .sub-card .meta{color:var(--muted);font-size:.78rem;margin-top:2px}
+  .sub-card .price{text-align:right;flex-shrink:0}
+  .sub-card .price .amount{font-weight:700;font-size:1rem}
+  .sub-card .price .period{color:var(--muted);font-size:.7rem}
+  
+  .health{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.7rem;font-weight:600;margin-top:4px}
+  .health.good{background:#0d2d22;color:var(--green)}
+  .health.warn{background:#2d2a0d;color:var(--yellow)}
+  .health.bad{background:#2d0d0d;color:var(--red)}
+  
+  /* Duplicate Alert */
+  .alert{background:linear-gradient(135deg,#2d1a0d,#2d0d1a);border:1px solid #ff6b6b33;border-radius:14px;padding:18px 20px;margin:20px 0;display:flex;gap:14px;align-items:flex-start}
+  .alert .alert-icon{font-size:1.5rem;flex-shrink:0}
+  .alert .alert-title{font-weight:700;font-size:.9rem;color:var(--red)}
+  .alert .alert-text{color:var(--muted);font-size:.8rem;margin-top:4px}
+  
+  /* CTA */
+  .cta{text-align:center;padding:40px 20px;margin-top:20px}
+  .cta button{background:linear-gradient(135deg,var(--accent),var(--pink));border:none;color:#fff;padding:16px 40px;border-radius:12px;font-size:1.1rem;font-weight:700;cursor:pointer;transition:transform .2s}
+  .cta button:hover{transform:scale(1.05)}
+  .cta .sub{color:var(--muted);font-size:.8rem;margin-top:12px}
+  
+  /* Mobile */
+  @media(max-width:480px){
+    .hero h1{font-size:1.8rem}
+    .savings-banner .amount{font-size:2.2rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>SubAudit</h1>
+  <p>Know what you pay for. Kill what you don't.</p>
+  <div class="tagline">You're losing <span>$127/mo</span> on forgotten subscriptions.</div>
+</div>
+
+<div class="savings-banner">
+  <div class="amount">$347<span style="font-size:1.2rem;color:var(--muted)">/mo</span></div>
+  <div class="label">Total Monthly Subscription Spend</div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num" style="color:var(--red)">14</div><div class="lbl">Active Subs</div></div>
+  <div class="stat"><div class="num" style="color:var(--yellow)">3</div><div class="lbl">Duplicates</div></div>
+  <div class="stat"><div class="num" style="color:var(--red)">$89</div><div class="lbl">Wasted/mo</div></div>
+  <div class="stat"><div class="num" style="color:var(--green)">5</div><div class="lbl">Unused</div></div>
+</div>
+
+<div class="container">
+  <div class="alert">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-title">3 Duplicate Streaming Services Found</div>
+      <div class="alert-text">You're paying for Spotify ($10.99), Apple Music ($10.99), AND YouTube Premium ($13.99). That's $35.97/mo for music. Pick one and save $25/mo.</div>
+    </div>
+  </div>
+
+  <div class="section-title">🔴 Bloodsuckers <span class="badge">5 found</span></div>
+  
+  <div class="sub-card">
+    <div class="icon" style="background:#1a0a2e">🧘</div>
+    <div class="info">
+      <div class="name">Calm</div>
+      <div class="meta">Last used: 4 months ago</div>
+      <div class="health bad">UNUSED — Cancel this</div>
+    </div>
+    <div class="price"><div class="amount">$14.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="sub-card">
+    <div class="icon" style="background:#2d0d0d">📰</div>
+    <div class="info">
+      <div class="name">NYT Cooking</div>
+      <div class="meta">Last used: 6 weeks ago</div>
+      <div class="health bad">UNUSED — Cancel this</div>
+    </div>
+    <div class="price"><div class="amount">$6.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="sub-card">
+    <div class="icon" style="background:#0d1a2e">🎵</div>
+    <div class="info">
+      <div class="name">YouTube Premium</div>
+      <div class="meta">Duplicate with Spotify + Apple Music</div>
+      <div class="health bad">DUPLICATE</div>
+    </div>
+    <div class="price"><div class="amount">$13.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="sub-card">
+    <div class="icon" style="background:#1a1a0d">💾</div>
+    <div class="info">
+      <div class="name">Dropbox Plus</div>
+      <div class="meta">You already have 2TB via Google One</div>
+      <div class="health bad">DUPLICATE</div>
+    </div>
+    <div class="price"><div class="amount">$11.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="sub-card">
+    <div class="icon" style="background:#2d1a0d">🏋️</div>
+    <div class="info">
+      <div class="name">Peloton App</div>
+      <div class="meta">Price increased $4/mo in January</div>
+      <div class="health warn">PRICE HIKE ↑18%</div>
+    </div>
+    <div class="price"><div class="amount">$24.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="section-title">🟡 Meh <span class="badge">4 found</span></div>
+  
+  <div class="sub-card">
+    <div class="icon" style="background:#0d2d2a">🎨</div>
+    <div class="info">
+      <div class="name">Adobe Creative Cloud</div>
+      <div class="meta">Used 3x this month — light usage</div>
+      <div class="health warn">$54.99/mo is steep for light use</div>
+    </div>
+    <div class="price"><div class="amount">$54.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="sub-card">
+    <div class="icon" style="background:#1a0d2d">💬</div>
+    <div class="info">
+      <div class="name">ChatGPT Plus</div>
+      <div class="meta">Used daily — but free alternatives exist</div>
+      <div class="health warn">Consider free tier?</div>
+    </div>
+    <div class="price"><div class="amount">$20.00</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="section-title">🟢 Worth It <span class="badge">5 found</span></div>
+  
+  <div class="sub-card">
+    <div class="icon" style="background:#0d2d16">🎵</div>
+    <div class="info">
+      <div class="name">Spotify Family</div>
+      <div class="meta">Used 4+ hours/day, 5 family members</div>
+      <div class="health good">HEAVY USE — Keep it</div>
+    </div>
+    <div class="price"><div class="amount">$16.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="sub-card">
+    <div class="icon" style="background:#0d2d16">📦</div>
+    <div class="info">
+      <div class="name">Amazon Prime</div>
+      <div class="meta">8 orders/month + daily video</div>
+      <div class="health good">HEAVY USE — Keep it</div>
+    </div>
+    <div class="price"><div class="amount">$14.99</div><div class="period">/month</div></div>
+  </div>
+
+  <div class="sub-card">
+    <div class="icon" style="background:#0d2d16">☁️</div>
+    <div class="info">
+      <div class="name">Google One 2TB</div>
+      <div class="meta">1.4TB used, daily backups</div>
+      <div class="health good">ESSENTIAL</div>
+    </div>
+    <div class="price"><div class="amount">$9.99</div><div class="period">/month</div></div>
+  </div>
+</div>
+
+<div class="cta">
+  <button onclick="alert('SubAudit would cancel these 5 subscriptions for you. 💀')">Kill $89/mo in Dead Subs →</button>
+  <div class="sub">Free for 5 subscriptions · $4.99/mo unlimited · Cancel anytime (ironic, we know)</div>
+</div>
+
+</body>
+</html>
