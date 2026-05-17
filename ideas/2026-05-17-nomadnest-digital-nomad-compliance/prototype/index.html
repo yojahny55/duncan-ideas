@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NomadNest — Digital Nomad Compliance Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0C0F0A;
+    --surface: #161B14;
+    --surface-2: #1E2419;
+    --border: #2A3325;
+    --text: #E8E4DC;
+    --text-muted: #8A8677;
+    --accent: #C4E84E;
+    --accent-dim: rgba(196,232,78,0.12);
+    --warning: #F0A830;
+    --danger: #E85454;
+    --safe: #4ECB71;
+    --visa-blue: #5B9BD5;
+    --tax-orange: #E8945A;
+    --insurance-teal: #4ECBB0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Ambient glow */
+  .glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-1 { background: var(--accent); top: -200px; right: -100px; }
+  .glow-2 { background: var(--visa-blue); bottom: -200px; left: -100px; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    position: relative;
+  }
+
+  .logo-icon::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 15px;
+    border: 1.5px solid var(--accent);
+    opacity: 0.3;
+  }
+
+  .logo h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+  }
+
+  .logo h1 span {
+    color: var(--accent);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .compliance-score {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .compliance-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--safe);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn:hover {
+    background: var(--surface-2);
+    border-color: var(--accent);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .btn-primary:hover {
+    background: #d4f85e;
+    transform: translateY(-1px);
+  }
+
+  /* Dashboard Grid */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover {
+    border-color: rgba(196,232,78,0.3);
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-label .icon {
+    font-size: 14px;
+  }
+
+  /* Current Location - spans 2 cols */
+  .card-location {
+    grid-column: span 2;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .location-info h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+
+  .location-info .country {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .visa-progress {
+    flex: 1;
+  }
+
+  .visa-bar-wrapper {
+    margin-top: 8px;
+  }
+
+  .visa-bar-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .visa-bar {
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .visa-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--safe), var(--accent));
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .visa-days {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .visa-days .number {
+    font-family: 'Instrument Serif', serif;
+    font-size: 48px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .visa-days .unit {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* Days remaining ring */
+  .ring-container {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+  }
+
+  .ring-container svg {
+    transform: rotate(-90deg);
+  }
+
+  .ring-bg {
+    fill: none;
+    stroke: var(--surface-2);
+    stroke-width: 8;
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 408;
+    stroke-dashoffset: 120;
+    transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ring-label .days {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    color: var(--accent);
+  }
+
+  .ring-label .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Tax card */
+  .tax-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tax-stat:last-child { border-bottom: none; }
+
+  .tax-country {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .tax-days-count {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+  }
+
+  .tax-warning {
+    color: var(--warning);
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* Insurance card */
+  .insurance-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--surface-2);
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+
+  .insurance-status:last-child { margin-bottom: 0; }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-dot.green { background: var(--safe); }
+  .status-dot.yellow { background: var(--warning); }
+  .status-dot.red { background: var(--danger); }
+
+  .insurance-name {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .insurance-expiry {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Travel Timeline - full width */
+  .card-timeline {
+    grid-column: span 3;
+  }
+
+  .timeline {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 120px;
+    padding: 20px 0;
+    position: relative;
+  }
+
+  .timeline-month {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .timeline-block {
+    border-radius: 4px;
+    min-height: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .timeline-block:hover {
+    transform: scaleY(1.05);
+    opacity: 0.9;
+  }
+
+  .timeline-labels {
+    display: flex;
+    gap: 2px;
+    margin-top: 8px;
+  }
+
+  .timeline-label {
+    flex: 1;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Country flags as colored blocks */
+  .flag-pt { background: #2D6A4F; }
+  .flag-es { background: #C1440E; }
+  .flag-th { background: #5B4ECB; }
+  .flag-co { background: #E8945A; }
+  .flag-mx { background: #4ECB71; }
+  .flag-it { background: #5B9BD5; }
+  .flag-de { background: #E85454; }
+  .flag-us { background: #5B7BD5; }
+
+  /* Documents card */
+  .doc-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--surface-2);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .doc-item:hover { background: rgba(196,232,78,0.06); }
+  .doc-item:last-child { margin-bottom: 0; }
+
+  .doc-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .doc-icon.passport { background: rgba(91,155,213,0.15); }
+  .doc-icon.visa { background: rgba(196,232,78,0.15); }
+  .doc-icon.insurance { background: rgba(78,203,176,0.15); }
+  .doc-icon.tax { background: rgba(232,148,90,0.15); }
+
+  .doc-details { flex: 1; }
+  .doc-name { font-size: 13px; font-weight: 500; }
+  .doc-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .doc-expiry-badge {
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .badge-safe { background: rgba(78,203,113,0.12); color: var(--safe); }
+  .badge-warn { background: rgba(240,168,48,0.12); color: var(--warning); }
+  .badge-danger { background: rgba(232,84,84,0.12); color: var(--danger); }
+
+  /* Alerts card */
+  .alert {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid;
+  }
+
+  .alert:last-child { margin-bottom: 0; }
+  .alert-warn { background: rgba(240,168,48,0.06); border-color: var(--warning); }
+  .alert-info { background: rgba(91,155,213,0.06); border-color: var(--visa-blue); }
+  .alert-danger { background: rgba(232,84,84,0.06); border-color: var(--danger); }
+
+  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alert-text { font-size: 13px; line-height: 1.5; }
+  .alert-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Quick stats row */
+  .stats-row {
+    grid-column: span 3;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card, .stat-card {
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+    .card-location, .card-timeline, .stats-row {
+      grid-column: span 1;
+    }
+    .stats-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .card-location {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  /* Tooltip */
+  .tooltip {
+    display: none;
+    position: absolute;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    z-index: 100;
+    white-space: nowrap;
+    pointer-events: none;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .timeline-block:hover .tooltip {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🪺</div>
+      <h1>Nomad<span>Nest</span></h1>
+    </div>
+    <div class="header-actions">
+      <div class="compliance-score">
+        <div class="compliance-dot"></div>
+        Compliant
+      </div>
+      <button class="btn">+ Add Entry</button>
+      <button class="btn btn-primary">Plan Trip</button>
+    </div>
+  </header>
+
+  <!-- Quick Stats -->
+  <div class="dashboard">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--accent)">47</div>
+        <div class="stat-label">Days Left</div>
+        <div class="stat-sub">Portugal visa</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--safe)">112</div>
+        <div class="stat-label">Days in EU</div>
+        <div class="stat-sub">of 180 Schengen</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--tax-orange)">68</div>
+        <div class="stat-label">PT Tax Days</div>
+        <div class="stat-sub">115 until residency</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--insurance-teal)">6</div>
+        <div class="stat-label">Countries</div>
+        <div class="stat-sub">in 2026</div>
+      </div>
+    </div>
+
+    <!-- Current Location -->
+    <div class="card card-location">
+      <div class="location-info">
+        <div class="card-label"><span class="icon">📍</span> Current Location</div>
+        <h2>Lisbon, Portugal</h2>
+        <div class="country">Arrived April 17, 2026 · Tourist Visa · 90 days permitted</div>
+        <div class="visa-bar-wrapper">
+          <div class="visa-bar-header">
+            <span>Visa used</span>
+            <span>47 days remaining</span>
+          </div>
+          <div class="visa-bar">
+            <div class="visa-bar-fill" style="width: 48%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="ring-container">
+        <svg viewBox="0 0 140 140" width="140" height="140">
+          <circle class="ring-bg" cx="70" cy="70" r="65"/>
+          <circle class="ring-fill" cx="70" cy="70" r="65"/>
+        </svg>
+        <div class="ring-label">
+          <span class="days">47</span>
+          <span class="label">Days Left</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax Residency -->
+    <div class="card">
+      <div class="card-label"><span class="icon">💰</span> Tax Residency</div>
+      <div class="tax-stat">
+        <div>
+          <div class="tax-country">🇵🇹 Portugal</div>
+          <div class="tax-warning">⚠️ 115 days until trigger</div>
+        </div>
+        <div class="tax-days-count" style="color:var(--warning)">68</div>
+      </div>
+      <div class="tax-stat">
+        <div>
+          <div class="tax-country">🇺🇸 USA</div>
+          <div style="font-size:11px;color:var(--text-muted)">Home base</div>
+        </div>
+        <div class="tax-days-count" style="color:var(--safe)">42</div>
+      </div>
+      <div class="tax-stat">
+        <div>
+          <div class="tax-country">🇪🇸 Spain</div>
+          <div style="font-size:11px;color:var(--text-muted)">Safe margin</div>
+        </div>
+        <div class="tax-days-count" style="color:var(--safe)">22</div>
+      </div>
+    </div>
+
+    <!-- Insurance -->
+    <div class="card">
+      <div class="card-label"><span class="icon">🏥</span> Insurance Coverage</div>
+      <div class="insurance-status">
+        <div class="status-dot green"></div>
+        <div class="insurance-name">SafetyWing Nomad</div>
+        <div class="insurance-expiry">Active · renews Jul 12</div>
+      </div>
+      <div class="insurance-status">
+        <div class="status-dot yellow"></div>
+        <div class="insurance-name">US Health (Aetna)</div>
+        <div class="insurance-expiry">⚠️ Out-of-network</div>
+      </div>
+      <div class="insurance-status">
+        <div class="status-dot green"></div>
+        <div class="insurance-name">Travel Guard</div>
+        <div class="insurance-expiry">Active · expires Aug 30</div>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="card">
+      <div class="card-label"><span class="icon">🔔</span> Active Alerts</div>
+      <div class="alert alert-warn">
+        <div class="alert-icon">⚠️</div>
+        <div>
+          <div class="alert-text"><strong>14 days</strong> until your Portugal visa expires. Consider extension or next destination.</div>
+          <div class="alert-time">Triggered today</div>
+        </div>
+      </div>
+      <div class="alert alert-info">
+        <div class="alert-icon">ℹ️</div>
+        <div>
+          <div class="alert-text">Schengen rolling window resets <strong>June 14</strong>. You'll regain 20 days.</div>
+          <div class="alert-time">2 days ago</div>
+        </div>
+      </div>
+      <div class="alert alert-danger">
+        <div class="alert-icon">🔴</div>
+        <div>
+          <div class="alert-text">Aetna coverage is <strong>out-of-network</strong> in Portugal. Consider local backup insurance.</div>
+          <div class="alert-time">Apr 17</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents -->
+    <div class="card">
+      <div class="card-label"><span class="icon">📄</span> Documents</div>
+      <div class="doc-item">
+        <div class="doc-icon passport">📕</div>
+        <div class="doc-details">
+          <div class="doc-name">US Passport</div>
+          <div class="doc-meta">Expires Mar 14, 2031</div>
+        </div>
+        <span class="doc-expiry-badge badge-safe">4.8 yr</span>
+      </div>
+      <div class="doc-item">
+        <div class="doc-icon visa">🛂</div>
+        <div class="doc-details">
+          <div class="doc-name">Portugal Tourist Visa</div>
+          <div class="doc-meta">90-day · entered Apr 17</div>
+        </div>
+        <span class="doc-expiry-badge badge-warn">47 days</span>
+      </div>
+      <div class="doc-item">
+        <div class="doc-icon insurance">🏥</div>
+        <div class="doc-details">
+          <div class="doc-name">SafetyWing Policy</div>
+          <div class="doc-meta">Renews Jul 12, 2026</div>
+        </div>
+        <span class="doc-expiry-badge badge-safe">55 days</span>
+      </div>
+      <div class="doc-item">
+        <div class="doc-icon tax">🏦</div>
+        <div class="doc-details">
+          <div class="doc-name">PT NIF (Tax ID)</div>
+          <div class="doc-meta">Issued Feb 2026</div>
+        </div>
+        <span class="doc-expiry-badge badge-safe">Valid</span>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card card-timeline">
+      <div class="card-label"><span class="icon">🗺️</span> 2026 Travel Timeline</div>
+      <div class="timeline" id="timeline"></div>
+      <div class="timeline-labels" id="timeline-labels"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Build timeline
+  const stays = [
+    { month: 'Jan', country: 'US', flag: 'flag-us', days: 31, name: 'USA (Home)' },
+    { month: 'Feb', country: 'CO', flag: 'flag-co', days: 28, name: 'Colombia' },
+    { month: 'Mar', country: 'MX', flag: 'flag-mx', days: 31, name: 'Mexico' },
+    { month: 'Apr', country: 'PT', flag: 'flag-pt', days: 14, name: 'Portugal' },
+    { month: 'Apr', country: 'ES', flag: 'flag-es', days: 16, name: 'Spain' },
+    { month: 'May', country: 'PT', flag: 'flag-pt', days: 31, name: 'Portugal' },
+    { month: 'Jun', country: 'IT', flag: 'flag-it', days: 15, name: 'Italy' },
+    { month: 'Jun', country: 'PT', flag: 'flag-pt', days: 15, name: 'Portugal' },
+    { month: 'Jul', country: 'DE', flag: 'flag-de', days: 31, name: 'Germany' },
+    { month: 'Aug', country: 'TH', flag: 'flag-th', days: 31, name: 'Thailand' },
+    { month: 'Sep', country: 'TH', flag: 'flag-th', days: 30, name: 'Thailand' },
+    { month: 'Oct', country: 'US', flag: 'flag-us', days: 31, name: 'USA (Home)' },
+    { month: 'Nov', country: 'CO', flag: 'flag-co', days: 30, name: 'Colombia' },
+    { month: 'Dec', country: 'PT', flag: 'flag-pt', days: 31, name: 'Portugal' },
+  ];
+
+  const monthBlocks = {};
+  stays.forEach(s => {
+    if (!monthBlocks[s.month]) monthBlocks[s.month] = [];
+    monthBlocks[s.month].push(s);
+  });
+
+  const monthOrder = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const timeline = document.getElementById('timeline');
+  const labels = document.getElementById('timeline-labels');
+
+  monthOrder.forEach(m => {
+    const col = document.createElement('div');
+    col.className = 'timeline-month';
+    (monthBlocks[m] || []).forEach(s => {
+      const block = document.createElement('div');
+      block.className = `timeline-block ${s.flag}`;
+      block.style.height = `${(s.days / 31) * 100}%`;
+      const tip = document.createElement('div');
+      tip.className = 'tooltip';
+      tip.textContent = `${s.name} · ${s.days} days`;
+      block.appendChild(tip);
+      col.appendChild(block);
+    });
+    timeline.appendChild(col);
+
+    const label = document.createElement('div');
+    label.className = 'timeline-label';
+    label.textContent = m;
+    labels.appendChild(label);
+  });
+
+  // Animate ring on load
+  setTimeout(() => {
+    document.querySelector('.ring-fill').style.strokeDashoffset = '210';
+  }, 300);
+</script>
+
+</body>
+</html>
