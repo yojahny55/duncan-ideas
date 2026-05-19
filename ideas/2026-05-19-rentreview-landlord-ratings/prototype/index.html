@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RentReview — Know Your Landlord Before You Sign</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1a1a24;
+  --border: #2a2a3a;
+  --text: #e8e8ed;
+  --text-dim: #8888a0;
+  --accent: #6c5ce7;
+  --accent-light: #a29bfe;
+  --green: #00d2a0;
+  --yellow: #ffc048;
+  --orange: #ff7f50;
+  --red: #ff4757;
+  --radius: 12px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(108,92,231,0.15), transparent 70%);
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+}
+
+.badge span { color: var(--green); font-weight: 600; }
+
+h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+h1 .gradient {
+  background: linear-gradient(135deg, var(--accent), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--text-dim);
+  max-width: 520px;
+  margin-bottom: 2rem;
+}
+
+.search-box {
+  display: flex;
+  width: 100%;
+  max-width: 560px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.search-box:focus-within { border-color: var(--accent); }
+
+.search-box input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 16px 20px;
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.search-box input::placeholder { color: var(--text-dim); }
+
+.search-box button {
+  background: var(--accent);
+  border: none;
+  padding: 16px 28px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.search-box button:hover { background: var(--accent-light); }
+
+.stats-row {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat { text-align: center; }
+.stat .num { font-size: 1.5rem; font-weight: 800; color: var(--green); }
+.stat .label { font-size: 0.75rem; color: var(--text-dim); }
+
+/* Results */
+.results {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+  display: none;
+}
+
+.results.active { display: block; }
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.results-header h2 { font-size: 1.3rem; font-weight: 700; }
+.results-header .count { color: var(--text-dim); font-size: 0.9rem; }
+
+/* Landlord Card */
+.landlord-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.landlord-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.card-top h3 { font-size: 1.15rem; font-weight: 700; }
+.card-top .properties { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
+
+.score-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.score-green { background: rgba(0,210,160,0.15); color: var(--green); }
+.score-yellow { background: rgba(255,192,72,0.15); color: var(--yellow); }
+.score-orange { background: rgba(255,127,80,0.15); color: var(--orange); }
+.score-red { background: rgba(255,71,87,0.15); color: var(--red); }
+
+.dimensions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.dim {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.dim-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.dim-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.dim-label { min-width: 90px; color: var(--text-dim); }
+.dim-val { min-width: 28px; text-align: right; font-weight: 600; }
+
+.red-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.flag {
+  background: rgba(255,71,87,0.1);
+  border: 1px solid rgba(255,71,87,0.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--red);
+}
+
+.reviews-link {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--accent-light);
+  text-decoration: none;
+}
+
+/* Detail Panel */
+.detail {
+  display: none;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+.detail.active { display: block; }
+
+.back-btn {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.back-btn:hover { border-color: var(--accent); color: var(--text); }
+
+.detail-header {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.detail-header .score-badge { width: 72px; height: 72px; font-size: 1.7rem; border-radius: 18px; }
+
+.detail-header h2 { font-size: 1.5rem; font-weight: 800; }
+.detail-header .meta { font-size: 0.85rem; color: var(--text-dim); margin-top: 4px; }
+
+.detail-dims {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.detail-dim {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.detail-dim .label { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 6px; }
+.detail-dim .bar-row { display: flex; align-items: center; gap: 10px; }
+.detail-dim .bar { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.detail-dim .bar-fill { height: 100%; border-radius: 3px; }
+.detail-dim .val { font-weight: 700; min-width: 30px; text-align: right; }
+
+/* Reviews */
+.reviews-section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+
+.review {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.reviewer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.reviewer .info .name { font-size: 0.85rem; font-weight: 600; }
+.reviewer .info .detail { font-size: 0.72rem; color: var(--text-dim); }
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.7rem;
+  color: var(--green);
+  background: rgba(0,210,160,0.1);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.review-score {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.review-body { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+.review-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 0.75rem;
+}
+
+.review-tag {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text-dim);
+}
+
+/* Write Review Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
+.modal .sub { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem; }
+
+.form-group { margin-bottom: 1.25rem; }
+.form-group label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; color: var(--text-dim); }
+
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { min-height: 80px; resize: vertical; }
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.rating-row .label { font-size: 0.82rem; color: var(--text-dim); }
+
+.stars {
+  display: flex;
+  gap: 4px;
+}
+
+.stars span {
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.15s;
+}
+
+.stars span.active { opacity: 1; }
+
+.submit-btn {
+  width: 100%;
+  background: var(--accent);
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+
+.submit-btn:hover { background: var(--accent-light); }
+
+.close-modal {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--accent);
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(108,92,231,0.4);
+  transition: transform 0.2s;
+  z-index: 50;
+}
+
+.fab:hover { transform: scale(1.1); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .dimensions, .detail-dims { grid-template-columns: 1fr; }
+  .detail-header { flex-direction: column; text-align: center; }
+  .stats-row { gap: 1rem; }
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate { animation: fadeUp 0.5s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="badge">🏠 <span>44M</span> US renters deserve transparency</div>
+  <h1>Know your landlord<br><span class="gradient">before you sign.</span></h1>
+  <p>Verified landlord ratings from real renters. Maintenance speed, deposit fairness, rent stability — the stuff that actually matters.</p>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Enter address, landlord name, or city...">
+    <button onclick="search()">Search</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="num">127K</div><div class="label">Verified Reviews</div></div>
+    <div class="stat"><div class="num">34K</div><div class="label">Landlords Rated</div></div>
+    <div class="stat"><div class="num">89%</div><div class="label">Deposit Recovery Rate</div></div>
+  </div>
+</section>
+
+<!-- Search Results -->
+<section class="results" id="results">
+  <div class="results-header">
+    <h2>Search Results</h2>
+    <span class="count" id="resultCount"></span>
+  </div>
+  <div id="resultsList"></div>
+</section>
+
+<!-- Detail View -->
+<section class="detail" id="detail">
+  <button class="back-btn" onclick="goBack()">← Back to results</button>
+  <div class="detail-header">
+    <div class="score-badge score-yellow" id="detailScore">0</div>
+    <div>
+      <h2 id="detailName"></h2>
+      <div class="meta" id="detailMeta"></div>
+    </div>
+  </div>
+  <div class="detail-dims" id="detailDims"></div>
+  <div id="detailFlags"></div>
+  <div class="reviews-section">
+    <h3>Recent Reviews</h3>
+    <div id="detailReviews"></div>
+  </div>
+</section>
+
+<!-- Write Review FAB -->
+<button class="fab" onclick="openModal()" title="Write a Review">✏️</button>
+
+<!-- Write Review Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal" style="position:relative;">
+    <button class="close-modal" onclick="closeModal()">×</button>
+    <h2>Write a Review</h2>
+    <p class="sub">Your review helps 44M renters make better decisions. All reviews are anonymous.</p>
+    
+    <div class="form-group">
+      <label>Landlord or Management Company</label>
+      <input type="text" placeholder="e.g., Oakwood Properties LLC">
+    </div>
+    <div class="form-group">
+      <label>Property Address</label>
+      <input type="text" placeholder="e.g., 742 Evergreen Terrace, Tampa FL">
+    </div>
+    <div class="form-group">
+      <label>Lease Duration</label>
+      <select>
+        <option>Less than 6 months</option>
+        <option>6–12 months</option>
+        <option>1–2 years</option>
+        <option>2+ years</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label>Rate Your Landlord</label>
+      <div class="rating-row"><span class="label">Maintenance Speed</span><div class="stars" data-dim="maintenance">★★★★★</div></div>
+      <div class="rating-row"><span class="label">Communication</span><div class="stars" data-dim="communication">★★★★★</div></div>
+      <div class="rating-row"><span class="label">Deposit Fairness</span><div class="stars" data-dim="deposit">★★★★★</div></div>
+      <div class="rating-row"><span class="label">Rent Stability</span><div class="stars" data-dim="rent">★★★★★</div></div>
+      <div class="rating-row"><span class="label">Safety & Upkeep</span><div class="stars" data-dim="safety">★★★★★</div></div>
+      <div class="rating-row"><span class="label">Lease Transparency</span><div class="stars" data-dim="lease">★★★★★</div></div>
+    </div>
+    
+    <div class="form-group">
+      <label>Your Experience</label>
+      <textarea placeholder="What should other renters know? Be specific about maintenance, communication, renewal experience..."></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>Verify Your Lease (optional — adds ✓ badge)</label>
+      <input type="file" accept=".pdf,.jpg,.png" style="font-size:0.82rem;">
+    </div>
+    
+    <button class="submit-btn" onclick="submitReview()">Submit Anonymous Review</button>
+  </div>
+</div>
+
+<script>
+// Data
+const landlords = [
+  {
+    name: "Oakwood Properties LLC",
+    properties: "12 properties in South Tampa",
+    reviews: 47,
+    score: 82,
+    dims: { maintenance: 88, communication: 79, deposit: 92, rent: 71, safety: 85, lease: 78 },
+    flags: ["15% rent increase avg at renewal"],
+    reviewList: [
+      { name: "Apt 4B Resident", detail: "Lived 2 years · Verified", body: "Maintenance usually responds within 48 hours. Only issue is they raise rent aggressively at renewal — went from $1,450 to $1,680 in one year. Got full deposit back though, which was nice.", tags: ["fast maintenance", "rent increase", "deposit returned"], score: 78 },
+      { name: "Unit 7A Tenant", detail: "Lived 1 year · Verified", body: "Solid landlord overall. Responsive to emails, fixed a leaky faucet same day. Lease was straightforward, no hidden clauses. Would rent again if the price was right.", tags: ["responsive", "fair lease", "recommended"], score: 88 }
+    ]
+  },
+  {
+    name: "J&M Holdings Group",
+    properties: "8 properties in Ybor City",
+    reviews: 23,
+    score: 41,
+    dims: { maintenance: 32, communication: 28, deposit: 55, rent: 45, safety: 38, lease: 48 },
+    flags: ["73% report deposit issues", "Avg maintenance: 18 days", "Multiple legal complaints"],
+    reviewList: [
+      { name: "Former Tenant", detail: "Lived 14 months · Verified", body: "Took 3 weeks to fix a broken AC in August. AUGUST IN FLORIDA. Withheld $800 from deposit for 'cleaning' when the place was spotless. Communication was nonexistent — texts went unanswered for days.", tags: ["slow maintenance", "deposit withheld", "unresponsive", "avoid"], score: 25 },
+      { name: "Unit 2C", detail: "Lived 8 months · Verified", body: "Lease had a clause allowing entry with 12 hours notice — they showed up unannounced twice. When I complained, they didn't renew my lease. Retaliatory and unprofessional.", tags: ["privacy violation", "retaliatory", "hidden clauses"], score: 30 }
+    ]
+  },
+  {
+    name: "Sunrise Property Management",
+    properties: "22 properties in Downtown Tampa",
+    reviews: 89,
+    score: 74,
+    dims: { maintenance: 81, communication: 72, deposit: 68, rent: 65, safety: 82, lease: 76 },
+    flags: ["Rent increases 8-12% annually"],
+    reviewList: [
+      { name: "Studio Renter", detail: "Lived 3 years · Verified", body: "Good property management for a larger company. They have an online portal for maintenance requests that actually works. Downside is rent goes up like clockwork every year. But they're professional and fair.", tags: ["professional", "online portal", "annual increases"], score: 75 },
+      { name: "Penthouse Tenant", detail: "Lived 1 year · Verified", body: "Well-maintained building, responsive staff. Lost $200 from deposit for 'wall patching' that seemed excessive. Overall a decent experience for corporate management.", tags: ["well-maintained", "minor deposit issue"], score: 72 }
+    ]
+  }
+];
+
+function getScoreClass(score) {
+  if (score >= 80) return 'score-green';
+  if (score >= 60) return 'score-yellow';
+  if (score >= 40) return 'score-orange';
+  return 'score-red';
+}
+
+function getBarColor(score) {
+  if (score >= 80) return 'var(--green)';
+  if (score >= 60) return 'var(--yellow)';
+  if (score >= 40) return 'var(--orange)';
+  return 'var(--red)';
+}
+
+function search() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const results = query.length > 0
+    ? landlords.filter(l => l.name.toLowerCase().includes(query) || l.properties.toLowerCase().includes(query))
+    : landlords;
+
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('detail').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+  document.getElementById('resultCount').textContent = `${results.length} landlord${results.length !== 1 ? 's' : ''} found`;
+
+  const list = document.getElementById('resultsList');
+  list.innerHTML = results.map((l, i) => `
+    <div class="landlord-card animate" style="animation-delay:${i * 0.1}s" onclick="showDetail(${landlords.indexOf(l)})">
+      <div class="card-top">
+        <div>
+          <h3>${l.name}</h3>
+          <div class="properties">${l.properties} · ${l.reviews} reviews</div>
+        </div>
+        <div class="score-badge ${getScoreClass(l.score)}">${l.score}</div>
+      </div>
+      <div class="dimensions">
+        ${Object.entries(l.dims).map(([k, v]) => `
+          <div class="dim">
+            <span class="dim-label">${k.charAt(0).toUpperCase() + k.slice(1)}</span>
+            <div class="dim-bar"><div class="dim-bar-fill" style="width:${v}%;background:${getBarColor(v)}"></div></div>
+            <span class="dim-val" style="color:${getBarColor(v)}">${v}</span>
+          </div>
+        `).join('')}
+      </div>
+      ${l.flags.length ? `<div class="red-flags">${l.flags.map(f => `<span class="flag">⚠ ${f}</span>`).join('')}</div>` : ''}
+      <div class="reviews-link">Read ${l.reviews} reviews →</div>
+    </div>
+  `).join('');
+}
+
+function showDetail(idx) {
+  const l = landlords[idx];
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('detail').classList.add('active');
+
+  const scoreEl = document.getElementById('detailScore');
+  scoreEl.textContent = l.score;
+  scoreEl.className = `score-badge ${getScoreClass(l.score)}`;
+
+  document.getElementById('detailName').textContent = l.name;
+  document.getElementById('detailMeta').textContent = `${l.properties} · ${l.reviews} verified reviews`;
+
+  document.getElementById('detailDims').innerHTML = Object.entries(l.dims).map(([k, v]) => `
+    <div class="detail-dim">
+      <div class="label">${k.charAt(0).toUpperCase() + k.slice(1)}</div>
+      <div class="bar-row">
+        <div class="bar"><div class="bar-fill" style="width:${v}%;background:${getBarColor(v)}"></div></div>
+        <div class="val" style="color:${getBarColor(v)}">${v}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('detailFlags').innerHTML = l.flags.length
+    ? `<div class="red-flags" style="margin-bottom:1.5rem">${l.flags.map(f => `<span class="flag">⚠ ${f}</span>`).join('')}</div>`
+    : '';
+
+  document.getElementById('detailReviews').innerHTML = l.reviewList.map(r => `
+    <div class="review">
+      <div class="review-header">
+        <div class="reviewer">
+          <div class="avatar">👤</div>
+          <div class="info">
+            <div class="name">${r.name} <span class="verified-badge">✓ Verified Lease</span></div>
+            <div class="detail">${r.detail}</div>
+          </div>
+        </div>
+        <div class="review-score" style="color:${getBarColor(r.score)}">${r.score}</div>
+      </div>
+      <div class="review-body">${r.body}</div>
+      <div class="review-tags">${r.tags.map(t => `<span class="review-tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function goBack() {
+  document.getElementById('detail').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+}
+
+function openModal() { document.getElementById('modal').classList.add('active'); }
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+// Star rating interaction
+document.querySelectorAll('.stars').forEach(group => {
+  const stars = group.querySelectorAll('span');
+  stars.forEach((star, i) => {
+    star.addEventListener('click', () => {
+      stars.forEach((s, j) => s.classList.toggle('active', j <= i));
+    });
+  });
+});
+
+function submitReview() {
+  closeModal();
+  alert('✅ Review submitted for verification. You\'ll be notified once it\'s published (usually 24-48 hours).');
+}
+
+// Allow Enter key to search
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+</script>
+
+</body>
+</html>
