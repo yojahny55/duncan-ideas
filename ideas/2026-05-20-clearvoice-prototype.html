@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearVoice — Audio Leveler Prototype</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #0a0a0f;
+    --surface: #14141f;
+    --surface2: #1e1e2e;
+    --accent: #6c5ce7;
+    --accent-glow: #6c5ce7aa;
+    --green: #00cec9;
+    --orange: #fdcb6e;
+    --red: #ff6b6b;
+    --text: #e8e8f0;
+    --text2: #8888aa;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--surface2);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--green));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .badge {
+    background: var(--surface2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  /* Main Layout */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--surface2);
+  }
+  .card-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+
+  /* Visualizer */
+  .visualizer-card {
+    grid-column: 1 / -1;
+    position: relative;
+    overflow: hidden;
+  }
+  .visualizer-container {
+    display: flex;
+    gap: 32px;
+    align-items: flex-end;
+    justify-content: center;
+    height: 200px;
+    padding: 20px;
+  }
+  .viz-panel {
+    flex: 1;
+    text-align: center;
+  }
+  .viz-label {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 8px;
+  }
+  canvas {
+    border-radius: 8px;
+  }
+
+  /* Controls */
+  .profiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .profile-btn {
+    background: var(--surface2);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 16px 8px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .profile-btn:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .profile-btn.active {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, #6c5ce722, #6c5ce711);
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .profile-icon { font-size: 28px; margin-bottom: 6px; }
+  .profile-name { font-size: 13px; font-weight: 600; }
+
+  /* Sliders */
+  .slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slider-label {
+    width: 110px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .slider-value {
+    width: 45px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  /* Status */
+  .status-bar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 16px 24px;
+    border: 1px solid var(--surface2);
+  }
+  .status-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  .status-dot.off {
+    background: var(--text2);
+    box-shadow: none;
+    animation: none;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .toggle-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-btn:hover { transform: scale(1.05); }
+  .toggle-btn.off {
+    background: var(--surface2);
+    color: var(--text2);
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .stat {
+    text-align: center;
+    padding: 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+  }
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  /* Source selector */
+  .source-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .source-chip {
+    background: var(--surface2);
+    border: 1px solid transparent;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .source-chip:hover { border-color: var(--accent); }
+  .source-chip.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: #00cec911;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--text2);
+    font-size: 12px;
+    border-top: 1px solid var(--surface2);
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🔊</div>
+    ClearVoice
+  </div>
+  <div class="badge">PROTOTYPE v0.1</div>
+</div>
+
+<div class="main">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-left">
+      <div class="status-dot off" id="statusDot"></div>
+      <span id="statusText">Processing inactive</span>
+    </div>
+    <button class="toggle-btn off" id="toggleBtn" onclick="toggleProcessing()">Enable ClearVoice</button>
+  </div>
+
+  <!-- Audio Visualizer -->
+  <div class="card visualizer-card">
+    <div class="card-title">Real-Time Audio Analysis</div>
+    <div class="visualizer-container">
+      <div class="viz-panel">
+        <canvas id="canvasRaw" width="500" height="160"></canvas>
+        <div class="viz-label">🎵 Original Audio</div>
+      </div>
+      <div class="viz-panel">
+        <canvas id="canvasProcessed" width="500" height="160"></canvas>
+        <div class="viz-label">🔊 ClearVoice Output</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="statDialogue">0 dB</div>
+        <div class="stat-label">Dialogue Level</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statCompression">0%</div>
+        <div class="stat-label">Compression</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statReduction">0 dB</div>
+        <div class="stat-label">Peak Reduction</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profiles -->
+  <div class="card">
+    <div class="card-title">Quick Profiles</div>
+    <div class="profiles">
+      <button class="profile-btn active" onclick="setProfile(this, 'movie')">
+        <div class="profile-icon">🎬</div>
+        <div class="profile-name">Movie Night</div>
+      </button>
+      <button class="profile-btn" onclick="setProfile(this, 'late')">
+        <div class="profile-icon">🌙</div>
+        <div class="profile-name">Late Night</div>
+      </button>
+      <button class="profile-btn" onclick="setProfile(this, 'podcast')">
+        <div class="profile-icon">🎙️</div>
+        <div class="profile-name">Podcast</div>
+      </button>
+      <button class="profile-btn" onclick="setProfile(this, 'music')">
+        <div class="profile-icon">🎵</div>
+        <div class="profile-name">Music</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Manual Controls -->
+  <div class="card">
+    <div class="card-title">Fine-Tune Controls</div>
+    <div class="slider-group">
+      <div class="slider-row">
+        <span class="slider-label">Dialogue Boost</span>
+        <input type="range" min="0" max="100" value="60" id="dialogueBoost" oninput="updateSlider(this)">
+        <span class="slider-value" id="dialogueBoostVal">60%</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Bass Reduction</span>
+        <input type="range" min="0" max="100" value="30" id="bassReduction" oninput="updateSlider(this)">
+        <span class="slider-value" id="bassReductionVal">30%</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Compression</span>
+        <input type="range" min="0" max="100" value="50" id="compression" oninput="updateSlider(this)">
+        <span class="slider-value" id="compressionVal">50%</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Output Gain</span>
+        <input type="range" min="0" max="100" value="70" id="outputGain" oninput="updateSlider(this)">
+        <span class="slider-value" id="outputGainVal">70%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Source -->
+  <div class="card">
+    <div class="card-title">Audio Source</div>
+    <div class="source-selector">
+      <div class="source-chip active">🖥️ System Audio</div>
+      <div class="source-chip">📱 Bluetooth</div>
+      <div class="source-chip">🎧 Headphones</div>
+      <div class="source-chip">📺 HDMI</div>
+      <div class="source-chip">🎵 AirPlay</div>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="card">
+    <div class="card-title">About</div>
+    <p style="font-size:13px; color: var(--text2); line-height: 1.6;">
+      ClearVoice uses real-time speech frequency detection (300Hz–3kHz) with dynamic range compression to level dialogue against background effects. 
+      No more riding the volume remote during movies. 
+    </p>
+    <div style="margin-top: 16px; padding: 12px; background: var(--surface2); border-radius: 8px;">
+      <div style="font-size: 11px; color: var(--text2); margin-bottom: 6px;">INSPIRED BY</div>
+      <div style="font-size: 13px;">
+        Reddit: r/hometheater · r/sounddesign · r/NoStupidQuestions<br>
+        <em>"I am tired of working the volume on my remote like I am trying to bring it to org*sm."</em>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  ClearVoice Prototype · Built with love (and frustration with movie audio mixing) · 2026
+</div>
+
+<script>
+  // State
+  let active = false;
+  let profile = 'movie';
+  let animFrame;
+
+  const profiles = {
+    movie: { dialogue: 60, bass: 30, compression: 50, gain: 70 },
+    late: { dialogue: 80, bass: 60, compression: 75, gain: 55 },
+    podcast: { dialogue: 90, bass: 40, compression: 30, gain: 80 },
+    music: { dialogue: 20, bass: 10, compression: 15, gain: 75 },
+  };
+
+  // Simulated audio data
+  function generateAudioData(t, compressed) {
+    const data = new Float32Array(64);
+    const compFactor = compressed ? 0.5 : 1;
+    const boostCenter = compressed ? 0.7 : 0.3;
+    
+    for (let i = 0; i < 64; i++) {
+      const freq = i / 64;
+      let val;
+      
+      if (compressed) {
+        // Compressed: dialogue freqs boosted, peaks reduced
+        const speechWeight = Math.exp(-Math.pow((freq - 0.3) * 4, 2));
+        val = 0.4 + speechWeight * boostCenter * 0.4 + Math.sin(t * 3 + i * 0.2) * 0.15;
+        val *= compFactor + 0.5;
+      } else {
+        // Raw: big peaks, low dialogue
+        const speechWeight = Math.exp(-Math.pow((freq - 0.3) * 4, 2));
+        const bassWeight = Math.exp(-Math.pow((freq - 0.05) * 6, 2));
+        val = bassWeight * (0.7 + Math.sin(t * 2) * 0.3) + speechWeight * 0.25 + Math.random() * 0.1;
+        val = Math.min(1, val);
+      }
+      
+      data[i] = val;
+    }
+    return data;
+  }
+
+  function drawBars(ctx, data, w, h, color1, color2) {
+    ctx.clearRect(0, 0, w, h);
+    const barW = (w / data.length) - 2;
+    
+    for (let i = 0; i < data.length; i++) {
+      const x = i * (barW + 2);
+      const barH = data[i] * h * 0.85;
+      
+      const grad = ctx.createLinearGradient(x, h, x, h - barH);
+      grad.addColorStop(0, color1);
+      grad.addColorStop(1, color2);
+      
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, h - barH, barW, barH);
+    }
+  }
+
+  const ctxRaw = document.getElementById('canvasRaw').getContext('2d');
+  const ctxProc = document.getElementById('canvasProcessed').getContext('2d');
+
+  function animate(t) {
+    const time = t / 1000;
+    
+    if (active) {
+      const rawData = generateAudioData(time, false);
+      const procData = generateAudioData(time, true);
+      
+      drawBars(ctxRaw, rawData, 500, 160, '#6c5ce7', '#a29bfe');
+      drawBars(ctxProc, procData, 500, 160, '#00cec9', '#55efc4');
+      
+      // Update stats
+      const dialogueLevel = (65 + Math.sin(time * 2) * 5).toFixed(0);
+      const compression = profiles[profile].compression + Math.sin(time * 1.5) * 5;
+      const peakReduction = (12 + Math.sin(time) * 3).toFixed(1);
+      
+      document.getElementById('statDialogue').textContent = dialogueLevel + ' dB';
+      document.getElementById('statCompression').textContent = compression.toFixed(0) + '%';
+      document.getElementById('statReduction').textContent = peakReduction + ' dB';
+    } else {
+      drawBars(ctxRaw, new Float32Array(64), 500, 160, '#333', '#222');
+      drawBars(ctxProc, new Float32Array(64), 500, 160, '#333', '#222');
+    }
+    
+    animFrame = requestAnimationFrame(animate);
+  }
+  
+  requestAnimationFrame(animate);
+
+  function toggleProcessing() {
+    active = !active;
+    const btn = document.getElementById('toggleBtn');
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+    
+    if (active) {
+      btn.textContent = 'Disable ClearVoice';
+      btn.classList.remove('off');
+      dot.classList.remove('off');
+      text.textContent = 'Processing active — ' + profile + ' mode';
+    } else {
+      btn.textContent = 'Enable ClearVoice';
+      btn.classList.add('off');
+      dot.classList.add('off');
+      text.textContent = 'Processing inactive';
+      document.getElementById('statDialogue').textContent = '0 dB';
+      document.getElementById('statCompression').textContent = '0%';
+      document.getElementById('statReduction').textContent = '0 dB';
+    }
+  }
+
+  function setProfile(el, name) {
+    profile = name;
+    document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    
+    const p = profiles[name];
+    setSlider('dialogueBoost', p.dialogue);
+    setSlider('bassReduction', p.bass);
+    setSlider('compression', p.compression);
+    setSlider('outputGain', p.gain);
+    
+    if (active) {
+      document.getElementById('statusText').textContent = 'Processing active — ' + name + ' mode';
+    }
+  }
+
+  function setSlider(id, val) {
+    const el = document.getElementById(id);
+    el.value = val;
+    document.getElementById(id + 'Val').textContent = val + '%';
+  }
+
+  function updateSlider(el) {
+    document.getElementById(el.id + 'Val').textContent = el.value + '%';
+  }
+
+  // Source chips
+  document.querySelectorAll('.source-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.source-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
