@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClaimKit — Insurance Claim Helper</title>
+<style>
+  :root {
+    --primary: #2563EB;
+    --primary-dark: #1D4ED8;
+    --primary-light: #DBEAFE;
+    --success: #059669;
+    --success-light: #D1FAE5;
+    --warning: #D97706;
+    --warning-light: #FEF3C7;
+    --danger: #DC2626;
+    --danger-light: #FEE2E2;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    max-width: 420px;
+    margin: 20px auto;
+    background: white;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-800);
+    background: white;
+  }
+
+  /* Navigation */
+  .nav {
+    display: flex;
+    align-items: center;
+    padding: 8px 20px 16px;
+    gap: 12px;
+  }
+  .nav-back {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: none;
+    font-size: 18px;
+    color: var(--gray-700);
+  }
+  .nav-title {
+    font-size: 18px;
+    font-weight: 700;
+    flex: 1;
+  }
+  .nav-badge {
+    background: var(--danger);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* Screens */
+  .screen { display: none; padding: 0 20px 100px; }
+  .screen.active { display: block; }
+
+  /* Tab bar */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 420px;
+    width: 100%;
+    background: white;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    padding: 8px 0 20px;
+    z-index: 100;
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--gray-400);
+    font-size: 10px;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .tab.active { color: var(--primary); }
+  .tab-icon { font-size: 22px; }
+
+  /* Cards */
+  .card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .card-title { font-weight: 700; font-size: 15px; }
+  .card-subtitle { font-size: 12px; color: var(--gray-500); }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%);
+    color: white;
+    padding: 28px 24px;
+    margin: 0 -20px 20px;
+    border-radius: 0 0 24px 24px;
+  }
+  .hero h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .hero p { font-size: 13px; opacity: 0.85; margin-bottom: 16px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
+  .btn-white { background: white; color: var(--primary); }
+  .btn-sm { padding: 8px 14px; font-size: 12px; width: auto; }
+  .btn-danger { background: var(--danger); color: white; }
+
+  /* Progress */
+  .progress-bar {
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+
+  /* Checklist */
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-circle {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-300);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+    color: white;
+    margin-top: 2px;
+  }
+  .check-circle.done {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .check-text { font-size: 14px; flex: 1; }
+  .check-text.done { text-decoration: line-through; color: var(--gray-400); }
+  .check-hint { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+  /* Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag-danger { background: var(--danger-light); color: var(--danger); }
+  .tag-warning { background: var(--warning-light); color: var(--warning); }
+  .tag-success { background: var(--success-light); color: var(--success); }
+  .tag-primary { background: var(--primary-light); color: var(--primary); }
+
+  /* Timeline */
+  .timeline { padding-left: 24px; border-left: 2px solid var(--gray-200); }
+  .timeline-item {
+    position: relative;
+    padding: 0 0 20px 16px;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: -29px;
+    top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--gray-300);
+  }
+  .timeline-dot.active { background: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+  .timeline-dot.done { background: var(--success); }
+  .timeline-date { font-size: 11px; color: var(--gray-400); }
+  .timeline-title { font-size: 14px; font-weight: 600; margin-top: 2px; }
+  .timeline-desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-value { font-size: 22px; font-weight: 800; color: var(--primary); }
+  .stat-label { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+  /* Damage type grid */
+  .damage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .damage-card {
+    background: var(--gray-50);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .damage-card:hover { border-color: var(--primary-light); }
+  .damage-card.selected { border-color: var(--primary); background: var(--primary-light); }
+  .damage-emoji { font-size: 32px; margin-bottom: 6px; }
+  .damage-name { font-size: 13px; font-weight: 700; }
+
+  /* Alert banner */
+  .alert {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .alert-danger { background: var(--danger-light); color: var(--danger); }
+  .alert-warning { background: var(--warning-light); color: var(--warning); }
+  .alert-info { background: var(--primary-light); color: var(--primary); }
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* Item list */
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+  }
+  .item-thumb {
+    width: 44px; height: 44px;
+    background: var(--gray-200);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .item-info { flex: 1; }
+  .item-name { font-size: 14px; font-weight: 600; }
+  .item-detail { font-size: 11px; color: var(--gray-500); }
+  .item-value { font-size: 15px; font-weight: 700; color: var(--success); }
+
+  /* Modal overlay */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    max-width: 420px;
+    width: 100%;
+    padding: 24px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--gray-300);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .modal h3 { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+
+  /* Photo placeholder */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .photo-slot {
+    aspect-ratio: 4/3;
+    background: var(--gray-100);
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .photo-slot:hover { border-color: var(--primary); color: var(--primary); }
+  .photo-slot.captured {
+    border-style: solid;
+    border-color: var(--success);
+    background: var(--success-light);
+    color: var(--success);
+  }
+  .photo-slot .emoji { font-size: 24px; }
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate { animation: fadeIn 0.3s ease-out; }
+
+  /* Urgent pulse */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .pulse { animation: pulse 2s infinite; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>📶 🔋</span>
+  </div>
+
+  <!-- Screen: Home Dashboard -->
+  <div class="screen active" id="screen-home">
+    <div class="hero">
+      <h1>🏠 ClaimKit</h1>
+      <p>Your insurance claim assistant</p>
+      <button class="btn btn-white" onclick="showScreen('screen-new-claim')">+ Start New Claim</button>
+    </div>
+
+    <!-- Active Claim Card -->
+    <div class="card" onclick="showScreen('screen-checklist')">
+      <div class="card-header">
+        <div class="card-icon" style="background:var(--danger-light);">💧</div>
+        <div style="flex:1">
+          <div class="card-title">Water Damage — Kitchen</div>
+          <div class="card-subtitle">Started May 18, 2026 · Claim #WC-20260518</div>
+        </div>
+        <span class="tag tag-danger pulse">Active</span>
+      </div>
+      <div style="margin-bottom: 8px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);">
+          <span>Documentation Progress</span>
+          <span style="font-weight:700;color:var(--primary)">68%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:68%;background:var(--primary);"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <span class="tag tag-warning">⏰ 12 days to deadline</span>
+        <span class="tag tag-primary">3 photos needed</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">$12,450</div>
+        <div class="stat-label">Estimated Damages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">14</div>
+        <div class="stat-label">Items Documented</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;">Quick Actions</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div class="card" style="margin:0;text-align:center;cursor:pointer;" onclick="showScreen('screen-photos')">
+        <div style="font-size:28px;margin-bottom:4px;">📸</div>
+        <div style="font-size:13px;font-weight:700;">Take Photos</div>
+        <div style="font-size:11px;color:var(--gray-400);">3 more needed</div>
+      </div>
+      <div class="card" style="margin:0;text-align:center;cursor:pointer;" onclick="showScreen('screen-items')">
+        <div style="font-size:28px;margin-bottom:4px;">📦</div>
+        <div style="font-size:13px;font-weight:700;">Log Items</div>
+        <div style="font-size:11px;color:var(--gray-400);">14 items</div>
+      </div>
+      <div class="card" style="margin:0;text-align:center;cursor:pointer;" onclick="showScreen('screen-timeline')">
+        <div style="font-size:28px;margin-bottom:4px;">📋</div>
+        <div style="font-size:13px;font-weight:700;">Timeline</div>
+        <div style="font-size:11px;color:var(--gray-400);">6 events</div>
+      </div>
+      <div class="card" style="margin:0;text-align:center;cursor:pointer;" onclick="showModal()">
+        <div style="font-size:28px;margin-bottom:4px;">📄</div>
+        <div style="font-size:13px;font-weight:700;">Export PDF</div>
+        <div style="font-size:11px;color:var(--gray-400);">Full package</div>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert alert-danger">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        <strong>Deadline approaching!</strong> Your Proof of Loss document is due in <strong>12 days</strong>. Make sure all photos and item valuations are complete.
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: New Claim -->
+  <div class="screen" id="screen-new-claim">
+    <div class="nav">
+      <button class="nav-back" onclick="showScreen('screen-home')">←</button>
+      <div class="nav-title">New Claim</div>
+    </div>
+
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:4px;">What type of damage?</h3>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Select the damage type for tailored guidance.</p>
+
+    <div class="damage-grid">
+      <div class="damage-card selected" onclick="selectDamage(this)">
+        <div class="damage-emoji">💧</div>
+        <div class="damage-name">Water</div>
+      </div>
+      <div class="damage-card" onclick="selectDamage(this)">
+        <div class="damage-emoji">🔥</div>
+        <div class="damage-name">Fire</div>
+      </div>
+      <div class="damage-card" onclick="selectDamage(this)">
+        <div class="damage-emoji">🌪️</div>
+        <div class="damage-name">Storm</div>
+      </div>
+      <div class="damage-card" onclick="selectDamage(this)">
+        <div class="damage-emoji"> burglary</div>
+        <div class="damage-name">Theft</div>
+      </div>
+      <div class="damage-card" onclick="selectDamage(this)">
+        <div class="damage-emoji">🧊</div>
+        <div class="damage-name">Hail</div>
+      </div>
+      <div class="damage-card" onclick="selectDamage(this)">
+        <div class="damage-emoji">🌲</div>
+        <div class="damage-name">Tree Fall</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Location of damage</label>
+      <input type="text" placeholder="e.g., Kitchen, Roof, Basement" style="width:100%;padding:12px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;outline:none;" value="Kitchen">
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">When did it happen?</label>
+      <input type="date" value="2026-05-18" style="width:100%;padding:12px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;outline:none;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Brief description</label>
+      <textarea rows="3" placeholder="Describe what happened..." style="width:100%;padding:12px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;outline:none;resize:none;">Pipe burst under kitchen sink. Water spread to kitchen floor and adjacent dining area. Discovered at 6am.</textarea>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <div><strong>Tip:</strong> Don't clean up yet! Document everything first. Your photos are your evidence.</div>
+    </div>
+
+    <button class="btn btn-primary" onclick="showScreen('screen-checklist')">Start Claim →</button>
+  </div>
+
+  <!-- Screen: Photo Checklist -->
+  <div class="screen" id="screen-photos">
+    <div class="nav">
+      <button class="nav-back" onclick="showScreen('screen-home')">←</button>
+      <div class="nav-title">Photo Guide</div>
+      <span class="tag tag-warning">3 missing</span>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">📸</span>
+      <div><strong>Water Damage Photos</strong> — Follow this checklist for maximum claim strength.</div>
+    </div>
+
+    <div class="photo-grid">
+      <div class="photo-slot captured">
+        <span class="emoji">✅</span>
+        <span>Wide room shot</span>
+      </div>
+      <div class="photo-slot captured">
+        <span class="emoji">✅</span>
+        <span>Water source</span>
+      </div>
+      <div class="photo-slot captured">
+        <span class="emoji">✅</span>
+        <span>Close-up damage</span>
+      </div>
+      <div class="photo-slot">
+        <span class="emoji">📏</span>
+        <span>With ruler/tape</span>
+      </div>
+      <div class="photo-slot captured">
+        <span class="emoji">✅</span>
+        <span>Water line height</span>
+      </div>
+      <div class="photo-slot">
+        <span class="emoji">🏠</span>
+        <span>Adjacent rooms</span>
+      </div>
+      <div class="photo-slot captured">
+        <span class="emoji">✅</span>
+        <span>Personal items</span>
+      </div>
+      <div class="photo-slot">
+        <span class="emoji">🔧</span>
+        <span>Mitigation steps</span>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:8px;">
+        <span>Photo Progress</span>
+        <span style="font-weight:700;color:var(--success)">5 of 8</span>
+      </div>
+      <div class="progress-bar" style="margin-bottom:16px;">
+        <div class="progress-fill" style="width:62.5%;background:var(--success);"></div>
+      </div>
+      <button class="btn btn-primary" style="max-width:200px;margin:0 auto;">📷 Take Photo</button>
+    </div>
+
+    <div class="card" style="margin-top:16px;background:var(--warning-light);border-color:var(--warning);">
+      <div style="font-size:13px;font-weight:700;color:var(--warning);margin-bottom:4px;">⚠️ AI Photo Analysis</div>
+      <div style="font-size:12px;color:var(--gray-700);">Your photos are missing <strong>scale reference</strong> (ruler/tape measure). Insurance adjusters use this to assess damage size. Add a tape measure or coin for reference.</div>
+    </div>
+  </div>
+
+  <!-- Screen: Checklist -->
+  <div class="screen" id="screen-checklist">
+    <div class="nav">
+      <button class="nav-back" onclick="showScreen('screen-home')">←</button>
+      <div class="nav-title">Claim Checklist</div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px;">
+        <span>Overall Progress</span>
+        <span style="font-weight:700;color:var(--primary)">68%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:68%;background:var(--primary);"></div>
+      </div>
+    </div>
+
+    <div class="checklist-item">
+      <div class="check-circle done">✓</div>
+      <div>
+        <div class="check-text done">Call insurance company</div>
+        <div class="check-hint">Claim #WC-20260518 filed</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle done">✓</div>
+      <div>
+        <div class="check-text done">Document damage with photos</div>
+        <div class="check-hint">5 of 8 photos taken — 3 more needed</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle done">✓</div>
+      <div>
+        <div class="check-text done">Stop further damage (mitigation)</div>
+        <div class="check-hint">Shut off water, towels placed</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle done">✓</div>
+      <div>
+        <div class="check-text done">Request adjuster visit</div>
+        <div class="check-hint">Scheduled May 25, 10am</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle done">✓</div>
+      <div>
+        <div class="check-text done">Inventory damaged items</div>
+        <div class="check-hint">14 items logged ($12,450 total)</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle" onclick="toggleCheck(this)"></div>
+      <div>
+        <div class="check-text">Complete photo documentation</div>
+        <div class="check-hint">3 photos remaining ⏰</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle" onclick="toggleCheck(this)"></div>
+      <div>
+        <div class="check-text">Get contractor repair estimates</div>
+        <div class="check-hint">Get 2-3 estimates for comparison</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle" onclick="toggleCheck(this)"></div>
+      <div>
+        <div class="check-text">Submit Proof of Loss form</div>
+        <div class="check-hint">Due by May 30 — <strong style="color:var(--danger)">12 days left</strong></div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle" onclick="toggleCheck(this)"></div>
+      <div>
+        <div class="check-text">Review adjuster's estimate</div>
+        <div class="check-hint">Compare with your documentation</div>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="check-circle" onclick="toggleCheck(this)"></div>
+      <div>
+        <div class="check-text">Export claim package PDF</div>
+        <div class="check-hint">All photos, items, and communications</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Items -->
+  <div class="screen" id="screen-items">
+    <div class="nav">
+      <button class="nav-back" onclick="showScreen('screen-home')">←</button>
+      <div class="nav-title">Damaged Items</div>
+      <span class="tag tag-primary">14 items</span>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:13px;color:var(--gray-500);">Total estimated value</div>
+      <div style="font-size:20px;font-weight:800;color:var(--success);">$12,450</div>
+    </div>
+
+    <div class="item-row">
+      <div class="item-thumb">🪵</div>
+      <div class="item-info">
+        <div class="item-name">Hardwood flooring (120 sq ft)</div>
+        <div class="item-detail">Kitchen · Original: $3,200</div>
+      </div>
+      <div class="item-value">$3,800</div>
+    </div>
+    <div class="item-row">
+      <div class="item-thumb">🗄️</div>
+      <div class="item-info">
+        <div class="item-name">Kitchen cabinets (lower)</div>
+        <div class="item-detail">Kitchen · Original: $4,500</div>
+      </div>
+      <div class="item-value">$4,200</div>
+    </div>
+    <div class="item-row">
+      <div class="item-thumb">📺</div>
+      <div class="item-info">
+        <div class="item-name">Samsung 55" TV</div>
+        <div class="item-detail">Kitchen · Serial: UN55AU8000</div>
+      </div>
+      <div class="item-value">$550</div>
+    </div>
+    <div class="item-row">
+      <div class="item-thumb">🧹</div>
+      <div class="item-info">
+        <div class="item-name">Dyson V15 vacuum</div>
+        <div class="item-detail">Dining area · Receipt available</div>
+      </div>
+      <div class="item-value">$650</div>
+    </div>
+    <div class="item-row">
+      <div class="item-thumb">🪑</div>
+      <div class="item-info">
+        <div class="item-name">Dining table (oak)</div>
+        <div class="item-detail">Dining area · Age: 2 years</div>
+      </div>
+      <div class="item-value">$1,200</div>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">💡</span>
+      <div>AI found comparable prices for 11 of 14 items. <strong>Add receipts</strong> for stronger evidence.</div>
+    </div>
+
+    <button class="btn btn-primary">+ Add Item</button>
+  </div>
+
+  <!-- Screen: Timeline -->
+  <div class="screen" id="screen-timeline">
+    <div class="nav">
+      <button class="nav-back" onclick="showScreen('screen-home')">←</button>
+      <div class="nav-title">Claim Timeline</div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot active"></div>
+        <div class="timeline-date">UPCOMING · May 25, 2026</div>
+        <div class="timeline-title">Adjuster Visit</div>
+        <div class="timeline-desc">State Farm adjuster scheduled 10am. Have all photos and items ready.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">DEADLINE · May 30, 2026</div>
+        <div class="timeline-title" style="color:var(--danger);">Proof of Loss Due</div>
+        <div class="timeline-desc">Submit complete documentation package. 12 days remaining.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot done"></div>
+        <div class="timeline-date">May 20, 2026</div>
+        <div class="timeline-title">Adjuster call logged</div>
+        <div class="timeline-desc">Spoke with Sarah K. Confirmed claim #WC-20260518. She said "document everything including mitigation efforts."</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot done"></div>
+        <div class="timeline-date">May 19, 2026</div>
+        <div class="timeline-title">Mitigation completed</div>
+        <div class="timeline-desc">Water shut off. Towels placed. Emergency plumber fixed pipe. Cost: $380.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot done"></div>
+        <div class="timeline-date">May 18, 2026</div>
+        <div class="timeline-title">Initial photos taken</div>
+        <div class="timeline-desc">5 photos captured documenting water damage in kitchen and dining area.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot done"></div>
+        <div class="timeline-date">May 18, 2026 · 6:15 AM</div>
+        <div class="timeline-title">Claim filed</div>
+        <div class="timeline-desc">Called State Farm at 1-800-SF-CLAIM. Reported burst pipe, water damage to kitchen.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot done"></div>
+        <div class="timeline-date">May 18, 2026 · 6:00 AM</div>
+        <div class="timeline-title">Damage discovered</div>
+        <div class="timeline-desc">Found water on kitchen floor. Pipe burst under sink.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="showScreen('screen-home')">
+      <span class="tab-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="tab" onclick="showScreen('screen-photos')">
+      <span class="tab-icon">📸</span>
+      <span>Photos</span>
+    </button>
+    <button class="tab" onclick="showScreen('screen-items')">
+      <span class="tab-icon">📦</span>
+      <span>Items</span>
+    </button>
+    <button class="tab" onclick="showScreen('screen-timeline')">
+      <span class="tab-icon">📋</span>
+      <span>Timeline</span>
+    </button>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal-overlay" id="modal-export" onclick="hideModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3>📄 Export Claim Package</h3>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Generate a complete PDF package for your insurance claim.</p>
+
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">✅</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;">5 Damage Photos</div>
+          <div style="font-size:11px;color:var(--gray-400);">3 missing — complete for stronger claim</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">✅</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;">14 Item Inventory ($12,450)</div>
+          <div style="font-size:11px;color:var(--gray-400);">11 with comparable prices</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">✅</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;">Communication Log (6 entries)</div>
+          <div style="font-size:11px;color:var(--gray-400);">All adjuster interactions recorded</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;background:var(--danger-light);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">⚠️</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--danger);">3 Photos Missing</div>
+          <div style="font-size:11px;color:var(--gray-600);">Complete photo guide before exporting</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="margin-bottom:8px;">📄 Export Anyway (Draft)</button>
+    <button class="btn btn-outline" onclick="hideModal(event)">Complete Photos First</button>
+  </div>
+</div>
+
+<script>
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  target.classList.add('animate');
+  setTimeout(() => target.classList.remove('animate'), 300);
+
+  // Update tabs
+  const tabMap = {
+    'screen-home': 0, 'screen-photos': 1, 'screen-items': 2, 'screen-timeline': 3
+  };
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', i === tabMap[id]);
+  });
+}
+
+function selectDamage(el) {
+  document.querySelectorAll('.damage-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  const text = el.nextElementSibling.querySelector('.check-text');
+  text.classList.toggle('done');
+  if (el.classList.contains('done')) {
+    el.textContent = '✓';
+  } else {
+    el.textContent = '';
+  }
+}
+
+function showModal() {
+  document.getElementById('modal-export').classList.add('active');
+}
+
+function hideModal(e) {
+  document.getElementById('modal-export').classList.remove('active');
+}
+</script>
+
+</body>
+</html>
