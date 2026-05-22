@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HumanPlease — Escape AI Chatbots</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text2: #8888a0;
+    --accent: #ff4d4d;
+    --accent2: #ff6b6b;
+    --green: #00d68f;
+    --yellow: #ffb800;
+    --orange: #ff8c00;
+    --blue: #4d9fff;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.9);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+  }
+  .logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--accent); }
+  .header-badge {
+    font-size: 11px;
+    background: var(--surface2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  /* Search */
+  .search-section {
+    padding: 32px 24px 24px;
+  }
+  .search-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+  }
+  .search-subtitle {
+    color: var(--text2);
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  .search-box {
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 16px 20px 16px 48px;
+    border-radius: var(--radius);
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus {
+    border-color: var(--accent);
+  }
+  .search-box input::placeholder { color: var(--text2); }
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--text2);
+  }
+
+  /* Quick stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 0 24px 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .stat-num.green { color: var(--green); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  /* Company card */
+  .results-section {
+    padding: 0 24px 100px;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text2);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .company-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .company-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .company-card.active {
+    border-color: var(--accent);
+  }
+  .company-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+  }
+  .company-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .company-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .company-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .company-category {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+  .ai-score {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .score-f { background: rgba(255,77,77,0.15); color: var(--accent); }
+  .score-d { background: rgba(255,140,0,0.15); color: var(--orange); }
+  .score-c { background: rgba(255,184,0,0.15); color: var(--yellow); }
+  .score-b { background: rgba(0,214,143,0.15); color: var(--green); }
+  .score-a { background: rgba(0,214,143,0.2); color: var(--green); }
+
+  /* Expanded detail */
+  .company-detail {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .company-card.active .company-detail {
+    display: block;
+    padding-top: 18px;
+  }
+
+  .escape-method {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .escape-method:hover {
+    border-color: var(--accent);
+  }
+  .method-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .method-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .method-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .badge-best { background: rgba(0,214,143,0.15); color: var(--green); }
+  .badge-fast { background: rgba(77,159,255,0.15); color: var(--blue); }
+  .badge-nuclear { background: rgba(255,77,77,0.15); color: var(--accent); }
+
+  .method-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-text { color: var(--text); padding-top: 2px; }
+  .step-text code {
+    background: rgba(255,77,77,0.1);
+    color: var(--accent2);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .meta-row span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .success-bar {
+    margin-top: 12px;
+    background: var(--border);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .success-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  /* Trending alerts */
+  .alert-card {
+    background: rgba(255,77,77,0.08);
+    border: 1px solid rgba(255,77,77,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alert-text { font-size: 13px; }
+  .alert-time { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* Tab bar */
+  .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    z-index: 100;
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--text2);
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .tab.active { color: var(--accent); }
+  .tab-icon { font-size: 20px; }
+  .tab-label { font-size: 10px; font-weight: 600; }
+
+  @media (min-width: 640px) {
+    body { max-width: 480px; margin: 0 auto; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">H</div>
+    <div class="logo-text">Human<span>Please</span></div>
+  </div>
+  <div class="header-badge">🔥 2,847 escapes today</div>
+</div>
+
+<div class="search-section">
+  <div class="search-title">Escape the Bot</div>
+  <div class="search-subtitle">Find the fastest path to a real human at any company</div>
+  <div class="search-box">
+    <div class="search-icon">🔍</div>
+    <input type="text" placeholder="Search company..." id="searchInput" autocomplete="off">
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-num">10,247</div>
+    <div class="stat-label">Companies</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num green">94%</div>
+    <div class="stat-label">Success Rate</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">2.3 min</div>
+    <div class="stat-label">Avg to Human</div>
+  </div>
+</div>
+
+<div class="results-section">
+  <div class="section-title"><div class="dot"></div> Trending Alerts</div>
+
+  <div class="alert-card">
+    <div class="alert-icon">🚨</div>
+    <div>
+      <div class="alert-text"><strong>United Airlines</strong> just replaced phone support with AI-only. Multiple reports of 45+ min loops.</div>
+      <div class="alert-time">2 hours ago · 847 reports</div>
+    </div>
+  </div>
+  <div class="alert-card">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-text"><strong>Comcast</strong> updated their phone tree — "say agent" no longer works. New escape route found.</div>
+      <div class="alert-time">5 hours ago · 312 reports</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top: 24px;"><div class="dot"></div> Most Searched</div>
+  <div id="companyList"></div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active">
+    <div class="tab-icon">🔍</div>
+    <div class="tab-label">Search</div>
+  </button>
+  <button class="tab">
+    <div class="tab-icon">📞</div>
+    <div class="tab-label">Auto-Dial</div>
+  </button>
+  <button class="tab">
+    <div class="tab-icon">📊</div>
+    <div class="tab-label">Scores</div>
+  </button>
+  <button class="tab">
+    <div class="tab-icon">⚡</div>
+    <div class="tab-label">Escalate</div>
+  </button>
+  <button class="tab">
+    <div class="tab-icon">👤</div>
+    <div class="tab-label">Profile</div>
+  </button>
+</div>
+
+<script>
+const companies = [
+  {
+    name: "Comcast Xfinity",
+    category: "Internet / Cable",
+    icon: "📡",
+    color: "#1a1a3a",
+    score: "F",
+    scoreClass: "score-f",
+    methods: [
+      {
+        type: "📞 Phone Escape",
+        badge: "BEST ROUTE",
+        badgeClass: "badge-best",
+        successRate: 91,
+        successColor: "var(--green)",
+        steps: [
+          "Call <code>1-800-934-6489</code>",
+          "Press <code>#</code> then <code>0</code> immediately",
+          "When bot asks, say <code>\"cancel service\"</code>",
+          "Silence for 5 sec → press <code>0</code> again",
+          "Human picks up in ~3 min"
+        ],
+        waitTime: "~3 min",
+        verified: "2 hours ago"
+      },
+      {
+        type: "💬 Chat Escape",
+        badge: "FAST",
+        badgeClass: "badge-fast",
+        successRate: 78,
+        successColor: "var(--green)",
+        steps: [
+          "Open xfinity.com/support",
+          "Type <code>\"I want to cancel\"</code>",
+          "Bot will transfer to retention team",
+          "If bot loops, type <code>\"supervisor\"</code> 3×"
+        ],
+        waitTime: "~8 min",
+        verified: "1 day ago"
+      },
+      {
+        type: "🏛️ Nuclear Option",
+        badge: "NUCLEAR",
+        badgeClass: "badge-nuclear",
+        successRate: 96,
+        successColor: "var(--green)",
+        steps: [
+          "File FCC complaint at fcc.gov/complaints",
+          "Select \"Billing\" → \"Cable\"",
+          "Comcast executive office calls YOU within 48h",
+          "They have full authority to resolve"
+        ],
+        waitTime: "48h callback",
+        verified: "3 days ago"
+      }
+    ]
+  },
+  {
+    name: "United Airlines",
+    category: "Airlines",
+    icon: "✈️",
+    color: "#1a1a2a",
+    score: "F",
+    scoreClass: "score-f",
+    methods: [
+      {
+        type: "📞 Phone Escape",
+        badge: "BEST ROUTE",
+        badgeClass: "badge-best",
+        successRate: 67,
+        successColor: "var(--yellow)",
+        steps: [
+          "Call <code>1-800-864-8331</code>",
+          "Say <code>\" MileagePlus\"</code> at prompt",
+          "Then say <code>\"agent\"</code>",
+          "If bot redirects, say <code>\"it's an emergency\"</code>",
+          "Expect 15-25 min hold even after escape"
+        ],
+        waitTime: "~20 min",
+        verified: "6 hours ago"
+      },
+      {
+        type: "💬 Twitter/X DM",
+        badge: "FAST",
+        badgeClass: "badge-fast",
+        successRate: 85,
+        successColor: "var(--green)",
+        steps: [
+          "DM @united on Twitter",
+          "Include booking reference",
+          "Real human responds within 1-2 hours",
+          "Often faster than phone"
+        ],
+        waitTime: "~1-2 hrs",
+        verified: "1 day ago"
+      }
+    ]
+  },
+  {
+    name: "Bank of America",
+    category: "Banking",
+    icon: "🏦",
+    color: "#1a1a2a",
+    score: "D",
+    scoreClass: "score-d",
+    methods: [
+      {
+        type: "📞 Phone Escape",
+        badge: "BEST ROUTE",
+        badgeClass: "badge-best",
+        successRate: 88,
+        successColor: "var(--green)",
+        steps: [
+          "Call <code>1-800-432-1000</code>",
+          "Enter any 4-digit PIN (will fail)",
+          "After 2 failed attempts, press <code>0</code>",
+          "Say <code>\"representative\"</code> clearly",
+          "Connected in ~2 min"
+        ],
+        waitTime: "~2 min",
+        verified: "4 hours ago"
+      }
+    ]
+  },
+  {
+    name: "Amazon",
+    category: "E-Commerce",
+    icon: "📦",
+    color: "#1a1a2a",
+    score: "D",
+    scoreClass: "score-d",
+    methods: [
+      {
+        type: "📞 Callback Request",
+        badge: "BEST ROUTE",
+        badgeClass: "badge-best",
+        successRate: 92,
+        successColor: "var(--green)",
+        steps: [
+          "Go to amazon.com/help → \"Need more help\"",
+          "Click <code>\"Contact Us\"</code> → <code>\"Phone\"</code>",
+          "Enter your number, they call YOU",
+          "Real human, usually within 5 min",
+          "Works even for Prime issues"
+        ],
+        waitTime: "~5 min callback",
+        verified: "12 hours ago"
+      },
+      {
+        type: "💬 Chat Escape",
+        badge: "FAST",
+        badgeClass: "badge-fast",
+        successRate: 73,
+        successColor: "var(--green)",
+        steps: [
+          "Start chat at amazon.com/contact-us",
+          "Type <code>\"call me\"</code> to bot",
+          "If no callback option, type <code>\"A-to-z claim\"</code>",
+          "Instant escalation to human"
+        ],
+        waitTime: "~10 min",
+        verified: "1 day ago"
+      }
+    ]
+  },
+  {
+    name: "Healthcare.gov",
+    category: "Government / Health",
+    icon: "🏥",
+    color: "#1a1a2a",
+    score: "C",
+    scoreClass: "score-c",
+    methods: [
+      {
+        type: "📞 Phone Escape",
+        badge: "BEST ROUTE",
+        badgeClass: "badge-best",
+        successRate: 95,
+        successColor: "var(--green)",
+        steps: [
+          "Call <code>1-800-318-2596</code>",
+          "Press <code>1</code> for English",
+          "Stay silent through all prompts (don't press anything)",
+          "After 3 rounds of silence, transfers to human",
+          "Wait times shortest Tue-Thu 8-9am"
+        ],
+        waitTime: "~5 min",
+        verified: "2 days ago"
+      }
+    ]
+  }
+];
+
+function renderCompanies(filter = '') {
+  const list = document.getElementById('companyList');
+  const filtered = companies.filter(c => 
+    c.name.toLowerCase().includes(filter.toLowerCase()) ||
+    c.category.toLowerCase().includes(filter.toLowerCase())
+  );
+  
+  list.innerHTML = filtered.map((c, i) => `
+    <div class="company-card" onclick="toggleCard(this)">
+      <div class="company-header">
+        <div class="company-info">
+          <div class="company-icon" style="background:${c.color}">${c.icon}</div>
+          <div>
+            <div class="company-name">${c.name}</div>
+            <div class="company-category">${c.category}</div>
+          </div>
+        </div>
+        <div class="ai-score ${c.scoreClass}">${c.score}</div>
+      </div>
+      <div class="company-detail">
+        <div style="margin-bottom: 14px; font-size: 13px; color: var(--text2);">
+          AI Difficulty Score: <strong style="color: var(--accent)">${c.score}</strong> — ${c.score === 'F' ? 'Nearly impossible to reach a human' : c.score === 'D' ? 'Very difficult, multiple bot layers' : c.score === 'C' ? 'Moderate, some patience needed' : 'Relatively easy'}
+        </div>
+        ${c.methods.map(m => `
+          <div class="escape-method">
+            <div class="method-header">
+              <div class="method-type">${m.type}</div>
+              <div class="method-badge ${m.badgeClass}">${m.badge}</div>
+            </div>
+            <div class="method-steps">
+              ${m.steps.map((s, si) => `
+                <div class="step">
+                  <div class="step-num">${si + 1}</div>
+                  <div class="step-text">${s}</div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="meta-row">
+              <span>⏱ ${m.waitTime}</span>
+              <span>✓ Verified ${m.verified}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+              <span style="font-size: 12px; color: var(--text2);">${m.successRate}% success</span>
+              <div class="success-bar" style="flex: 1;">
+                <div class="success-fill" style="width: ${m.successRate}%; background: ${m.successColor};"></div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="event.stopPropagation()">👍 This Worked (47)</button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">👎 Didn't Work (3)</button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation()">📤 Share</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleCard(el) {
+  const wasActive = el.classList.contains('active');
+  document.querySelectorAll('.company-card').forEach(c => c.classList.remove('active'));
+  if (!wasActive) el.classList.add('active');
+}
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  renderCompanies(e.target.value);
+});
+
+renderCompanies();
+</script>
+</body>
+</html>
