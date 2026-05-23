@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brain Dump — Just type.</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg: #0a0a0f;
+    --surface: #14141f;
+    --surface2: #1e1e2e;
+    --accent: #7c5cfc;
+    --accent-dim: #7c5cfc33;
+    --text: #e8e6f0;
+    --text-dim: #6b6888;
+    --green: #4ade80;
+    --orange: #fb923c;
+    --pink: #f472b6;
+    --blue: #60a5fa;
+  }
+
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Glow effect behind the input */
+  .glow {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.4s;
+  }
+
+  .glow.active { opacity: 1; }
+  .glow.idle { opacity: 0.3; }
+
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .nav-tab {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-tab.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  .nav-tab:hover:not(.active) { color: var(--text); }
+
+  /* Capture Zone */
+  .capture-zone {
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .capture-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 24px;
+    background: var(--surface);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-family: inherit;
+  }
+
+  .capture-input::placeholder { color: var(--text-dim); }
+
+  .capture-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px var(--accent-dim);
+  }
+
+  .capture-hint {
+    text-align: center;
+    margin-top: 12px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  .capture-hint kbd {
+    background: var(--surface2);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    border: 1px solid var(--text-dim)33;
+  }
+
+  /* Dump animation */
+  .dump-flash {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--accent);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity 0.1s;
+  }
+
+  .dump-flash.show {
+    opacity: 0.08;
+  }
+
+  /* Saved indicator */
+  .saved-indicator {
+    text-align: center;
+    padding: 12px;
+    color: var(--green);
+    font-weight: 600;
+    font-size: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+  }
+
+  .saved-indicator.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Timeline */
+  .section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  .timeline { display: flex; flex-direction: column; gap: 12px; }
+
+  .dump-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    transition: transform 0.2s;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .dump-card:hover { transform: translateY(-2px); }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .dump-text { font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
+
+  .dump-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .dump-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .tag.work { background: var(--blue)22; color: var(--blue); }
+  .tag.idea { background: var(--orange)22; color: var(--orange); }
+  .tag.personal { background: var(--pink)22; color: var(--pink); }
+  .tag.health { background: var(--green)22; color: var(--green); }
+  .tag.learning { background: var(--accent)22; color: var(--accent); }
+
+  .dump-time { font-size: 12px; color: var(--text-dim); }
+
+  /* Clusters view */
+  .clusters { display: none; flex-direction: column; gap: 20px; }
+  .clusters.visible { display: flex; }
+  .timeline.hidden { display: none; }
+
+  .cluster {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 20px;
+    border-left: 3px solid;
+  }
+
+  .cluster.work { border-color: var(--blue); }
+  .cluster.idea { border-color: var(--orange); }
+  .cluster.personal { border-color: var(--pink); }
+  .cluster.health { border-color: var(--green); }
+  .cluster.learning { border-color: var(--accent); }
+
+  .cluster-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .cluster-title { font-weight: 600; font-size: 16px; }
+  .cluster-count { font-size: 12px; color: var(--text-dim); }
+
+  .cluster-items { display: flex; flex-direction: column; gap: 8px; }
+
+  .cluster-item {
+    font-size: 14px;
+    color: var(--text);
+    opacity: 0.85;
+    padding-left: 12px;
+    border-left: 1px solid var(--surface2);
+  }
+
+  /* Stats bar */
+  .stats {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .stat {
+    flex: 1;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-value { font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  /* Mobile responsive */
+  @media (max-width: 480px) {
+    .capture-input { font-size: 16px; min-height: 100px; padding: 18px; }
+    .nav-tab { padding: 6px 12px; font-size: 13px; }
+    .stats { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow idle"></div>
+<div class="dump-flash" id="dumpFlash"></div>
+
+<div class="app">
+  <header>
+    <div class="logo">brain<span>dump</span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showView('timeline')">Timeline</button>
+      <button class="nav-tab" onclick="showView('clusters')">Clusters</button>
+    </div>
+  </header>
+
+  <!-- Capture -->
+  <div class="capture-zone">
+    <textarea class="capture-input" id="dumpInput" placeholder="What's on your mind? Just type it..." autofocus></textarea>
+    <div class="capture-hint"><kbd>⌘ Enter</kbd> to dump &middot; no tags, no folders &middot; AI handles the rest</div>
+    <div class="saved-indicator" id="savedMsg">✓ Dumped</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value" id="todayCount">0</div>
+      <div class="stat-label">Today</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="weekCount">0</div>
+      <div class="stat-label">This Week</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="streakCount">0</div>
+      <div class="stat-label">Day Streak</div>
+    </div>
+  </div>
+
+  <!-- Timeline View -->
+  <div class="section-title">Recent Dumps</div>
+  <div class="timeline" id="timeline"></div>
+
+  <!-- Clusters View -->
+  <div class="clusters" id="clustersView"></div>
+</div>
+
+<script>
+const CATEGORIES = ['work','idea','personal','health','learning'];
+const CATEGORY_LABELS = {work:'Work',idea:'Ideas',personal:'Personal',health:'Health',learning:'Learning'};
+const SAMPLE_TEXTS = [
+  { text: "The API rate limiting is killing us — need to implement exponential backoff with jitter", cat: 'work', time: '2m ago' },
+  { text: "What if we built a browser extension that auto-summarizes meeting notes?", cat: 'idea', time: '38m ago' },
+  { text: "Call mom about Thanksgiving plans", cat: 'personal', time: '1h ago' },
+  { text: "Sleep has been garbage this week. Try no screens after 10pm.", cat: 'health', time: '3h ago' },
+  { text: "Learned about zod schemas today — way better than manual validation", cat: 'learning', time: '5h ago' },
+  { text: "Refactor the auth middleware before the demo on Thursday", cat: 'work', time: '6h ago' },
+  { text: "Serial port communication for the IoT project — check out serialport npm package", cat: 'learning', time: '8h ago' },
+  { text: "Maybe a weekly brain dump email digest? People love email for some reason.", cat: 'idea', time: 'Yesterday' },
+];
+
+let dumps = [...SAMPLE_TEXTS];
+
+function renderTimeline() {
+  const el = document.getElementById('timeline');
+  el.innerHTML = dumps.map(d => `
+    <div class="dump-card">
+      <div class="dump-text">${d.text}</div>
+      <div class="dump-meta">
+        <div class="dump-tags">
+          <span class="tag ${d.cat}">${CATEGORY_LABELS[d.cat]}</span>
+        </div>
+        <div class="dump-time">${d.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderClusters() {
+  const grouped = {};
+  dumps.forEach(d => {
+    if (!grouped[d.cat]) grouped[d.cat] = [];
+    grouped[d.cat].push(d);
+  });
+  const el = document.getElementById('clustersView');
+  el.innerHTML = Object.entries(grouped).map(([cat, items]) => `
+    <div class="cluster ${cat}">
+      <div class="cluster-header">
+        <div class="cluster-title">${CATEGORY_LABELS[cat]}</div>
+        <div class="cluster-count">${items.length} dump${items.length !== 1 ? 's' : ''}</div>
+      </div>
+      <div class="cluster-items">
+        ${items.map(i => `<div class="cluster-item">${i.text}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function showView(view) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  if (view === 'timeline') {
+    document.getElementById('timeline').classList.remove('hidden');
+    document.getElementById('clustersView').classList.remove('visible');
+  } else {
+    document.getElementById('timeline').classList.add('hidden');
+    document.getElementById('clustersView').classList.add('visible');
+    renderClusters();
+  }
+}
+
+function randomCat() { return CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)]; }
+
+function dumpText() {
+  const input = document.getElementById('dumpInput');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  // Flash
+  const flash = document.getElementById('dumpFlash');
+  flash.classList.add('show');
+  setTimeout(() => flash.classList.remove('show'), 150);
+  
+  // Add to front
+  dumps.unshift({ text, cat: randomCat(), time: 'Just now' });
+  input.value = '';
+  
+  // Show saved
+  const msg = document.getElementById('savedMsg');
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 1500);
+  
+  // Update stats
+  document.getElementById('todayCount').textContent = parseInt(document.getElementById('todayCount').textContent) + 1;
+  document.getElementById('weekCount').textContent = parseInt(document.getElementById('weekCount').textContent) + 1;
+  if (document.getElementById('streakCount').textContent === '0') {
+    document.getElementById('streakCount').textContent = '1';
+  }
+  
+  renderTimeline();
+}
+
+// Keyboard shortcut
+document.getElementById('dumpInput').addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault();
+    dumpText();
+  }
+});
+
+// Glow effect
+document.getElementById('dumpInput').addEventListener('focus', () => {
+  document.querySelector('.glow').classList.remove('idle');
+  document.querySelector('.glow').classList.add('active');
+});
+document.getElementById('dumpInput').addEventListener('blur', () => {
+  document.querySelector('.glow').classList.remove('active');
+  document.querySelector('.glow').classList.add('idle');
+});
+
+// Init
+document.getElementById('todayCount').textContent = '3';
+document.getElementById('weekCount').textContent = '14';
+document.getElementById('streakCount').textContent = '5';
+renderTimeline();
+</script>
+</body>
+</html>
