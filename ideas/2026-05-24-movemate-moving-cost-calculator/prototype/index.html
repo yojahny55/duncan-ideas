@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoveMate — Moving Cost Calculator & Coordinator</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#2563EB;--primary-light:#DBEAFE;--primary-dark:#1E40AF;
+  --accent:#10B981;--accent-light:#D1FAE5;
+  --warn:#F59E0B;--danger:#EF4444;
+  --bg:#F8FAFC;--card:#FFFFFF;--text:#0F172A;--text2:#64748B;--text3:#94A3B8;
+  --border:#E2E8F0;--radius:12px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+.container{max-width:420px;margin:0 auto;padding:16px;min-height:100vh}
+
+/* Header */
+.header{text-align:center;padding:24px 0 8px}
+.logo{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.logo span{color:var(--primary)}
+.tagline{color:var(--text2);font-size:13px;margin-top:2px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;background:var(--border);border-radius:10px;padding:3px;margin:16px 0}
+.tab{flex:1;padding:8px 4px;text-align:center;font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .2s;color:var(--text2);background:transparent;border:none}
+.tab.active{background:var(--card);color:var(--primary);box-shadow:var(--shadow)}
+.tab:hover:not(.active){color:var(--text)}
+
+/* Panels */
+.panel{display:none}
+.panel.active{display:block}
+
+/* Cards */
+.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.card-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+/* Form */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--bg);transition:border .2s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Range slider */
+.range-wrap{display:flex;align-items:center;gap:10px}
+.range-wrap input[type=range]{flex:1;accent-color:var(--primary)}
+.range-val{font-size:14px;font-weight:700;color:var(--primary);min-width:32px;text-align:right}
+
+/* Buttons */
+.btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-outline{background:transparent;border:1.5px solid var(--primary);color:var(--primary)}
+.btn-sm{padding:8px 14px;font-size:13px;width:auto}
+
+/* Results */
+.result-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:10px;border:2px solid var(--border);cursor:pointer;transition:all .2s;position:relative}
+.result-card.recommended{border-color:var(--primary)}
+.result-card .badge{position:absolute;top:-8px;right:12px;background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
+.result-card .option-name{font-weight:700;font-size:16px;margin-bottom:4px}
+.result-card .option-price{font-size:28px;font-weight:800;color:var(--primary)}
+.result-card .option-price small{font-size:13px;font-weight:500;color:var(--text2)}
+.result-card .option-detail{font-size:12px;color:var(--text2);margin-top:6px}
+.result-card .option-detail span{display:inline-block;margin-right:8px}
+.result-card .hidden-fees{background:#FEF3C7;border-radius:6px;padding:6px 10px;font-size:11px;color:#92400E;margin-top:8px}
+.result-card .expand-content{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+.result-card.expanded .expand-content{display:block}
+.cost-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.cost-row.total{border-top:1.5px solid var(--border);margin-top:6px;padding-top:6px;font-weight:700;font-size:15px}
+
+/* Timeline */
+.timeline-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.timeline-item:last-child{border:none}
+.timeline-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px}
+.timeline-dot.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.timeline-dot.current{background:var(--primary-light);border-color:var(--primary);color:var(--primary)}
+.timeline-week{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.5px}
+.timeline-task{font-size:14px;font-weight:600;margin:2px 0}
+.timeline-desc{font-size:12px;color:var(--text2)}
+
+/* Packing */
+.room-card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid var(--border)}
+.room-icon{font-size:28px}
+.room-info{flex:1}
+.room-name{font-weight:700;font-size:14px}
+.room-progress{font-size:12px;color:var(--text2)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-top:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .3s}
+.room-toggle{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+
+/* Budget */
+.budget-header{text-align:center;padding:20px 0}
+.budget-total{font-size:36px;font-weight:800}
+.budget-total.over{color:var(--danger)}
+.budget-total.under{color:var(--accent)}
+.budget-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.budget-bar{height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin:16px 0}
+.budget-bar-fill{height:100%;border-radius:5px;transition:width .3s}
+.budget-cat{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.budget-cat:last-child{border:none}
+.budget-cat-icon{font-size:20px;width:32px;text-align:center}
+.budget-cat-info{flex:1}
+.budget-cat-name{font-size:13px;font-weight:600}
+.budget-cat-bar{height:4px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden}
+.budget-cat-fill{height:100%;border-radius:2px}
+.budget-cat-amount{font-size:13px;font-weight:700;text-align:right;min-width:70px}
+
+/* Summary */
+.summary-box{background:linear-gradient(135deg,var(--primary),#7C3AED);border-radius:var(--radius);padding:20px;color:#fff;text-align:center;margin-bottom:16px}
+.summary-box h3{font-size:14px;opacity:.85;font-weight:500;margin-bottom:4px}
+.summary-box .big-num{font-size:42px;font-weight:800}
+.summary-box .sub{font-size:12px;opacity:.7;margin-top:4px}
+.savings-tip{background:var(--accent-light);border-radius:8px;padding:12px;margin-top:12px;font-size:13px;color:#065F46}
+.savings-tip strong{display:block;margin-bottom:2px}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeIn .3s ease}
+
+/* Hide sections */
+#estimator-input,#results,#budget-section{display:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">Move<span>Mate</span> 📦</div>
+    <div class="tagline">Plan your move. Know the cost. Don't lose your mind.</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-panel="estimate">💰 Estimate</button>
+    <button class="tab" data-panel="timeline">📅 Timeline</button>
+    <button class="tab" data-panel="packing">📦 Packing</button>
+    <button class="tab" data-panel="budget">💳 Budget</button>
+  </div>
+
+  <!-- ESTIMATE PANEL -->
+  <div class="panel active" id="panel-estimate">
+    <div class="card" id="estimator-input">
+      <div class="card-title">📍 Move Details</div>
+      <div class="form-row">
+        <div class="form-group"><label>From</label><input type="text" id="from-city" placeholder="City, State" value="Tampa, FL"></div>
+        <div class="form-group"><label>To</label><input type="text" id="to-city" placeholder="City, State" value="Atlanta, GA"></div>
+      </div>
+      <div class="form-group"><label>Distance</label><div class="range-wrap"><input type="range" id="distance" min="10" max="3000" value="450"><span class="range-val" id="dist-val">450 mi</span></div></div>
+      <div class="form-group"><label>Home Size</label>
+        <select id="home-size">
+          <option value="studio">Studio / 1 Room</option>
+          <option value="1br" selected>1 Bedroom</option>
+          <option value="2br">2 Bedroom</option>
+          <option value="3br">3 Bedroom</option>
+          <option value="4br">4+ Bedroom</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Floor</label>
+          <select id="floor">
+            <option value="0">Ground</option>
+            <option value="1">2nd Floor</option>
+            <option value="2">3rd+</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Elevator?</label>
+          <select id="elevator"><option value="1">Yes</option><option value="0">No</option></select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="calculate()">Calculate My Move →</button>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <!-- TIMELINE PANEL -->
+  <div class="panel" id="panel-timeline">
+    <div class="card">
+      <div class="card-title">🗓️ Your Move Timeline</div>
+      <div id="timeline-list"></div>
+    </div>
+  </div>
+
+  <!-- PACKING PANEL -->
+  <div class="panel" id="panel-packing">
+    <div class="card">
+      <div class="card-title">🏠 Room-by-Room Packing</div>
+      <div id="packing-list"></div>
+    </div>
+    <div class="savings-tip">
+      <strong>📱 QR Box Labels</strong>
+      Print labels for each box. Scan to see what's inside — never lose your coffee maker again.
+    </div>
+  </div>
+
+  <!-- BUDGET PANEL -->
+  <div class="panel" id="panel-budget">
+    <div class="card">
+      <div id="budget-content"></div>
+    </div>
+    <div class="savings-tip">
+      <strong>💼 Tax Deduction Tip</strong>
+      If you're moving for work (50+ miles from old job), your moving expenses may be tax deductible. Track everything!
+    </div>
+  </div>
+</div>
+
+<script>
+const tabs=document.querySelectorAll('.tab');
+const panels=document.querySelectorAll('.panel');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  panels.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-'+t.dataset.panel).classList.add('active');
+}));
+
+document.getElementById('distance').addEventListener('input',e=>{
+  document.getElementById('dist-val').textContent=e.target.value+' mi';
+});
+
+const sizeData={
+  studio:{weight:2000,boxes:20,rooms:2},
+  '1br':{weight:3500,boxes:35,rooms:3},
+  '2br':{weight:5500,boxes:55,rooms:5},
+  '3br':{weight:8000,boxes:80,rooms:7},
+  '4br':{weight:12000,boxes:120,rooms:9}
+};
+
+function calculate(){
+  const dist=+document.getElementById('distance').value;
+  const size=document.getElementById('home-size').value;
+  const floor=+document.getElementById('floor').value;
+  const elevator=+document.getElementById('elevator').value;
+  const sd=sizeData[size];
+
+  // Base costs
+  const truckRate=dist<50?0.8:dist<500?0.65:0.55;
+  const truckBase=dist*truckRate+sd.weight*0.08;
+  const truckGas=dist*0.15*(size==='4br'?2:size==='3br'?1.5:1);
+  const truckInsurance=Math.max(80,truckBase*0.08);
+  const truckTotal=truckBase+truckGas+truckInsurance;
+
+  const containerRate=dist<100?3.5:dist<500?2.8:2.2;
+  const containerBase=dist*containerRate+sd.weight*0.06;
+  const containerDelivery=150+dist*0.1;
+  const containerTotal=containerBase+containerDelivery;
+
+  const moverRate=dist<50?120:dist<500?0.85:0.7;
+  const moverBase=dist<50?moverRate*(sd.weight/1000)*2:moverRate*sd.weight+500;
+  const moverPacking=sd.rooms*65;
+  const stairFee=floor>0&&!elevator?floor*75:0;
+  const moverInsurance=Math.max(120,moverBase*0.06);
+  const moverTips=(moverBase+moverPacking+stairFee)*0.15;
+  const moverTotal=moverBase+moverPacking+stairFee+moverInsurance+moverTips;
+
+  const supplies=sd.boxes*3.5+sd.rooms*8;
+  const travelCosts=dist>200?Math.ceil(dist/500)*120+dist*0.05:0;
+  const hiddenFees=Math.round((stairFee+supplies*0.15+travelCosts*0.1)*100)/100;
+
+  const results=document.getElementById('results');
+  document.getElementById('estimator-input').style.display='none';
+  results.style.display='block';
+
+  results.innerHTML=`
+    <div class="summary-box animate">
+      <h3>Estimated Move Cost Range</h3>
+      <div class="big-num">$${Math.round(truckTotal+supplies)}–$${Math.round(moverTotal+supplies)}</div>
+      <div class="sub">Tampa, FL → Atlanta, GA · ${dist} miles · ${size.toUpperCase()}</div>
+    </div>
+
+    <div class="result-card animate" onclick="toggleExpand(this)">
+      <div class="badge">💰 SAVE MOST</div>
+      <div class="option-name">🚛 DIY Truck Rental</div>
+      <div class="option-price">$${Math.round(truckTotal+supplies)}<small> total</small></div>
+      <div class="option-detail">
+        <span>⏱️ You do the work</span>
+        <span>📦 ${sd.boxes} boxes</span>
+      </div>
+      <div class="hidden-fees">⚠️ Hidden costs: Gas $${Math.round(truckGas)} · Insurance $${Math.round(truckInsurance)} · Supplies $${Math.round(supplies)}</div>
+      <div class="expand-content">
+        <div class="cost-row"><span>Truck rental</span><span>$${Math.round(truckBase)}</span></div>
+        <div class="cost-row"><span>Gas & tolls</span><span>$${Math.round(truckGas)}</span></div>
+        <div class="cost-row"><span>Insurance</span><span>$${Math.round(truckInsurance)}</span></div>
+        <div class="cost-row"><span>Packing supplies</span><span>$${Math.round(supplies)}</span></div>
+        ${travelCosts>0?`<div class="cost-row"><span>Travel (hotel/meals)</span><span>$${Math.round(travelCosts)}</span></div>`:''}
+        <div class="cost-row total"><span>Total (DIY)</span><span>$${Math.round(truckTotal+supplies+travelCosts)}</span></div>
+      </div>
+    </div>
+
+    <div class="result-card recommended animate" onclick="toggleExpand(this)">
+      <div class="badge">⭐ BEST VALUE</div>
+      <div class="option-name">📦 Portable Container</div>
+      <div class="option-price">$${Math.round(containerTotal+supplies)}<small> total</small></div>
+      <div class="option-detail">
+        <span>⏱️ Load at your pace</span>
+        <span>📦 ${sd.boxes} boxes</span>
+      </div>
+      <div class="hidden-fees">💡 You pack, they drive. No driving a huge truck.</div>
+      <div class="expand-content">
+        <div class="cost-row"><span>Container rental</span><span>$${Math.round(containerBase)}</span></div>
+        <div class="cost-row"><span>Delivery & transport</span><span>$${Math.round(containerDelivery)}</span></div>
+        <div class="cost-row"><span>Packing supplies</span><span>$${Math.round(supplies)}</span></div>
+        <div class="cost-row total"><span>Total (Container)</span><span>$${Math.round(containerTotal+supplies)}</span></div>
+      </div>
+    </div>
+
+    <div class="result-card animate" onclick="toggleExpand(this)">
+      <div class="option-name">🧑‍💼 Full-Service Movers</div>
+      <div class="option-price">$${Math.round(moverTotal+supplies)}<small> total</small></div>
+      <div class="option-detail">
+        <span>⏱️ They do everything</span>
+        <span>📦 Includes packing help</span>
+      </div>
+      ${stairFee>0?`<div class="hidden-fees">⚠️ Stair fee: $${stairFee} (${floor} flights, no elevator)</div>`:''}
+      <div class="expand-content">
+        <div class="cost-row"><span>Base move cost</span><span>$${Math.round(moverBase)}</span></div>
+        <div class="cost-row"><span>Packing service</span><span>$${Math.round(moverPacking)}</span></div>
+        ${stairFee>0?`<div class="cost-row"><span>Stair carry fee</span><span>$${stairFee}</span></div>`:''}
+        <div class="cost-row"><span>Insurance</span><span>$${Math.round(moverInsurance)}</span></div>
+        <div class="cost-row"><span>Mover tips (15%)</span><span>$${Math.round(moverTips)}</span></div>
+        <div class="cost-row"><span>Packing supplies</span><span>$${Math.round(supplies)}</span></div>
+        <div class="cost-row total"><span>Total (Full Service)</span><span>$${Math.round(moverTotal+supplies)}</span></div>
+      </div>
+    </div>
+
+    <div class="savings-tip animate">
+      <strong>💡 Smart Move Tip</strong>
+      A portable container saves you $${Math.round(moverTotal-containerTotal)} vs full-service movers — and you don't have to drive a truck. Most people pick this for ${dist > 200 ? 'long' : 'local'} moves.
+    </div>
+
+    <button class="btn btn-outline animate" style="margin-top:12px" onclick="resetCalc()">← Recalculate</button>
+  `;
+}
+
+function toggleExpand(el){el.classList.toggle('expanded')}
+function resetCalc(){
+  document.getElementById('estimator-input').style.display='block';
+  document.getElementById('results').style.display='none';
+}
+
+// Timeline
+const timelineData=[
+  {week:'8 WEEKS BEFORE',tasks:[{t:'Book movers or reserve truck',d:'Get 3+ quotes, compare options',done:true},{t:'Start decluttering',d:'Donate, sell, or trash what you won\'t move',done:true}]},
+  {week:'6 WEEKS BEFORE',tasks:[{t:'Order packing supplies',d:'Boxes, tape, bubble wrap, markers',done:true},{t:'Notify landlord/mgmt',d:'Give notice per lease terms',done:true},{t:'Research insurance options',d:'Released value vs full replacement protection',done:false}]},
+  {week:'4 WEEKS BEFORE',tasks:[{t:'Transfer utilities',d:'Electric, gas, water, internet — schedule disconnect/connect',done:false},{t:'Change address with USPS',d:'Set up mail forwarding',done:false},{t:'Update important contacts',d:'Bank, insurance, doctor, subscriptions',done:false}]},
+  {week:'2 WEEKS BEFORE',tasks:[{t:'Pack non-essentials',d:'Books, décor, seasonal items, guest room',done:false},{t:'Confirm move details',d:'Verify time, address, payment with movers',done:false}]},
+  {week:'1 WEEK BEFORE',tasks:[{t:'Pack essentials box',d:'Toiletries, chargers, change of clothes, important docs',done:false},{t:'Defrost & clean fridge',d:'Use up perishable food',done:false},{t:'Take photos of everything',d:'Document condition for deposit return',done:false}]},
+  {week:'MOVE DAY',tasks:[{t:'Final walk-through',d:'Check every room, closet, cabinet',done:false},{t:'Supervise loading',d:'Point out fragile items, do inventory count',done:false},{t:'Hand over keys',d:'Get receipt/confirmation of return',done:false}]}
+];
+
+const tl=document.getElementById('timeline-list');
+timelineData.forEach(w=>{
+  let html=`<div style="margin-top:8px"><div class="timeline-week">${w.week}</div>`;
+  w.tasks.forEach(task=>{
+    const cls=task.done?'done':'current';
+    html+=`<div class="timeline-item"><div class="timeline-dot ${cls}">${task.done?'✓':''}</div><div><div class="timeline-task">${task.t}</div><div class="timeline-desc">${task.d}</div></div></div>`;
+  });
+  html+='</div>';
+  tl.innerHTML+=html;
+});
+
+// Packing
+const rooms=[
+  {name:'Kitchen',icon:'🍳',boxes:8,packed:5,color:'var(--primary)'},
+  {name:'Living Room',icon:'🛋️',boxes:6,packed:2,color:'#8B5CF6'},
+  {name:'Bedroom',icon:'🛏️',boxes:10,packed:8,color:'var(--accent)'},
+  {name:'Bathroom',icon:'🚿',boxes:3,packed:3,color:'var(--warn)'},
+  {name:'Office',icon:'💻',boxes:5,packed:1,color:'#EC4899'},
+  {name:'Closet',icon:'👔',boxes:4,packed:0,color:'#F97316'},
+  {name:'Storage',icon:'📦',boxes:3,packed:0,color:'var(--text3)'}
+];
+
+const pl=document.getElementById('packing-list');
+rooms.forEach(r=>{
+  const pct=Math.round(r.packed/r.boxes*100);
+  pl.innerHTML+=`
+    <div class="room-card">
+      <div class="room-icon">${r.icon}</div>
+      <div class="room-info">
+        <div class="room-name">${r.name}</div>
+        <div class="room-progress">${r.packed}/${r.boxes} boxes packed (${pct}%)</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${r.color}"></div></div>
+      </div>
+      <div class="room-toggle" onclick="this.textContent=this.textContent==='✓'?'○':'✓'">✓</div>
+    </div>`;
+});
+
+// Budget
+const budget=4200;
+const spent=2840;
+const cats=[
+  {name:'Movers / Truck',icon:'🚛',budget:1800,spent:1650,color:'var(--primary)'},
+  {name:'Packing Supplies',icon:'📦',budget:250,spent:310,color:'var(--warn)'},
+  {name:'Travel & Hotels',icon:'🏨',budget:400,spent:280,color:'#8B5CF6'},
+  {name:'Insurance',icon:'🛡️',budget:200,spent:180,color:'var(--accent)'},
+  {name:'Tips & Extras',icon:'💡',budget:300,spent:220,color:'#EC4899'},
+  {name:'Address / Utilities',icon:'⚡',budget:250,spent:200,color:'#F97316'}
+];
+
+const bc=document.getElementById('budget-content');
+const under=budget-spent>=0;
+bc.innerHTML=`
+  <div class="budget-header">
+    <div class="budget-label">${under?'Under budget by':'Over budget by'}</div>
+    <div class="budget-total ${under?'under':'over'}">$${Math.abs(budget-spent)}</div>
+    <div class="budget-label">of $${budget} budget</div>
+    <div class="budget-bar"><div class="budget-bar-fill" style="width:${Math.min(spent/budget*100,100)}%;background:${under?'var(--accent)':'var(--danger)'}"></div></div>
+  </div>
+  ${cats.map(c=>`
+    <div class="budget-cat">
+      <div class="budget-cat-icon">${c.icon}</div>
+      <div class="budget-cat-info">
+        <div class="budget-cat-name">${c.name}</div>
+        <div class="budget-cat-bar"><div class="budget-cat-fill" style="width:${Math.min(c.spent/c.budget*100,100)}%;background:${c.spent>c.budget?'var(--danger)':c.color}"></div></div>
+      </div>
+      <div class="budget-cat-amount" style="color:${c.spent>c.budget?'var(--danger)':'var(--text)'}">$${c.spent}<br><small style="color:var(--text3);font-weight:400">/ $${c.budget}</small></div>
+    </div>
+  `).join('')}
+`;
+</script>
+</body>
+</html>
