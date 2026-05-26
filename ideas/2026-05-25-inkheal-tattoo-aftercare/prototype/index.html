@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InkHeal — Tattoo Healing Tracker</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #14141f;
+    --card: #1a1a2e;
+    --border: #2a2a3e;
+    --text: #e8e6f0;
+    --muted: #8888a0;
+    --accent: #c084fc;
+    --accent2: #7c3aed;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --orange: #fb923c;
+    --pink: #f472b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px 16px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+
+  .icon-btn:hover { background: var(--accent2); border-color: var(--accent); }
+
+  /* Active Healing Card */
+  .healing-card {
+    margin: 0 16px 16px;
+    background: linear-gradient(145deg, #1e1e35, #151528);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .healing-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(192, 132, 252, 0.1), transparent);
+    pointer-events: none;
+  }
+
+  .healing-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .tattoo-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .tattoo-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .day-badge {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Progress Bar */
+  .progress-section { margin-bottom: 16px; }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent), var(--pink));
+    width: 35%;
+    transition: width 1s ease;
+  }
+
+  .phase-markers {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .phase-active { color: var(--accent); font-weight: 600; }
+
+  /* Today's Tasks */
+  .tasks-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .task-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .task-item:hover { background: rgba(255,255,255,0.06); }
+
+  .task-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .task-check.done {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+
+  .task-text { font-size: 14px; flex: 1; }
+  .task-text.done-text { text-decoration: line-through; color: var(--muted); }
+  .task-time { font-size: 11px; color: var(--muted); }
+
+  /* AI Checker */
+  .ai-checker {
+    margin: 0 16px 16px;
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .ai-checker-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .ai-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .ai-title { font-weight: 600; font-size: 15px; }
+  .ai-subtitle { font-size: 12px; color: var(--muted); }
+
+  .checker-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px dashed var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .checker-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(192, 132, 252, 0.05);
+  }
+
+  /* Result Card */
+  .ai-result {
+    display: none;
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    border-left: 3px solid var(--green);
+    background: rgba(52, 211, 153, 0.08);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .ai-result.show { display: block; }
+
+  .result-status {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Photo Timeline */
+  .photo-section {
+    margin: 0 16px 16px;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .section-title { font-size: 16px; font-weight: 600; }
+  .see-all { font-size: 13px; color: var(--accent); cursor: pointer; }
+
+  .photo-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .photo-scroll::-webkit-scrollbar { display: none; }
+
+  .photo-card {
+    flex-shrink: 0;
+    width: 100px;
+    text-align: center;
+  }
+
+  .photo-thumb {
+    width: 100px;
+    height: 100px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo-thumb:hover { border-color: var(--accent); transform: scale(1.03); }
+
+  .photo-thumb.today::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .photo-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .add-photo {
+    border: 2px dashed var(--border);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .add-photo:hover { border-color: var(--accent); }
+
+  /* Healing Guide */
+  .guide-section {
+    margin: 0 16px 16px;
+  }
+
+  .guide-timeline {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .guide-timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .guide-phase {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .guide-dot {
+    position: absolute;
+    left: -20px;
+    top: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--border);
+    border: 2px solid var(--bg);
+    z-index: 1;
+  }
+
+  .guide-dot.active { background: var(--accent); box-shadow: 0 0 10px rgba(192, 132, 252, 0.4); }
+  .guide-dot.complete { background: var(--green); }
+
+  .guide-phase-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .guide-phase-days {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .guide-phase-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* My Collection */
+  .collection {
+    margin: 0 16px 16px;
+  }
+
+  .collection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .collection-item {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .collection-item:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .collection-emoji { font-size: 28px; margin-bottom: 4px; }
+  .collection-name { font-size: 10px; color: var(--muted); text-align: center; padding: 0 4px; }
+  .collection-healing {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 24px;
+    z-index: 100;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+  }
+
+  .nav-item.active { color: var(--accent); }
+  .nav-item:hover { color: var(--text); }
+  .nav-icon { font-size: 20px; }
+
+  .nav-add {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -20px;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    transition: transform 0.2s;
+  }
+
+  .nav-add:hover { transform: scale(1.1); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 430px;
+    padding: 24px 20px 40px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .modal-overlay.show .modal { transform: translateY(0); }
+
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+
+  .body-map {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .body-part {
+    padding: 8px 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-size: 11px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+
+  .body-part:hover, .body-part.selected {
+    border-color: var(--accent);
+    background: rgba(192, 132, 252, 0.1);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+
+  .submit-btn:hover { opacity: 0.9; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--card);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 300;
+    transition: transform 0.3s ease;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 16px 16px;
+    padding: 14px;
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .stat-item { text-align: center; }
+  .stat-value { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 0; }
+
+  /* Bottom spacing for nav */
+  .bottom-space { height: 90px; }
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ Task completed!</div>
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <span>9:41</span>
+  <span>📶 🔋</span>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <h1>✒️ InkHeal</h1>
+  <div class="header-actions">
+    <button class="icon-btn" title="Notifications">🔔</button>
+    <button class="icon-btn" title="Settings">⚙️</button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-value">7</div>
+    <div class="stat-label">Total Pieces</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">1</div>
+    <div class="stat-label">Healing</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">23h</div>
+    <div class="stat-label">In Chair</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value">$2.4k</div>
+    <div class="stat-label">Invested</div>
+  </div>
+</div>
+
+<!-- Active Healing Card -->
+<div class="healing-card">
+  <div class="healing-card-header">
+    <div>
+      <div class="tattoo-title">Geometric Wolf 🐺</div>
+      <div class="tattoo-meta">Left forearm · Maria @ Black Ink Studio · 6"×4"</div>
+    </div>
+    <div class="day-badge">Day 5</div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-labels">
+      <span>35% healed</span>
+      <span>~19 days remaining</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="phase-markers">
+      <span class="phase-active">Wash</span>
+      <span>Peel</span>
+      <span>Itch</span>
+      <span>Settle</span>
+      <span>Healed</span>
+    </div>
+  </div>
+
+  <div class="tasks-title">Today's Aftercare</div>
+  <div class="task-list">
+    <div class="task-item" onclick="toggleTask(this)">
+      <div class="task-check done">✓</div>
+      <span class="task-text done-text">Morning wash — gentle soap, pat dry</span>
+      <span class="task-time">8:00 AM</span>
+    </div>
+    <div class="task-item" onclick="toggleTask(this)">
+      <div class="task-check done">✓</div>
+      <span class="task-text done-text">Apply thin layer of Aquaphor</span>
+      <span class="task-time">8:15 AM</span>
+    </div>
+    <div class="task-item" onclick="toggleTask(this)">
+      <div class="task-check"></div>
+      <span class="task-text">Evening wash — gentle soap, pat dry</span>
+      <span class="task-time">8:00 PM</span>
+    </div>
+    <div class="task-item" onclick="toggleTask(this)">
+      <div class="task-check"></div>
+      <span class="task-text">Apply thin layer of Aquaphor</span>
+      <span class="task-time">8:15 PM</span>
+    </div>
+  </div>
+</div>
+
+<!-- AI Checker -->
+<div class="ai-checker">
+  <div class="ai-checker-header">
+    <div class="ai-icon">🔍</div>
+    <div>
+      <div class="ai-title">"Is This Normal?"</div>
+      <div class="ai-subtitle">AI-powered healing check</div>
+    </div>
+  </div>
+  <button class="checker-btn" onclick="runChecker()">
+    📸 Snap a photo to check healing progress
+  </button>
+  <div class="ai-result" id="aiResult">
+    <div class="result-status">🟢 Looks Normal — Peeling Phase</div>
+    Light peeling and flaking is <strong>expected on day 5-7</strong> for a forearm piece of this size. The skin underneath appears healthy. <strong>Do not pick or scratch.</strong> Continue washing 2× daily and applying thin moisturizer layer.<br><br>
+    <span style="color: var(--muted); font-size: 11px;">⚠️ Not medical advice. Contact your artist or a doctor if redness spreads or warmth increases.</span>
+  </div>
+</div>
+
+<!-- Photo Timeline -->
+<div class="photo-section">
+  <div class="section-header">
+    <span class="section-title">📸 Healing Timeline</span>
+    <span class="see-all">See All</span>
+  </div>
+  <div class="photo-scroll">
+    <div class="photo-card">
+      <div class="photo-thumb">🐺</div>
+      <div class="photo-label">Day 1</div>
+    </div>
+    <div class="photo-card">
+      <div class="photo-thumb">🐺</div>
+      <div class="photo-label">Day 2</div>
+    </div>
+    <div class="photo-card">
+      <div class="photo-thumb">🐺</div>
+      <div class="photo-label">Day 3</div>
+    </div>
+    <div class="photo-card">
+      <div class="photo-thumb">🐺</div>
+      <div class="photo-label">Day 4</div>
+    </div>
+    <div class="photo-card">
+      <div class="photo-thumb today">📷</div>
+      <div class="photo-label">Today</div>
+    </div>
+    <div class="photo-card">
+      <div class="photo-thumb add-photo">+</div>
+      <div class="photo-label">Add Photo</div>
+    </div>
+  </div>
+</div>
+
+<!-- Healing Guide -->
+<div class="guide-section">
+  <div class="section-header">
+    <span class="section-title">📋 Healing Guide</span>
+    <span class="see-all">Forearm Specific</span>
+  </div>
+  <div class="guide-timeline">
+    <div class="guide-phase">
+      <div class="guide-dot complete"></div>
+      <div class="guide-phase-title">Fresh Ink</div>
+      <div class="guide-phase-days">Day 1-2</div>
+      <div class="guide-phase-desc">Wash every 4-6 hours. Apply Saniderm or thin ointment. Expect tenderness, slight swelling, and weeping.</div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-dot active"></div>
+      <div class="guide-phase-title">Peeling Phase</div>
+      <div class="guide-phase-days">Day 3-7 · You are here</div>
+      <div class="guide-phase-desc">Tattoo will peel like a sunburn. Light flaking is normal. Switch from ointment to unscented lotion. Never pick or scratch.</div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-dot"></div>
+      <div class="guide-phase-title">Itch Phase</div>
+      <div class="guide-phase-days">Day 7-14</div>
+      <div class="guide-phase-desc">Intense itching is normal — slap gently, don't scratch. Skin may look cloudy/milky. Color will settle.</div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-dot"></div>
+      <div class="guide-phase-title">Settling</div>
+      <div class="guide-phase-days">Day 14-21</div>
+      <div class="guide-phase-desc">Surface healed but deeper layers still settling. Moisturize daily. Avoid direct sun. Colors continue to mature.</div>
+    </div>
+    <div class="guide-phase">
+      <div class="guide-dot"></div>
+      <div class="guide-phase-title">Fully Healed</div>
+      <div class="guide-phase-days">Day 21-30</div>
+      <div class="guide-phase-desc">Healed! Schedule touch-up if needed. Apply SPF when exposed. Book next session? 😏</div>
+    </div>
+  </div>
+</div>
+
+<!-- My Collection -->
+<div class="collection">
+  <div class="section-header">
+    <span class="section-title">🖼️ My Collection</span>
+    <span class="see-all">7 pieces</span>
+  </div>
+  <div class="collection-grid">
+    <div class="collection-item" style="position:relative;">
+      <span class="collection-healing"></span>
+      <span class="collection-emoji">🐺</span>
+      <span class="collection-name">Geometric Wolf</span>
+    </div>
+    <div class="collection-item">
+      <span class="collection-emoji">🌹</span>
+      <span class="collection-name">Rose Sleeve</span>
+    </div>
+    <div class="collection-item">
+      <span class="collection-emoji">⚡</span>
+      <span class="collection-name">Lightning Bolt</span>
+    </div>
+    <div class="collection-item">
+      <span class="collection-emoji">🏔️</span>
+      <span class="collection-name">Mountain Scene</span>
+    </div>
+    <div class="collection-item">
+      <span class="collection-emoji">🦅</span>
+      <span class="collection-name">Eagle Chest</span>
+    </div>
+    <div class="collection-item">
+      <span class="collection-emoji">🌙</span>
+      <span class="collection-name">Moon Phases</span>
+    </div>
+    <div class="collection-item">
+      <span class="collection-emoji">🎸</span>
+      <span class="collection-name">Guitar Pick</span>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-space"></div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-item active">
+    <span class="nav-icon">🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="nav-item">
+    <span class="nav-icon">📋</span>
+    <span>Guide</span>
+  </button>
+  <button class="nav-add" onclick="showModal()">+</button>
+  <button class="nav-item">
+    <span class="nav-icon">🖼️</span>
+    <span>Collection</span>
+  </button>
+  <button class="nav-item">
+    <span class="nav-icon">👤</span>
+    <span>Profile</span>
+  </button>
+</div>
+
+<!-- Add Tattoo Modal -->
+<div class="modal-overlay" id="modal" onclick="hideModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2>✒️ New Tattoo</h2>
+    <div class="form-group">
+      <label class="form-label">Name / Description</label>
+      <input class="form-input" placeholder="e.g., Geometric Wolf" id="tattooName">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Placement</label>
+      <div class="body-map">
+        <button class="body-part" onclick="selectBody(this)">Left Arm</button>
+        <button class="body-part" onclick="selectBody(this)">Right Arm</button>
+        <button class="body-part" onclick="selectBody(this)">Chest</button>
+        <button class="body-part" onclick="selectBody(this)">Back</button>
+        <button class="body-part" onclick="selectBody(this)">Left Leg</button>
+        <button class="body-part" onclick="selectBody(this)">Right Leg</button>
+        <button class="body-part" onclick="selectBody(this)">Neck</button>
+        <button class="body-part" onclick="selectBody(this)">Other</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Artist & Studio</label>
+      <input class="form-input" placeholder="e.g., Maria @ Black Ink Studio">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date Done</label>
+      <input class="form-input" type="date" id="tattooDate">
+    </div>
+    <button class="submit-btn" onclick="addTattoo()">Start Healing Journey ✨</button>
+  </div>
+</div>
+
+<script>
+  function toggleTask(el) {
+    const check = el.querySelector('.task-check');
+    const text = el.querySelector('.task-text');
+    const isDone = check.classList.contains('done');
+
+    if (isDone) {
+      check.classList.remove('done');
+      check.textContent = '';
+      text.classList.remove('done-text');
+    } else {
+      check.classList.add('done');
+      check.textContent = '✓';
+      text.classList.add('done-text');
+      showToast('✓ Task completed!');
+    }
+  }
+
+  function runChecker() {
+    const result = document.getElementById('aiResult');
+    const btn = document.querySelector('.checker-btn');
+    btn.textContent = '🔄 Analyzing...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      result.classList.add('show');
+      btn.textContent = '📸 Snap another photo';
+      btn.disabled = false;
+    }, 1500);
+  }
+
+  function showModal() {
+    document.getElementById('modal').classList.add('show');
+    document.getElementById('tattooDate').value = new Date().toISOString().split('T')[0];
+  }
+
+  function hideModal(e) {
+    if (e.target === document.getElementById('modal')) {
+      document.getElementById('modal').classList.remove('show');
+    }
+  }
+
+  function selectBody(el) {
+    document.querySelectorAll('.body-part').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function addTattoo() {
+    const name = document.getElementById('tattooName').value;
+    if (!name) {
+      showToast('⚠️ Give your tattoo a name!');
+      return;
+    }
+    document.getElementById('modal').classList.remove('show');
+    showToast('✨ New tattoo added! Day 1 begins.');
+    document.getElementById('tattooName').value = '';
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Animate progress fill on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelector('.progress-fill').style.width = '35%';
+    }, 300);
+  });
+</script>
+
+</body>
+</html>
