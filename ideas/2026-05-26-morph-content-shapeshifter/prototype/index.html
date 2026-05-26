@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morph — AI Content Shape-Shifter</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --surface2: #1a1a26;
+  --surface3: #222230;
+  --border: #2a2a3a;
+  --text: #e8e8f0;
+  --text2: #8888a0;
+  --text3: #55556a;
+  --accent: #8b5cf6;
+  --accent2: #a78bfa;
+  --accent-glow: rgba(139, 92, 246, 0.15);
+  --green: #10b981;
+  --blue: #3b82f6;
+  --pink: #ec4899;
+  --orange: #f97316;
+  --cyan: #06b6d4;
+  --red: #ef4444;
+  --twitter: #1d9bf0;
+  --linkedin: #0a66c2;
+  --instagram: #e4405f;
+  --tiktok: #ff0050;
+  --newsletter: #f59e0b;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+/* Header */
+.header { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.85); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--pink)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
+.logo-text { font-weight: 700; font-size: 20px; letter-spacing: -0.5px; }
+.logo-text span { color: var(--accent2); }
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.btn { padding: 8px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+.btn-ghost { background: transparent; color: var(--text2); }
+.btn-ghost:hover { color: var(--text); background: var(--surface2); }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.morph-count { font-size: 12px; color: var(--text3); margin-right: 8px; }
+.morph-count strong { color: var(--accent2); }
+
+/* Main layout */
+.app { display: grid; grid-template-columns: 1fr 380px; height: calc(100vh - 61px); }
+
+/* Left: Input area */
+.input-panel { padding: 24px; overflow-y: auto; border-right: 1px solid var(--border); }
+.input-panel h2 { font-size: 14px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+
+.source-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.source-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--text2); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.source-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+.source-tab:hover:not(.active) { border-color: var(--accent); color: var(--text); }
+
+.editor-area { position: relative; }
+.editor { width: 100%; min-height: 220px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; color: var(--text); font-family: inherit; font-size: 15px; line-height: 1.7; resize: vertical; outline: none; transition: border-color 0.2s; }
+.editor:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.editor::placeholder { color: var(--text3); }
+.editor-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 12px; color: var(--text3); }
+.voice-toggle { display: flex; align-items: center; gap: 6px; color: var(--text2); cursor: pointer; font-size: 12px; }
+.voice-toggle input { accent-color: var(--accent); }
+
+/* Platform selector */
+.platform-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+.platform-chip { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 500; color: var(--text2); }
+.platform-chip:hover { border-color: var(--accent); color: var(--text); }
+.platform-chip.active { border-color: var(--accent); background: var(--accent-glow); color: var(--text); }
+.platform-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.morph-btn { width: 100%; padding: 16px; border-radius: var(--radius); border: none; background: linear-gradient(135deg, var(--accent), var(--pink)); color: white; font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 12px; position: relative; overflow: hidden; }
+.morph-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139, 92, 246, 0.3); }
+.morph-btn:active { transform: translateY(0); }
+.morph-btn.loading { pointer-events: none; }
+.morph-btn.loading .btn-text { opacity: 0; }
+.morph-btn.loading .btn-loader { opacity: 1; }
+.btn-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+.spinner { width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Right: Output area */
+.output-panel { background: var(--surface); overflow-y: auto; }
+.output-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.output-header h3 { font-size: 14px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+.output-actions { display: flex; gap: 6px; }
+.output-actions button { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text3); font-size: 11px; cursor: pointer; font-family: inherit; }
+.output-actions button:hover { color: var(--text); border-color: var(--accent); }
+
+.outputs-container { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.output-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all 0.2s; }
+.output-card:hover { border-color: var(--accent); }
+.card-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+.card-platform { display: flex; align-items: center; gap: 8px; }
+.card-platform-icon { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+.card-platform-name { font-size: 13px; font-weight: 600; }
+.card-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text3); }
+.char-count { padding: 2px 8px; border-radius: 10px; background: var(--surface3); }
+.char-count.good { color: var(--green); }
+.char-count.warn { color: var(--orange); }
+.char-count.over { color: var(--red); }
+.card-body { padding: 16px; font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; max-height: 250px; overflow-y: auto; }
+.card-actions { padding: 10px 16px; display: flex; gap: 6px; border-top: 1px solid var(--border); }
+.card-actions button { flex: 1; padding: 6px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text2); font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.card-actions button:hover { background: var(--surface3); color: var(--text); }
+.card-actions .copy-btn:hover { border-color: var(--green); color: var(--green); }
+.card-actions .edit-btn:hover { border-color: var(--blue); color: var(--blue); }
+.card-actions .schedule-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+/* Empty state */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 40px; }
+.empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.empty-state p { font-size: 14px; color: var(--text3); max-width: 260px; line-height: 1.6; }
+
+/* Sample content */
+.sample-ideas { margin-top: 16px; }
+.sample-ideas h4 { font-size: 12px; color: var(--text3); font-weight: 500; margin-bottom: 8px; }
+.sample-btn { display: block; width: 100%; text-align: left; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text2); font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.15s; margin-bottom: 6px; line-height: 1.4; }
+.sample-btn:hover { border-color: var(--accent); color: var(--text); }
+
+/* Toast */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--green); color: white; padding: 10px 20px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; z-index: 1000; transition: transform 0.3s; pointer-events: none; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* Voice slider */
+.voice-slider-container { margin: 16px 0; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.voice-slider-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+.voice-slider { width: 100%; accent-color: var(--accent); }
+.voice-value { font-size: 13px; color: var(--accent2); font-weight: 600; text-align: center; margin-top: 4px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .output-panel { height: 50vh; }
+  .header { padding: 12px 16px; }
+  .input-panel { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">M</div>
+    <div class="logo-text">Morph<span>.</span></div>
+  </div>
+  <div class="header-actions">
+    <span class="morph-count"><strong>3</strong>/5 free morphs this month</span>
+    <button class="btn btn-ghost">Calendar</button>
+    <button class="btn btn-ghost">Voice</button>
+    <button class="btn btn-primary">Upgrade →</button>
+  </div>
+</div>
+
+<div class="app">
+  <!-- Input Panel -->
+  <div class="input-panel">
+    <h2>Your Idea</h2>
+    
+    <div class="source-tabs">
+      <button class="source-tab active" data-source="write">✏️ Write</button>
+      <button class="source-tab" data-source="voice">🎙️ Voice</button>
+      <button class="source-tab" data-source="url">🔗 Paste URL</button>
+      <button class="source-tab" data-source="bullets">📋 Bullets</button>
+    </div>
+
+    <div class="editor-area">
+      <textarea class="editor" id="editor" placeholder="Write your idea here... a thought, a take, a lesson learned, a story — Morph will adapt it for every platform."></textarea>
+      <div class="editor-footer">
+        <label class="voice-toggle">
+          <input type="checkbox" id="voiceLearn" checked>
+          Learn from my style
+        </label>
+        <span id="charCount">0 characters</span>
+      </div>
+    </div>
+
+    <div class="voice-slider-container">
+      <div class="voice-slider-label">
+        <span>More platform-native</span>
+        <span>More my voice</span>
+      </div>
+      <input type="range" class="voice-slider" id="voiceSlider" min="0" max="100" value="60">
+      <div class="voice-value">Balanced — platform-aware with personal flair</div>
+    </div>
+
+    <h2 style="margin-top:20px">Target Platforms</h2>
+    <div class="platform-grid" id="platformGrid">
+      <div class="platform-chip active" data-platform="twitter">
+        <span class="platform-dot" style="background:var(--twitter)"></span> Twitter/X
+      </div>
+      <div class="platform-chip active" data-platform="linkedin">
+        <span class="platform-dot" style="background:var(--linkedin)"></span> LinkedIn
+      </div>
+      <div class="platform-chip active" data-platform="instagram">
+        <span class="platform-dot" style="background:var(--instagram)"></span> Instagram
+      </div>
+      <div class="platform-chip active" data-platform="tiktok">
+        <span class="platform-dot" style="background:var(--tiktok)"></span> TikTok Script
+      </div>
+      <div class="platform-chip" data-platform="newsletter">
+        <span class="platform-dot" style="background:var(--newsletter)"></span> Newsletter
+      </div>
+      <div class="platform-chip" data-platform="threads">
+        <span class="platform-dot" style="background:#fff"></span> Threads
+      </div>
+    </div>
+
+    <button class="morph-btn" id="morphBtn" onclick="morphContent()">
+      <span class="btn-text">⚡ Morph It</span>
+      <span class="btn-loader"><span class="spinner"></span></span>
+    </button>
+
+    <div class="sample-ideas">
+      <h4>Try a sample idea:</h4>
+      <button class="sample-btn" onclick="loadSample(0)">💡 "I just realized most of my best work happened when I was slightly under-qualified for the role..."</button>
+      <button class="sample-btn" onclick="loadSample(1)">🚀 "Launching a new feature after 3 months of building in silence. Here's what I learned about shipping without hype..."</button>
+      <button class="sample-btn" onclick="loadSample(2)">📊 "Unpopular opinion: AI won't replace junior developers. It'll make them 10x faster. Here's the data..."</button>
+    </div>
+  </div>
+
+  <!-- Output Panel -->
+  <div class="output-panel">
+    <div class="output-header">
+      <h3>Adaptations</h3>
+      <div class="output-actions">
+        <button onclick="copyAll()">Copy All</button>
+        <button onclick="scheduleAll()">Schedule All</button>
+      </div>
+    </div>
+    <div class="outputs-container" id="outputsContainer">
+      <div class="empty-state">
+        <div class="empty-icon">🦎</div>
+        <h3>Ready to shape-shift</h3>
+        <p>Write your idea on the left, pick your platforms, and hit Morph to generate platform-native versions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+const samples = [
+  "I just realized most of my best work happened when I was slightly under-qualified for the role. Not wildly out of depth — just enough imposter syndrome to over-prepare, ask better questions, and actually listen to feedback instead of assuming I knew the answer. Comfort is the enemy of growth. The moment you feel 100% qualified is the moment you stop leveling up.",
+  "Launching a new feature after 3 months of building in silence. No teaser tweets. No \"building in public\" threads. Just heads-down work. And you know what? It felt amazing. Not every project needs an audience. Some things need quiet before they need a stage. Shipping > announcing.",
+  "Unpopular opinion: AI won't replace junior developers. It'll make them 10x faster and force seniors to become mentors again. The data: teams using AI tools report 40% faster onboarding, juniors shipping production code in weeks instead of months. The bottleneck was never talent — it was the learning curve. AI flattens it."
+];
+
+const platformChars = {
+  twitter: 280,
+  linkedin: 3000,
+  instagram: 2200,
+  tiktok: 150,
+  newsletter: 5000,
+  threads: 500
+};
+
+const platformColors = {
+  twitter: 'var(--twitter)',
+  linkedin: 'var(--linkedin)',
+  instagram: 'var(--instagram)',
+  tiktok: 'var(--tiktok)',
+  newsletter: 'var(--newsletter)',
+  threads: '#fff'
+};
+
+const platformIcons = {
+  twitter: '𝕏',
+  linkedin: 'in',
+  instagram: 'IG',
+  tiktok: 'TT',
+  newsletter: '✉',
+  threads: '@'
+};
+
+function loadSample(i) {
+  document.getElementById('editor').value = samples[i];
+  document.getElementById('charCount').textContent = samples[i].length + ' characters';
+}
+
+// Char counter
+document.getElementById('editor').addEventListener('input', function() {
+  document.getElementById('charCount').textContent = this.value.length + ' characters';
+});
+
+// Source tabs
+document.querySelectorAll('.source-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.source-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Platform chips
+document.querySelectorAll('.platform-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    this.classList.toggle('active');
+  });
+});
+
+// Voice slider
+document.getElementById('voiceSlider').addEventListener('input', function() {
+  const v = parseInt(this.value);
+  const label = document.querySelector('.voice-value');
+  if (v < 30) label.textContent = 'Platform purist — follows each platform\'s conventions';
+  else if (v < 60) label.textContent = 'Balanced — platform-aware with personal flair';
+  else if (v < 85) label.textContent = 'My voice — stays true to your style';
+  else label.textContent = 'Pure me — minimal platform adaptation';
+});
+
+// Generate platform-specific content
+function generateContent(text, platform) {
+  if (!text.trim()) return '';
+  
+  const firstSentence = text.split(/[.!]\s/)[0];
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  
+  switch(platform) {
+    case 'twitter':
+      if (text.length <= 200) {
+        return text + '\n\n(Thread?) 🧵';
+      }
+      // Create a thread
+      const hook = sentences[0].trim();
+      let thread = hook + '\n\n🧵 Thread:';
+      const remaining = sentences.slice(1);
+      let tweet = '';
+      let tweetNum = 2;
+      remaining.forEach((s, i) => {
+        if ((tweet + s).length > 250) {
+          thread += '\n\n' + tweet.trim() + (i < remaining.length - 1 ? ' /' : '');
+          tweet = s;
+          tweetNum++;
+        } else {
+          tweet += s;
+        }
+      });
+      if (tweet) thread += '\n\n' + tweet.trim();
+      return thread;
+
+    case 'linkedin':
+      let li = '';
+      // Hook line
+      li += sentences[0].trim() + '\n\n';
+      // Body with line breaks
+      sentences.slice(1, -1).forEach(s => {
+        li += s.trim() + '\n\n';
+      });
+      // CTA
+      li += '—\n\n';
+      li += 'Agree? Disagree? I read every comment.\n\n';
+      li += '♻️ Repost if this resonated';
+      return li;
+
+    case 'instagram':
+      let ig = '🔥 ' + sentences[0].trim().replace(/[.!?]+$/, '').toUpperCase() + ' 🔥\n\n';
+      sentences.slice(1).forEach(s => {
+        ig += s.trim() + '\n\n';
+      });
+      ig += '—\n';
+      ig += '💬 Which one hit hardest?\n';
+      ig += '📌 Save this for later\n';
+      ig += '📤 Share with someone who needs this\n\n';
+      ig += '#mindset #growth #motivation #entrepreneur #hustle #reels #viral';
+      return ig;
+
+    case 'tiktok':
+      let tt = '🎬 TIKTOK SCRIPT\n\n';
+      tt += '📱 HOOK (0-3 sec):\n"';
+      const hookWords = sentences[0].trim().split(' ').slice(0, 12).join(' ');
+      tt += hookWords + '..."\n\n';
+      tt += '📝 BODY (3-20 sec):\n';
+      sentences.slice(1).forEach(s => {
+        tt += '- ' + s.trim() + '\n';
+      });
+      tt += '\n🏁 CTA (20-25 sec):\n"';
+      tt += 'Follow for more. Link in bio."\n\n';
+      tt += '⏱️ Est. length: 25-35 seconds\n';
+      tt += '🎵 Suggested: trending audio, lo-fi beat';
+      return tt;
+
+    case 'newsletter':
+      let nl = '📧 NEWSLETTER SECTION\n\n';
+      nl += '## ' + sentences[0].trim().replace(/[.!?]+$/, '') + '\n\n';
+      nl += text + '\n\n';
+      nl += '---\n\n';
+      nl += '*Thoughts? Hit reply — I read every email.*\n\n';
+      nl += 'P.S. If this was forwarded to you, subscribe [here]. Welcome to the crew.';
+      return nl;
+
+    case 'threads':
+      let th = sentences[0].trim() + '\n\n';
+      if (sentences.length > 2) {
+        th += sentences.slice(1, 3).map(s => s.trim()).join(' ');
+      }
+      return th;
+
+    default:
+      return text;
+  }
+}
+
+function morphContent() {
+  const text = document.getElementById('editor').value.trim();
+  if (!text) return;
+
+  const btn = document.getElementById('morphBtn');
+  btn.classList.add('loading');
+
+  const activePlatforms = [];
+  document.querySelectorAll('.platform-chip.active').forEach(chip => {
+    activePlatforms.push(chip.dataset.platform);
+  });
+
+  if (activePlatforms.length === 0) {
+    btn.classList.remove('loading');
+    return;
+  }
+
+  const container = document.getElementById('outputsContainer');
+  container.innerHTML = '';
+
+  // Simulate loading
+  let delay = 0;
+  activePlatforms.forEach((platform, index) => {
+    delay += 400;
+    setTimeout(() => {
+      const content = generateContent(text, platform);
+      const chars = content.length;
+      const limit = platformChars[platform];
+      const ratio = chars / limit;
+      let charClass = 'good';
+      if (ratio > 0.9) charClass = 'warn';
+      if (ratio > 1) charClass = 'over';
+
+      const card = document.createElement('div');
+      card.className = 'output-card';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(10px)';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-platform">
+            <div class="card-platform-icon" style="background:${platformColors[platform]}">${platformIcons[platform]}</div>
+            <span class="card-platform-name">${platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
+          </div>
+          <div class="card-meta">
+            <span class="char-count ${charClass}">${chars}/${limit}</span>
+          </div>
+        </div>
+        <div class="card-body">${escapeHtml(content)}</div>
+        <div class="card-actions">
+          <button class="copy-btn" onclick="copyText(this, '${platform}')">📋 Copy</button>
+          <button class="edit-btn" onclick="editCard(this)">✏️ Edit</button>
+          <button class="schedule-btn" onclick="scheduleCard(this, '${platform}')">📅 Schedule</button>
+        </div>
+      `;
+      container.appendChild(card);
+
+      // Animate in
+      requestAnimationFrame(() => {
+        card.style.transition = 'all 0.3s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      });
+
+      if (index === activePlatforms.length - 1) {
+        setTimeout(() => btn.classList.remove('loading'), 200);
+      }
+    }, delay);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function copyText(btn, platform) {
+  const body = btn.closest('.output-card').querySelector('.card-body');
+  navigator.clipboard.writeText(body.textContent).then(() => showToast('Copied ' + platform + ' version!'));
+}
+
+function copyAll() {
+  const cards = document.querySelectorAll('.output-card .card-body');
+  if (!cards.length) return;
+  let all = '';
+  cards.forEach(card => {
+    all += card.textContent + '\n\n---\n\n';
+  });
+  navigator.clipboard.writeText(all).then(() => showToast('All adaptations copied!'));
+}
+
+function editCard(btn) {
+  const body = btn.closest('.output-card').querySelector('.card-body');
+  body.contentEditable = body.contentEditable === 'true' ? 'false' : 'true';
+  body.focus();
+  if (body.contentEditable === 'true') {
+    body.style.background = 'var(--surface3)';
+    body.style.border = '1px dashed var(--accent)';
+    body.style.borderRadius = '6px';
+    body.style.padding = '12px';
+  } else {
+    body.style.background = '';
+    body.style.border = '';
+    body.style.padding = '';
+  }
+}
+
+function scheduleCard(btn, platform) {
+  showToast(platform + ' scheduled for best posting time!');
+}
+
+function scheduleAll() {
+  showToast('All adaptations added to calendar!');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Load a sample on start for demo
+setTimeout(() => loadSample(0), 500);
+</script>
+</body>
+</html>
