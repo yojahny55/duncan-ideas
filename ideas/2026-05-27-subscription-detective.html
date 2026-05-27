@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscription Detective — Prototype</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0e17;
+    --card: #131a2b;
+    --card-hover: #1a2340;
+    --accent: #00d4aa;
+    --accent2: #ff6b6b;
+    --warning: #ffa726;
+    --text: #e8ecf1;
+    --muted: #6b7a99;
+    --border: #1e2a45;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .app {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    position: relative;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), #00f5c8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header .badge {
+    background: var(--accent2);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+  }
+
+  /* Summary Card */
+  .summary {
+    background: linear-gradient(135deg, #131a2b 0%, #1a2340 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .summary .total {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .summary .label {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .summary .savings {
+    display: inline-block;
+    margin-top: 10px;
+    background: rgba(255,107,107,0.15);
+    color: var(--accent2);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* Alert Banner */
+  .alert-banner {
+    background: linear-gradient(135deg, rgba(255,167,38,0.15), rgba(255,107,107,0.1));
+    border: 1px solid rgba(255,167,38,0.3);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .alert-banner:hover { background: rgba(255,167,38,0.2); }
+  .alert-banner .icon { font-size: 24px; }
+  .alert-banner .text { flex: 1; }
+  .alert-banner .title { font-size: 13px; font-weight: 600; }
+  .alert-banner .desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .alert-banner .arrow { color: var(--muted); font-size: 14px; }
+
+  /* Section */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  /* Subscription Card */
+  .sub-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .sub-card:hover { background: var(--card-hover); transform: translateY(-1px); }
+  .sub-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .sub-info { flex: 1; min-width: 0; }
+  .sub-name { font-size: 14px; font-weight: 600; }
+  .sub-detail { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .sub-right { text-align: right; flex-shrink: 0; }
+  .sub-price { font-size: 15px; font-weight: 700; }
+  .sub-cycle { font-size: 10px; color: var(--muted); }
+  .sub-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+  .tag-trial { background: rgba(255,167,38,0.15); color: var(--warning); }
+  .tag-unused { background: rgba(255,107,107,0.15); color: var(--accent2); }
+  .tag-overlap { background: rgba(0,212,170,0.15); color: var(--accent); }
+
+  /* Overlap Card */
+  .overlap-card {
+    background: linear-gradient(135deg, rgba(0,212,170,0.08), rgba(0,245,200,0.03));
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .overlap-card .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .overlap-card .emoji { font-size: 18px; }
+  .overlap-card .overlap-title { font-size: 13px; font-weight: 600; color: var(--accent); }
+  .overlap-card .desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .overlap-card .save-tag {
+    display: inline-block;
+    margin-top: 8px;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    background: rgba(10,14,23,0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 20px;
+  }
+  .nav-item {
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+  .nav-item.active { opacity: 1; color: var(--accent); }
+  .nav-item:hover { opacity: 0.8; }
+  .nav-item .icon { font-size: 20px; }
+  .nav-item .label { font-size: 10px; margin-top: 2px; }
+
+  /* Cancel Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 420px;
+    padding: 24px 20px 40px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .modal h2 { font-size: 18px; margin-bottom: 6px; }
+  .modal .subtext { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  .cancel-step {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .cancel-step .step-num {
+    display: inline-block;
+    width: 20px; height: 20px;
+    background: var(--accent2);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .btn-cancel {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: opacity 0.2s;
+  }
+  .btn-cancel:hover { opacity: 0.9; }
+  .btn-danger { background: var(--accent2); color: white; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+  /* Difficulty meter */
+  .difficulty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .difficulty .label { font-size: 11px; color: var(--muted); }
+  .difficulty .dots { display: flex; gap: 3px; }
+  .difficulty .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .difficulty .dot.active { background: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <h1>🕵️ Sub Detective</h1>
+    <span class="badge">3 Alerts</span>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="total">$187.94</div>
+    <div class="label">Monthly subscriptions · 9 active</div>
+    <div class="savings">💸 You could save $53.97/mo</div>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert-banner" onclick="openModal()">
+    <span class="icon">⚠️</span>
+    <div class="text">
+      <div class="title">Adobe CC trial ends in 2 days</div>
+      <div class="desc">You haven't opened it in 3 weeks — cancel before $54.99 charge</div>
+    </div>
+    <span class="arrow">›</span>
+  </div>
+
+  <!-- Overlap Detection -->
+  <div class="section-title">🎯 Overlap Detected</div>
+  <div class="overlap-card">
+    <div class="top">
+      <span class="emoji">🎵</span>
+      <span class="overlap-title">3 Music Streaming Services</span>
+    </div>
+    <div class="desc">You're paying for Spotify, Apple Music, and YouTube Premium. Based on your usage, you only need one.</div>
+    <span class="save-tag">Save $25.98/mo</span>
+  </div>
+
+  <!-- Subscriptions -->
+  <div class="section-title" style="margin-top:20px">📋 Active Subscriptions</div>
+
+  <div class="sub-card" onclick="openModal()">
+    <div class="sub-icon" style="background:#ff6b6b22;color:#ff6b6b">🎨</div>
+    <div class="sub-info">
+      <div class="sub-name">Adobe Creative Cloud</div>
+      <div class="sub-detail">Last used: 23 days ago</div>
+      <span class="sub-tag tag-trial">⏰ Trial ends in 2d</span>
+    </div>
+    <div class="sub-right">
+      <div class="sub-price" style="color:var(--warning)">$0.00</div>
+      <div class="sub-cycle">→ $54.99/mo</div>
+    </div>
+  </div>
+
+  <div class="sub-card">
+    <div class="sub-icon" style="background:#1DB95422;color:#1DB954">🎵</div>
+    <div class="sub-info">
+      <div class="sub-name">Spotify Premium</div>
+      <div class="sub-detail">Renews Jun 3 · Used daily</div>
+    </div>
+    <div class="sub-right">
+      <div class="sub-price">$10.99</div>
+      <div class="sub-cycle">/month</div>
+    </div>
+  </div>
+
+  <div class="sub-card">
+    <div class="sub-icon" style="background:#FC3C4422;color:#FC3C44">🎵</div>
+    <div class="sub-info">
+      <div class="sub-name">Apple Music</div>
+      <div class="sub-detail">Renews Jun 1 · Used 2x this month</div>
+      <span class="sub-tag tag-overlap">🎵 Overlap</span>
+    </div>
+    <div class="sub-right">
+      <div class="sub-price">$10.99</div>
+      <div class="sub-cycle">/month</div>
+    </div>
+  </div>
+
+  <div class="sub-card">
+    <div class="sub-icon" style="background:#FF000022;color:#FF0000">▶️</div>
+    <div class="sub-info">
+      <div class="sub-name">YouTube Premium</div>
+      <div class="sub-detail">Renews Jun 8 · Used daily</div>
+      <span class="sub-tag tag-overlap">🎵 Overlap</span>
+    </div>
+    <div class="sub-right">
+      <div class="sub-price">$13.99</div>
+      <div class="sub-cycle">/month</div>
+    </div>
+  </div>
+
+  <div class="sub-card">
+    <div class="sub-icon" style="background:#E5091422;color:#E50914">🎬</div>
+    <div class="sub-info">
+      <div class="sub-name">Netflix</div>
+      <div class="sub-detail">Renews Jun 5 · Used 4x this month</div>
+    </div>
+    <div class="sub-right">
+      <div class="sub-price">$22.99</div>
+      <div class="sub-cycle">/month</div>
+    </div>
+  </div>
+
+  <div class="sub-card">
+    <div class="sub-icon" style="background:#6366F122;color:#6366F1">🤖</div>
+    <div class="sub-info">
+      <div class="sub-name">ChatGPT Plus</div>
+      <div class="sub-detail">Renews Jun 12 · Used daily</div>
+    </div>
+    <div class="sub-right">
+      <div class="sub-price">$20.00</div>
+      <div class="sub-cycle">/month</div>
+    </div>
+  </div>
+
+  <div class="sub-card">
+    <div class="sub-icon" style="background:#f9731622;color:#f97316">📧</div>
+    <div class="sub-info">
+      <div class="sub-name">Superhuman</div>
+      <div class="sub-detail">Renews Jun 15 · Last opened 6 weeks ago</div>
+      <span class="sub-tag tag-unused">⚠️ Unused</span>
+    </div>
+    <div class="sub-right">
+      <div class="sub-price">$30.00</div>
+      <div class="sub-cycle">/month</div>
+    </div>
+  </div>
+
+  <div style="height:80px"></div>
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal-overlay" id="cancelModal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2>🚫 Cancel Adobe CC</h2>
+    <div class="subtext">Adobe is known for making cancellation difficult. Here's your escape plan:</div>
+    <div class="difficulty">
+      <span class="label">Cancellation difficulty:</span>
+      <div class="dots">
+        <div class="dot active"></div>
+        <div class="dot active"></div>
+        <div class="dot active"></div>
+        <div class="dot active"></div>
+        <div class="dot"></div>
+      </div>
+      <span class="label" style="color:var(--accent2)">Hard</span>
+    </div>
+    <div class="cancel-step">
+      <span class="step-num">1</span>
+      Go to account.adobe.com → Plans → Manage Plan
+    </div>
+    <div class="cancel-step">
+      <span class="step-num">2</span>
+      Click "Cancel plan" — they will show 2-3 "are you sure?" screens. Keep clicking.
+    </div>
+    <div class="cancel-step">
+      <span class="step-num">3</span>
+      Select "I still want to cancel" when offered a discount
+    </div>
+    <div class="cancel-step">
+      <span class="step-num">4</span>
+      If redirected to chat/support, use this message: <em style="color:var(--accent)">"I am exercising my right to cancel under the FTC Click-to-Cancel rule. Please process immediately."</em>
+    </div>
+    <button class="btn-cancel btn-danger" onclick="alert('📧 Cancellation email generated! We\'ll watch your transactions to confirm the charge stops.')">📧 Generate Cancel Email</button>
+    <button class="btn-cancel btn-ghost" onclick="document.getElementById('cancelModal').classList.remove('open')">Keep Subscription</button>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item active">
+    <div class="icon">🏠</div>
+    <div class="label">Dashboard</div>
+  </div>
+  <div class="nav-item">
+    <div class="icon">🔍</div>
+    <div class="label">Detect</div>
+  </div>
+  <div class="nav-item">
+    <div class="icon">🎯</div>
+    <div class="label">Optimize</div>
+  </div>
+  <div class="nav-item">
+    <div class="icon">⚙️</div>
+    <div class="label">Settings</div>
+  </div>
+</div>
+
+<script>
+function openModal() {
+  document.getElementById('cancelModal').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('cancelModal')) {
+    document.getElementById('cancelModal').classList.remove('open');
+  }
+}
+</script>
+</body>
+</html>
