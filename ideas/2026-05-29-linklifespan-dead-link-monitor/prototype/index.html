@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkLifespan — Dead Link Monitor & Web Content Preserver</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo">
+      <span class="logo-icon">🔗</span>
+      <span class="logo-text">LinkLifespan</span>
+    </div>
+    <div class="nav-items">
+      <a href="#" class="nav-item active" data-view="dashboard">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-view="links">
+        <span class="nav-icon">🔗</span>
+        <span>My Links</span>
+      </a>
+      <a href="#" class="nav-item" data-view="alerts">
+        <span class="nav-icon">🔔</span>
+        <span>Alerts</span>
+        <span class="badge">7</span>
+      </a>
+      <a href="#" class="nav-item" data-view="archive">
+        <span class="nav-icon">🏛️</span>
+        <span>Archive</span>
+      </a>
+      <a href="#" class="nav-item" data-view="integrations">
+        <span class="nav-icon">🔌</span>
+        <span>Integrations</span>
+      </a>
+      <a href="#" class="nav-item" data-view="settings">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="usage-bar">
+        <div class="usage-label">2,847 / 5,000 links</div>
+        <div class="usage-track">
+          <div class="usage-fill" style="width: 57%"></div>
+        </div>
+      </div>
+      <div class="plan-badge">Guardian Plan</div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Your link library health overview</p>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-secondary" id="importBtn">
+          <span>📥</span> Import Links
+        </button>
+        <button class="btn btn-primary" id="addLinkBtn">
+          <span>＋</span> Add Link
+        </button>
+      </div>
+    </header>
+
+    <!-- Health Score Card -->
+    <div class="health-hero">
+      <div class="health-score-ring">
+        <svg viewBox="0 0 120 120" class="score-svg">
+          <circle cx="60" cy="60" r="52" class="score-bg"/>
+          <circle cx="60" cy="60" r="52" class="score-fill" style="stroke-dashoffset: 56"/>
+        </svg>
+        <div class="score-text">
+          <span class="score-number">78</span>
+          <span class="score-label">Health Score</span>
+        </div>
+      </div>
+      <div class="health-stats">
+        <div class="stat-group">
+          <div class="stat">
+            <span class="stat-number">2,847</span>
+            <span class="stat-desc">Total Links</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number stat-ok">2,541</span>
+            <span class="stat-desc">Healthy</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number stat-warn">189</span>
+            <span class="stat-desc">Changed</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number stat-dead">117</span>
+            <span class="stat-desc">Dead</span>
+          </div>
+        </div>
+        <div class="health-trend">
+          <span class="trend-label">This month</span>
+          <span class="trend-value trend-down">↓ 3 points</span>
+          <span class="trend-detail">23 links died, 8 restored</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #fef2f2;">🔴</div>
+        <div class="stat-card-body">
+          <span class="stat-card-number">7</span>
+          <span class="stat-card-label">New Dead Links Today</span>
+        </div>
+        <div class="stat-card-action"><a href="#">View →</a></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #fffbeb;">🟡</div>
+        <div class="stat-card-body">
+          <span class="stat-card-number">12</span>
+          <span class="stat-card-label">Content Changed</span>
+        </div>
+        <div class="stat-card-action"><a href="#">Review →</a></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #f0fdf4;">🟢</div>
+        <div class="stat-card-body">
+          <span class="stat-card-number">2,847</span>
+          <span class="stat-card-label">Auto-Archived</span>
+        </div>
+        <div class="stat-card-action"><a href="#">Browse →</a></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #eff6ff;">📦</div>
+        <div class="stat-card-body">
+          <span class="stat-card-number">3</span>
+          <span class="stat-card-label">Sources Connected</span>
+        </div>
+        <div class="stat-card-action"><a href="#">Manage →</a></div>
+      </div>
+    </div>
+
+    <!-- Two Column Section -->
+    <div class="two-col">
+      <!-- Recent Alerts -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Alerts</h2>
+          <a href="#" class="card-link">View all →</a>
+        </div>
+        <div class="alert-list">
+          <div class="alert-item alert-dead">
+            <div class="alert-severity">🔴</div>
+            <div class="alert-body">
+              <div class="alert-title">CSS-Tricks: "A Complete Guide to Flexbox"</div>
+              <div class="alert-meta">404 — Page not found · Bookmarks · 2 hours ago</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn-sm btn-archive">🏛️ View Archive</button>
+            </div>
+          </div>
+          <div class="alert-item alert-changed">
+            <div class="alert-severity">🟡</div>
+            <div class="alert-body">
+              <div class="alert-title">MDN: "Using CORS" — Content significantly edited</div>
+              <div class="alert-meta">Key section removed · Notion · 5 hours ago</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn-sm btn-diff">👁️ View Diff</button>
+            </div>
+          </div>
+          <div class="alert-item alert-dead">
+            <div class="alert-severity">🔴</div>
+            <div class="alert-body">
+              <div class="alert-title">Medium: "Understanding React Server Components"</div>
+              <div class="alert-meta">Paywall added (was free) · Pocket · 8 hours ago</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn-sm btn-archive">🏛️ View Archive</button>
+            </div>
+          </div>
+          <div class="alert-item alert-dead">
+            <div class="alert-severity">🔴</div>
+            <div class="alert-body">
+              <div class="alert-title">stackoverflow.com/a/123456 — Answer deleted</div>
+              <div class="alert-meta">410 Gone · Obsidian · 12 hours ago</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn-sm btn-archive">🏛️ View Archive</button>
+            </div>
+          </div>
+          <div class="alert-item alert-changed">
+            <div class="alert-severity">🟡</div>
+            <div class="alert-body">
+              <div class="alert-title">npmjs.com/package/express — Version updated to 5.1.2</div>
+              <div class="alert-meta">Content changed · Docs · 1 day ago</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn-sm btn-diff">👁️ View Diff</button>
+            </div>
+          </div>
+          <div class="alert-item alert-redirect">
+            <div class="alert-severity">🟢</div>
+            <div class="alert-body">
+              <div class="alert-title">reactjs.org → react.dev — Permanent redirect</div>
+              <div class="alert-meta">301 Redirect · Bookmarks · 2 days ago</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn-sm btn-fix">✅ Update URL</button>
+            </div>
+          </div>
+          <div class="alert-item alert-dead">
+            <div class="alert-severity">🔴</div>
+            <div class="alert-body">
+              <div class="alert-title">Old startup blog (acme-startup.io) — Domain expired</div>
+              <div class="alert-meta">DNS_NXDOMAIN · Google Docs · 3 days ago</div>
+            </div>
+            <div class="alert-actions">
+              <button class="btn-sm btn-archive">🏛️ View Archive</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Link Health by Source -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">Health by Source</h2>
+          <a href="#" class="card-link">Details →</a>
+        </div>
+        <div class="source-list">
+          <div class="source-item">
+            <div class="source-icon">🔖</div>
+            <div class="source-info">
+              <div class="source-name">Chrome Bookmarks</div>
+              <div class="source-count">1,247 links</div>
+            </div>
+            <div class="source-health">
+              <div class="mini-bar">
+                <div class="mini-bar-ok" style="width: 82%"></div>
+                <div class="mini-bar-warn" style="width: 8%"></div>
+                <div class="mini-bar-dead" style="width: 10%"></div>
+              </div>
+              <span class="source-score">82%</span>
+            </div>
+          </div>
+          <div class="source-item">
+            <div class="source-icon">📝</div>
+            <div class="source-info">
+              <div class="source-name">Notion</div>
+              <div class="source-count">634 links</div>
+            </div>
+            <div class="source-health">
+              <div class="mini-bar">
+                <div class="mini-bar-ok" style="width: 71%"></div>
+                <div class="mini-bar-warn" style="width: 15%"></div>
+                <div class="mini-bar-dead" style="width: 14%"></div>
+              </div>
+              <span class="source-score">71%</span>
+            </div>
+          </div>
+          <div class="source-item">
+            <div class="source-icon">📚</div>
+            <div class="source-info">
+              <div class="source-name">Obsidian</div>
+              <div class="source-count">523 links</div>
+            </div>
+            <div class="source-health">
+              <div class="mini-bar">
+                <div class="mini-bar-ok" style="width: 88%"></div>
+                <div class="mini-bar-warn" style="width: 6%"></div>
+                <div class="mini-bar-dead" style="width: 6%"></div>
+              </div>
+              <span class="source-score">88%</span>
+            </div>
+          </div>
+          <div class="source-item">
+            <div class="source-icon">📖</div>
+            <div class="source-info">
+              <div class="source-name">Pocket</div>
+              <div class="source-count">312 links</div>
+            </div>
+            <div class="source-health">
+              <div class="mini-bar">
+                <div class="mini-bar-ok" style="width: 75%"></div>
+                <div class="mini-bar-warn" style="width: 11%"></div>
+                <div class="mini-bar-dead" style="width: 14%"></div>
+              </div>
+              <span class="source-score">75%</span>
+            </div>
+          </div>
+          <div class="source-item">
+            <div class="source-icon">📄</div>
+            <div class="source-info">
+              <div class="source-name">Google Docs</div>
+              <div class="source-count">131 links</div>
+            </div>
+            <div class="source-health">
+              <div class="mini-bar">
+                <div class="mini-bar-ok" style="width: 90%"></div>
+                <div class="mini-bar-warn" style="width: 4%"></div>
+                <div class="mini-bar-dead" style="width: 6%"></div>
+              </div>
+              <span class="source-score">90%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Decay Timeline -->
+        <div class="decay-section">
+          <h3 class="section-title">Link Decay Timeline</h3>
+          <div class="decay-chart">
+            <div class="chart-y-axis">
+              <span>100%</span><span>80%</span><span>60%</span><span>40%</span><span>20%</span>
+            </div>
+            <div class="chart-bars">
+              <div class="chart-bar-group">
+                <div class="chart-bar" style="height: 96%"></div>
+                <span class="chart-label">Jan</span>
+              </div>
+              <div class="chart-bar-group">
+                <div class="chart-bar" style="height: 94%"></div>
+                <span class="chart-label">Feb</span>
+              </div>
+              <div class="chart-bar-group">
+                <div class="chart-bar" style="height: 91%"></div>
+                <span class="chart-label">Mar</span>
+              </div>
+              <div class="chart-bar-group">
+                <div class="chart-bar" style="height: 89%"></div>
+                <span class="chart-label">Apr</span>
+              </div>
+              <div class="chart-bar-group">
+                <div class="chart-bar" style="height: 85%"></div>
+                <span class="chart-label">May</span>
+              </div>
+              <div class="chart-bar-group">
+                <div class="chart-bar" style="height: 82%"></div>
+                <span class="chart-label">Jun</span>
+              </div>
+              <div class="chart-bar-group">
+                <div class="chart-bar" style="height: 78%"></div>
+                <span class="chart-label">Now</span>
+              </div>
+            </div>
+          </div>
+          <div class="decay-summary">
+            <span class="decay-stat">Lost <strong>117 links</strong> in 7 months</span>
+            <span class="decay-stat">That's <strong>~17 links/month</strong></span>
+            <span class="decay-stat">Projected: <strong>204 dead by Dec</strong></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Top At-Risk Domains -->
+    <section class="card full-width">
+      <div class="card-header">
+        <h2 class="card-title">🔥 Top At-Risk Domains</h2>
+        <span class="card-badge">Domains most likely to lose links soon</span>
+      </div>
+      <div class="risk-table">
+        <div class="risk-row risk-header">
+          <span>Domain</span>
+          <span>Your Links</span>
+          <span>Dead</span>
+          <span>Risk Level</span>
+          <span>Archived</span>
+          <span>Action</span>
+        </div>
+        <div class="risk-row">
+          <span class="domain-name">medium.com</span>
+          <span>142</span>
+          <span class="stat-dead">23 (16%)</span>
+          <span><span class="risk-badge risk-high">HIGH</span></span>
+          <span>142/142 ✅</span>
+          <span><button class="btn-sm">Review</button></span>
+        </div>
+        <div class="risk-row">
+          <span class="domain-name">dev.to</span>
+          <span>89</span>
+          <span class="stat-dead">11 (12%)</span>
+          <span><span class="risk-badge risk-high">HIGH</span></span>
+          <span>89/89 ✅</span>
+          <span><button class="btn-sm">Review</button></span>
+        </div>
+        <div class="risk-row">
+          <span class="domain-name">twitter.com</span>
+          <span>67</span>
+          <span class="stat-dead">19 (28%)</span>
+          <span><span class="risk-badge risk-critical">CRITICAL</span></span>
+          <span>45/67 ⚠️</span>
+          <span><button class="btn-sm btn-primary">Archive Now</button></span>
+        </div>
+        <div class="risk-row">
+          <span class="domain-name">reddit.com</span>
+          <span>54</span>
+          <span class="stat-dead">8 (15%)</span>
+          <span><span class="risk-badge risk-medium">MEDIUM</span></span>
+          <span>54/54 ✅</span>
+          <span><button class="btn-sm">Review</button></span>
+        </div>
+        <div class="risk-row">
+          <span class="domain-name">stackoverflow.com</span>
+          <span>41</span>
+          <span class="stat-dead">3 (7%)</span>
+          <span><span class="risk-badge risk-low">LOW</span></span>
+          <span>41/41 ✅</span>
+          <span><button class="btn-sm">Review</button></span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Add Link Modal -->
+<div class="modal-overlay" id="addLinkModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Add New Link</h2>
+      <button class="modal-close" id="closeModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>URL</label>
+        <input type="url" placeholder="https://example.com/article" class="input"/>
+      </div>
+      <div class="form-group">
+        <label>Label (optional)</label>
+        <input type="text" placeholder="Why you saved this link" class="input"/>
+      </div>
+      <div class="form-group">
+        <label>Source</label>
+        <select class="input">
+          <option>Chrome Bookmarks</option>
+          <option>Notion</option>
+          <option>Obsidian</option>
+          <option>Pocket</option>
+          <option>Google Docs</option>
+          <option>Manual</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Check Frequency</label>
+        <select class="input">
+          <option>Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" checked/>
+          Auto-archive to Wayback Machine
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox"/>
+          Alert on content change (not just dead/alive)
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelModal">Cancel</button>
+      <button class="btn btn-primary">Add & Archive</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
