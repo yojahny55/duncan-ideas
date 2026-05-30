@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthBridge — Your Health Data, Unlocked</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --accent: #00d4aa;
+    --accent2: #7c5cff;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --danger: #ff4466;
+    --warning: #ffaa00;
+    --success: #00d4aa;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  
+  .app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--bg); }
+  
+  /* Header */
+  .header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--surface2); }
+  .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; }
+  .logo-icon { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .header-actions { display: flex; gap: 12px; }
+  .header-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--surface2); color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
+
+  /* Tabs */
+  .tabs { display: flex; padding: 12px 20px; gap: 4px; border-bottom: 1px solid var(--surface2); }
+  .tab { flex: 1; padding: 10px; text-align: center; border-radius: 10px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.2s; background: none; border: none; }
+  .tab.active { background: var(--accent); color: var(--bg); }
+  .tab:hover:not(.active) { background: var(--surface); }
+
+  .content { padding: 20px; }
+
+  /* Sync Status Banner */
+  .sync-banner { background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(124,92,255,0.1)); border: 1px solid rgba(0,212,170,0.2); border-radius: 14px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+  .sync-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .sync-text h3 { font-size: 14px; font-weight: 600; }
+  .sync-text p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Connected Devices */
+  .section-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .devices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .device { background: var(--surface); border: 1px solid var(--surface2); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s; }
+  .device:hover { border-color: var(--accent); }
+  .device-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .device-info { flex: 1; }
+  .device-name { font-size: 14px; font-weight: 600; }
+  .device-status { font-size: 12px; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .status-dot.green { background: var(--success); }
+  .status-dot.yellow { background: var(--warning); }
+  .status-dot.red { background: var(--danger); }
+  .device-data { text-align: right; }
+  .device-value { font-size: 18px; font-weight: 700; }
+  .device-label { font-size: 11px; color: var(--muted); }
+
+  /* Health Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
+  .timeline-item { background: var(--surface); padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+  .timeline-item:first-child { border-radius: 14px 14px 0 0; }
+  .timeline-item:last-child { border-radius: 0 0 14px 14px; }
+  .timeline-item:only-child { border-radius: 14px; }
+  .timeline-time { font-size: 11px; color: var(--muted); width: 48px; flex-shrink: 0; }
+  .timeline-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .timeline-desc { font-size: 13px; flex: 1; }
+  .timeline-source { font-size: 11px; color: var(--muted); background: var(--surface2); padding: 2px 8px; border-radius: 6px; }
+
+  /* Conflict Alert */
+  .conflict { background: rgba(255,170,0,0.08); border: 1px solid rgba(255,170,0,0.2); border-radius: 14px; padding: 16px; margin-bottom: 24px; }
+  .conflict-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .conflict-header span:first-child { font-size: 18px; }
+  .conflict-header span:last-child { font-size: 13px; font-weight: 600; color: var(--warning); }
+  .conflict-values { display: flex; gap: 8px; }
+  .conflict-card { flex: 1; background: var(--surface); border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+  .conflict-card:hover { border-color: var(--accent); }
+  .conflict-card .val { font-size: 22px; font-weight: 700; }
+  .conflict-card .src { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* Stats Grid */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .stat { background: var(--surface); border: 1px solid var(--surface2); border-radius: 14px; padding: 16px; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 700; }
+  .stat-unit { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .stat-change { font-size: 11px; margin-top: 4px; }
+  .stat-change.up { color: var(--success); }
+  .stat-change.down { color: var(--danger); }
+
+  /* CTA Button */
+  .cta { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 14px; color: white; font-size: 15px; font-weight: 600; cursor: pointer; }
+
+  /* Bottom Nav */
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--surface); border-top: 1px solid var(--surface2); display: flex; padding: 8px 20px; }
+  .nav-item { flex: 1; text-align: center; padding: 8px; cursor: pointer; color: var(--muted); font-size: 20px; }
+  .nav-item.active { color: var(--accent); }
+  .nav-label { font-size: 10px; margin-top: 2px; }
+
+  /* Hidden panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Export button */
+  .export-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .export-btn { flex: 1; padding: 12px; background: var(--surface2); border: 1px solid var(--surface2); border-radius: 10px; color: var(--text); font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .export-btn:hover { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      HealthBridge
+    </div>
+    <div class="header-actions">
+      <button class="header-btn">⚙️</button>
+      <button class="header-btn">👤</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showPanel('dashboard')">Dashboard</button>
+    <button class="tab" onclick="showPanel('sources')">Sources</button>
+    <button class="tab" onclick="showPanel('export')">Export</button>
+  </div>
+
+  <!-- Dashboard Panel -->
+  <div id="panel-dashboard" class="panel active content">
+    <div class="sync-banner">
+      <div class="sync-icon">🔄</div>
+      <div class="sync-text">
+        <h3>All sources synced</h3>
+        <p>Last sync: 3 minutes ago · 4 sources active</p>
+      </div>
+    </div>
+
+    <div class="conflict">
+      <div class="conflict-header">
+        <span>⚠️</span>
+        <span>Conflict Detected — Resting Heart Rate</span>
+      </div>
+      <div class="conflict-values">
+        <div class="conflict-card" onclick="resolveConflict(this, 62)">
+          <div class="val">62 bpm</div>
+          <div class="src">🟢 Garmin</div>
+        </div>
+        <div class="conflict-card" onclick="resolveConflict(this, 68)">
+          <div class="val">68 bpm</div>
+          <div class="src">🔵 Google Health</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Today's Overview</div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Steps</div>
+        <div class="stat-value">8,432</div>
+        <div class="stat-change up">▲ 12% vs avg</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Heart Rate</div>
+        <div class="stat-value">62 <span class="stat-unit">bpm</span></div>
+        <div class="stat-change down">▼ 3 bpm</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Sleep</div>
+        <div class="stat-value">7.2 <span class="stat-unit">hrs</span></div>
+        <div class="stat-change up">▲ 0.5h</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Weight</div>
+        <div class="stat-value">174.2 <span class="stat-unit">lbs</span></div>
+        <div class="stat-change down">▼ 0.8 lbs</div>
+      </div>
+    </div>
+
+    <div class="section-title">Timeline</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">7:42 AM</div>
+        <div class="timeline-dot" style="background: var(--accent)"></div>
+        <div class="timeline-desc">Morning walk — 3,200 steps</div>
+        <div class="timeline-source">Garmin</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">6:30 AM</div>
+        <div class="timeline-dot" style="background: var(--accent2)"></div>
+        <div class="timeline-desc">Weight logged — 174.2 lbs</div>
+        <div class="timeline-source">Withings</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">6:15 AM</div>
+        <div class="timeline-dot" style="background: var(--warning)"></div>
+        <div class="timeline-desc">Sleep tracking — 7h 12m (Deep: 1h 40m)</div>
+        <div class="timeline-source">Google</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">5:50 AM</div>
+        <div class="timeline-dot" style="background: var(--danger)"></div>
+        <div class="timeline-desc">Resting HR — 62 bpm</div>
+        <div class="timeline-source">Garmin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sources Panel -->
+  <div id="panel-sources" class="panel content">
+    <div class="section-title">Connected Sources</div>
+    <div class="devices">
+      <div class="device">
+        <div class="device-icon" style="background: rgba(0,212,170,0.1)">⌚</div>
+        <div class="device-info">
+          <div class="device-name">Garmin Venu 3</div>
+          <div class="device-status"><span class="status-dot green"></span> Synced 3m ago</div>
+        </div>
+        <div class="device-data">
+          <div class="device-value">8,432</div>
+          <div class="device-label">steps today</div>
+        </div>
+      </div>
+      <div class="device">
+        <div class="device-icon" style="background: rgba(66,133,244,0.1)">📱</div>
+        <div class="device-info">
+          <div class="device-name">Google Health (Pixel)</div>
+          <div class="device-status"><span class="status-dot yellow"></span> Partial sync</div>
+        </div>
+        <div class="device-data">
+          <div class="device-value">6,891</div>
+          <div class="device-label">steps today</div>
+        </div>
+      </div>
+      <div class="device">
+        <div class="device-icon" style="background: rgba(124,92,255,0.1)">⚖️</div>
+        <div class="device-info">
+          <div class="device-name">Withings Scale</div>
+          <div class="device-status"><span class="status-dot green"></span> Synced 1h ago</div>
+        </div>
+        <div class="device-data">
+          <div class="device-value">174.2</div>
+          <div class="device-label">lbs</div>
+        </div>
+      </div>
+      <div class="device">
+        <div class="device-icon" style="background: rgba(255,170,0,0.1)">💪</div>
+        <div class="device-info">
+          <div class="device-name">OURA Ring Gen 4</div>
+          <div class="device-status"><span class="status-dot green"></span> Synced 30m ago</div>
+        </div>
+        <div class="device-data">
+          <div class="device-value">82</div>
+          <div class="device-label">readiness</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta" onclick="alert('Connect a new device → OAuth flow would launch here')">+ Connect New Source</button>
+  </div>
+
+  <!-- Export Panel -->
+  <div id="panel-export" class="panel content">
+    <div class="section-title">Export Your Data</div>
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">Your data is yours. Export everything, anytime, in any format.</p>
+    
+    <div class="export-row">
+      <button class="export-btn" onclick="fakeExport('JSON')">📦 JSON</button>
+      <button class="export-btn" onclick="fakeExport('CSV')">📊 CSV</button>
+      <button class="export-btn" onclick="fakeExport('FHIR')">🏥 FHIR R4</button>
+    </div>
+
+    <div class="section-title">Migration Tool</div>
+    <div class="device" style="margin-bottom: 12px;">
+      <div class="device-icon" style="background: rgba(255,68,102,0.1)">🔀</div>
+      <div class="device-info">
+        <div class="device-name">Fitbit → Garmin</div>
+        <div class="device-status">Transfer 2.3 years of history</div>
+      </div>
+    </div>
+    <button class="cta" onclick="alert('Migration wizard would start here — selects date range, data types, and target platform')">Start Migration</button>
+  </div>
+</div>
+
+<script>
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function resolveConflict(card, value) {
+  card.style.borderColor = 'var(--accent)';
+  card.style.background = 'rgba(0,212,170,0.1)';
+  const other = card.parentElement.querySelector('.conflict-card:not([style*="border-color"])') || 
+    Array.from(card.parentElement.children).find(c => c !== card);
+  if (other) {
+    other.style.opacity = '0.4';
+  }
+  const banner = card.closest('.conflict');
+  banner.innerHTML = '<div style="text-align:center;padding:8px"><span style="font-size:18px">✅</span><p style="font-size:13px;margin-top:4px">Resolved: using <strong>' + value + ' bpm</strong> from selected source</p></div>';
+}
+
+function fakeExport(format) {
+  alert('📄 Exporting all health data as ' + format + '...\n\n(This is a prototype — in production this would download your complete health history)');
+}
+</script>
+</body>
+</html>
