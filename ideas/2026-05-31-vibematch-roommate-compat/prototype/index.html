@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeMatch — Roommate Compatibility Scorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#14141f;--surface2:#1e1e2e;--surface3:#2a2a3d;
+  --text:#e8e8f0;--text2:#9898b0;--text3:#6868880;
+  --accent:#8b5cf6;--accent2:#a78bfa;--accent-glow:rgba(139,92,246,0.3);
+  --green:#22c55e;--green-glow:rgba(34,197,94,0.2);
+  --yellow:#eab308;--yellow-glow:rgba(234,179,8,0.2);
+  --red:#ef4444;--red-glow:rgba(239,68,68,0.2);
+  --pink:#ec4899;--cyan:#06b6d4;--orange:#f97316;
+  --radius:16px;--radius-sm:10px;--radius-xs:6px;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;animation:fadeIn .4s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Header */
+.header{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;max-width:480px;margin:0 auto}
+.logo{font-weight:800;font-size:1.3rem;background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.step-dots{display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--surface3)}
+.dot.done{background:var(--accent)}
+.dot.current{background:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
+
+/* Content */
+.content{max-width:480px;margin:0 auto;padding:0 24px 100px}
+.hero{text-align:center;padding:60px 0 40px}
+.hero h1{font-size:2.2rem;font-weight:900;line-height:1.1;margin-bottom:16px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text2);font-size:1.05rem;line-height:1.6;max-width:340px;margin:0 auto 32px}
+.hero-stats{display:flex;justify-content:center;gap:32px;margin-bottom:40px}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:1.4rem;font-weight:800;color:var(--accent2)}
+.hero-stat .label{font-size:.75rem;color:var(--text2);margin-top:2px}
+
+/* Buttons */
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:var(--radius);font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;text-align:center}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;box-shadow:0 4px 20px var(--accent-glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--accent-glow)}
+.btn-secondary{background:var(--surface2);color:var(--text)}
+.btn-secondary:hover{background:var(--surface3)}
+.btn-sm{padding:12px 20px;width:auto;font-size:.875rem;border-radius:var(--radius-sm)}
+.btn-ghost{background:transparent;color:var(--text2);padding:10px}
+.btn-ghost:hover{color:var(--text)}
+
+/* Question Screen */
+.question-category{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--surface2);border-radius:20px;font-size:.8rem;font-weight:600;color:var(--accent2);margin-bottom:20px}
+.question-num{font-size:.8rem;color:var(--text2);margin-bottom:8px}
+.question-text{font-size:1.4rem;font-weight:800;line-height:1.3;margin-bottom:32px}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{padding:16px 20px;background:var(--surface);border:2px solid transparent;border-radius:var(--radius);cursor:pointer;transition:all .2s;font-weight:600;font-size:.95rem}
+.option:hover{border-color:var(--surface3);background:var(--surface2)}
+.option.selected{border-color:var(--accent);background:rgba(139,92,246,0.1);box-shadow:0 0 20px var(--accent-glow)}
+.option .emoji{margin-right:10px}
+
+/* Results */
+.result-hero{text-align:center;padding:40px 0 24px}
+.score-ring{width:180px;height:180px;margin:0 auto 20px;position:relative}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring circle{fill:none;stroke-width:10}
+.score-ring .bg{stroke:var(--surface2)}
+.score-ring .progress{stroke:var(--green);stroke-linecap:round;transition:stroke-dashoffset 1.5s ease}
+.score-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.score-value .num{font-size:3rem;font-weight:900;line-height:1}
+.score-value .label{font-size:.8rem;color:var(--text2)}
+.verdict{font-size:1.2rem;font-weight:700;margin-bottom:4px}
+.verdict-sub{font-size:.9rem;color:var(--text2);margin-bottom:32px}
+
+/* Dimension bars */
+.dim-card{background:var(--surface);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+.dim-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dim-name{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:8px}
+.dim-score{font-weight:800;font-size:1.1rem}
+.dim-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.dim-bar-fill{height:100%;border-radius:3px;transition:width 1s ease}
+.dim-insight{font-size:.8rem;color:var(--text2);margin-top:8px;line-height:1.4}
+
+/* Friction alerts */
+.friction-alert{display:flex;gap:12px;padding:16px;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);border-radius:var(--radius-sm);margin-bottom:10px}
+.friction-alert.critical{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2)}
+.friction-icon{font-size:1.3rem;flex-shrink:0}
+.friction-text{font-size:.875rem;line-height:1.5}
+.friction-text strong{color:var(--text)}
+
+/* Conversation starters */
+.starter-card{background:var(--surface);border-radius:var(--radius-sm);padding:16px;margin-bottom:10px;border-left:3px solid var(--accent)}
+.starter-card .q{font-weight:700;font-size:.9rem;margin-bottom:4px}
+.starter-card .why{font-size:.8rem;color:var(--text2)}
+
+/* Share section */
+.share-box{background:var(--surface);border-radius:var(--radius);padding:20px;text-align:center;margin:24px 0}
+.share-link{display:flex;gap:8px;margin:12px 0}
+.share-link input{flex:1;background:var(--surface2);border:1px solid var(--surface3);border-radius:var(--radius-xs);padding:10px 14px;color:var(--text);font-family:monospace;font-size:.85rem}
+.share-link button{padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-xs);font-weight:600;cursor:pointer;font-size:.85rem}
+
+/* Nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--surface2);padding:16px 24px;display:flex;gap:10px;max-width:480px;margin:0 auto}
+.bottom-nav .btn{width:auto;flex:1}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;background:var(--surface);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px}
+.tab{flex:1;padding:10px;text-align:center;border-radius:var(--radius-xs);font-size:.85rem;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s}
+.tab.active{background:var(--accent);color:#fff}
+
+/* Animations */
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.pulse{animation:pulse 2s infinite}
+
+/* Responsive */
+@media(min-width:481px){.content{padding:0 24px 100px}}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: Landing -->
+<div class="screen active" id="landing">
+  <div class="content">
+    <div class="hero">
+      <div style="font-size:3rem;margin-bottom:16px">🏠</div>
+      <h1>Will you <span>vibe</span> as roommates?</h1>
+      <p>Both take a 5-minute quiz. Get your compatibility score, friction predictions, and conversation starters.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">7</div><div class="label">Dimensions</div></div>
+        <div class="hero-stat"><div class="num">25</div><div class="label">Questions</div></div>
+        <div class="hero-stat"><div class="num">5min</div><div class="label">To Complete</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+      <div style="height:12px"></div>
+      <button class="btn btn-secondary" onclick="showResults()">View Demo Results →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2: Quiz -->
+<div class="screen" id="quiz">
+  <div class="header">
+    <div class="logo">VibeMatch</div>
+    <div class="step-dots" id="stepDots"></div>
+  </div>
+  <div class="content">
+    <div class="question-category" id="qCategory">🌙 Sleep Schedule</div>
+    <div class="question-num" id="qNum">Question 1 of 25</div>
+    <div class="question-text" id="qText">What time do you usually go to bed on weekdays?</div>
+    <div class="options" id="qOptions"></div>
+  </div>
+  <div class="bottom-nav">
+    <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" style="display:none">← Back</button>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next →</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: Results -->
+<div class="screen" id="results">
+  <div class="header">
+    <div class="logo">VibeMatch</div>
+    <div style="font-size:.8rem;color:var(--text2)">Compatibility Report</div>
+  </div>
+  <div class="content">
+    <div class="result-hero">
+      <div class="score-ring">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle class="bg" cx="90" cy="90" r="80"/>
+          <circle class="progress" cx="90" cy="90" r="80" stroke-dasharray="502" stroke-dashoffset="502" id="scoreCircle"/>
+        </svg>
+        <div class="score-value">
+          <div class="num" id="scoreNum">0</div>
+          <div class="label">compatibility</div>
+        </div>
+      </div>
+      <div class="verdict" id="verdict">Great Match!</div>
+      <div class="verdict-sub" id="verdictSub">You'd make solid roommates with a few areas to discuss</div>
+    </div>
+
+    <div class="tabs" id="resultTabs">
+      <div class="tab active" onclick="showTab('breakdown')">Breakdown</div>
+      <div class="tab" onclick="showTab('friction')">Friction Points</div>
+      <div class="tab" onclick="showTab('talk')">Talk About</div>
+    </div>
+
+    <!-- Breakdown Tab -->
+    <div id="tab-breakdown">
+      <div class="dim-card">
+        <div class="dim-header"><div class="dim-name">🌙 Sleep Schedule</div><div class="dim-score" style="color:var(--green)">92%</div></div>
+        <div class="dim-bar"><div class="dim-bar-fill" style="width:92%;background:var(--green)"></div></div>
+        <div class="dim-insight">Very similar bedtimes. Weekend sleep-in difference is minor.</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-header"><div class="dim-name">🧹 Cleanliness</div><div class="dim-score" style="color:var(--yellow)">68%</div></div>
+        <div class="dim-bar"><div class="dim-bar-fill" style="width:68%;background:var(--yellow)"></div></div>
+        <div class="dim-insight">Different bathroom standards. One prefers spotless, the other is "lived-in."</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-header"><div class="dim-name">🎉 Social Life</div><div class="dim-score" style="color:var(--green)">85%</div></div>
+        <div class="dim-bar"><div class="dim-bar-fill" style="width:85%;background:var(--green)"></div></div>
+        <div class="dim-insight">Both prefer small gatherings. Agreement on advance notice for guests.</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-header"><div class="dim-name">🔊 Noise Tolerance</div><div class="dim-score" style="color:var(--yellow)">72%</div></div>
+        <div class="dim-bar"><div class="dim-bar-fill" style="width:72%;background:var(--yellow)"></div></div>
+        <div class="dim-insight">Different definitions of "quiet hours." One watches TV late, other is light sleeper.</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-header"><div class="dim-name">🌡️ Temperature</div><div class="dim-score" style="color:var(--green)">95%</div></div>
+        <div class="dim-bar"><div class="dim-bar-fill" style="width:95%;background:var(--green)"></div></div>
+        <div class="dim-insight">Both prefer cool rooms. Similar AC/heating preferences.</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-header"><div class="dim-name">🍽️ Sharing</div><div class="dim-score" style="color:var(--green)">88%</div></div>
+        <div class="dim-bar"><div class="dim-bar-fill" style="width:88%;background:var(--green)"></div></div>
+        <div class="dim-insight">Clear boundaries on food and supplies. Similar "ask first" approach.</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-header"><div class="dim-name">💰 Finances</div><div class="dim-score" style="color:var(--yellow)">64%</div></div>
+        <div class="dim-bar"><div class="dim-bar-fill" style="width:64%;background:var(--yellow)"></div></div>
+        <div class="dim-insight">Different spending philosophies. One tracks every penny, the other is casual.</div>
+      </div>
+    </div>
+
+    <!-- Friction Tab -->
+    <div id="tab-friction" style="display:none">
+      <div class="friction-alert">
+        <div class="friction-icon">⚠️</div>
+        <div class="friction-text"><strong>Bathroom Cleanliness Clash</strong><br>You have different standards for what "clean" means. This is the #1 roommate conflict trigger — discuss expectations before move-in.</div>
+      </div>
+      <div class="friction-alert">
+        <div class="friction-icon">⚠️</div>
+        <div class="friction-text"><strong>Late Night TV vs Light Sleeper</strong><br>One person watches shows before bed, the other needs silence. Headphones rule needed? Different rooms?</div>
+      </div>
+      <div class="friction-alert critical">
+        <div class="friction-icon">🔴</div>
+        <div class="friction-text"><strong>Money Philosophy Gap</strong><br>72% probability of conflict over shared expenses. One tracks every dollar, the other goes with the flow. Set up a shared expense system BEFORE move-in.</div>
+      </div>
+      <div class="friction-alert">
+        <div class="friction-icon">💡</div>
+        <div class="friction-text"><strong>Guest Frequency</strong><br>Both said "occasional guests" but defined it differently — 1-2x/month vs 1-2x/week. Align on specifics.</div>
+      </div>
+      <div style="margin-top:20px;padding:16px;background:var(--surface);border-radius:var(--radius-sm);text-align:center">
+        <div style="font-size:.85rem;color:var(--text2)">Overall Risk Level</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--yellow);margin-top:4px">🟡 Moderate</div>
+        <div style="font-size:.8rem;color:var(--text2);margin-top:4px">Manageable with communication</div>
+      </div>
+    </div>
+
+    <!-- Talk About Tab -->
+    <div id="tab-talk" style="display:none">
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:16px">Use these conversation starters to cover your weak spots before signing a lease.</div>
+      <div class="starter-card">
+        <div class="q">"What does a clean bathroom look like to you?"</div>
+        <div class="why">Cleanliness is your biggest gap — get specific about expectations</div>
+      </div>
+      <div class="starter-card">
+        <div class="q">"How should we handle shared expenses?"</div>
+        <div class="why">Different money philosophies — agree on a system upfront</div>
+      </div>
+      <div class="starter-card">
+        <div class="q">"What are your quiet hours?"</div>
+        <div class="why">You have different definitions of "late night" — set boundaries</div>
+      </div>
+      <div class="starter-card">
+        <div class="q">"How many guests per month feels right?"</div>
+        <div class="why">Both said "occasional" but mean different things — get specific</div>
+      </div>
+      <div class="starter-card">
+        <div class="q">"What's your biggest roommate pet peeve?"</div>
+        <div class="why">Open-ended question often reveals dealbreakers you didn't think to ask</div>
+      </div>
+
+      <div class="share-box">
+        <div style="font-weight:700;margin-bottom:4px">📋 Lease Readiness</div>
+        <div style="font-size:.85rem;color:var(--text2);margin-bottom:12px">You've identified 3 areas to discuss. Cover them before signing.</div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          <span style="padding:6px 12px;background:var(--red-glow);color:var(--red);border-radius:20px;font-size:.8rem;font-weight:600">💰 Finances</span>
+          <span style="padding:6px 12px;background:var(--yellow-glow);color:var(--yellow);border-radius:20px;font-size:.8rem;font-weight:600">🧹 Cleanliness</span>
+          <span style="padding:6px 12px;background:var(--yellow-glow);color:var(--yellow);border-radius:20px;font-size:.8rem;font-weight:600">🔊 Noise</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-box" style="margin-top:32px">
+      <div style="font-weight:700;margin-bottom:8px">Share your results</div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:12px">Send this to your potential roommate to compare</div>
+      <div class="share-link">
+        <input type="text" value="vibematch.app/room/a7x2k9" readonly id="shareInput">
+        <button onclick="copyLink()">Copy</button>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" onclick="location.reload()" style="margin-top:16px">Start Over</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { cat:'🌙 Sleep Schedule', q:'What time do you usually go to bed on weekdays?', opts:['Before 10pm','10–11pm','11pm–12am','After 12am'] },
+  { cat:'🌙 Sleep Schedule', q:'What time do you wake up on weekdays?', opts:['Before 6am','6–7am','7–8am','After 8am'] },
+  { cat:'🌙 Sleep Schedule', q:'How different is your weekend sleep schedule?', opts:['Same as weekdays','1-2 hours later','3+ hours later','Completely different'] },
+  { cat:'🧹 Cleanliness', q:'How tidy is your natural state?', opts:['Everything in its place','Generally tidy with minor mess','Organized chaos','Lived-in is fine'] },
+  { cat:'🧹 Cleanliness', q:'Bathroom standards?', opts:['Spotless at all times','Wipe down after use','Weekly deep clean is fine','As long as it\'s not gross'] },
+  { cat:'🧹 Cleanliness', q:'Dishes philosophy?', opts:['Wash immediately after use','Within a few hours','By end of day','When the sink is full'] },
+  { cat:'🎉 Social Life', q:'How often do you have people over?', opts:['Never','1-2 times a month','Weekly','Multiple times a week'] },
+  { cat:'🎉 Social Life', q:'Party tolerance?', opts:['No parties ever','Small gatherings OK','Parties are fine occasionally','Love a good party'] },
+  { cat:'🎉 Social Life', q:'Introvert or extrovert?', opts:['Strong introvert','Lean introvert','Lean extrovert','Strong extrovert'] },
+  { cat:'🔊 Noise', q:'How do you feel about background noise?', opts:['Need complete silence','Quiet music/podcasts OK','TV always on','Love ambient noise'] },
+  { cat:'🔊 Noise', q:'When should quiet hours start?', opts:['9pm','10pm','11pm','Midnight or later'] },
+  { cat:'🔊 Noise', q:'Phone call habits?', opts:['Always in my room','Brief calls OK in common areas','Long calls in common areas','I take all calls anywhere'] },
+  { cat:'🌡️ Temperature', q:'Ideal room temperature?', opts:['Below 65°F','65–68°F','68–72°F','Above 72°F'] },
+  { cat:'🌡️ Temperature', q:'Window preference while sleeping?', opts:['Always open for fresh air','Cracked open','Closed with AC/fan','Closed, sealed tight'] },
+  { cat:'🍽️ Sharing', q:'Food sharing philosophy?', opts:['Strictly separate','Ask before borrowing','Share basics (milk, oil)','What\'s mine is yours'] },
+  { cat:'🍽️ Sharing', q:'How do you feel about sharing supplies (TP, soap)?', opts:['Each buy our own','Split costs evenly','Take turns buying','Don\'t care'] },
+  { cat:'💰 Finances', q:'How do you track spending?', opts:['Every penny in a budget app','General awareness','I just know somehow','What budget?'] },
+  { cat:'💰 Finances', q:'Bill payment style?', opts:['Pay immediately','Pay on due date','Sometimes need a reminder','Often late, need nudges'] },
+  { cat:'💰 Finances', q:'Shared subscription approach?', opts:['Split everything 50/50','Each pays for what we use','Rotate who pays','Avoid shared subscriptions'] },
+  { cat:'🌙 Sleep Schedule', q:'Alarm habits?', opts:['Silent vibration, one alarm','One alarm, get up immediately','Snooze once or twice','Serial snoozer (5+ times)'] },
+  { cat:'🧹 Cleanliness', q:'How do you handle shared spaces?', opts:['Always clean up after myself','Mostly clean up','Clean up when it bothers me','Cleaning is a weekend thing'] },
+  { cat:'🎉 Social Life', q:'Partner/significant other sleepovers?', opts:['Never','Occasionally with notice','Regularly with notice','Anytime is fine'] },
+  { cat:'🔊 Noise', q:'Music listening habits?', opts:['Always headphones','Speakers at low volume','Speakers at normal volume','Speakers loud, music is life'] },
+  { cat:'🍽️ Sharing', q:'How do you handle "borrowed" items that aren\'t returned?', opts:['I don\'t lend things','Politely ask for them back','Get passive-aggressive','I forget about it'] },
+  { cat:'💰 Finances', q:'Biggest financial priority right now?', opts:['Aggressive saving','Budgeting carefully','Living comfortably','Living in the moment'] },
+];
+
+let currentQ = 0;
+let answers = [];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  answers = new Array(questions.length).fill(-1);
+  currentQ = 0;
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('qCategory').textContent = q.cat;
+  document.getElementById('qNum').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+  document.getElementById('qText').textContent = q.q;
+  
+  const optsEl = document.getElementById('qOptions');
+  optsEl.innerHTML = q.opts.map((o, i) => 
+    `<div class="option ${answers[currentQ]===i?'selected':''}" onclick="selectOption(${i})">${o}</div>`
+  ).join('');
+
+  const dotsEl = document.getElementById('stepDots');
+  const total = Math.ceil(questions.length / 5);
+  const current = Math.floor(currentQ / 5);
+  dotsEl.innerHTML = Array.from({length: total}, (_, i) => 
+    `<div class="dot ${i < current ? 'done' : ''} ${i === current ? 'current' : ''}"></div>`
+  ).join('');
+
+  document.getElementById('prevBtn').style.display = currentQ > 0 ? 'block' : 'none';
+  document.getElementById('nextBtn').textContent = currentQ === questions.length - 1 ? 'See Results →' : 'Next →';
+}
+
+function selectOption(i) {
+  answers[currentQ] = i;
+  document.querySelectorAll('.option').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+}
+
+function nextQuestion() {
+  if (answers[currentQ] === -1) return;
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+
+function showResults() {
+  showScreen('results');
+  // Animate score
+  const targetScore = 78;
+  const circle = document.getElementById('scoreCircle');
+  const circumference = 2 * Math.PI * 80;
+  circle.style.strokeDasharray = circumference;
+  setTimeout(() => {
+    circle.style.strokeDashoffset = circumference - (circumference * targetScore / 100);
+  }, 100);
+  
+  const numEl = document.getElementById('scoreNum');
+  let current = 0;
+  const interval = setInterval(() => {
+    current += 1;
+    numEl.textContent = current;
+    if (current >= targetScore) clearInterval(interval);
+  }, 15);
+}
+
+function showTab(tab) {
+  document.querySelectorAll('#resultTabs .tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  ['breakdown','friction','talk'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+function copyLink() {
+  const input = document.getElementById('shareInput');
+  input.select();
+  document.execCommand('copy');
+}
+</script>
+</body>
+</html>
