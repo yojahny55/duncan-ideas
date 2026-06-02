@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeMap — Your Home's Infrastructure Blueprint</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0f1a;
+    --surface: #111827;
+    --surface2: #1e293b;
+    --border: #2d3a4f;
+    --text: #e8ecf4;
+    --text-dim: #8896ab;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.15);
+    --red: #ef4444;
+    --red-glow: rgba(239, 68, 68, 0.15);
+    --orange: #f97316;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --cyan: #06b6d4;
+    --purple: #a855f7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--accent); }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text-dim); }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-emergency {
+    background: var(--red);
+    color: white;
+    animation: pulse-red 2s infinite;
+  }
+  @keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  }
+
+  /* Layout */
+  .app {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    height: calc(100vh - 65px);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .room-list { list-style: none; margin-bottom: 24px; }
+  .room-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .room-item:hover { background: var(--surface2); }
+  .room-item.active { background: var(--accent-glow); color: var(--accent); }
+  .room-icon { font-size: 18px; }
+  .room-count {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--surface2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .room-item.active .room-count { background: rgba(59,130,246,0.2); color: var(--accent); }
+
+  .pin-category {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-bottom: 4px;
+    transition: all 0.15s;
+  }
+  .pin-category:hover { background: var(--surface2); }
+  .pin-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  /* Floor Plan Canvas */
+  .canvas-area {
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .floor-plan {
+    position: relative;
+    width: 680px;
+    height: 520px;
+    background: var(--surface);
+    border-radius: 16px;
+    border: 2px solid var(--border);
+  }
+  .room-block {
+    position: absolute;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(30, 41, 59, 0.5);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .room-block:hover, .room-block.active {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+  .room-block-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .room-block-size {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Pins */
+  .pin {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .pin:hover {
+    transform: scale(1.2);
+    z-index: 20;
+  }
+  .pin.water { background: #1d4ed8; }
+  .pin.electric { background: #b45309; }
+  .pin.gas { background: #dc2626; }
+  .pin.hvac { background: #059669; }
+  .pin.network { background: #7c3aed; }
+  .pin.sewer { background: #57534e; }
+
+  .pin-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    white-space: nowrap;
+    color: var(--text-dim);
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  /* Canvas toolbar */
+  .canvas-toolbar {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    background: var(--surface);
+    padding: 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    z-index: 50;
+  }
+  .toolbar-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .toolbar-btn:hover { background: var(--surface2); color: var(--text); }
+  .toolbar-btn.active { background: var(--accent); color: white; }
+
+  /* Detail Panel */
+  .detail-panel {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .detail-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .detail-title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .detail-subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .detail-section {
+    margin-bottom: 20px;
+  }
+  .detail-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .detail-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .detail-field-label { color: var(--text-dim); }
+  .detail-field-value { font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .detail-note {
+    background: var(--surface2);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  .directions-box {
+    background: var(--red-glow);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .directions-box strong { color: var(--red); }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .photo-thumb {
+    aspect-ratio: 4/3;
+    background: var(--surface2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .badge-red { background: var(--red-glow); color: var(--red); }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-orange { background: rgba(249,115,22,0.15); color: var(--orange); }
+
+  /* Emergency overlay */
+  .emergency-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 15, 26, 0.95);
+    z-index: 1000;
+    padding: 40px;
+    overflow-y: auto;
+  }
+  .emergency-overlay.show { display: block; }
+  .emergency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .emergency-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all 0.2s;
+  }
+  .emergency-card:hover { border-color: var(--red); }
+  .emergency-card-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  .emergency-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .emergency-card-directions {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+  .emergency-card-directions strong { color: var(--text); }
+  .emergency-close {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+  }
+  .emergency-title {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .emergency-title h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+  .emergency-title p {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  .emergency-badge {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar, .detail-panel { display: none; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🏠</div>
+    <div class="logo-text">Home<span>Map</span></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-emergency" onclick="toggleEmergency()">🚨 EMERGENCY</button>
+    <button class="btn btn-ghost">📤 Share</button>
+    <button class="btn btn-primary">+ Add Pin</button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-value" style="color: var(--accent)">8</div>
+    <div class="stat-label">Rooms Mapped</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value" style="color: var(--green)">14</div>
+    <div class="stat-label">Pins Placed</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value" style="color: var(--orange)">3</div>
+    <div class="stat-label">Critical Systems</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-value" style="color: var(--cyan)">92%</div>
+    <div class="stat-label">Documented</div>
+  </div>
+</div>
+
+<!-- Main App -->
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="section-title">Rooms</div>
+    <ul class="room-list">
+      <li class="room-item active" onclick="selectRoom(this, 'kitchen')">
+        <span class="room-icon">🍳</span> Kitchen <span class="room-count">3</span>
+      </li>
+      <li class="room-item" onclick="selectRoom(this, 'garage')">
+        <span class="room-icon">🚗</span> Garage <span class="room-count">4</span>
+      </li>
+      <li class="room-item" onclick="selectRoom(this, 'bathroom')">
+        <span class="room-icon">🚿</span> Main Bathroom <span class="room-count">2</span>
+      </li>
+      <li class="room-item" onclick="selectRoom(this, 'laundry')">
+        <span class="room-icon">👕</span> Laundry Room <span class="room-count">2</span>
+      </li>
+      <li class="room-item" onclick="selectRoom(this, 'hallway')">
+        <span class="room-icon">🚪</span> Main Hallway <span class="room-count">1</span>
+      </li>
+      <li class="room-item" onclick="selectRoom(this, 'bedroom')">
+        <span class="room-icon">🛏️</span> Master Bedroom <span class="room-count">1</span>
+      </li>
+      <li class="room-item" onclick="selectRoom(this, 'living')">
+        <span class="room-icon">🛋️</span> Living Room <span class="room-count">0</span>
+      </li>
+      <li class="room-item" onclick="selectRoom(this, 'outside')">
+        <span class="room-icon">🌳</span> Exterior <span class="room-count">1</span>
+      </li>
+    </ul>
+
+    <div class="section-title">Pin Types</div>
+    <div class="pin-category"><div class="pin-dot" style="background:#1d4ed8"></div> Water / Plumbing</div>
+    <div class="pin-category"><div class="pin-dot" style="background:#b45309"></div> Electrical</div>
+    <div class="pin-category"><div class="pin-dot" style="background:#dc2626"></div> Gas</div>
+    <div class="pin-category"><div class="pin-dot" style="background:#059669"></div> HVAC</div>
+    <div class="pin-category"><div class="pin-dot" style="background:#7c3aed"></div> Network</div>
+    <div class="pin-category"><div class="pin-dot" style="background:#57534e"></div> Sewer / Drain</div>
+
+    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
+      <div class="section-title">Quick Actions</div>
+      <button class="btn btn-ghost" style="width:100%; margin-bottom:8px; text-align:left;">📤 Generate Sitter Guide</button>
+      <button class="btn btn-ghost" style="width:100%; margin-bottom:8px; text-align:left;">🔗 Contractor Share Link</button>
+      <button class="btn btn-ghost" style="width:100%; margin-bottom:8px; text-align:left;">📋 Export to PDF</button>
+      <button class="btn btn-ghost" style="width:100%; text-align:left;">🔄 Transfer to New Owner</button>
+    </div>
+  </div>
+
+  <!-- Floor Plan -->
+  <div class="canvas-area">
+    <div class="canvas-toolbar">
+      <button class="toolbar-btn active">📍 Pins</button>
+      <button class="toolbar-btn">📐 Measure</button>
+      <button class="toolbar-btn">📝 Annotate</button>
+      <button class="toolbar-btn">📷 Photos</button>
+      <button class="toolbar-btn">🔍 Zoom</button>
+    </div>
+
+    <div class="floor-plan" id="floorPlan">
+      <!-- Rooms -->
+      <div class="room-block active" style="left:20px; top:20px; width:220px; height:160px;">
+        <span class="room-block-label">🍳 Kitchen</span>
+        <span class="room-block-size">12' × 10'</span>
+      </div>
+      <div class="room-block" style="left:250px; top:20px; width:200px; height:160px;">
+        <span class="room-block-label">🛋️ Living Room</span>
+        <span class="room-block-size">16' × 14'</span>
+      </div>
+      <div class="room-block" style="left:460px; top:20px; width:200px; height:240px;">
+        <span class="room-block-label">🛏️ Master Bed</span>
+        <span class="room-block-size">14' × 12'</span>
+      </div>
+      <div class="room-block" style="left:20px; top:190px; width:160px; height:140px;">
+        <span class="room-block-label">🚿 Bathroom</span>
+        <span class="room-block-size">8' × 7'</span>
+      </div>
+      <div class="room-block" style="left:190px; top:190px; width:120px; height:140px;">
+        <span class="room-block-label">🚪 Hallway</span>
+        <span class="room-block-size">10' × 3'</span>
+      </div>
+      <div class="room-block" style="left:320px; top:190px; width:130px; height:140px;">
+        <span class="room-block-label">👕 Laundry</span>
+        <span class="room-block-size">6' × 6'</span>
+      </div>
+      <div class="room-block" style="left:20px; top:340px; width:330px; height:160px;">
+        <span class="room-block-label">🚗 Garage</span>
+        <span class="room-block-size">20' × 20'</span>
+      </div>
+      <div class="room-block" style="left:360px; top:340px; width:300px; height:160px;">
+        <span class="room-block-label">🌳 Exterior</span>
+        <span class="room-block-size">—</span>
+      </div>
+
+      <!-- Pins -->
+      <div class="pin water" style="left:60px; top:80px;" onclick="showDetail('water-shutoff')">
+        💧<span class="pin-label">Water Shutoff</span>
+      </div>
+      <div class="pin electric" style="left:170px; top:60px;" onclick="showDetail('breaker')">
+        ⚡<span class="pin-label">Breaker Panel</span>
+      </div>
+      <div class="pin gas" style="left:80px; top:400px;" onclick="showDetail('gas')">
+        🔥<span class="pin-label">Gas Meter</span>
+      </div>
+      <div class="pin hvac" style="left:240px; top:260px;" onclick="showDetail('hvac')">
+        ❄️<span class="pin-label">HVAC Unit</span>
+      </div>
+      <div class="pin network" style="left:520px; top:100px;" onclick="showDetail('router')">
+        📡<span class="pin-label">Router</span>
+      </div>
+      <div class="pin water" style="left:60px; top:260px;" onclick="showDetail('sink-valve')">
+        🔧<span class="pin-label">Sink Valve</span>
+      </div>
+      <div class="pin sewer" style="left:450px; top:430px;" onclick="showDetail('sewer')">
+        🕳️<span class="pin-label">Sewer Cleanout</span>
+      </div>
+      <div class="pin electric" style="left:540px; top:310px;" onclick="showDetail('outdoor-outlet')">
+        🔌<span class="pin-label">GFCI Outlet</span>
+      </div>
+      <div class="pin hvac" style="left:130px; top:430px;" onclick="showDetail('water-heater')">
+        🌡️<span class="pin-label">Water Heater</span>
+      </div>
+      <div class="pin water" style="left:350px; top:270px;" onclick="showDetail('washer-valve')">
+        🔧<span class="pin-label">Washer Valve</span>
+      </div>
+      <div class="pin electric" style="left:100px; top:150px;" onclick="showDetail('kitchen-gfci')">
+        🔌<span class="pin-label">GFCI</span>
+      </div>
+      <div class="pin network" style="left:340px; top:100px;" onclick="showDetail('switch')">
+        📡<span class="pin-label">Network Switch</span>
+      </div>
+      <div class="pin gas" style="left:200px; top:310px;" onclick="showDetail('furnace')">
+        🔥<span class="pin-label">Furnace</span>
+      </div>
+      <div class="pin electric" style="left:580px; top:180px;" onclick="showDetail('smoke')">
+        🔔<span class="pin-label">Smoke Det.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <div class="detail-icon" style="background: rgba(29,78,216,0.2);">💧</div>
+      <div>
+        <div class="detail-title">Main Water Shutoff</div>
+        <div class="detail-subtitle">Kitchen · Critical System</div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:6px; margin-bottom: 16px;">
+      <span class="badge badge-red">🔴 Critical</span>
+      <span class="badge badge-blue">Plumbing</span>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">📍 Location</div>
+      <div class="detail-field">
+        <span class="detail-field-label">Room</span>
+        <span class="detail-field-value">Kitchen</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Position</span>
+        <span class="detail-field-value">Under sink, left cabinet</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">🚨 Emergency Directions</div>
+      <div class="directions-box">
+        <strong>How to shut off water:</strong><br>
+        1. Open left cabinet under kitchen sink<br>
+        2. Push aside cleaning supplies<br>
+        3. Find <strong>red handle valve</strong> on the wall pipe<br>
+        4. Turn handle <strong>90° clockwise</strong> (perpendicular to pipe = OFF)
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">📋 Details</div>
+      <div class="detail-field">
+        <span class="detail-field-label">Type</span>
+        <span class="detail-field-value">Ball Valve (¼ turn)</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Pipe Size</span>
+        <span class="detail-field-value">¾" copper</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Last Tested</span>
+        <span class="detail-field-value">2026-04-15</span>
+      </div>
+      <div class="detail-field">
+        <span class="detail-field-label">Condition</span>
+        <span class="detail-field-value" style="color: var(--green);">Good ✅</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">📷 Photos</div>
+      <div class="photo-grid">
+        <div class="photo-thumb">📷</div>
+        <div class="photo-thumb">📷</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">📝 Notes</div>
+      <div class="detail-note">
+        Handle is stiff — needs moderate force. If it won't budge, use pliers on the handle grip. DO NOT force beyond 90° or you'll snap the valve.
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:16px;">
+      <button class="btn btn-primary" style="flex:1;">✏️ Edit</button>
+      <button class="btn btn-ghost" style="flex:1;">🗑️ Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Emergency Overlay -->
+<div class="emergency-overlay" id="emergencyOverlay">
+  <button class="emergency-close" onclick="toggleEmergency()">✕</button>
+  <div class="emergency-title">
+    <h2>🚨 EMERGENCY SHUTOFFS</h2>
+    <p>Quick access to all critical system controls — works offline</p>
+  </div>
+  <div class="emergency-grid">
+    <div class="emergency-card">
+      <span class="emergency-badge">Critical</span>
+      <div class="emergency-card-icon">💧</div>
+      <div class="emergency-card-title">Main Water Shutoff</div>
+      <div class="emergency-card-directions">
+        <strong>Location:</strong> Kitchen, under sink, left cabinet<br>
+        <strong>Action:</strong> Red handle ball valve → turn <strong>90° clockwise</strong><br>
+        <strong>Pipe:</strong> ¾" copper
+      </div>
+    </div>
+    <div class="emergency-card">
+      <span class="emergency-badge">Critical</span>
+      <div class="emergency-card-icon">🔥</div>
+      <div class="emergency-card-title">Gas Meter Shutoff</div>
+      <div class="emergency-card-directions">
+        <strong>Location:</strong> Garage, east wall near side door<br>
+        <strong>Action:</strong> 12" wrench on meter valve → turn <strong>¼ turn perpendicular</strong><br>
+        <strong>⚠️ If you smell gas, DO NOT use light switches. Evacuate first.**
+      </div>
+    </div>
+    <div class="emergency-card">
+      <span class="emergency-badge">Critical</span>
+      <div class="emergency-card-icon">⚡</div>
+      <div class="emergency-card-title">Main Breaker</div>
+      <div class="emergency-card-directions">
+        <strong>Location:</strong> Kitchen, left of fridge, behind access panel<br>
+        <strong>Main breaker:</strong> Top-left, <strong>200A double-pole</strong> → flip DOWN<br>
+        <strong>Panel:</strong> Square D QO, 42 spaces
+      </div>
+    </div>
+    <div class="emergency-card">
+      <span class="emergency-badge" style="background: var(--orange);">Important</span>
+      <div class="emergency-card-icon">❄️</div>
+      <div class="emergency-card-title">HVAC Emergency Switch</div>
+      <div class="emergency-card-directions">
+        <strong>Location:</strong> Hallway, next to thermostat (red switch plate)<br>
+        <strong>Action:</strong> Toggle switch DOWN to kill furnace/AC<br>
+        <strong>Furnace:</strong> Carrier 59SC6 (gas, installed 2019)
+      </div>
+    </div>
+    <div class="emergency-card">
+      <span class="emergency-badge" style="background: var(--orange);">Important</span>
+      <div class="emergency-card-icon">🌡️</div>
+      <div class="emergency-card-title">Water Heater Shutoff</div>
+      <div class="emergency-card-directions">
+        <strong>Location:</strong> Garage, south wall<br>
+        <strong>Water valve:</strong> Ball valve on cold inlet → <strong>90° clockwise</strong><br>
+        <strong>Gas valve:</strong> Red handle → <strong>¼ turn off</strong><br>
+        <strong>Drain:</strong> Hose bib at bottom, attach garden hose
+      </div>
+    </div>
+    <div class="emergency-card">
+      <span class="emergency-badge" style="background: var(--green);">Reference</span>
+      <div class="emergency-card-icon">📞</div>
+      <div class="emergency-card-title">Emergency Contacts</div>
+      <div class="emergency-card-directions">
+        <strong>Fire/Police/Medical:</strong> 911<br>
+        <strong>Gas Company:</strong> 1-800-427-2200<br>
+        <strong>Water Utility:</strong> (813) 274-8121<br>
+        <strong>Electric:</strong> 1-800-468-8243<br>
+        <strong>Plumber (24h):</strong> (813) 555-0147
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectRoom(el, room) {
+  document.querySelectorAll('.room-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function showDetail(pinId) {
+  const details = {
+    'water-shutoff': { icon: '💧', title: 'Main Water Shutoff', subtitle: 'Kitchen · Critical', color: 'rgba(29,78,216,0.2)', badges: ['badge-red:🔴 Critical', 'badge-blue:Plumbing'] },
+    'breaker': { icon: '⚡', title: 'Breaker Panel', subtitle: 'Kitchen · 42-Space Square D QO', color: 'rgba(180,83,9,0.2)', badges: ['badge-red:🔴 Critical', 'badge-orange:Electrical'] },
+    'gas': { icon: '🔥', title: 'Gas Meter', subtitle: 'Garage · East Wall', color: 'rgba(220,38,38,0.2)', badges: ['badge-red:🔴 Critical', 'badge-red:Gas'] },
+    'hvac': { icon: '❄️', title: 'HVAC Unit', subtitle: 'Hallway Closet · Carrier 59SC6', color: 'rgba(5,150,105,0.2)', badges: ['badge-orange:Important', 'badge-green:HVAC'] },
+  };
+  const d = details[pinId] || { icon: '📍', title: pinId, subtitle: '', color: 'var(--surface2)', badges: [] };
+  const panel = document.getElementById('detailPanel');
+  panel.querySelector('.detail-icon').textContent = d.icon;
+  panel.querySelector('.detail-icon').style.background = d.color;
+  panel.querySelector('.detail-title').textContent = d.title;
+  panel.querySelector('.detail-subtitle').textContent = d.subtitle;
+}
+
+function toggleEmergency() {
+  document.getElementById('emergencyOverlay').classList.toggle('show');
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') document.getElementById('emergencyOverlay').classList.remove('show');
+});
+</script>
+
+</body>
+</html>
