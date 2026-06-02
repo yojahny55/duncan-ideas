@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LastLogin — Digital Estate Planner</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #242836;
+    --border: #2e3348;
+    --text: #e8eaf0;
+    --text-dim: #8b90a5;
+    --accent: #7c6aef;
+    --accent-glow: rgba(124,106,239,0.15);
+    --danger: #ef4444;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .header-nav {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .nav-btn.active, .nav-btn:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .checkin-badge {
+    background: var(--success);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c6aef, #ec4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* Main layout */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat-card.accent .stat-value { color: var(--accent); }
+  .stat-card.success .stat-value { color: var(--success); }
+  .stat-card.warning .stat-value { color: var(--warning); }
+
+  /* Account list */
+  .account-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .account-item:last-child { border-bottom: none; }
+  .account-item:hover { padding-left: 6px; }
+  .account-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .account-info { flex: 1; min-width: 0; }
+  .account-name { font-weight: 600; font-size: 14px; }
+  .account-detail { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .account-wish {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .wish-transfer { background: rgba(34,197,94,0.15); color: var(--success); }
+  .wish-memorial { background: rgba(124,106,239,0.15); color: var(--accent); }
+  .wish-delete { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .wish-download { background: rgba(245,158,11,0.15); color: var(--warning); }
+
+  /* Sidebar */
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+  /* Heir cards */
+  .heir-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+  }
+  .heir-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .heir-info { flex: 1; }
+  .heir-name { font-weight: 600; font-size: 14px; }
+  .heir-role { font-size: 11px; color: var(--text-dim); }
+  .heir-access {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Dead man's switch */
+  .switch-visual {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    text-align: center;
+    margin: 12px 0;
+  }
+  .pulse-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--success);
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    animation: pulse 2s ease-in-out infinite;
+    position: relative;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+    50% { box-shadow: 0 0 0 12px rgba(34,197,94,0); }
+  }
+  .switch-status { font-weight: 600; font-size: 14px; }
+  .switch-detail { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* Category tabs */
+  .cat-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .cat-tab {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-tab.active, .cat-tab:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* CTA button */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #6b5ce0; transform: translateY(-1px); }
+  .btn-ghost { background: none; border: 1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { background: var(--surface2); }
+  .btn-full { width: 100%; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .modal-subtitle {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* Form elements */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+
+  .wish-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .wish-option {
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: none;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .wish-option:hover { border-color: var(--text-dim); }
+  .wish-option.selected { border-color: var(--accent); background: var(--accent-glow); }
+  .wish-option .emoji { font-size: 24px; display: block; margin-bottom: 4px; }
+  .wish-option .label { font-weight: 600; font-size: 12px; }
+
+  /* Legacy score */
+  .score-ring {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) 0deg, var(--accent) 280deg, var(--surface2) 280deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .score-inner {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .score-value { font-size: 28px; font-weight: 800; color: var(--accent); }
+  .score-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .header-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">💀</div>
+    <span>LastLogin</span>
+  </div>
+  <nav class="header-nav">
+    <button class="nav-btn active">Dashboard</button>
+    <button class="nav-btn">Accounts</button>
+    <button class="nav-btn">Heirs</button>
+    <button class="nav-btn">Dead Switch</button>
+    <button class="nav-btn">Legacy PDF</button>
+  </nav>
+  <div class="header-right">
+    <span class="checkin-badge">✓ Checked in today</span>
+    <div class="avatar">YC</div>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="main">
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card accent">
+        <div class="stat-value">34</div>
+        <div class="stat-label">Accounts</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-value">27</div>
+        <div class="stat-label">Planned</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Heirs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--danger)">7</div>
+        <div class="stat-label">Unplanned</div>
+      </div>
+    </div>
+
+    <!-- Accounts card -->
+    <div class="card">
+      <div class="card-title">
+        📋 Digital Assets
+        <span style="flex:1"></span>
+        <button class="btn btn-primary" onclick="openModal()">+ Add Account</button>
+      </div>
+      <div class="cat-tabs">
+        <button class="cat-tab active">All (34)</button>
+        <button class="cat-tab">💰 Financial (8)</button>
+        <button class="cat-tab">📱 Social (6)</button>
+        <button class="cat-tab">☁️ Cloud (5)</button>
+        <button class="cat-tab">₿ Crypto (4)</button>
+        <button class="cat-tab">🔄 Subscriptions (7)</button>
+        <button class="cat-tab">🏢 Business (4)</button>
+      </div>
+
+      <div id="accountList">
+        <!-- Financial -->
+        <div class="account-item">
+          <div class="account-icon" style="background:rgba(34,197,94,0.15)">🏦</div>
+          <div class="account-info">
+            <div class="account-name">Chase Banking</div>
+            <div class="account-detail">Checking + Savings • Last accessed today</div>
+          </div>
+          <span class="account-wish wish-transfer">→ Transfer to Maria</span>
+        </div>
+
+        <div class="account-item">
+          <div class="account-icon" style="background:rgba(245,158,11,0.15)">₿</div>
+          <div class="account-info">
+            <div class="account-name">Coinbase Wallet</div>
+            <div class="account-detail">~$12,400 in BTC/ETH • Seed phrase in vault</div>
+          </div>
+          <span class="account-wish wish-transfer">→ Transfer to Carlos</span>
+        </div>
+
+        <div class="account-item">
+          <div class="account-icon" style="background:rgba(59,130,246,0.15)">📧</div>
+          <div class="account-info">
+            <div class="account-name">Gmail — yojahny@gmail.com</div>
+            <div class="account-detail">Primary email • 2FA hub for 40+ services</div>
+          </div>
+          <span class="account-wish wish-transfer">→ Transfer to Maria</span>
+        </div>
+
+        <div class="account-item">
+          <div class="account-icon" style="background:rgba(124,106,239,0.15)">📸</div>
+          <div class="account-info">
+            <div class="account-name">Google Photos</div>
+            <div class="account-detail">14,200+ photos, 800+ videos • Family memories</div>
+          </div>
+          <span class="account-wish wish-download">↓ Download & Delete</span>
+        </div>
+
+        <div class="account-item">
+          <div class="account-icon" style="background:rgba(239,68,68,0.15)">𝕏</div>
+          <div class="account-info">
+            <div class="account-name">X / Twitter</div>
+            <div class="account-detail">@yojahny • 1,200 followers • Professional presence</div>
+          </div>
+          <span class="account-wish wish-memorial">🕊 Memorialize</span>
+        </div>
+
+        <div class="account-item">
+          <div class="account-icon" style="background:rgba(34,197,94,0.15)">💳</div>
+          <div class="account-info">
+            <div class="account-name">Netflix</div>
+            <div class="account-detail">$15.49/mo • Premium plan</div>
+          </div>
+          <span class="account-wish wish-delete">✕ Cancel & Delete</span>
+        </div>
+
+        <div class="account-item">
+          <div class="account-icon" style="background:rgba(59,130,246,0.15)">🌐</div>
+          <div class="account-info">
+            <div class="account-name">yojahny.dev — Domain</div>
+            <div class="account-detail">Google Domains → Squarespace • Renewal: Aug 2026</div>
+          </div>
+          <span class="account-wish wish-transfer">→ Transfer to Carlos</span>
+        </div>
+
+        <div class="account-item" style="opacity:0.5">
+          <div class="account-icon" style="background:rgba(139,144,165,0.15)">🎮</div>
+          <div class="account-info">
+            <div class="account-name">Steam</div>
+            <div class="account-detail">240 games • ~$3,200 value</div>
+          </div>
+          <span class="account-wish" style="background:var(--surface2);color:var(--text-dim)">⚠️ Unplanned</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <!-- Readiness Score -->
+    <div class="card" style="text-align:center">
+      <div class="card-title" style="justify-content:center">🛡️ Estate Readiness</div>
+      <div class="score-ring">
+        <div class="score-inner">
+          <div class="score-value">78</div>
+          <div class="score-label">out of 100</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-dim);margin-top:8px">7 accounts need wishes assigned</p>
+      <button class="btn btn-primary btn-full" style="margin-top:12px">Complete Your Plan</button>
+    </div>
+
+    <!-- Dead Man's Switch -->
+    <div class="card">
+      <div class="card-title">⏰ Dead Man's Switch</div>
+      <div class="switch-visual">
+        <div class="pulse-ring">✓</div>
+        <div class="switch-status" style="color:var(--success)">Active — All Good</div>
+        <div class="switch-detail">Next check-in: June 8, 2026</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span>Missed check-ins before alert</span>
+          <span style="color:var(--text)">2</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span>Verifier</span>
+          <span style="color:var(--text)">Maria C.</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span>Grace period</span>
+          <span style="color:var(--text)">7 days</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Digital Heirs -->
+    <div class="card">
+      <div class="card-title">
+        👥 Digital Heirs
+        <span style="flex:1"></span>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px">+ Add</button>
+      </div>
+
+      <div class="heir-card">
+        <div class="heir-avatar" style="background:linear-gradient(135deg,#ec4899,#f43f5e)">MC</div>
+        <div class="heir-info">
+          <div class="heir-name">Maria Chavez</div>
+          <div class="heir-role">Sister • Verifier</div>
+        </div>
+        <span class="heir-access">Full Access</span>
+      </div>
+
+      <div class="heir-card">
+        <div class="heir-avatar" style="background:linear-gradient(135deg,#3b82f6,#6366f1)">CC</div>
+        <div class="heir-info">
+          <div class="heir-name">Carlos Chavez</div>
+          <div class="heir-role">Brother</div>
+        </div>
+        <span class="heir-access">Financial</span>
+      </div>
+
+      <div class="heir-card">
+        <div class="heir-avatar" style="background:linear-gradient(135deg,#22c55e,#14b8a6)">AL</div>
+        <div class="heir-info">
+          <div class="heir-name">Ana López</div>
+          <div class="heir-role">Partner</div>
+        </div>
+        <span class="heir-access">Sentimental</span>
+      </div>
+    </div>
+
+    <!-- Quick Export -->
+    <div class="card">
+      <div class="card-title">📦 Export</div>
+      <button class="btn btn-ghost btn-full" style="margin-bottom:8px">📄 Generate Legacy PDF</button>
+      <button class="btn btn-ghost btn-full">🪪 Print Emergency Card</button>
+    </div>
+  </aside>
+</main>
+
+<!-- Add Account Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">Add Digital Asset</div>
+    <div class="modal-subtitle">Add an account, asset, or subscription to your digital estate plan.</div>
+
+    <div class="form-group">
+      <label class="form-label">Service / Account Name</label>
+      <input class="form-input" placeholder="e.g. Chase Bank, Gmail, Coinbase...">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-input">
+        <option>💰 Financial</option>
+        <option>📱 Social Media</option>
+        <option>☁️ Cloud Storage</option>
+        <option>₿ Crypto / Web3</option>
+        <option>🔄 Subscription</option>
+        <option>🏢 Business</option>
+        <option>🎮 Entertainment</option>
+        <option>📧 Email</option>
+        <option>🔗 Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notes for your heir</label>
+      <textarea class="form-input" rows="2" placeholder="Password hints, 2FA backup codes location, special instructions..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">What should happen to this account?</label>
+      <div class="wish-options">
+        <button class="wish-option selected" onclick="selectWish(this)">
+          <span class="emoji">📤</span>
+          <span class="label">Transfer</span>
+        </button>
+        <button class="wish-option" onclick="selectWish(this)">
+          <span class="emoji">🕊</span>
+          <span class="label">Memorialize</span>
+        </button>
+        <button class="wish-option" onclick="selectWish(this)">
+          <span class="emoji">📥</span>
+          <span class="label">Download & Delete</span>
+        </button>
+        <button class="wish-option" onclick="selectWish(this)">
+          <span class="emoji">✕</span>
+          <span class="label">Cancel & Delete</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Assign to Heir</label>
+      <select class="form-input">
+        <option>Maria Chavez — Full Access</option>
+        <option>Carlos Chavez — Financial</option>
+        <option>Ana López — Sentimental</option>
+      </select>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:20px">
+      <button class="btn btn-primary btn-full" onclick="closeModal()">Add to Estate Plan</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal() {
+  document.getElementById('modal').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+function selectWish(el) {
+  document.querySelectorAll('.wish-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+// Category tab switching
+document.querySelectorAll('.cat-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
