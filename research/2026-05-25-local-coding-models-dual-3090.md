@@ -160,36 +160,71 @@
 
 ---
 
-## Final Verdict for Dual RTX 3090 Setup
+## Final Verdict — LOCKED IN
 
-### Option A: Dual Qwen 3.6-27B (Your Current Plan) ✅ RECOMMENDED
-- **One copy per GPU**, AutoRound INT4 quant
-- ~70-90 tok/s per instance, 2 parallel agents
-- 77.2% SWE-Bench — best quality that fits on 24GB
-- LiteLLM routes between them for load balancing
-- Apache 2.0 license
+### Production Config: Dual Qwen 3.6-27B ✅ SHIPPED
 
-### Option B: Single Qwen 3.6-27B TP=2 + MoE on GPU 2
-- GPU 0+1: 27B dense at TP=2 (90-96 tok/s, highest quality)
-- GPU 2 doesn't exist, so this doesn't apply
+```
+Per GPU (each 3090, 24GB VRAM):
+├── Model: Qwen 3.6-27B
+├── Quant: AutoRound INT4 (~18GB weights)
+├── KV Cache: fp8_e5m2 (fp16 KV if Ampere issues)
+├── Context: 20-75K tokens per instance
+├── Engine: vLLM (OpenAI-compatible API + tool calling)
+├── TPS: ~70-90 tok/s per instance
+└── License: Apache 2.0
 
-### Option C: Hybrid Routing (Advanced)
-- Run 27B dense on both GPUs (dual instance)
-- Add LiteLLM routing to cloud APIs for tasks exceeding local capacity
-- Use GLM-5.1 or DeepSeek V4-Pro via API for the hardest tasks
+Routing:
+├── LiteLLM round-robin between both instances
+├── No external/cloud fallback — all local
+└── 2 parallel agent streams for House Atreides
+```
 
-### Quantization Recommendation
-- **AutoRound INT4** is the community-tested winner for 3090
-- AWQ INT4 works but slightly worse quality
-- FP8 not supported on Ampere (3090 is Ampere, not Hopper)
-- GGUF/IQ4_XS for llama.cpp fallback
+### Context Management Strategy
+
+**Coding mode (big codebases):**
+- Drop to Q4_K_M (~17GB weights) → ~7GB free per GPU for KV
+- Enable Q4 KV cache quantization (q4_0)
+- Result: ~64K-128K context per instance in VRAM
+- Two instances still running, LiteLLM round-robins
+
+**Quality mode (chat, reasoning, writing):**
+- Stay at INT4 (~18GB weights)
+- fp8 KV cache
+- 20-75K context per instance
+- Higher quality per token
+
+**Max context (loading entire project, rare):**
+- Spin up single instance across both GPUs (TP=2)
+- Or chunk the task smaller
+- No cloud fallback
+
+### Why NOT Q5_K_M
+
+Original plan was Q5_K_M (~20GB weights) but:
+- Only ~4GB left for KV cache per GPU
+- Limits context to ~8-16K tokens (too small for codebases)
+- Q4_K_M frees ~7GB for KV → 4x more context room
+- Quality difference between Q4 and Q5 is real but small
+- For agency coding work, extra context > slight quality bump
 
 ### What to AVOID
-- FP8 on 3090 (not hardware-supported)
+- FP8 on 3090 (not hardware-supported on Ampere)
 - vLLM MoE on single 3090 (documented 18 tok/s anti-pattern)
 - Tensor parallelism beyond TP=2 on consumer GPUs (PCIe bottleneck, no NVLink)
-- Llama 4 Scout (you already rejected it, community agrees it's weak for coding)
+- Llama 4 Scout (community agrees it's weak for coding)
 - Any MoE with "tensor split" — use layer split mode only
+- Cloud/API fallbacks — everything stays on the rig
+- KTransformers for dense models (only useful for MoE like GLM-5)
+
+### When to Switch Modes
+
+| Scenario | Config | Context | Speed |
+|----------|--------|---------|-------|
+| Default agency work | INT4 + fp8 KV, 2 instances | 20-75K each | ~90 tok/s |
+| Big codebase tasks | Q4_K_M + q4_0 KV, 2 instances | 64-128K each | ~70 tok/s |
+| Need max context | INT4 + fp8 KV, TP=2 (1 instance) | 100-500K | ~96 tok/s |
+| Max throughput code gen | INT4 + MTP-3, TP=2 | 100K | ~264 tok/s |
 
 ---
 
