@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScopeGuard — Freelancer Scope Creep Defense</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --surface2: #1a1a28;
+  --surface3: #222236;
+  --border: #2a2a40;
+  --text: #e8e8f0;
+  --text2: #8888a8;
+  --text3: #555570;
+  --green: #22c55e;
+  --green-bg: rgba(34,197,94,0.1);
+  --yellow: #eab308;
+  --yellow-bg: rgba(234,179,8,0.1);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.1);
+  --purple: #8b5cf6;
+  --purple-bg: rgba(139,92,246,0.1);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59,130,246,0.1);
+  --accent: #f97316;
+}
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.app { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
+.logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; padding: 0 8px; }
+.logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #fb923c); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #000; }
+.logo-text { font-weight: 700; font-size: 16px; color: var(--text); }
+.logo-text span { color: var(--accent); }
+.nav-section { margin-bottom: 24px; }
+.nav-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text3); padding: 0 12px; margin-bottom: 8px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: var(--text2); cursor: pointer; font-size: 13px; font-weight: 500; transition: all .15s; }
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--surface3); color: var(--text); }
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+.nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+.sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+.user-info { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+.user-name { font-size: 13px; font-weight: 600; }
+.user-plan { font-size: 11px; color: var(--accent); font-weight: 500; }
+
+/* Main */
+.main { margin-left: 240px; flex: 1; padding: 32px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* Header */
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+.page-title { font-size: 24px; font-weight: 700; }
+.page-subtitle { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.btn { padding: 10px 20px; border-radius: 8px; border: none; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary { background: var(--accent); color: #000; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--text3); color: var(--text); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* Stats row */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.stat-label { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 8px; }
+.stat-value { font-size: 28px; font-weight: 800; }
+.stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.stat-card.red .stat-value { color: var(--red); }
+.stat-card.yellow .stat-value { color: var(--yellow); }
+.stat-card.green .stat-value { color: var(--green); }
+.stat-card.purple .stat-value { color: var(--purple); }
+
+/* Request Feed */
+.feed { display: flex; flex-direction: column; gap: 12px; }
+.feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.feed-title { font-size: 16px; font-weight: 700; }
+.request-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: all .15s; }
+.request-card:hover { border-color: var(--text3); }
+.request-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.request-meta { display: flex; align-items: center; gap: 12px; }
+.request-client { display: flex; align-items: center; gap: 8px; }
+.client-dot { width: 8px; height: 8px; border-radius: 50%; }
+.client-name { font-size: 13px; font-weight: 600; }
+.request-project { font-size: 12px; color: var(--text2); }
+.request-time { font-size: 11px; color: var(--text3); }
+.request-text { font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 16px; padding: 12px 16px; background: var(--surface2); border-radius: 8px; border-left: 3px solid var(--border); }
+.scope-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.scope-badge.in-scope { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+.scope-badge.borderline { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
+.scope-badge.creep { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+.request-bottom { display: flex; justify-content: space-between; align-items: center; }
+.request-reason { font-size: 12px; color: var(--text2); max-width: 60%; line-height: 1.5; }
+.request-actions { display: flex; gap: 8px; }
+
+/* Log Request Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: center; justify-content: center; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 560px; max-height: 90vh; overflow-y: auto; }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.modal-title { font-size: 16px; font-weight: 700; }
+.modal-close { background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; }
+.modal-body { padding: 24px; }
+.form-group { margin-bottom: 20px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 8px; display: block; }
+.form-input, .form-textarea, .form-select { width: 100%; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: 13px; }
+.form-textarea { min-height: 100px; resize: vertical; }
+.form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--accent); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+/* Response Preview */
+.response-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 16px; }
+.response-label { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+.response-text { font-size: 13px; line-height: 1.7; color: var(--text); }
+
+/* Clients page */
+.clients-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.client-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.client-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.client-card-name { font-size: 15px; font-weight: 700; }
+.client-card-projects { font-size: 12px; color: var(--text2); }
+.creep-bar { height: 6px; background: var(--surface3); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+.creep-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+.client-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.client-stat { text-align: center; }
+.client-stat-val { font-size: 16px; font-weight: 700; }
+.client-stat-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* Scope def page */
+.scope-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.scope-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+.scope-card-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.scope-card-client { font-size: 12px; color: var(--text2); margin-bottom: 16px; }
+.scope-items { display: flex; flex-direction: column; gap: 8px; }
+.scope-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
+.scope-item .check { color: var(--green); font-size: 14px; }
+.scope-item .x { color: var(--red); font-size: 14px; }
+.scope-meta { display: flex; gap: 16px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.scope-meta-item { font-size: 11px; color: var(--text3); }
+.scope-meta-item span { color: var(--text2); font-weight: 600; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.empty-desc { font-size: 13px; color: var(--text2); max-width: 400px; margin: 0 auto 24px; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .clients-grid, .scope-cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">🛡</div>
+      <div class="logo-text">Scope<span>Guard</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span> Dashboard</div>
+      <div class="nav-item" data-page="feed"><span class="icon">📋</span> Request Feed <span class="badge">3</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Manage</div>
+      <div class="nav-item" data-page="clients"><span class="icon">👥</span> Clients</div>
+      <div class="nav-item" data-page="scope"><span class="icon">📐</span> Scope Definitions</div>
+      <div class="nav-item" data-page="reports"><span class="icon">📈</span> Reports</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <div class="nav-item" data-page="respond"><span class="icon">✉️</span> Response Generator</div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="user-info">
+        <div class="avatar">SM</div>
+        <div>
+          <div class="user-name">Sarah M.</div>
+          <div class="user-plan">Pro Plan</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-subtitle">Your scope defense overview — June 2026</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal()">+ Log Request</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card red">
+          <div class="stat-label">Unbilled Hours</div>
+          <div class="stat-value">14.5h</div>
+          <div class="stat-sub">↑ 3.2h from last month</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">Revenue at Risk</div>
+          <div class="stat-value">$1,522</div>
+          <div class="stat-sub">At $105/hr avg rate</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-label">Scope Creep Rate</div>
+          <div class="stat-value">23%</div>
+          <div class="stat-sub">Of all requests this month</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Defended</div>
+          <div class="stat-value">$890</div>
+          <div class="stat-sub">Saved via scope responses</div>
+        </div>
+      </div>
+      <div class="feed-header">
+        <div class="feed-title">Recent Requests</div>
+        <button class="btn btn-ghost btn-sm" onclick="navigateTo('feed')">View All →</button>
+      </div>
+      <div class="feed">
+        <div class="request-card">
+          <div class="request-top">
+            <div class="request-meta">
+              <div class="request-client"><div class="client-dot" style="background:#8b5cf6"></div><span class="client-name">TechFlow Inc.</span></div>
+              <span class="request-project">Website Redesign</span>
+            </div>
+            <span class="request-time">2 hours ago</span>
+          </div>
+          <div class="request-text">"Hey Sarah, love the homepage! Quick thing — could you also redesign our blog section? We have about 30 posts that need a fresh look. Shouldn't take too long right?"</div>
+          <div class="request-bottom">
+            <div>
+              <span class="scope-badge creep">🔴 Scope Creep — 94%</span>
+              <div class="request-reason" style="margin-top:8px">Blog section was explicitly excluded from scope. Original proposal: "Homepage + 3 landing pages." 30 blog post redesigns ≈ 8-12 additional hours.</div>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-ghost btn-sm" onclick="showResponse(this, 'blog')">Generate Response</button>
+            </div>
+          </div>
+        </div>
+        <div class="request-card">
+          <div class="request-top">
+            <div class="request-meta">
+              <div class="request-client"><div class="client-dot" style="background:#3b82f6"></div><span class="client-name">GreenLeaf Co.</span></div>
+              <span class="request-project">Brand Identity</span>
+            </div>
+            <span class="request-time">Yesterday</span>
+          </div>
+          <div class="request-text">"The logo looks great! Can we see it in a few more color variations? Maybe 5-6 options? And could you mock up how it looks on a t-shirt and coffee mug?"</div>
+          <div class="request-bottom">
+            <div>
+              <span class="scope-badge borderline">⚠️ Borderline — 62%</span>
+              <div class="request-reason" style="margin-top:8px">Contract allows 2 color variations. 5-6 exceeds revision limit. Merch mockups were not in scope.</div>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-ghost btn-sm" onclick="showResponse(this, 'logo')">Generate Response</button>
+            </div>
+          </div>
+        </div>
+        <div class="request-card">
+          <div class="request-top">
+            <div class="request-meta">
+              <div class="request-client"><div class="client-dot" style="background:#22c55e"></div><span class="client-name">Cafe Sunrise</span></div>
+              <span class="request-project">Menu Design</span>
+            </div>
+            <span class="request-time">2 days ago</span>
+          </div>
+          <div class="request-text">"Can you swap out the latte photo for the cappuccino one on page 2?"</div>
+          <div class="request-bottom">
+            <div>
+              <span class="scope-badge in-scope">✅ In Scope — 91%</span>
+              <div class="request-reason" style="margin-top:8px">Minor content swap within revision cycle. No scope impact.</div>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-sm" style="background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.2);border-radius:8px;cursor:pointer;font-family:inherit;font-weight:600">✓ Approve</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed Page -->
+    <div class="page" id="page-feed">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Request Feed</div>
+          <div class="page-subtitle">All client requests — classified and tracked</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" style="border-color:var(--red);color:var(--red)">Creep Only</button>
+          <button class="btn btn-primary" onclick="openModal()">+ Log Request</button>
+        </div>
+      </div>
+      <div class="feed">
+        <div class="request-card">
+          <div class="request-top">
+            <div class="request-meta">
+              <div class="request-client"><div class="client-dot" style="background:#f97316"></div><span class="client-name">PetPals App</span></div>
+              <span class="request-project">Mobile App UI</span>
+            </div>
+            <span class="request-time">3 days ago</span>
+          </div>
+          <div class="request-text">"We love the designs! Our investors want to see a dark mode version too. Can you whip that up by Friday? Also the onboarding flow needs 3 more screens we didn't discuss."</div>
+          <div class="request-bottom">
+            <div>
+              <span class="scope-badge creep">🔴 Scope Creep — 97%</span>
+              <div class="request-reason" style="margin-top:8px">Dark mode = full design system rebuild (~16hrs). 3 additional screens beyond contracted scope. Friday deadline is unrealistic for scope expansion.</div>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-ghost btn-sm">Generate Response</button>
+            </div>
+          </div>
+        </div>
+        <div class="request-card">
+          <div class="request-top">
+            <div class="request-meta">
+              <div class="request-client"><div class="client-dot" style="background:#8b5cf6"></div><span class="client-name">TechFlow Inc.</span></div>
+              <span class="request-project">Website Redesign</span>
+            </div>
+            <span class="request-time">3 days ago</span>
+          </div>
+          <div class="request-text">"Also can you set up our Google Analytics and Tag Manager? Our old dev used to handle that."</div>
+          <div class="request-bottom">
+            <div>
+              <span class="scope-badge creep">🔴 Scope Creep — 89%</span>
+              <div class="request-reason" style="margin-top:8px">Analytics setup was excluded in scope doc. Section 4.2: "Client responsible for analytics integration."</div>
+            </div>
+            <div class="request-actions">
+              <button class="btn btn-ghost btn-sm">Generate Response</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clients Page -->
+    <div class="page" id="page-clients">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Clients</div>
+          <div class="page-subtitle">Scope health per client — ranked by creep risk</div>
+        </div>
+      </div>
+      <div class="clients-grid">
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-card-name" style="color:#f97316">PetPals App</div>
+              <div class="client-card-projects">1 active project</div>
+            </div>
+            <span class="scope-badge creep" style="font-size:11px">High Risk</span>
+          </div>
+          <div class="client-stats">
+            <div class="client-stat"><div class="client-stat-val" style="color:var(--red)">$2,400</div><div class="client-stat-label">Unbilled</div></div>
+            <div class="client-stat"><div class="client-stat-val" style="color:var(--red)">41%</div><div class="client-stat-label">Creep Rate</div></div>
+            <div class="client-stat"><div class="client-stat-val">8</div><div class="client-stat-label">Out of Scope</div></div>
+          </div>
+          <div class="creep-bar"><div class="creep-bar-fill" style="width:41%;background:var(--red)"></div></div>
+        </div>
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-card-name" style="color:#8b5cf6">TechFlow Inc.</div>
+              <div class="client-card-projects">1 active project</div>
+            </div>
+            <span class="scope-badge borderline" style="font-size:11px">Medium Risk</span>
+          </div>
+          <div class="client-stats">
+            <div class="client-stat"><div class="client-stat-val" style="color:var(--yellow)">$1,050</div><div class="client-stat-label">Unbilled</div></div>
+            <div class="client-stat"><div class="client-stat-val" style="color:var(--yellow)">28%</div><div class="client-stat-label">Creep Rate</div></div>
+            <div class="client-stat"><div class="client-stat-val">5</div><div class="client-stat-label">Out of Scope</div></div>
+          </div>
+          <div class="creep-bar"><div class="creep-bar-fill" style="width:28%;background:var(--yellow)"></div></div>
+        </div>
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-card-name" style="color:#3b82f6">GreenLeaf Co.</div>
+              <div class="client-card-projects">1 active project</div>
+            </div>
+            <span class="scope-badge borderline" style="font-size:11px">Medium Risk</span>
+          </div>
+          <div class="client-stats">
+            <div class="client-stat"><div class="client-stat-val" style="color:var(--yellow)">$420</div><div class="client-stat-label">Unbilled</div></div>
+            <div class="client-stat"><div class="client-stat-val" style="color:var(--yellow)">18%</div><div class="client-stat-label">Creep Rate</div></div>
+            <div class="client-stat"><div class="client-stat-val">3</div><div class="client-stat-label">Out of Scope</div></div>
+          </div>
+          <div class="creep-bar"><div class="creep-bar-fill" style="width:18%;background:var(--yellow)"></div></div>
+        </div>
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-card-name" style="color:#22c55e">Cafe Sunrise</div>
+              <div class="client-card-projects">2 projects (1 active)</div>
+            </div>
+            <span class="scope-badge in-scope" style="font-size:11px">Low Risk</span>
+          </div>
+          <div class="client-stats">
+            <div class="client-stat"><div class="client-stat-val">$0</div><div class="client-stat-label">Unbilled</div></div>
+            <div class="client-stat"><div class="client-stat-val" style="color:var(--green)">4%</div><div class="client-stat-label">Creep Rate</div></div>
+            <div class="client-stat"><div class="client-stat-val">0</div><div class="client-stat-label">Out of Scope</div></div>
+          </div>
+          <div class="creep-bar"><div class="creep-bar-fill" style="width:4%;background:var(--green)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scope Definitions -->
+    <div class="page" id="page-scope">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Scope Definitions</div>
+          <div class="page-subtitle">Active project boundaries — your defense contracts</div>
+        </div>
+        <button class="btn btn-primary">+ New Project Scope</button>
+      </div>
+      <div class="scope-cards">
+        <div class="scope-card">
+          <div class="scope-card-title">Website Redesign</div>
+          <div class="scope-card-client">TechFlow Inc. — Started May 1, 2026</div>
+          <div class="scope-items">
+            <div class="scope-item"><span class="check">✓</span> Homepage design + development</div>
+            <div class="scope-item"><span class="check">✓</span> 3 landing pages (Pricing, About, Contact)</div>
+            <div class="scope-item"><span class="check">✓</span> Mobile responsive (all pages)</div>
+            <div class="scope-item"><span class="check">✓</span> 2 rounds of revisions</div>
+            <div class="scope-item"><span class="check">✓</span> CMS integration (WordPress)</div>
+            <div class="scope-item"><span class="x">✗</span> Blog section redesign</div>
+            <div class="scope-item"><span class="x">✗</span> Analytics/Tag Manager setup</div>
+            <div class="scope-item"><span class="x">✗</span> SEO optimization</div>
+            <div class="scope-item"><span class="x">✗</span> Content writing</div>
+          </div>
+          <div class="scope-meta">
+            <div class="scope-meta-item">Budget: <span>$8,500</span></div>
+            <div class="scope-meta-item">Revisions used: <span>1/2</span></div>
+            <div class="scope-meta-item">Deadline: <span>Jun 30</span></div>
+          </div>
+        </div>
+        <div class="scope-card">
+          <div class="scope-card-title">Brand Identity Package</div>
+          <div class="scope-card-client">GreenLeaf Co. — Started May 15, 2026</div>
+          <div class="scope-items">
+            <div class="scope-item"><span class="check">✓</span> Logo design (primary + secondary)</div>
+            <div class="scope-item"><span class="check">✓</span> 2 color variations included</div>
+            <div class="scope-item"><span class="check">✓</span> Brand color palette</div>
+            <div class="scope-item"><span class="check">✓</span> Typography selection</div>
+            <div class="scope-item"><span class="check">✓</span> Business card design</div>
+            <div class="scope-item"><span class="check">✓</span> 3 rounds of revisions</div>
+            <div class="scope-item"><span class="x">✗</span> Merch mockups</div>
+            <div class="scope-item"><span class="x">✗</span> Social media templates</div>
+            <div class="scope-item"><span class="x">✗</span> Brand guidelines document</div>
+          </div>
+          <div class="scope-meta">
+            <div class="scope-meta-item">Budget: <span>$4,200</span></div>
+            <div class="scope-item">Revisions used: <span>2/3</span></div>
+            <div class="scope-meta-item">Deadline: <span>Jun 20</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="page" id="page-reports">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Reports</div>
+          <div class="page-subtitle">Scope health reports — download and share</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">May 2026 Scope Report</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;">12 scope creep requests detected • $2,180 unbilled • 18.5 hrs free work</div>
+          </div>
+          <button class="btn btn-ghost btn-sm">📄 Download PDF</button>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">April 2026 Scope Report</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;">8 scope creep requests detected • $1,440 unbilled • 12 hrs free work</div>
+          </div>
+          <button class="btn btn-ghost btn-sm">📄 Download PDF</button>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;font-size:14px;">Q1 2026 Quarterly Review</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;">31 scope creep requests • $5,620 unbilled • Worst client: PetPals (42% creep rate)</div>
+          </div>
+          <button class="btn btn-ghost btn-sm">📄 Download PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Response Generator -->
+    <div class="page" id="page-respond">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Response Generator</div>
+          <div class="page-subtitle">AI-powered scope boundary responses</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Client Request</label>
+        <textarea class="form-textarea" id="respond-input" placeholder="Paste the client's request here...">Hey Sarah, love the homepage! Quick thing — could you also redesign our blog section? We have about 30 posts that need a fresh look. Shouldn't take too long right?</textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Project</label>
+          <select class="form-select" id="respond-project">
+            <option>Website Redesign — TechFlow Inc.</option>
+            <option>Brand Identity — GreenLeaf Co.</option>
+            <option>Mobile App UI — PetPals App</option>
+            <option>Menu Design — Cafe Sunrise</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tone</label>
+          <select class="form-select" id="respond-tone">
+            <option>😊 Friendly & Firm</option>
+            <option>👔 Professional</option>
+            <option>💪 Direct</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="generateResponse()">Generate Response</button>
+      <div id="response-output" style="display:none;">
+        <div class="response-box" style="margin-top:24px;">
+          <div class="response-label">Scope Classification</div>
+          <span class="scope-badge creep" style="margin-bottom:12px">🔴 Scope Creep — 94% confidence</span>
+          <div style="font-size:12px;color:var(--text2);margin-top:8px;">Blog redesign was explicitly excluded. ~8-12 hours additional work. Estimated value: $840-$1,260.</div>
+        </div>
+        <div class="response-box" style="margin-top:16px;">
+          <div class="response-label">Suggested Response</div>
+          <div class="response-text" id="response-text">Hi there! Thanks so much for the kind words about the homepage — really glad it's hitting the mark! 🎉
+
+I'd love to help with the blog section too, but I want to be transparent: the blog redesign wasn't included in our original scope (we defined the project as homepage + 3 landing pages in our proposal).
+
+Redesigning 30 blog posts would be a separate phase of work. I'd estimate roughly 8-12 hours depending on complexity. Here are a couple options:
+
+<b>Option A:</b> Blog redesign as a new project — I can put together a proposal this week
+<b>Option B:</b> Template-based approach — I design 2-3 blog templates, your team applies them to existing posts (more budget-friendly)
+
+Want me to put together a quick estimate for either approach?</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="btn btn-primary btn-sm">📋 Copy to Clipboard</button>
+          <button class="btn btn-ghost btn-sm">🔄 Regenerate</button>
+          <button class="btn btn-ghost btn-sm">📝 Edit</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Log Request Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Log Client Request</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Client Request (paste or type)</label>
+        <textarea class="form-textarea" placeholder='"Hey, can you also add a contact form to the about page?"'></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Client</label>
+          <select class="form-select">
+            <option>TechFlow Inc.</option>
+            <option>GreenLeaf Co.</option>
+            <option>PetPals App</option>
+            <option>Cafe Sunrise</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Source</label>
+          <select class="form-select">
+            <option>Email</option>
+            <option>Slack/Teams</option>
+            <option>Phone/Video Call</option>
+            <option>In-Person Meeting</option>
+            <option>Project Management Tool</option>
+          </select>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:8px;">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">⚡ AI will auto-classify this request against your project scope</div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span style="font-size:12px;color:var(--text2)">Expected result:</span>
+          <span class="scope-badge creep" style="font-size:11px">🔴 / ⚠️ / ✅</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Log & Classify</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function navigateTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+}
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.page));
+});
+function openModal() { document.getElementById('modal').classList.add('active'); }
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+function showResponse(btn, type) {
+  const card = btn.closest('.request-bottom');
+  const existing = card.querySelector('.response-box');
+  if (existing) { existing.remove(); return; }
+  const box = document.createElement('div');
+  box.className = 'response-box';
+  const responses = {
+    blog: `Hi! Really glad you're happy with the homepage 🎉\n\nQuick heads up — the blog section wasn't included in our original scope (homepage + 3 landing pages). A 30-post blog redesign would be about 8-12 hours of additional work.\n\nI can put together a separate proposal for the blog this week if you'd like? Happy to discuss options that fit your budget.`,
+    logo: `Thanks for the feedback! The logo variations are looking great.\n\nOur scope includes 2 color variations, so 5-6 additional ones plus merch mockups would go beyond what we outlined. I'd love to make it happen though!\n\nI can do the extra variations + mockups as an add-on for $350. Want me to proceed?`
+  };
+  box.innerHTML = `<div class="response-label">AI-Generated Response</div><div class="response-text">${(responses[type]||'').replace(/\n/g,'<br>')}</div>`;
+  card.querySelector('.request-reason').after(box);
+}
+
+function generateResponse() {
+  document.getElementById('response-output').style.display = 'block';
+}
+</script>
+</body>
+</html>
