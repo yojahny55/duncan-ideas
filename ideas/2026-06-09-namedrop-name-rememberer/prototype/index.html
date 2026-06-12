@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NameDrop — Your Social Memory, Supercharged</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0b;--surface:#141416;--surface-2:#1c1c20;--surface-3:#242428;--border:rgba(255,255,255,0.06);--text:#f0efe9;--text-dim:#8a8a8e;--accent:#e8c547;--accent-dim:rgba(232,197,71,0.15);--accent-glow:rgba(232,197,71,0.3);--coral:#e86f47;--coral-dim:rgba(232,111,71,0.15);--teal:#47c5e8;--teal-dim:rgba(71,197,232,0.15);--green:#5ce847;--green-dim:rgba(92,232,71,0.15);--radius:16px;--radius-sm:10px;--radius-xs:6px}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(10,10,11,0.8);border-bottom:1px solid var(--border)}
+.logo{font-family:'Instrument Serif',serif;font-size:1.5rem;color:var(--accent);display:flex;align-items:center;gap:8px}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--bg)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--text-dim);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.btn-primary{background:var(--accent);color:var(--bg);border:none;padding:10px 24px;border-radius:100px;font-family:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s}
+.btn-primary:hover{transform:scale(1.03);box-shadow:0 0 30px var(--accent-glow)}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border);padding:10px 24px;border-radius:100px;font-family:inherit;font-weight:500;font-size:.9rem;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;padding-top:80px;overflow:hidden}
+.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:.15;pointer-events:none}
+.hero-glow-1{top:-200px;right:-100px;background:var(--accent)}
+.hero-glow-2{bottom:-200px;left:-100px;background:var(--teal)}
+.hero-content{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;width:100%}
+.hero-text h1{font-family:'Instrument Serif',serif;font-size:clamp(3rem,5.5vw,5rem);line-height:1.05;margin-bottom:24px;animation:fadeUp .8s ease-out}
+.hero-text h1 span{color:var(--accent)}
+.hero-text p{font-size:1.15rem;color:var(--text-dim);max-width:480px;margin-bottom:40px;animation:fadeUp .8s ease-out .15s both}
+.hero-cta{display:flex;gap:16px;animation:fadeUp .8s ease-out .3s both}
+.hero-mockup{position:relative;animation:fadeUp 1s ease-out .4s both}
+.phone-frame{width:280px;margin:0 auto;background:var(--surface);border-radius:36px;border:2px solid var(--border);overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 60px var(--accent-dim)}
+.phone-notch{width:120px;height:28px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto;position:relative;z-index:2}
+.phone-screen{padding:16px;min-height:480px}
+.screen-header{text-align:center;margin-bottom:16px}
+.screen-header small{color:var(--accent);font-size:.7rem;text-transform:uppercase;letter-spacing:2px;font-weight:600}
+.screen-header h3{font-family:'Instrument Serif',serif;font-size:1.3rem;margin-top:4px}
+.person-card{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface-2);border-radius:var(--radius-sm);margin-bottom:8px;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.person-card:hover{border-color:var(--accent);transform:translateX(4px)}
+.person-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.person-info h4{font-size:.9rem;font-weight:600}
+.person-info p{font-size:.75rem;color:var(--text-dim)}
+.hint-bubble{margin-top:12px;padding:10px 12px;background:var(--accent-dim);border-radius:var(--radius-xs);border-left:3px solid var(--accent);font-size:.75rem;color:var(--accent);line-height:1.4}
+.hint-bubble strong{color:var(--text)}
+.stats-bar{padding:48px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center}
+.stat-item h3{font-family:'Instrument Serif',serif;font-size:2.5rem;color:var(--accent)}
+.stat-item p{color:var(--text-dim);font-size:.85rem;margin-top:4px}
+section{padding:100px 0}
+.section-label{color:var(--accent);font-size:.75rem;text-transform:uppercase;letter-spacing:3px;font-weight:600;margin-bottom:12px}
+.section-title{font-family:'Instrument Serif',serif;font-size:clamp(2rem,3.5vw,3rem);margin-bottom:16px;line-height:1.15}
+.section-desc{color:var(--text-dim);font-size:1.05rem;max-width:560px;margin-bottom:48px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:all .3s;position:relative;overflow:hidden}
+.feature-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:20px}
+.feature-card h3{font-size:1.1rem;margin-bottom:8px}
+.feature-card p{color:var(--text-dim);font-size:.9rem;line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.step{text-align:center}
+.step-number{width:56px;height:56px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--accent)}
+.step h3{margin-bottom:8px;font-size:1.15rem}
+.step p{color:var(--text-dim);font-size:.9rem;max-width:280px;margin:0 auto}
+.demo-section{background:var(--surface);border-radius:var(--radius);padding:48px}
+.demo-tabs{display:flex;gap:8px;margin-bottom:32px}
+.demo-tab{padding:8px 20px;border-radius:100px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);font-family:inherit;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s}
+.demo-tab.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.demo-panel{display:none}.demo-panel.active{display:block;animation:fadeIn .3s ease}
+.form-row{margin-bottom:16px}
+.form-row label{display:block;font-size:.8rem;color:var(--text-dim);margin-bottom:6px;font-weight:500}
+.form-input{width:100%;padding:12px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:.95rem;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--text-dim);opacity:.5}
+.detail-tags{display:flex;gap:8px;flex-wrap:wrap}
+.detail-tag{padding:6px 14px;background:var(--surface-3);border:1px solid var(--border);border-radius:100px;font-size:.8rem;color:var(--text-dim);cursor:pointer;transition:all .2s}
+.detail-tag:hover,.detail-tag.selected{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.briefing-card{background:var(--surface-2);border-radius:var(--radius);padding:24px;border:1px solid var(--border)}
+.briefing-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.briefing-header h3{font-family:'Instrument Serif',serif;font-size:1.3rem}
+.briefing-badge{padding:4px 12px;background:var(--teal-dim);color:var(--teal);border-radius:100px;font-size:.75rem;font-weight:600}
+.briefing-people{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.b-person{display:flex;gap:12px;padding:14px;background:var(--surface-3);border-radius:var(--radius-sm);border:1px solid var(--border);transition:border-color .2s}
+.b-person:hover{border-color:var(--accent)}
+.b-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.b-info h4{font-size:.85rem}.b-info p{font-size:.72rem;color:var(--text-dim);margin-top:2px}
+.b-info .hook{color:var(--accent);font-size:.7rem;margin-top:4px;font-style:italic}
+.flashcard-container{display:flex;flex-direction:column;align-items:center;gap:24px}
+.flashcard{width:280px;height:360px;perspective:1000px;cursor:pointer}
+.flashcard-inner{width:100%;height:100%;position:relative;transition:transform .6s;transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.flashcard-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid var(--border)}
+.flashcard-front{background:var(--surface-2)}
+.flashcard-front .fc-avatar{width:80px;height:80px;border-radius:50%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:16px}
+.flashcard-front p{color:var(--text-dim);font-size:.85rem}
+.flashcard-front small{color:var(--text-dim);font-size:.7rem;opacity:.6;margin-top:8px}
+.flashcard-back{background:var(--surface-2);transform:rotateY(180deg);padding:24px;text-align:left}
+.flashcard-back h3{font-size:1.2rem;margin-bottom:12px;color:var(--accent)}
+.flashcard-back .detail-row{display:flex;gap:8px;margin-bottom:8px;font-size:.85rem}
+.flashcard-back .detail-row span:first-child{color:var(--text-dim);min-width:70px}
+.flashcard-back .detail-row span:last-child{color:var(--text)}
+.fc-controls{display:flex;gap:12px}
+.fc-btn{padding:10px 28px;border-radius:100px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-family:inherit;font-weight:500;cursor:pointer;transition:all .2s;font-size:.85rem}
+.fc-btn.know{border-color:var(--green);color:var(--green)}.fc-btn.know:hover{background:var(--green-dim)}
+.fc-btn.skip{border-color:var(--coral);color:var(--coral)}.fc-btn.skip:hover{background:var(--coral-dim)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;text-align:center;transition:all .3s}
+.price-card:hover{transform:translateY(-4px)}
+.price-card.featured{border-color:var(--accent);position:relative}
+.price-card.featured::before{content:'POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);padding:4px 16px;border-radius:100px;font-size:.7rem;font-weight:700;letter-spacing:1px}
+.price-card h3{font-size:1.1rem;margin-bottom:8px}
+.price{font-family:'Instrument Serif',serif;font-size:2.8rem;color:var(--accent);margin-bottom:4px}
+.price small{font-size:1rem;color:var(--text-dim);font-family:'DM Sans',sans-serif}
+.price-sub{color:var(--text-dim);font-size:.8rem;margin-bottom:24px}
+.price-features{list-style:none;text-align:left;margin-bottom:24px}
+.price-features li{padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem;color:var(--text-dim);display:flex;align-items:center;gap:8px}
+.price-features li::before{content:'✓';color:var(--green);font-weight:700}
+.cta-section{text-align:center;padding:120px 0;position:relative}
+.cta-section::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:var(--accent);filter:blur(200px);opacity:.08;top:50%;left:50%;transform:translate(-50%,-50%)}
+.cta-section h2{font-family:'Instrument Serif',serif;font-size:clamp(2.5rem,4vw,4rem);margin-bottom:16px}
+.cta-section p{color:var(--text-dim);font-size:1.1rem;margin-bottom:32px}
+footer{padding:40px 0;border-top:1px solid var(--border);text-align:center;color:var(--text-dim);font-size:.8rem}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.fade-up{opacity:0;transform:translateY(20px);transition:all .6s ease-out}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.success-msg{background:var(--green-dim);border:1px solid var(--green);border-radius:var(--radius-sm);padding:16px;text-align:center;color:var(--green);animation:fadeIn .3s ease}
+@media(max-width:900px){
+.hero-content{grid-template-columns:1fr;gap:40px;text-align:center}
+.hero-text p{margin:0 auto 40px}.hero-cta{justify-content:center}
+.features-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr;gap:32px}
+.pricing-grid{grid-template-columns:1fr;max-width:400px}
+.stats-grid{grid-template-columns:repeat(2,1fr)}.briefing-people{grid-template-columns:1fr}
+.nav-links{display:none}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo"><div class="logo-icon">🧠</div> NameDrop</div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#demo">Demo</a>
+    <a href="#pricing">Pricing</a>
+    <button class="btn-primary">Get Early Access</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+  <div class="container"><div class="hero-content">
+    <div class="hero-text">
+      <h1>Never forget a <span>name</span> again.</h1>
+      <p>Your social memory, supercharged. Capture names, faces, and context in 15 seconds. Get briefed before every encounter.</p>
+      <div class="hero-cta">
+        <button class="btn-primary">Get Early Access</button>
+        <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+      </div>
+    </div>
+    <div class="hero-mockup"><div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="screen-header"><small>Tonight at 7 PM</small><h3>Company BBQ 🍔</h3></div>
+        <div class="person-card"><div class="person-avatar" style="background:var(--accent-dim)">👩🏽</div><div class="person-info"><h4>Sarah Chen</h4><p>Marketing at Adobe · Met Mar 14</p></div></div>
+        <div class="person-card"><div class="person-avatar" style="background:var(--teal-dim)">👨🏼</div><div class="person-info"><h4>Marcus Rivera</h4><p>Engineering lead · Kids same age</p></div></div>
+        <div class="person-card"><div class="person-avatar" style="background:var(--coral-dim)">👩🏻</div><div class="person-info"><h4>Emma Walsh</h4><p>HR director · Loves hiking</p></div></div>
+        <div class="hint-bubble">💡 <strong>Hook:</strong> Ask Sarah about her golden retriever's surgery recovery.</div>
+      </div>
+    </div></div>
+  </div></div>
+</section>
+
+<div class="stats-bar"><div class="container"><div class="stats-grid">
+  <div class="stat-item fade-up"><h3>85%</h3><p>of adults are bad with names</p></div>
+  <div class="stat-item fade-up"><h3>6.6M</h3><p>Americans have face blindness</p></div>
+  <div class="stat-item fade-up"><h3>15 sec</h3><p>to capture a new person</p></div>
+  <div class="stat-item fade-up"><h3>30 sec</h3><p>daily review to never forget</p></div>
+</div></div></div>
+
+<section id="features"><div class="container">
+  <div class="fade-up">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything you need to remember everyone.</h2>
+    <p class="section-desc">Purpose-built for the universal problem of forgetting people. Not a contacts app. Not a CRM. A social memory engine.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card fade-up"><div class="feature-icon" style="background:var(--accent-dim)">⚡</div><h3>15-Second Capture</h3><p>Name, face, context, 3 key details. Voice-first for hands-free logging right after a handshake.</p></div>
+    <div class="feature-card fade-up"><div class="feature-icon" style="background:var(--teal-dim)">📅</div><h3>Pre-Event Briefing</h3><p>Calendar-aware. Walking into a PTA meeting? See every parent you've met with their kids' names.</p></div>
+    <div class="feature-card fade-up"><div class="feature-icon" style="background:var(--green-dim)">🃏</div><h3>Smart Flashcards</h3><p>Spaced repetition for names and faces. 30 seconds a day keeps the embarrassment away.</p></div>
+    <div class="feature-card fade-up"><div class="feature-icon" style="background:var(--coral-dim)">🔍</div><h3>Search by Context</h3><p>"Guy from the BBQ with the golden retriever" — instantly found. No name needed.</p></div>
+    <div class="feature-card fade-up"><div class="feature-icon" style="background:var(--accent-dim)">📸</div><h3>Face Match</h3><p>Discreetly snap a photo — NameDrop identifies them. On-device, always private.</p></div>
+    <div class="feature-card fade-up"><div class="feature-icon" style="background:var(--teal-dim)">💡</div><h3>Conversation Hooks</h3><p>"Ask about their Japan trip." "Their dog had surgery." Never run out of things to say.</p></div>
+  </div>
+</div></section>
+
+<section id="how"><div class="container">
+  <div class="fade-up" style="text-align:center">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Three steps to a perfect memory.</h2>
+    <p class="section-desc" style="margin:16px auto 48px">Designed for the real world — at parties, conferences, school events, or the coffee shop.</p>
+  </div>
+  <div class="steps">
+    <div class="step fade-up"><div class="step-number">1</div><h3>Meet &amp; Capture</h3><p>After meeting someone, log their name, face, where you met, and 2-3 memorable details. Takes 15 seconds.</p></div>
+    <div class="step fade-up"><div class="step-number">2</div><h3>Review &amp; Retain</h3><p>Spend 30 seconds a day with smart flashcards. Spaced repetition moves names into long-term memory.</p></div>
+    <div class="step fade-up"><div class="step-number">3</div><h3>Brief &amp; Connect</h3><p>Before any event, get a briefing on who you'll see, conversation hooks, and context. Walk in confident.</p></div>
+  </div>
+</div></section>
+
+<section id="demo"><div class="container">
+  <div class="fade-up" style="text-align:center"><div class="section-label">Interactive Demo</div><h2 class="section-title">Try it yourself.</h2></div>
+  <div class="demo-section fade-up">
+    <div class="demo-tabs">
+      <button class="demo-tab active" data-tab="capture">⚡ Quick Capture</button>
+      <button class="demo-tab" data-tab="briefing">📅 Event Briefing</button>
+      <button class="demo-tab" data-tab="flashcard">🃏 Flashcard Review</button>
+    </div>
+
+    <div class="demo-panel active" id="panel-capture">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
+        <div>
+          <div class="form-row"><label>Name</label><input class="form-input" placeholder="e.g. Sarah Chen" id="capture-name"></div>
+          <div class="form-row"><label>Where you met</label><input class="form-input" placeholder="e.g. Company BBQ, March 2026" id="capture-where"></div>
+          <div class="form-row"><label>Key details</label><div class="detail-tags">
+            <span class="detail-tag" onclick="toggleTag(this)">🐕 Has a dog</span>
+            <span class="detail-tag" onclick="toggleTag(this)">📊 Marketing</span>
+            <span class="detail-tag" onclick="toggleTag(this)">👶 Has kids</span>
+            <span class="detail-tag" onclick="toggleTag(this)">🥾 Hiking</span>
+            <span class="detail-tag" onclick="toggleTag(this)">🌴 California</span>
+            <span class="detail-tag" onclick="toggleTag(this)">☕ Coffee</span>
+          </div></div>
+          <div class="form-row"><label>Conversation hook</label><input class="form-input" placeholder="e.g. Ask about her golden retriever" id="capture-hook"></div>
+          <button class="btn-primary" style="margin-top:8px" onclick="savePerson()">Save Person ⚡</button>
+        </div>
+        <div id="capture-preview" style="display:flex;align-items:center;justify-content:center;min-height:300px">
+          <div style="text-align:center;color:var(--text-dim)"><p style="font-size:3rem;margin-bottom:12px">👤</p><p>Fill in the form to see a preview</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-panel" id="panel-briefing">
+      <div class="briefing-card">
+        <div class="briefing-header"><div><h3>🏢 Team Standup — Tomorrow 9 AM</h3></div><span class="briefing-badge">4 people</span></div>
+        <div class="briefing-people">
+          <div class="b-person"><div class="b-avatar" style="background:var(--accent-dim)">👨🏼</div><div class="b-info"><h4>Marcus Rivera</h4><p>Engineering lead · Last chatted May 28</p><div class="hook">💡 Ask about his daughter's graduation</div></div></div>
+          <div class="b-person"><div class="b-avatar" style="background:var(--teal-dim)">👩🏽</div><div class="b-info"><h4>Sarah Chen</h4><p>Marketing · Golden retriever owner</p><div class="hook">💡 Check in on dog's surgery recovery</div></div></div>
+          <div class="b-person"><div class="b-avatar" style="background:var(--coral-dim)">👩🏻</div><div class="b-info"><h4>Emma Walsh</h4><p>HR director · Avid hiker</p><div class="hook">💡 She went to Patagonia — ask about it!</div></div></div>
+          <div class="b-person"><div class="b-avatar" style="background:var(--green-dim)">👨🏻</div><div class="b-info"><h4>James Park</h4><p>Product · New to team (Jun 2)</p><div class="hook">💡 Intro yourself — he's new!</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-panel" id="panel-flashcard">
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard" onclick="this.classList.toggle('flipped')">
+          <div class="flashcard-inner">
+            <div class="flashcard-face flashcard-front">
+              <div class="fc-avatar">👩🏽</div>
+              <p>Who is this?</p>
+              <small>Tap to reveal</small>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <h3>Sarah Chen</h3>
+              <div class="detail-row"><span>Met at</span><span>Company BBQ, Mar 2026</span></div>
+              <div class="detail-row"><span>Role</span><span>Marketing at Adobe</span></div>
+              <div class="detail-row"><span>Pet</span><span>Golden retriever (Biscuit)</span></div>
+              <div class="detail-row"><span>Hook</span><span>Ask about Biscuit's surgery</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-controls">
+          <button class="fc-btn skip" onclick="document.getElementById('flashcard').classList.remove('flipped')">😕 Still Learning</button>
+          <button class="fc-btn know" onclick="document.getElementById('flashcard').classList.remove('flipped')">✓ Got It!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="container">
+  <div class="fade-up" style="text-align:center">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Start free. Upgrade when you're hooked.</h2>
+  </div>
+  <div class="pricing-grid">
+    <div class="price-card fade-up">
+      <h3>Free</h3>
+      <div class="price">$0<small>/mo</small></div>
+      <div class="price-sub">Perfect for trying it out</div>
+      <ul class="price-features">
+        <li>50 people</li>
+        <li>Manual capture</li>
+        <li>Context search</li>
+        <li>Basic flashcards</li>
+      </ul>
+      <button class="btn-secondary">Get Started</button>
+    </div>
+    <div class="price-card featured fade-up">
+      <h3>Pro</h3>
+      <div class="price">$3.99<small>/mo</small></div>
+      <div class="price-sub">For active networkers</div>
+      <ul class="price-features">
+        <li>Unlimited people</li>
+        <li>Face match (on-device)</li>
+        <li>Calendar briefings</li>
+        <li>Conversation hooks</li>
+        <li>LinkedIn import</li>
+      </ul>
+      <button class="btn-primary">Get Pro</button>
+    </div>
+    <div class="price-card fade-up">
+      <h3>Family</h3>
+      <div class="price">$6.99<small>/mo</small></div>
+      <div class="price-sub">Shared social memory</div>
+      <ul class="price-features">
+        <li>Everything in Pro</li>
+        <li>2 family members</li>
+        <li>Shared groups</li>
+        <li>Partner sharing</li>
+        <li>Event scan photos</li>
+      </ul>
+      <button class="btn-secondary">Get Family</button>
+    </div>
+  </div>
+</div></section>
+
+<div class="cta-section">
+  <div class="container">
+    <h2>Stop pretending you remember.</h2>
+    <p>85% of us are bad with names. Join the ones who do something about it.</p>
+    <button class="btn-primary" style="font-size:1.1rem;padding:14px 36px">Get Early Access</button>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>🧠 NameDrop — Your social memory, supercharged. &copy; 2026</p>
+  </div>
+</footer>
+
+<script>
+// Tab switching
+document.querySelectorAll('.demo-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Detail tag toggle
+function toggleTag(el) {
+  el.classList.toggle('selected');
+  updatePreview();
+}
+
+// Live preview
+function updatePreview() {
+  const name = document.getElementById('capture-name').value || 'Name';
+  const where = document.getElementById('capture-where').value || 'Where you met';
+  const hook = document.getElementById('capture-hook').value;
+  const tags = [...document.querySelectorAll('.detail-tag.selected')].map(t => t.textContent.trim());
+
+  const preview = document.getElementById('capture-preview');
+  if (!name || name === 'Name') {
+    preview.innerHTML = '<div style="text-align:center;color:var(--text-dim)"><p style="font-size:3rem;margin-bottom:12px">👤</p><p>Fill in the form to see a preview</p></div>';
+    return;
+  }
+
+  let html = '<div style="background:var(--surface-2);border-radius:var(--radius);padding:24px;border:1px solid var(--border);width:100%">';
+  html += '<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">';
+  html += '<div style="width:56px;height:56px;border-radius:50%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:1.8rem">👤</div>';
+  html += '<div><h3 style="font-size:1.2rem">' + name + '</h3><p style="color:var(--text-dim);font-size:.85rem">' + where + '</p></div>';
+  html += '</div>';
+  if (tags.length) {
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">';
+    tags.forEach(t => html += '<span style="padding:4px 10px;background:var(--accent-dim);border-radius:100px;font-size:.75rem;color:var(--accent)">' + t + '</span>');
+    html += '</div>';
+  }
+  if (hook) {
+    html += '<div class="hint-bubble">💡 ' + hook + '</div>';
+  }
+  html += '</div>';
+  preview.innerHTML = html;
+}
+
+function savePerson() {
+  const name = document.getElementById('capture-name').value;
+  if (!name) return;
+  const preview = document.getElementById('capture-preview');
+  preview.innerHTML = '<div class="success-msg" style="width:100%"><p style="font-size:1.5rem;margin-bottom:8px">✅ Saved!</p><p style="color:var(--text-dim)">' + name + ' added to your memory bank.</p><p style="color:var(--text-dim);font-size:.8rem;margin-top:8px">You'll see a flashcard for ' + name + ' in your next review.</p></div>';
+}
+
+// Listen for input changes
+['capture-name', 'capture-where', 'capture-hook'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePreview);
+});
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

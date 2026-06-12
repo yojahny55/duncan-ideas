@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlightDrop — Flight Compensation Claim Automator</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --accent: #f59e0b;
+    --accent-dark: #d97706;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #334155;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #475569;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Header */
+  header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .total-recovered {
+    background: var(--success);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Screens */
+  .screen {
+    display: none;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 30px 0;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .stat {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px 12px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(37,99,235,0.4); }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 2px solid var(--border);
+  }
+
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: #1e293b;
+  }
+
+  .btn-success {
+    background: var(--success);
+    color: white;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Eligibility Result */
+  .eligibility-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+    border: 2px solid transparent;
+  }
+
+  .eligibility-card.eligible {
+    border-color: var(--success);
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), var(--surface));
+  }
+
+  .eligibility-card.not-eligible {
+    border-color: var(--danger);
+    background: linear-gradient(135deg, rgba(239,68,68,0.1), var(--surface));
+  }
+
+  .eligibility-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .eligibility-badge.success {
+    background: rgba(16,185,129,0.2);
+    color: var(--success);
+  }
+
+  .eligibility-badge.danger {
+    background: rgba(239,68,68,0.2);
+    color: var(--danger);
+  }
+
+  .compensation-amount {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--success);
+    margin: 8px 0;
+  }
+
+  .compensation-amount .currency { font-size: 28px; vertical-align: top; }
+
+  .strength-bar {
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    margin: 16px 0 8px;
+    overflow: hidden;
+  }
+
+  .strength-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  .strength-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* Claim List */
+  .claim-item {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .claim-item:hover { transform: translateX(4px); }
+
+  .claim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .claim-route {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .claim-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .status-submitted { background: rgba(37,99,235,0.2); color: var(--primary); }
+  .status-acknowledged { background: rgba(245,158,11,0.2); color: var(--accent); }
+  .status-paid { background: rgba(16,185,129,0.2); color: var(--success); }
+  .status-appealed { background: rgba(239,68,68,0.2); color: var(--danger); }
+
+  .claim-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* Claim Letter Preview */
+  .letter-preview {
+    background: white;
+    color: #1e293b;
+    border-radius: var(--radius);
+    padding: 24px;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 16px 0;
+    font-family: 'Georgia', serif;
+  }
+
+  .letter-preview .header-line {
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .letter-preview .regulation-ref {
+    background: #eff6ff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary);
+    margin: 12px 0;
+    font-size: 12px;
+  }
+
+  /* Email Scanner */
+  .scanner-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .scanner-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+  }
+
+  .scan-results {
+    margin-top: 16px;
+  }
+
+  .scan-flight {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: var(--surface-2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .scan-flight .eligible-tag {
+    color: var(--success);
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 500;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+  }
+
+  .nav-item.active { color: var(--primary); }
+  .nav-item .icon { font-size: 20px; }
+
+  /* Pulse animation */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .scanning { animation: pulse 1.5s ease infinite; }
+
+  /* Progress steps */
+  .steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 20px 0;
+  }
+
+  .step {
+    width: 32px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface-2);
+  }
+
+  .step.active { background: var(--primary); }
+  .step.done { background: var(--success); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--bg);
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-width: 480px;
+    padding: 24px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .modal-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">✈️</div>
+      FlightDrop
+    </div>
+    <div class="total-recovered">$1,847 recovered</div>
+  </header>
+
+  <!-- Screen: Home -->
+  <div class="screen active" id="screen-home">
+    <div class="hero">
+      <h1>Your flight was <span>delayed?</span><br>Get your money back.</h1>
+      <p>Up to €600 ($650) per flight. No lawyers. No 30% commission. Just enter your flight and claim.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">$650</div>
+        <div class="stat-label">Max Per Flight</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">8M+</div>
+        <div class="stat-label">Eligible/Year</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">&lt;2%</div>
+        <div class="stat-label">Who Claim</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="showScreen('screen-check')" style="margin-bottom:12px">
+      ✈️ Check My Flight
+    </button>
+    <button class="btn btn-secondary" onclick="showScreen('screen-scanner')">
+      📧 Scan My Email for Past Flights
+    </button>
+
+    <div style="margin-top:24px">
+      <div class="section-title">📋 My Claims</div>
+
+      <div class="claim-item" onclick="showScreen('screen-claim')">
+        <div class="claim-header">
+          <div class="claim-route">JFK → CDG</div>
+          <div class="claim-status status-paid">Paid</div>
+        </div>
+        <div class="claim-meta">
+          <span>Air France · AF 009</span>
+          <span style="color:var(--success);font-weight:600">+$600</span>
+        </div>
+      </div>
+
+      <div class="claim-item" onclick="showScreen('screen-claim')">
+        <div class="claim-header">
+          <div class="claim-route">LHR → BCN</div>
+          <div class="claim-status status-acknowledged">In Progress</div>
+        </div>
+        <div class="claim-meta">
+          <span>easyJet · U28455</span>
+          <span style="color:var(--text-muted)">€400 pending</span>
+        </div>
+      </div>
+
+      <div class="claim-item" onclick="showScreen('screen-claim')">
+        <div class="claim-header">
+          <div class="claim-route">MIA → LAX</div>
+          <div class="claim-status status-submitted">Submitted</div>
+        </div>
+        <div class="claim-meta">
+          <span>American · AA 217</span>
+          <span style="color:var(--text-muted)">Refund pending</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: Check Flight -->
+  <div class="screen" id="screen-check">
+    <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+
+    <div class="section-title">✈️ Check Your Flight</div>
+
+    <div class="form-group">
+      <label>Flight Number</label>
+      <input type="text" id="flightNumber" placeholder="e.g. AF 009, BA 178" maxlength="10">
+    </div>
+
+    <div class="form-group">
+      <label>Date of Flight</label>
+      <input type="date" id="flightDate">
+    </div>
+
+    <div class="form-group">
+      <label>What Happened?</label>
+      <select id="issueType">
+        <option value="delay">Flight Delayed (3+ hours)</option>
+        <option value="cancel">Flight Cancelled</option>
+        <option value="denied">Denied Boarding (Overbooked)</option>
+        <option value="missed">Missed Connection</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Departing From</label>
+      <input type="text" placeholder="e.g. JFK, London, Paris CDG">
+    </div>
+
+    <div class="form-group">
+      <label>Arriving At</label>
+      <input type="text" placeholder="e.g. CDG, Barcelona, Miami">
+    </div>
+
+    <button class="btn btn-primary" onclick="checkEligibility()" id="checkBtn">
+      🔍 Check Eligibility
+    </button>
+  </div>
+
+  <!-- Screen: Eligibility Result -->
+  <div class="screen" id="screen-result">
+    <button class="back-btn" onclick="showScreen('screen-check')">← Check Another</button>
+
+    <div class="steps">
+      <div class="step done"></div>
+      <div class="step done"></div>
+      <div class="step active"></div>
+      <div class="step"></div>
+    </div>
+
+    <div class="eligibility-card eligible" id="resultCard">
+      <div class="eligibility-badge success" id="resultBadge">
+        ✅ Eligible for Compensation
+      </div>
+
+      <div style="color:var(--text-muted);font-size:13px;margin-bottom:4px">Estimated Compensation</div>
+      <div class="compensation-amount"><span class="currency">€</span>400</div>
+      <div style="color:var(--text-muted);font-size:13px">≈ $435 USD per passenger</div>
+
+      <div class="strength-bar">
+        <div class="strength-fill" style="width:87%;background:var(--success)"></div>
+      </div>
+      <div class="strength-label">
+        <span>Claim Strength</span>
+        <span style="color:var(--success);font-weight:600">87% — Strong</span>
+      </div>
+
+      <div style="margin-top:16px;padding:12px;background:var(--surface-2);border-radius:8px;font-size:13px">
+        <div style="font-weight:600;margin-bottom:8px">📋 Regulation</div>
+        <div style="color:var(--text-muted)">EU Regulation 261/2004 — Flight distance 5,500km+ delayed 4h 12m. Extraordinary circumstances not applicable.</div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px;background:var(--surface-2);border-radius:8px;font-size:13px">
+        <div style="font-weight:600;margin-bottom:8px">⚠️ Airline Response History</div>
+        <div style="color:var(--text-muted)">Air France responds within 21 days on average. Initial acceptance rate: 68%. Escalation success: 84%.</div>
+      </div>
+    </div>
+
+    <button class="btn btn-success" onclick="showScreen('screen-letter')" style="margin-bottom:12px">
+      📝 Generate Claim Letter
+    </button>
+    <button class="btn btn-secondary" onclick="showScreen('screen-home')">
+      Save & Check Later
+    </button>
+  </div>
+
+  <!-- Screen: Claim Letter -->
+  <div class="screen" id="screen-letter">
+    <button class="back-btn" onclick="showScreen('screen-result')">← Back</button>
+
+    <div class="steps">
+      <div class="step done"></div>
+      <div class="step done"></div>
+      <div class="step done"></div>
+      <div class="step active"></div>
+    </div>
+
+    <div class="section-title">📝 Your Claim Letter</div>
+
+    <div class="letter-preview">
+      <div class="header-line">COMPENSATION CLAIM — EU REGULATION 261/2004</div>
+      
+      <p>Dear Air France Customer Relations,</p>
+      
+      <p>I am writing to claim compensation under EU Regulation 261/2004 for flight <strong>AF 009</strong> on <strong>June 8, 2026</strong>, departing JFK (New York) at 19:30, scheduled to arrive at CDG (Paris) at 09:05+1.</p>
+      
+      <div class="regulation-ref">
+        <strong>Article 7 — Right to Compensation:</strong><br>
+        For flights over 3,500 km with a delay of 3+ hours at the final destination, the operating carrier shall pay compensation of <strong>€600</strong> per passenger.
+      </div>
+      
+      <p>My flight was delayed by <strong>4 hours and 12 minutes</strong>, arriving at 13:17 instead of the scheduled 09:05. The delay was caused by operational reasons within the airline's control (crew scheduling), which does not constitute an extraordinary circumstance under Article 5(3).</p>
+      
+      <p>I hereby request compensation of <strong>€600</strong> within 14 days, as required by Article 7(2).</p>
+      
+      <p>Should you fail to process this claim, I will escalate to the Direction Générale de l'Aviation Civile (DGAC) within 30 days.</p>
+      
+      <p>Booking Reference: <strong>ABC123</strong><br>
+      Passenger: <strong>[Your Name]</strong></p>
+      
+      <p>Sincerely,<br>[Your Name]</p>
+    </div>
+
+    <button class="btn btn-accent" style="margin-bottom:12px">
+      📤 Submit to Air France
+    </button>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-secondary" style="flex:1" onclick="alert('PDF downloaded!')">
+        📄 Download PDF
+      </button>
+      <button class="btn btn-secondary" style="flex:1" onclick="alert('Copied to clipboard!')">
+        📋 Copy Text
+      </button>
+    </div>
+  </div>
+
+  <!-- Screen: Email Scanner -->
+  <div class="screen" id="screen-scanner">
+    <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+
+    <div class="section-title">📧 Email Flight Scanner</div>
+
+    <div class="scanner-card" id="scannerPrompt">
+      <div class="scanner-icon">🔍</div>
+      <h3 style="margin-bottom:8px">Find Unclaimed Compensation</h3>
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">
+        Connect your email to scan 3 years of flight confirmations. We'll check every flight for delay compensation eligibility.
+      </p>
+      <button class="btn btn-primary" onclick="startScan()">
+        🔗 Connect Gmail
+      </button>
+      <p style="color:var(--text-muted);font-size:11px;margin-top:12px">
+        🔒 Read-only access. We only scan flight confirmations.
+      </p>
+    </div>
+
+    <div id="scanProgress" style="display:none">
+      <div class="scanner-card scanning">
+        <div class="scanner-icon">📧</div>
+        <h3 style="margin-bottom:8px">Scanning your emails...</h3>
+        <p style="color:var(--text-muted);font-size:14px" id="scanStatus">
+          Found 47 flight confirmations...
+        </p>
+      </div>
+    </div>
+
+    <div id="scanResults" style="display:none">
+      <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:2px solid var(--success)">
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">🎉 You have 3 eligible flights!</div>
+        <div style="color:var(--text-muted);font-size:13px">Potential compensation: <strong style="color:var(--success)">$1,050</strong></div>
+      </div>
+
+      <div class="scan-flight">
+        <div>
+          <div style="font-weight:600">BA 178 · LHR → JFK</div>
+          <div style="color:var(--text-muted);font-size:12px">Mar 15, 2026 · Delayed 3h 45m</div>
+        </div>
+        <div class="eligible-tag">€600</div>
+      </div>
+      <div class="scan-flight">
+        <div>
+          <div style="font-weight:600">LH 401 · FRA → MIA</div>
+          <div style="color:var(--text-muted);font-size:12px">Jan 22, 2026 · Cancelled</div>
+        </div>
+        <div class="eligible-tag">€600</div>
+      </div>
+      <div class="scan-flight">
+        <div>
+          <div style="font-weight:600">U28455 · LGW → BCN</div>
+          <div style="color:var(--text-muted);font-size:12px">Nov 8, 2025 · Delayed 4h 20m</div>
+        </div>
+        <div class="eligible-tag">€250</div>
+      </div>
+
+      <button class="btn btn-success" style="margin-top:16px">
+        🚀 Claim All 3 Flights
+      </button>
+    </div>
+  </div>
+
+  <!-- Screen: Claim Detail -->
+  <div class="screen" id="screen-claim">
+    <button class="back-btn" onclick="showScreen('screen-home')">← Back</button>
+
+    <div class="section-title">Claim Details</div>
+
+    <div style="background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:20px;font-weight:700">JFK → CDG</div>
+        <div class="claim-status status-paid">Paid</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+        <div>
+          <div style="color:var(--text-muted)">Airline</div>
+          <div style="font-weight:600">Air France · AF 009</div>
+        </div>
+        <div>
+          <div style="color:var(--text-muted)">Date</div>
+          <div style="font-weight:600">May 12, 2026</div>
+        </div>
+        <div>
+          <div style="color:var(--text-muted)">Delay</div>
+          <div style="font-weight:600">4h 12m</div>
+        </div>
+        <div>
+          <div style="color:var(--text-muted)">Compensation</div>
+          <div style="font-weight:600;color:var(--success)">$650 (€600)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">📊 Timeline</div>
+
+    <div style="padding-left:16px;border-left:2px solid var(--border);margin-left:8px">
+      <div style="padding:12px 0;padding-left:16px;position:relative">
+        <div style="position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--success)"></div>
+        <div style="font-weight:600;font-size:14px">Payment Received</div>
+        <div style="color:var(--text-muted);font-size:12px">June 2, 2026 · €600 deposited</div>
+      </div>
+      <div style="padding:12px 0;padding-left:16px;position:relative">
+        <div style="position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--success)"></div>
+        <div style="font-weight:600;font-size:14px">Airline Accepted Claim</div>
+        <div style="color:var(--text-muted);font-size:12px">May 28, 2026 · Accepted after 16 days</div>
+      </div>
+      <div style="padding:12px 0;padding-left:16px;position:relative">
+        <div style="position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--primary)"></div>
+        <div style="font-weight:600;font-size:14px">Claim Submitted</div>
+        <div style="color:var(--text-muted);font-size:12px">May 12, 2026 · Via email</div>
+      </div>
+      <div style="padding:12px 0;padding-left:16px;position:relative">
+        <div style="position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--primary)"></div>
+        <div style="font-weight:600;font-size:14px">Claim Letter Generated</div>
+        <div style="color:var(--text-muted);font-size:12px">May 12, 2026 · EU261 Article 7</div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" style="margin-top:16px">
+      📄 View Claim Letter
+    </button>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="showScreen('screen-home')">
+      <div class="icon">🏠</div>
+      Home
+    </button>
+    <button class="nav-item" onclick="showScreen('screen-check')">
+      <div class="icon">✈️</div>
+      Check
+    </button>
+    <button class="nav-item" onclick="showScreen('screen-scanner')">
+      <div class="icon">📧</div>
+      Scanner
+    </button>
+    <button class="nav-item" onclick="showScreen('screen-claim')">
+      <div class="icon">📋</div>
+      Claims
+    </button>
+  </div>
+</div>
+
+<script>
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = {
+    'screen-home': 0, 'screen-check': 1, 'screen-scanner': 2, 'screen-claim': 3,
+    'screen-result': 1, 'screen-letter': 1
+  };
+  const idx = navMap[id] ?? 0;
+  document.querySelectorAll('.nav-item')[idx].classList.add('active');
+  
+  window.scrollTo(0, 0);
+}
+
+function checkEligibility() {
+  const fn = document.getElementById('flightNumber').value;
+  const fd = document.getElementById('flightDate').value;
+  if (!fn || !fd) {
+    alert('Please enter flight number and date');
+    return;
+  }
+  
+  const btn = document.getElementById('checkBtn');
+  btn.disabled = true;
+  btn.innerHTML = '🔍 Checking flight data...';
+  
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Check Eligibility';
+    showScreen('screen-result');
+  }, 2000);
+}
+
+function startScan() {
+  document.getElementById('scannerPrompt').style.display = 'none';
+  document.getElementById('scanProgress').style.display = 'block';
+  
+  const messages = [
+    'Connecting to Gmail...',
+    'Scanning for flight confirmations...',
+    'Found 12 bookings...',
+    'Found 34 bookings...',
+    'Found 47 flight confirmations...',
+    'Cross-referencing with delay databases...',
+    'Checking EU261 eligibility...',
+    'Checking US DOT eligibility...'
+  ];
+  
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < messages.length) {
+      document.getElementById('scanStatus').textContent = messages[i];
+      i++;
+    } else {
+      clearInterval(interval);
+      document.getElementById('scanProgress').style.display = 'none';
+      document.getElementById('scanResults').style.display = 'block';
+    }
+  }, 800);
+}
+</script>
+
+</body>
+</html>
