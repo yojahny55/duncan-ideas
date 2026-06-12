@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KidCraft — AI Kids' Activity Generator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap');
+
+:root {
+  --coral: #FF6B6B;
+  --coral-light: #FFE0E0;
+  --teal: #4ECDC4;
+  --teal-light: #D4F5F2;
+  --yellow: #FFE66D;
+  --yellow-light: #FFF8DC;
+  --purple: #A78BFA;
+  --purple-light: #EDE9FE;
+  --blue: #60A5FA;
+  --orange: #FB923C;
+  --bg: #FAFBFF;
+  --text: #1E293B;
+  --text-light: #64748B;
+  --card: #FFFFFF;
+  --shadow: 0 4px 24px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Floating background shapes */
+.bg-shapes {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.bg-shapes span {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.08;
+  animation: float 20s infinite ease-in-out;
+}
+.bg-shapes span:nth-child(1) { width: 300px; height: 300px; background: var(--coral); top: -50px; right: -80px; animation-delay: 0s; }
+.bg-shapes span:nth-child(2) { width: 200px; height: 200px; background: var(--teal); bottom: 10%; left: -60px; animation-delay: -5s; }
+.bg-shapes span:nth-child(3) { width: 150px; height: 150px; background: var(--yellow); top: 40%; right: 5%; animation-delay: -10s; }
+.bg-shapes span:nth-child(4) { width: 250px; height: 250px; background: var(--purple); bottom: -50px; right: 30%; animation-delay: -15s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-30px) rotate(5deg); }
+  66% { transform: translateY(15px) rotate(-3deg); }
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 20px 0 24px;
+}
+.logo {
+  font-family: 'Nunito', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--coral), var(--orange), var(--yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+.logo-sub {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: white;
+  padding: 6px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+.tab {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.tab.active {
+  background: var(--coral);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255,107,107,0.3);
+}
+
+/* Section cards */
+.section {
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Age selector */
+.age-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.age-chip {
+  padding: 8px 16px;
+  background: white;
+  border: 2px solid #E2E8F0;
+  border-radius: 50px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.age-chip:hover { border-color: var(--coral); }
+.age-chip.active {
+  background: var(--coral-light);
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+/* Situation mode pills */
+.modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mode-pill {
+  padding: 12px 8px;
+  background: white;
+  border: 2px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Quicksand', sans-serif;
+}
+.mode-pill:hover { border-color: var(--teal); transform: translateY(-1px); }
+.mode-pill.active {
+  border-color: var(--teal);
+  background: var(--teal-light);
+}
+.mode-pill .emoji { font-size: 24px; display: block; margin-bottom: 4px; }
+.mode-pill .label { font-size: 11px; font-weight: 700; color: var(--text); }
+
+/* Materials */
+.materials {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mat-chip {
+  padding: 6px 14px;
+  background: white;
+  border: 2px solid #E2E8F0;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.mat-chip:hover { border-color: var(--purple); }
+.mat-chip.active {
+  background: var(--purple-light);
+  border-color: var(--purple);
+  color: var(--purple);
+}
+
+/* Time + energy sliders */
+.slider-group {
+  background: white;
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.slider-row:last-child { margin-bottom: 0; }
+.slider-row label {
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 70px;
+}
+.slider-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--teal);
+  height: 6px;
+}
+.slider-row .val {
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--teal);
+  min-width: 55px;
+  text-align: right;
+}
+
+/* Generate button */
+.generate-btn {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--coral), #FF8E6B);
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255,107,107,0.35);
+  transition: all 0.3s;
+  margin-top: 8px;
+  letter-spacing: -0.3px;
+}
+.generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255,107,107,0.45);
+}
+.generate-btn:active { transform: translateY(0); }
+.generate-btn.loading {
+  background: linear-gradient(135deg, #94A3B8, #CBD5E1);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+/* Results */
+.results { margin-top: 24px; display: none; }
+.results.show { display: block; }
+
+.activity-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 16px;
+  border-left: 5px solid var(--coral);
+  animation: slideUp 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+.activity-card:nth-child(2) { border-left-color: var(--teal); animation-delay: 0.1s; }
+.activity-card:nth-child(3) { border-left-color: var(--purple); animation-delay: 0.2s; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.2;
+}
+.card-emoji { font-size: 32px; }
+.card-description {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.meta-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.badge {
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-time { background: var(--teal-light); color: #0D9488; }
+.badge-mess { background: var(--yellow-light); color: #B45309; }
+.badge-energy { background: var(--coral-light); color: #DC2626; }
+.badge-age { background: var(--purple-light); color: #7C3AED; }
+
+.steps {
+  background: var(--bg);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+}
+.step {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.step:last-child { margin-bottom: 0; }
+.step-num {
+  width: 22px;
+  height: 22px;
+  background: var(--coral);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.materials-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.mat-tag {
+  padding: 4px 10px;
+  background: #F1F5F9;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+.card-btn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  background: white;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.card-btn:hover { border-color: var(--teal); background: var(--teal-light); }
+.card-btn.heart:hover { border-color: var(--coral); background: var(--coral-light); }
+.card-btn.heart.saved {
+  background: var(--coral-light);
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: white;
+  padding: 14px 12px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.stat-num {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 24px;
+  color: var(--coral);
+}
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+/* Tab panels */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Favorites list */
+.fav-item {
+  background: white;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  margin-bottom: 8px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fav-item:hover { transform: translateX(4px); }
+.fav-emoji { font-size: 28px; }
+.fav-info { flex: 1; }
+.fav-name { font-weight: 700; font-size: 14px; }
+.fav-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.fav-remove {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #FEE2E2;
+  color: var(--coral);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+.empty-emoji { font-size: 48px; margin-bottom: 12px; }
+.empty-title { font-family: 'Nunito'; font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+.empty-sub { font-size: 13px; color: var(--text-light); }
+
+/* Bottom nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  padding: 10px 24px;
+  padding-bottom: env(safe-area-inset-bottom, 10px);
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+  z-index: 100;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-light);
+  font-family: 'Quicksand';
+  font-weight: 700;
+  font-size: 10px;
+  transition: color 0.2s;
+  padding: 4px 12px;
+}
+.nav-item.active { color: var(--coral); }
+.nav-item .nav-icon { font-size: 22px; }
+
+/* Animations */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; display: inline-block; }
+
+/* Responsive */
+@media (max-width: 400px) {
+  .modes { grid-template-columns: repeat(2, 1fr); }
+  .app { padding: 16px 12px 100px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-shapes">
+  <span></span><span></span><span></span><span></span>
+</div>
+
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">🎨 KidCraft</div>
+    <div class="logo-sub">AI Kids' Activity Generator</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-generated">0</div>
+      <div class="stat-label">Generated</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-saved">0</div>
+      <div class="stat-label">Saved</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-done">0</div>
+      <div class="stat-label">Completed</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="generate">✨ Generate</button>
+    <button class="tab" data-tab="favorites">❤️ Saved</button>
+    <button class="tab" data-tab="history">📋 History</button>
+  </div>
+
+  <!-- Generate Tab -->
+  <div class="tab-panel active" id="tab-generate">
+    <!-- Ages -->
+    <div class="section">
+      <div class="section-title">👶 Kids' Ages</div>
+      <div class="age-row">
+        <div class="age-chip" data-age="1-2">1-2</div>
+        <div class="age-chip active" data-age="3-4">3-4</div>
+        <div class="age-chip active" data-age="5-7">5-7</div>
+        <div class="age-chip" data-age="8-10">8-10</div>
+        <div class="age-chip" data-age="11-12">11-12</div>
+      </div>
+    </div>
+
+    <!-- Situation Mode -->
+    <div class="section">
+      <div class="section-title">🎪 Situation</div>
+      <div class="modes">
+        <div class="mode-pill active" data-mode="rainy">🌧️<span class="label">Rainy Day</span></div>
+        <div class="mode-pill" data-mode="playdate">👫<span class="label">Playdate</span></div>
+        <div class="mode-pill" data-mode="quick">⚡<span class="label">Quick Fix</span></div>
+        <div class="mode-pill" data-mode="outdoor">🌿<span class="label">Outdoor</span></div>
+        <div class="mode-pill" data-mode="bedtime">🌙<span class="label">Wind Down</span></div>
+        <div class="mode-pill" data-mode="party">🎉<span class="label">Party</span></div>
+      </div>
+    </div>
+
+    <!-- Materials -->
+    <div class="section">
+      <div class="section-title">📦 Materials Available</div>
+      <div class="materials">
+        <div class="mat-chip active" data-mat="paper">📄 Paper</div>
+        <div class="mat-chip active" data-mat="markers">🖍️ Markers</div>
+        <div class="mat-chip active" data-mat="tape">🩹 Tape</div>
+        <div class="mat-chip" data-mat="scissors">✂️ Scissors</div>
+        <div class="mat-chip" data-mat="glue">🫧 Glue</div>
+        <div class="mat-chip" data-mat="cardboard">📦 Cardboard</div>
+        <div class="mat-chip" data-mat="paint">🎨 Paint</div>
+        <div class="mat-chip" data-mat="kitchen">🍳 Kitchen</div>
+        <div class="mat-chip" data-mat="nature">🍂 Nature</div>
+        <div class="mat-chip" data-mat="fabric">🧵 Fabric</div>
+        <div class="mat-chip" data-mat="recycle">♻️ Recycling</div>
+        <div class="mat-chip" data-mat="lego">🧱 LEGO</div>
+      </div>
+    </div>
+
+    <!-- Time & Energy -->
+    <div class="slider-group">
+      <div class="slider-row">
+        <label>⏱ Time</label>
+        <input type="range" id="time-slider" min="5" max="120" value="30" step="5">
+        <span class="val" id="time-val">30 min</span>
+      </div>
+      <div class="slider-row">
+        <label>⚡ Energy</label>
+        <input type="range" id="energy-slider" min="1" max="3" value="2" step="1">
+        <span class="val" id="energy-val">Medium</span>
+      </div>
+    </div>
+
+    <!-- Generate -->
+    <button class="generate-btn" id="gen-btn">✨ Generate Activities</button>
+
+    <!-- Results -->
+    <div class="results" id="results"></div>
+  </div>
+
+  <!-- Favorites Tab -->
+  <div class="tab-panel" id="tab-favorites">
+    <div id="fav-list"></div>
+  </div>
+
+  <!-- History Tab -->
+  <div class="tab-panel" id="tab-history">
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-item active"><span class="nav-icon">✨</span>Generate</button>
+  <button class="nav-item"><span class="nav-icon">❤️</span>Saved</button>
+  <button class="nav-item"><span class="nav-icon">📋</span>History</button>
+</div>
+
+<script>
+const activities = {
+  rainy: [
+    {
+      title: "Cardboard City Builder",
+      emoji: "🏙️",
+      desc: "Transform cardboard boxes and tubes into an entire city! Kids design buildings, roads, and parks. The 3-4 crowd can decorate while the 5-7 group handles construction.",
+      time: "30-45 min", mess: "🟡 Medium", energy: "⚡ Medium", ages: "3-7",
+      materials: ["Cardboard", "Tape", "Markers", "Scissors"],
+      steps: [
+        "Gather cardboard boxes of different sizes — cereal boxes, toilet rolls, shoe boxes",
+        "Help kids plan their city: houses, shops, fire station, park",
+        "Tape boxes together to form buildings — cut doors and windows",
+        "Decorate with markers — add signs, flowers, people",
+        "Use tape on the floor to create roads between buildings",
+        "Play! Drive toy cars through the city or use small figures as residents"
+      ]
+    },
+    {
+      title: "Indoor Obstacle Course",
+      emoji: "🏃",
+      desc: "Turn your living room into an adventure course! Crawl under tables, jump over cushions, balance on tape lines. Adjustable for different ages and energy levels.",
+      time: "20-30 min", mess: "🟢 Low", energy: "🔴 High", ages: "3-7",
+      materials: ["Cushions", "Tape", "Blankets", "Chairs"],
+      steps: [
+        "Clear a safe space in the living room or hallway",
+        "Create stations: crawl under blanket tent, jump between cushion islands",
+        "Use tape on the floor as a balance beam",
+        "Set up a 'river' with pillows — jump from stone to stone",
+        "Time each kid with a phone timer — try to beat your own record",
+        "For younger kids: simpler course with more guidance. Older kids: add challenges like 'hop on one foot'"
+      ]
+    },
+    {
+      title: "Shadow Puppet Theater",
+      emoji: "🎭",
+      desc: "Build a mini puppet theater with a blanket and flashlight. Kids cut out characters and put on a show! Great for creativity and storytelling.",
+      time: "25-35 min", mess: "🟡 Medium", energy: "⚡ Medium", ages: "3-7",
+      materials: ["Paper", "Scissors", "Tape", "Flashlight"],
+      steps: [
+        "Hang a blanket across two chairs — this is your 'screen'",
+        "Set up a flashlight behind the blanket pointing at the screen",
+        "Cut out character shapes from paper — animals, people, monsters",
+        "Tape each character to a pencil or stick",
+        "Turn off the lights and practice making shadows dance",
+        "Put on a show! Take turns telling stories with your shadow characters"
+      ]
+    }
+  ],
+  playdate: [
+    {
+      title: "Friendship Bracelet Factory",
+      emoji: " Bracelet",
+      emoji: "💜",
+      desc: "Set up a bracelet-making station! Kids can braid, bead, and create matching friendship bracelets. Great collaborative activity that doubles as a party favor.",
+      time: "30-40 min", mess: "🟡 Medium", energy: "⚡ Low", ages: "5-7",
+      materials: ["String/Yarn", "Beads", "Tape", "Scissors"],
+      steps: [
+        "Tape one end of 3 colored strings to a table",
+        "Teach the basic braid: left over middle, right over middle, repeat",
+        "Add beads every few inches for extra flair",
+        "Try different patterns: stripes, chevrons, or spirals",
+        "Tie off the ends and trade with your friend",
+        "Make matching sets — one for each kid!"
+      ]
+    },
+    {
+      title: "DIY Pizza Party",
+      emoji: "🍕",
+      desc: "Kids make their own personal pizzas with toppings they choose! Younger kids spread sauce, older ones get creative with topping art.",
+      time: "35-45 min", mess: "🔴 High", energy: "⚡ Medium", ages: "3-7",
+      materials: ["Pizza dough", "Sauce", "Cheese", "Toppings"],
+      steps: [
+        "Pre-make or buy pizza dough — divide into personal sizes",
+        "Set up a topping bar: cheese, pepperoni, veggies, olives",
+        "Each kid gets a dough circle on a floured surface",
+        "Spread sauce, add cheese, then decorate with toppings",
+        "Make faces, patterns, or letters with the toppings",
+        "Bake at 425°F for 10-12 min. Let cool. Eat!"
+      ]
+    },
+    {
+      title: "Treasure Hunt Adventure",
+      emoji: "🗺️",
+      desc: "Create an indoor treasure hunt with rhyming clues! Kids work together to find the hidden treasure. Adjustable difficulty for mixed ages.",
+      time: "20-30 min", mess: "🟢 Low", energy: "🔴 High", ages: "3-7",
+      materials: ["Paper", "Markers", "Small prize"],
+      steps: [
+        "Hide a 'treasure' (snack, sticker, small toy) somewhere in the house",
+        "Write 5-8 clues on paper — each leads to the next hiding spot",
+        "For 3-4 year olds: use pictures instead of words",
+        "For 5-7 year olds: use rhyming riddles ('I'm where you rest your head at night')",
+        "Give the first clue and let the adventure begin!",
+        "Team up older and younger kids to solve clues together"
+      ]
+    }
+  ],
+  quick: [
+    {
+      title: "Freeze Dance Party",
+      emoji: "💃",
+      desc: "Put on music and dance! When the music stops, FREEZE. Last one moving is out (or in the kid version: everyone wins!). Instant energy burner.",
+      time: "5-10 min", mess: "🟢 Zero", energy: "🔴 High", ages: "3-7",
+      materials: ["Music player"],
+      steps: [
+        "Clear a small dancing space",
+        "Put on your kids' favorite songs",
+        "Dance! When you pause the music, everyone freezes",
+        "Make silly poses when frozen",
+        "Take turns being the DJ who pauses the music"
+      ]
+    },
+    {
+      title: "Speed Drawing Challenge",
+      emoji: "✏️",
+      desc: "One-minute drawing challenges! Call out a topic, everyone draws for 60 seconds, then show and tell. Hilarious results guaranteed.",
+      time: "5-15 min", mess: "🟢 Zero", energy: "⚡ Low", ages: "3-7",
+      materials: ["Paper", "Markers"],
+      steps: [
+        "Give everyone paper and something to draw with",
+        "Set a 1-minute timer on your phone",
+        "Call out a topic: 'a cat wearing a hat!', 'a robot dinosaur!'",
+        "Everyone draws as fast as they can",
+        "Show your drawings and vote on the funniest one",
+        "Best of 5 rounds wins!"
+      ]
+    },
+    {
+      title: "Sock Ball Basketball",
+      emoji: "🏀",
+      desc: "Roll up clean socks into balls and shoot them into a laundry basket. Adjust distance for age. Add trick shot challenges for older kids.",
+      time: "5-10 min", mess: "🟢 Zero", energy: "🔴 High", ages: "3-7",
+      materials: ["Clean socks", "Laundry basket"],
+      steps: [
+        "Roll 5-10 pairs of socks into tight balls",
+        "Place a laundry basket 3-5 feet away (closer for younger kids)",
+        "Take turns shooting sock balls into the basket",
+        "Count baskets — first to 10 wins",
+        "Advanced: try backwards shots, over-the-shoulder, or bounce shots"
+      ]
+    }
+  ],
+  outdoor: [
+    {
+      title: "Nature Scavenger Hunt",
+      emoji: "🌿",
+      desc: "Explore your yard or park with a scavenger hunt list! Find a smooth rock, a yellow leaf, something fuzzy, an insect, and more.",
+      time: "25-40 min", mess: "🟡 Muddy", energy: "🔴 High", ages: "3-7",
+      materials: ["Bag/bucket", "Printed list"],
+      steps: [
+        "Write or draw a list of 10 nature items to find",
+        "Ideas: smooth rock, crunchy leaf, something green, a seed, something fuzzy",
+        "Give each kid a bag for collecting",
+        "Explore together — help younger ones identify items",
+        "When you find everything, lay out your treasures and compare",
+        "Bonus: make a nature collage with glue and paper when you get home"
+      ]
+    },
+    {
+      title: "Sidewalk Chalk Art Gallery",
+      emoji: "🎨",
+      desc: "Turn your driveway into an art gallery! Each kid gets a 'frame' drawn in chalk to fill with their masterpiece. Open a gallery walk when done.",
+      time: "30-45 min", mess: "🟢 Washable", energy: "⚡ Medium", ages: "3-7",
+      materials: ["Sidewalk chalk"],
+      steps: [
+        "Draw large picture frames on the ground (2-3 per kid)",
+        "Each kid picks a frame and creates their art",
+        "For 3-4: simple shapes, hand prints, free drawing",
+        "For 5-7: try drawing animals, houses, or rainbows",
+        "Do a 'gallery walk' — each artist explains their work",
+        "Take photos before the rain washes it away!"
+      ]
+    },
+    {
+      title: "Mud Kitchen Cafe",
+      emoji: "🧁",
+      desc: "Set up an outdoor 'kitchen' with dirt, water, leaves, and sticks. Kids 'cook' mud pies and nature soup. Pure messy joy.",
+      time: "30-45 min", mess: "🔴 Very messy", energy: "⚡ Medium", ages: "3-7",
+      materials: ["Old containers", "Spoons", "Water", "Nature"],
+      steps: [
+        "Set up a 'kitchen' area with old bowls, cups, and spoons",
+        "Add dirt, water, leaves, pebbles, flowers as 'ingredients'",
+        "Kids mix, pour, and create their 'recipes'",
+        "Older kids can write menus or take 'orders'",
+        "Younger kids love just pouring and mixing",
+        "Hose them down when done! (The kids, not the food)"
+      ]
+    }
+  ],
+  bedtime: [
+    {
+      title: "Bedtime Story Builder",
+      emoji: "📖",
+      desc: "Build a story together! Each person adds one sentence. Start with 'Once upon a time...' and see where the adventure goes.",
+      time: "10-15 min", mess: "🟢 Zero", energy: "🟢 Calm", ages: "3-7",
+      materials: ["Just imagination"],
+      steps: [
+        "Get cozy in bed or on the couch",
+        "Start: 'Once upon a time, there was a [kid picks animal]...'",
+        "Each person adds one sentence to the story",
+        "Keep it gentle — sleepy adventures, not scary ones",
+        "When the story feels done, wrap it up with '...and they all slept happily ever after'",
+        "Try different themes: space adventure, underwater world, magic forest"
+      ]
+    },
+    {
+      title: "Calm Down Jar Craft",
+      emoji: "🌌",
+      desc: "Make a mesmerizing calm-down jar with glitter and water. Shake it, watch the glitter settle, and breathe. Perfect pre-bed ritual.",
+      time: "15-20 min", mess: "🟡 Medium", energy: "🟢 Calm", ages: "3-7",
+      materials: ["Jar/bottle", "Glitter", "Water", "Glue"],
+      steps: [
+        "Fill a clear jar or bottle 3/4 with warm water",
+        "Add a tablespoon of glitter glue or clear glue (makes it thicker)",
+        "Add fine glitter — lots of it!",
+        "Optional: a drop of food coloring",
+        "Glue the lid shut and let it dry",
+        "Shake before bed, watch the glitter fall, take deep breaths together"
+      ]
+    },
+    {
+      title: "Star Gazing from Bed",
+      emoji: "⭐",
+      desc: "Create glow-in-the-dark constellations on the ceiling! Use stickers or tape paper stars. Learn real constellation shapes together.",
+      time: "10-20 min", mess: "🟢 Zero", energy: "🟢 Calm", ages: "3-7",
+      materials: ["Glow stickers", "Tape"],
+      steps: [
+        "Get glow-in-the-dark star stickers (or make paper ones)",
+        "Look up simple constellations: Big Dipper, Orion, Cassiopeia",
+        "Stick stars on the ceiling in constellation patterns",
+        "Turn off lights and 'star gaze' from bed",
+        "Make up stories about each constellation",
+        "Goodnight under the stars ✨"
+      ]
+    }
+  ],
+  party: [
+    {
+      title: "DIY Photo Booth",
+      emoji: "📸",
+      desc: "Create a photo booth station with homemade props! Kids make silly glasses, hats, and signs, then take turns posing for photos.",
+      time: "30-45 min", mess: "🟡 Medium", energy: "⚡ Fun", ages: "5-7",
+      materials: ["Cardboard", "Markers", "Tape", "Scissors", "Sticks"],
+      steps: [
+        "Cut cardboard into prop shapes: glasses, mustaches, hats, crowns",
+        "Decorate with markers — go wild with colors",
+        "Tape each prop to a stick or pencil for holding",
+        "Set up a 'backdrop' with a blanket or streamers",
+        "Take turns posing with the props",
+        "Print or share the best photos with parents"
+      ]
+    },
+    {
+      title: "Musical Statues Remix",
+      emoji: "🎵",
+      desc: "Classic musical statues with fun twists! Dance to the music, freeze when it stops. Add challenges: freeze like an animal, freeze on one foot!",
+      time: "15-20 min", mess: "🟢 Zero", energy: "🔴 High", ages: "3-7",
+      materials: ["Music player"],
+      steps: [
+        "Clear a dancing area",
+        "Play upbeat music — everyone dances",
+        "Pause the music randomly — everyone freezes",
+        "Call out freeze challenges: 'Freeze like a T-Rex!' 'Freeze upside down!'",
+        "Anyone who moves is out (or just keeps dancing — your call)",
+        "Last one standing picks the next song"
+      ]
+    },
+    {
+      title: "Cupcake Decorating Contest",
+      emoji: "🧁",
+      desc: "Plain cupcakes + toppings = art contest! Set up a decorating bar and let kids create. Vote on categories: prettiest, funniest, most creative.",
+      time: "25-35 min", mess: "🔴 High", energy: "⚡ Medium", ages: "3-7",
+      materials: ["Cupcakes", "Frosting", "Sprinkles", "Candy"],
+      steps: [
+        "Bake or buy plain cupcakes",
+        "Set up a decorating station: different frostings, sprinkles, mini candies",
+        "Each kid gets 2-3 cupcakes to decorate",
+        "Set a timer: 10 minutes to decorate!",
+        "Display all cupcakes on a table",
+        "Vote: Most Beautiful, Funniest, Most Creative. Everyone eats their art!"
+      ]
+    }
+  ]
+};
+
+// Fallback for any mode not explicitly defined
+const fallback = [
+  {
+    title: "Build a Blanket Fort",
+    emoji: "🏰",
+    desc: "The classic! Use blankets, chairs, and cushions to build the ultimate cozy fort. Add flashlights and snacks for the full experience.",
+    time: "20-30 min", mess: "🟡 Low", energy: "⚡ Medium", ages: "3-7",
+    materials: ["Blankets", "Chairs", "Cushions", "Flashlight"],
+    steps: [
+      "Arrange chairs in a square or rectangle",
+      "Drape blankets over the chairs to create walls and a roof",
+      "Add cushions inside for comfortable seating",
+      "Bring in a flashlight for 'indoor camping'",
+      "Add snacks and books — it's now your secret base",
+      "Optional: make a 'no grown-ups allowed' sign"
+    ]
+  }
+];
+
+let saved = JSON.parse(localStorage.getItem('kidcraft-saved') || '[]');
+let history = JSON.parse(localStorage.getItem('kidcraft-history') || '[]');
+let genCount = parseInt(localStorage.getItem('kidcraft-gen') || '0');
+
+updateStats();
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('tab-' + t.dataset.tab).classList.add('active');
+    if (t.dataset.tab === 'favorites') renderFavorites();
+    if (t.dataset.tab === 'history') renderHistory();
+  });
+});
+
+// Age chips
+document.querySelectorAll('.age-chip').forEach(c => {
+  c.addEventListener('click', () => c.classList.toggle('active'));
+});
+
+// Mode pills (single select)
+document.querySelectorAll('.mode-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.mode-pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+  });
+});
+
+// Material chips
+document.querySelectorAll('.mat-chip').forEach(c => {
+  c.addEventListener('click', () => c.classList.toggle('active'));
+});
+
+// Sliders
+document.getElementById('time-slider').addEventListener('input', e => {
+  document.getElementById('time-val').textContent = e.target.value + ' min';
+});
+document.getElementById('energy-slider').addEventListener('input', e => {
+  const labels = ['', '🟢 Low', '⚡ Medium', '🔴 High'];
+  document.getElementById('energy-val').textContent = labels[e.target.value];
+});
+
+// Generate
+document.getElementById('gen-btn').addEventListener('click', generate);
+
+function generate() {
+  const btn = document.getElementById('gen-btn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="spinner">⏳</span> Thinking...';
+  
+  const mode = document.querySelector('.mode-pill.active')?.dataset.mode || 'rainy';
+  
+  setTimeout(() => {
+    const pool = activities[mode] || fallback;
+    const results = document.getElementById('results');
+    results.innerHTML = '';
+    results.classList.add('show');
+    
+    pool.forEach((a, i) => {
+      const card = document.createElement('div');
+      card.className = 'activity-card';
+      card.style.animationDelay = (i * 0.1) + 's';
+      card.innerHTML = `
+        <div class="card-header">
+          <div>
+            <div class="card-title">${a.title}</div>
+          </div>
+          <div class="card-emoji">${a.emoji}</div>
+        </div>
+        <div class="card-description">${a.desc}</div>
+        <div class="meta-badges">
+          <span class="badge badge-time">${a.time}</span>
+          <span class="badge badge-mess">${a.mess}</span>
+          <span class="badge badge-energy">${a.energy}</span>
+          <span class="badge badge-age">${a.ages} yrs</span>
+        </div>
+        <div class="materials-list">${a.materials.map(m => `<span class="mat-tag">${m}</span>`).join('')}</div>
+        <div class="steps">${a.steps.map((s, j) => `<div class="step"><span class="step-num">${j+1}</span><span>${s}</span></div>`).join('')}</div>
+        <div class="card-actions">
+          <button class="card-btn heart" onclick="toggleSave(this, '${a.title.replace(/'/g, "\\'")}')">❤️ Save</button>
+          <button class="card-btn" onclick="markDone('${a.title.replace(/'/g, "\\'")}')">✅ We did this!</button>
+        </div>
+      `;
+      results.appendChild(card);
+    });
+    
+    genCount += 3;
+    localStorage.setItem('kidcraft-gen', genCount);
+    updateStats();
+    
+    btn.classList.remove('loading');
+    btn.innerHTML = '✨ Generate Activities';
+  }, 1200);
+}
+
+function toggleSave(btn, title) {
+  btn.classList.toggle('saved');
+  if (btn.classList.contains('saved')) {
+    btn.textContent = '❤️ Saved!';
+    if (!saved.includes(title)) {
+      saved.push(title);
+    }
+  } else {
+    btn.textContent = '❤️ Save';
+    saved = saved.filter(t => t !== title);
+  }
+  localStorage.setItem('kidcraft-saved', JSON.stringify(saved));
+  updateStats();
+}
+
+function markDone(title) {
+  history.unshift({ title, date: new Date().toLocaleDateString() });
+  if (history.length > 50) history.pop();
+  localStorage.setItem('kidcraft-history', JSON.stringify(history));
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('stat-generated').textContent = genCount;
+  document.getElementById('stat-saved').textContent = saved.length;
+  document.getElementById('stat-done').textContent = history.length;
+}
+
+function renderFavorites() {
+  const el = document.getElementById('fav-list');
+  if (saved.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-emoji">💝</div><div class="empty-title">No saved activities yet</div><div class="empty-sub">Generate some activities and tap ❤️ to save your favorites</div></div>';
+    return;
+  }
+  // Find activity data for saved titles
+  let html = '';
+  const allActs = Object.values(activities).flat().concat(fallback);
+  saved.forEach(title => {
+    const a = allActs.find(x => x.title === title);
+    if (a) {
+      html += `<div class="fav-item"><div class="fav-emoji">${a.emoji}</div><div class="fav-info"><div class="fav-name">${a.title}</div><div class="fav-meta">${a.time} · ${a.ages} yrs · ${a.mess}</div></div><button class="fav-remove" onclick="removeFav('${title.replace(/'/g, "\\'")}')">✕</button></div>`;
+    }
+  });
+  el.innerHTML = html;
+}
+
+function removeFav(title) {
+  saved = saved.filter(t => t !== title);
+  localStorage.setItem('kidcraft-saved', JSON.stringify(saved));
+  updateStats();
+  renderFavorites();
+}
+
+function renderHistory() {
+  const el = document.getElementById('history-list');
+  if (history.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-emoji">📋</div><div class="empty-title">No completed activities yet</div><div class="empty-sub">Tap "We did this!" after completing an activity</div></div>';
+    return;
+  }
+  let html = '';
+  const allActs = Object.values(activities).flat().concat(fallback);
+  history.forEach(h => {
+    const a = allActs.find(x => x.title === h.title);
+    html += `<div class="fav-item"><div class="fav-emoji">${a ? a.emoji : '✅'}</div><div class="fav-info"><div class="fav-name">${h.title}</div><div class="fav-meta">Completed ${h.date}</div></div></div>`;
+  });
+  el.innerHTML = html;
+}
+</script>
+</body>
+</html>
