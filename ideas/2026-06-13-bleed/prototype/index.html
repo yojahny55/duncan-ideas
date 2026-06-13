@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bleed — Stop the bleed.</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">💸</span>
+      <h1>Bleed</h1>
+    </div>
+    <nav class="tabs">
+      <button class="tab active" data-view="dashboard">Dashboard</button>
+      <button class="tab" data-view="subs">Subscriptions</button>
+      <button class="tab" data-view="cancel">Cancel Challenge</button>
+      <button class="tab" data-view="trends">Trends</button>
+    </nav>
+    <div class="badge pro">PRO</div>
+  </header>
+
+  <!-- DASHBOARD VIEW -->
+  <section class="view active" id="view-dashboard">
+    <div class="hero">
+      <div class="hero-stat">
+        <span class="label">Monthly Bleed</span>
+        <span class="amount" id="totalMonthly">$0</span>
+        <span class="sub">across <span id="subCount">0</span> subscriptions</span>
+      </div>
+      <div class="hero-secondary">
+        <div class="stat">
+          <span class="stat-label">🔥 AI Credits at Risk</span>
+          <span class="stat-value warn" id="creditsAtRisk">$0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">💤 Dormant (60+ days)</span>
+          <span class="stat-value bad" id="dormantCost">$0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">✂️ Bleed Stopped (YTD)</span>
+          <span class="stat-value good">$1,247</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Credit Burn Dashboard -->
+    <div class="card">
+      <div class="card-header">
+        <h2>🤖 AI Credit Burn Dashboard</h2>
+        <span class="card-sub">The killer feature — see every credit burn across providers</span>
+      </div>
+      <div class="credits-grid" id="creditsGrid"></div>
+      <div class="burn-summary">
+        <div class="burn-stat">
+          <span>Monthly AI Burn</span>
+          <strong>$148.94</strong>
+        </div>
+        <div class="burn-stat">
+          <span>3-Month Avg</span>
+          <strong>$132.10</strong>
+        </div>
+        <div class="burn-stat">
+          <span>Wasted (expired credits)</span>
+          <strong class="bad">$23.40</strong>
+        </div>
+        <div class="burn-stat">
+          <span>Projected EOM</span>
+          <strong class="warn">$172.00</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dormancy Alerts -->
+    <div class="card">
+      <div class="card-header">
+        <h2>💤 Dormancy Alerts</h2>
+        <span class="card-sub">Subscriptions you haven't used in 30+ days</span>
+      </div>
+      <div class="dormant-list" id="dormantList"></div>
+    </div>
+
+    <!-- Renewals This Week -->
+    <div class="card">
+      <div class="card-header">
+        <h2>⏰ Renewals This Week</h2>
+      </div>
+      <div class="renewals" id="renewals"></div>
+    </div>
+  </section>
+
+  <!-- SUBSCRIPTIONS VIEW -->
+  <section class="view" id="view-subs">
+    <div class="card">
+      <div class="card-header">
+        <h2>📡 Subscription Radar</h2>
+        <button class="btn-primary" onclick="openAddModal()">+ Add Subscription</button>
+      </div>
+      <div class="filters">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="ai">🤖 AI Tools</button>
+        <button class="filter" data-filter="streaming">📺 Streaming</button>
+        <button class="filter" data-filter="productivity">⚡ Productivity</button>
+        <button class="filter" data-filter="news">📰 News</button>
+        <button class="filter" data-filter="fitness">💪 Fitness</button>
+      </div>
+      <div class="subs-list" id="subsList"></div>
+    </div>
+  </section>
+
+  <!-- CANCEL CHALLENGE VIEW -->
+  <section class="view" id="view-cancel">
+    <div class="challenge-hero">
+      <h2>⚔️ The Cancel Challenge</h2>
+      <p>Pick 3 subscriptions to cancel this month. Watch the savings stack up.</p>
+      <div class="challenge-progress">
+        <div class="progress-ring">
+          <div class="ring-inner">
+            <span class="ring-amount" id="challengeSaved">$0</span>
+            <span class="ring-label">saved this month</span>
+          </div>
+        </div>
+        <div class="challenge-info">
+          <div class="challenge-stat">
+            <span>Target</span>
+            <strong>$100/mo</strong>
+          </div>
+          <div class="challenge-stat">
+            <span>Canceled this month</span>
+            <strong id="challengeCount">0 of 3</strong>
+          </div>
+          <div class="challenge-stat">
+            <span>Streak</span>
+            <strong>🔥 4 months</strong>
+          </div>
+          <div class="challenge-stat">
+            <span>Lifetime Stopped</span>
+            <strong>$1,247</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h2>Top Cancel Candidates</h2>
+        <span class="card-sub">Based on dormancy and low usage</span>
+      </div>
+      <div class="cancel-candidates" id="cancelCandidates"></div>
+    </div>
+  </section>
+
+  <!-- TRENDS VIEW -->
+  <section class="view" id="view-trends">
+    <div class="card">
+      <div class="card-header">
+        <h2>📈 Spend Trends</h2>
+      </div>
+      <div class="trend-chart">
+        <canvas id="trendChart" width="800" height="280"></canvas>
+      </div>
+      <div class="trend-legend">
+        <span><span class="dot ai"></span> AI Tools</span>
+        <span><span class="dot streaming"></span> Streaming</span>
+        <span><span class="dot other"></span> Other</span>
+      </div>
+    </div>
+    <div class="trend-cards">
+      <div class="trend-card">
+        <h3>🤖 AI Spend (2026)</h3>
+        <div class="big-number">$2,140</div>
+        <div class="trend-delta bad">+73% vs 2025</div>
+      </div>
+      <div class="trend-card">
+        <h3>📺 Streaming (2026)</h3>
+        <div class="big-number">$684</div>
+        <div class="trend-delta bad">+12% vs 2025</div>
+      </div>
+      <div class="trend-card">
+        <h3>💤 Wasted on Dormant</h3>
+        <div class="big-number">$312</div>
+        <div class="trend-delta warn">3 subs unused 60+ days</div>
+      </div>
+      <div class="trend-card">
+        <h3>💸 Total Annual Bleed</h3>
+        <div class="big-number">$4,036</div>
+        <div class="trend-delta bad">+38% vs 2024</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>Bleed Pro — <strong>$19.99 one-time</strong> · No subscription. Ever.</span>
+  </footer>
+</div>
+
+<!-- Add Subscription Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h3>Add Subscription</h3>
+    <p class="modal-sub">Manual entry — or forward receipts to receipts@bleed.app for auto-parsing</p>
+    <div class="form-row">
+      <label>Service Name</label>
+      <input type="text" id="newName" placeholder="e.g., ChatGPT Plus">
+    </div>
+    <div class="form-row">
+      <label>Category</label>
+      <select id="newCategory">
+        <option value="ai">🤖 AI Tools</option>
+        <option value="streaming">📺 Streaming</option>
+        <option value="productivity">⚡ Productivity</option>
+        <option value="news">📰 News</option>
+        <option value="fitness">💪 Fitness</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Monthly Cost ($)</label>
+      <input type="number" id="newCost" placeholder="20.00" step="0.01">
+    </div>
+    <div class="form-row">
+      <label>Billing Cycle</label>
+      <select id="newCycle">
+        <option value="monthly">Monthly</option>
+        <option value="annual">Annual</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-primary" onclick="addSubscription()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
