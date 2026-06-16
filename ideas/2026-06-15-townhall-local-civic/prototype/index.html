@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TownHall 🏛️ — Local Politics for Busy People</title>
+  <meta name="description" content="Your city council is voting on things that affect you this week. TownHall tells you what, when, and how to weigh in — in 60 seconds." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>" />
+</head>
+<body>
+
+<a href="#main" class="sr-only">Skip to content</a>
+
+<!-- ============== NAV ============== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">🏛️</span>
+      <span>TownHall</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#demo">See it work</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#mission">Mission</a>
+    </div>
+    <a href="#hero-lookup" class="nav-cta">Find my reps</a>
+  </div>
+</nav>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span>🇺🇸</span>
+    <span>Nonpartisan · 19,500 cities covered · Beta</span>
+  </div>
+  <h1>Your city council is voting on things<br/>that affect you this week.</h1>
+  <p class="hero-sub">You just don't know it. TownHall tells you what's on the agenda, who your reps are, and how to weigh in — in 60 seconds a week.</p>
+
+  <form class="hero-form" id="hero-lookup" data-lookup-form>
+    <input type="text" placeholder="Enter your street address — 123 Main St, Tampa FL" aria-label="Your address" />
+    <button type="submit" class="hero-cta">Find my reps →</button>
+  </form>
+  <p class="hero-trust">Free. Nonpartisan. We never sell your data.</p>
+
+  <div class="hero-stats">
+    <div>
+      <div class="hero-stat-num">89M</div>
+      <div class="hero-stat-label">Voters</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">19.5K</div>
+      <div class="hero-stat-label">Cities</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">500K</div>
+      <div class="hero-stat-label">Officials</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">73%</div>
+      <div class="hero-stat-label">Can't name rep</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== DEMO PHONE ============== -->
+<section class="demo-wrap" id="demo">
+  <div class="container">
+    <div class="section-header" style="text-align:center; margin-bottom: 32px;">
+      <div class="section-eyebrow">Live Demo</div>
+      <h2 class="section-title">This week in your town</h2>
+      <p class="section-sub" style="margin: 0 auto;">A real, working mockup of the TownHall app.</p>
+    </div>
+
+    <div class="demo-phone" id="main">
+      <header class="demo-phone-header">
+        <div class="demo-location">📍 Tampa, FL · District 3</div>
+        <div class="demo-location-name">Week of June 15, 2026</div>
+      </header>
+
+      <nav class="demo-tabs">
+        <button class="demo-tab is-active" data-tab="feed">📅 Agenda</button>
+        <button class="demo-tab" data-tab="reps">👥 My Reps</button>
+        <button class="demo-tab" data-tab="alerts">🔔 Alerts</button>
+        <button class="demo-tab" data-tab="elections">🗳️ Elections</button>
+      </nav>
+
+      <!-- AGENDA FEED -->
+      <div class="demo-feed" data-tab-panel="feed">
+        <div class="alert-card">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>VOTE TOMORROW · 10 AM</strong>
+            <p>Council votes on Short-Term Rental Ordinance. Your street has 8 active Airbnbs.</p>
+          </div>
+        </div>
+
+        <div class="feed-date">Tuesday, June 17</div>
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-zoning">Housing</span>
+            <span class="feed-item-time">10:00 AM</span>
+          </div>
+          <h3 class="feed-item-title">Short-Term Rental Ordinance — Final Vote</h3>
+          <p class="feed-item-desc">Limits STRs to primary residences, requires $250 annual license, caps occupancy at 2 per bedroom in R-1.</p>
+          <div class="feed-item-impact">
+            <span>📍</span>
+            <span>8 active STRs within 3 blocks of you</span>
+          </div>
+          <div class="feed-item-actions">
+            <button class="btn-mini" data-view-detail="shortterm">Read summary</button>
+            <button class="btn-mini btn-secondary" data-action="email">Email rep</button>
+            <button class="btn-mini btn-secondary" data-action="call">Call script</button>
+          </div>
+        </article>
+
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-transit">Transit</span>
+            <span class="feed-item-time">11:30 AM</span>
+          </div>
+          <h3 class="feed-item-title">HART Bus Route Cuts — Public Hearing</h3>
+          <p class="feed-item-desc">Proposed elimination of Route 14 (Ybor → Westshore) and reduced weekend frequency on Routes 6, 9, 12.</p>
+          <div class="feed-item-impact">
+            <span>🚌</span>
+            <span>Route 14 is 0.4 miles from your home</span>
+          </div>
+          <div class="feed-item-actions">
+            <button class="btn-mini">Read summary</button>
+            <button class="btn-mini btn-secondary" data-action="email">Email rep</button>
+          </div>
+        </article>
+
+        <div class="feed-date">Thursday, June 19</div>
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-taxes">Taxes</span>
+            <span class="feed-item-time">6:00 PM</span>
+          </div>
+          <h3 class="feed-item-title">FY2027 City Budget — Public Hearing</h3>
+          <p class="feed-item-desc">$1.4B proposed budget. 3.2% millage increase. $48M for housing, $12M for police training facility.</p>
+          <div class="feed-item-impact">
+            <span>🏠</span>
+            <span>Estimated impact: +$78/year on median home</span>
+          </div>
+          <div class="feed-item-actions">
+            <button class="btn-mini" data-view-detail="budget">Full breakdown</button>
+            <button class="btn-mini btn-secondary" data-action="share">Submit comment</button>
+          </div>
+        </article>
+
+        <div class="feed-date">Monday, June 23</div>
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-schools">Schools</span>
+            <span class="feed-item-time">5:30 PM</span>
+          </div>
+          <h3 class="feed-item-title">School Board: New Attendance Zone for Grady Elementary</h3>
+          <p class="feed-item-desc">Redistricting proposal would move 142 students from Grady to Mitchell Elementary due to overcrowding.</p>
+          <div class="feed-item-impact">
+            <span>🎒</span>
+            <span>Directly affects households in ZIP 33609</span>
+          </div>
+          <div class="feed-item-actions">
+            <button class="btn-mini">Read summary</button>
+            <button class="btn-mini btn-secondary" data-action="email">Email board</button>
+          </div>
+        </article>
+
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-safety">Public Safety</span>
+            <span class="feed-item-time">6:00 PM</span>
+          </div>
+          <h3 class="feed-item-title">Noise Ordinance Amendment — First Reading</h3>
+          <p class="feed-item-desc">Lowers residential noise threshold from 65 to 55 dB after 10 PM. Increases fines to $500 first offense.</p>
+          <div class="feed-item-actions">
+            <button class="btn-mini">Read summary</button>
+          </div>
+        </article>
+      </div>
+
+      <!-- DETAIL VIEW (hidden by default) -->
+      <div class="demo-detail is-hidden" data-view="detail">
+        <a href="#" class="detail-back" data-back>← Back to agenda</a>
+        <div id="detail-body"></div>
+        <div class="feed-item-actions" style="margin-top: 14px;">
+          <button class="btn-mini" data-action="email">✉️ Email rep</button>
+          <button class="btn-mini btn-secondary" data-action="call">📞 Call script</button>
+          <button class="btn-mini btn-secondary" data-action="share">📝 Submit comment</button>
+        </div>
+      </div>
+
+      <!-- REPS TAB -->
+      <div class="demo-feed is-hidden" data-tab-panel="reps" id="your-reps">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          You are represented by 7 officials across 4 levels of government.
+        </p>
+
+        <div class="feed-date">City of Tampa</div>
+        <article class="feed-item">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--townhall-blue-soft); display: grid; place-items: center; font-weight: 700; color: var(--townhall-blue);">JK</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px;">Hon. Jane Kelsey</div>
+              <div style="font-size: 12px; color: var(--text-muted);">City Council · District 3 · Since 2022</div>
+            </div>
+            <span class="rep-alignment alignment-high">86% match</span>
+          </div>
+        </article>
+        <article class="feed-item">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--townhall-red-soft); display: grid; place-items: center; font-weight: 700; color: var(--townhall-red);">RB</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px;">Hon. Ramon Burgos</div>
+              <div style="font-size: 12px; color: var(--text-muted);">City Council · At-Large · Since 2019</div>
+            </div>
+            <span class="rep-alignment alignment-low">42% match</span>
+          </div>
+        </article>
+
+        <div class="feed-date">Hillsborough County</div>
+        <article class="feed-item">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--townhall-green-soft); display: grid; place-items: center; font-weight: 700; color: var(--townhall-green);">KW</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px;">Hon. Ken Welch</div>
+              <div style="font-size: 12px; color: var(--text-muted);">County Commission · District 5</div>
+            </div>
+            <span class="rep-alignment alignment-mid">68% match</span>
+          </div>
+        </article>
+
+        <div class="feed-date">School Board</div>
+        <article class="feed-item">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--townhall-blue-soft); display: grid; place-items: center; font-weight: 700; color: var(--townhall-blue);">MA</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px;">Maria Alvarez</div>
+              <div style="font-size: 12px; color: var(--text-muted);">School Board · District 3 · Since 2021</div>
+            </div>
+            <span class="rep-alignment alignment-high">81% match</span>
+          </div>
+        </article>
+
+        <article class="feed-item">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--townhall-gray-100); display: grid; place-items: center; font-weight: 700; color: var(--townhall-navy);">+3</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 14px;">State & Federal reps</div>
+              <div style="font-size: 12px; color: var(--text-muted);">FL Senate, FL House, US Congress</div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- ALERTS TAB -->
+      <div class="demo-feed is-hidden" data-tab-panel="alerts">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          Get pinged the moment something you care about hits an agenda.
+        </p>
+
+        <div class="feed-item">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="feed-tag tag-zoning">Housing</span>
+            <span style="font-size: 14px; flex: 1;">Short-term rentals</span>
+            <button class="btn-mini btn-secondary" data-topic-alert data-on="1">✓ Subscribed</button>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="feed-tag tag-schools">Schools</span>
+            <span style="font-size: 14px; flex: 1;">School boundaries</span>
+            <button class="btn-mini btn-secondary" data-topic-alert data-on="0">+ Subscribe</button>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="feed-tag tag-taxes">Taxes</span>
+            <span style="font-size: 14px; flex: 1;">Property tax changes</span>
+            <button class="btn-mini btn-secondary" data-topic-alert data-on="1">✓ Subscribed</button>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="feed-tag tag-safety">Safety</span>
+            <span style="font-size: 14px; flex: 1;">Police budget items</span>
+            <button class="btn-mini btn-secondary" data-topic-alert data-on="0">+ Subscribe</button>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="feed-tag tag-transit">Transit</span>
+            <span style="font-size: 14px; flex: 1;">Bus route changes</span>
+            <button class="btn-mini btn-secondary" data-topic-alert data-on="0">+ Subscribe</button>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="feed-tag">Custom</span>
+            <span style="font-size: 14px; flex: 1; color: var(--text-muted);">+ Add keyword ("tree removal", your street name)</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 18px; padding: 14px; background: var(--townhall-blue-soft); border-radius: 10px; font-size: 13px;">
+          <strong style="color: var(--townhall-blue);">💡 How alerts work</strong><br/>
+          We monitor every agenda item posted by your city, county, and school board. When something matches your topics, you'll get a notification within 30 minutes.
+        </div>
+      </div>
+
+      <!-- ELECTIONS TAB -->
+      <div class="demo-feed is-hidden" data-tab-panel="elections">
+        <div class="alert-card" style="background: var(--townhall-blue-soft); border-color: #C9DEFA;">
+          <span class="alert-icon">🗳️</span>
+          <div>
+            <strong style="color: var(--townhall-blue);">FL PRIMARY · 76 DAYS</strong>
+            <p>Tuesday, August 26 · Register by July 30</p>
+          </div>
+        </div>
+
+        <div class="feed-date">On Your Ballot</div>
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-zoning">Mayor</span>
+          </div>
+          <h3 class="feed-item-title">Tampa Mayoral Primary</h3>
+          <p class="feed-item-desc">5 candidates. Top 2 advance to November general.</p>
+          <div class="feed-item-actions">
+            <button class="btn-mini">Compare candidates</button>
+          </div>
+        </article>
+
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-schools">School Board</span>
+          </div>
+          <h3 class="feed-item-title">District 3 School Board</h3>
+          <p class="feed-item-desc">Incumbent Maria Alvarez vs. 2 challengers. Q&A inside.</p>
+          <div class="feed-item-actions">
+            <button class="btn-mini">See Q&A</button>
+          </div>
+        </article>
+
+        <article class="feed-item">
+          <div class="feed-item-head">
+            <span class="feed-tag tag-taxes">Bond</span>
+          </div>
+          <h3 class="feed-item-title">$350M Transportation Bond</h3>
+          <p class="feed-item-desc">Funds road resurfacing, bike lanes, and 12 new HART stops over 10 years.</p>
+          <div class="feed-item-actions">
+            <button class="btn-mini">Read pros &amp; cons</button>
+          </div>
+        </article>
+
+        <div style="margin-top: 18px; font-size: 12px; color: var(--text-muted); text-align: center;">
+          ✅ You're registered · Polling: Jan Kaminis Platt Library
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FEATURES ============== -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">Everything you need</div>
+      <h2 class="section-title">Built for 5-minute civic engagement.</h2>
+      <p class="section-sub">No more 80-page PDFs. No more finding out about a vote the day after it happens. No more wondering who represents you.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📍</div>
+        <div class="feature-title">Know your reps</div>
+        <div class="feature-desc">Every official who represents you — city, county, school board, state, Congress. With photos, contact info, and how they've voted.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📰</div>
+        <div class="feature-title">Weekly civic digest</div>
+        <div class="feature-desc">Every Sunday: what's on next week's agenda in plain English. Five-minute read. Know before the meeting happens.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">One-tap actions</div>
+        <div class="feature-desc">AI-drafted email to your rep. Call script with talking points. Public comment in a tap. Actually make your voice heard.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-title">Topic alerts</div>
+        <div class="feature-desc">Subscribe to "renter protections," "school boundaries," "bike lanes" — get pinged when something matching hits an agenda.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Vote tracker</div>
+        <div class="feature-desc">See how your reps actually voted — not just what they said. Attendance records. Donor data. Flip-flop alerts.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🗳️</div>
+        <div class="feature-title">Election center</div>
+        <div class="feature-desc">Know every local race on your ballot. Candidate Q&As. Sample ballot. Registration status. Polling location. Never miss a local election.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PRICING ============== -->
+<section class="section" id="pricing" style="background: var(--townhall-gray-100);">
+  <div class="container">
+    <div class="section-header" style="text-align: center;">
+      <div class="section-eyebrow">Pricing</div>
+      <h2 class="section-title" style="margin-left: auto; margin-right: auto;">Free forever. Upgrade for power.</h2>
+      <p class="section-sub" style="margin: 0 auto;">Democracy shouldn't be paywalled. The free tier is real, not a trial.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Free</div>
+        <div class="price-amount">$0</div>
+        <div class="price-desc">For individuals. Forever.</div>
+        <ul class="price-features">
+          <li>Rep lookup</li>
+          <li>Weekly agenda digest</li>
+          <li>3 action emails / month</li>
+          <li>Election reminders</li>
+          <li>2 topic alerts</li>
+        </ul>
+      </div>
+
+      <div class="price-card is-featured">
+        <div class="price-flag">Most popular</div>
+        <div class="price-tier">TownHall Plus</div>
+        <div class="price-amount">$4.99<small>/mo</small></div>
+        <div class="price-desc">or $29.99/year (save 50%)</div>
+        <ul class="price-features">
+          <li>Everything in Free</li>
+          <li>Unlimited topic alerts</li>
+          <li>Advanced vote tracking</li>
+          <li>Donor & campaign finance data</li>
+          <li>Rep comparison tool</li>
+          <li>30-min "first to know" alerts</li>
+          <li>Civic Score history</li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Advocate</div>
+        <div class="price-amount">$14.99<small>/mo</small></div>
+        <div class="price-desc">For organizers, journalists, civic leaders.</div>
+        <ul class="price-features">
+          <li>Everything in Plus</li>
+          <li>Multi-ZIP monitoring (5 areas)</li>
+          <li>Bulk vote-history export</li>
+          <li>Slack & Discord webhooks</li>
+          <li>Position tracker for your org</li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Newsroom</div>
+        <div class="price-amount">$99<small>/mo</small></div>
+        <div class="price-desc">For local news outlets &amp; reporters.</div>
+        <ul class="price-features">
+          <li>API access</li>
+          <li>White-label embeds</li>
+          <li>Multi-reporter seats</li>
+          <li>Story idea generator</li>
+          <li>Source database (reps, meetings, votes)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MISSION ============== -->
+<section class="mission" id="mission">
+  <div class="mission-inner">
+    <h2>Local democracy is quietly dying — not from malice, but from inattention.</h2>
+    <p>The people who show up to 10 AM Tuesday council meetings are not representative of your community. Decisions get made without you. TownHall exists to change that — in 5 minutes a week, not 5 hours.</p>
+    <form class="mission-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='✓ Subscribed';">
+      <input type="email" placeholder="your@email.com" aria-label="Email" />
+      <button type="submit">Get launch updates</button>
+    </form>
+    <p style="font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 16px;">
+      Nonpartisan · Open data · Built by people who care · Tampa → Florida → USA
+    </p>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="logo">
+        <span class="logo-mark">🏛️</span>
+        <span>TownHall</span>
+      </div>
+      <div class="footer-tag">Local politics for busy people. © 2026</div>
+    </div>
+    <div class="footer-links">
+      <a href="#">About</a>
+      <a href="#">Coverage map</a>
+      <a href="#">For journalists</a>
+      <a href="#">For governments</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
