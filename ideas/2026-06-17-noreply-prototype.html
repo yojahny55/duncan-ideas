@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoReply — Ghost Client Survival Kit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .ghost-risk-low { background: linear-gradient(90deg, #10b981, #34d399); }
+        .ghost-risk-medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .ghost-risk-high { background: linear-gradient(90deg, #ef4444, #f87171); }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .nudge-item:hover {
+            transform: translateX(5px);
+            transition: transform 0.2s ease;
+        }
+        
+        .tab-active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <i class="fas fa-ghost text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold">NoReply</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#" class="text-gray-300 hover:text-white transition">Dashboard</a>
+                <a href="#" class="text-gray-300 hover:text-white transition">Projects</a>
+                <a href="#" class="text-gray-300 hover:text-white transition">Community</a>
+                <a href="#" class="text-gray-300 hover:text-white transition">Ghost Radar</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="p-2 text-gray-300 hover:text-white transition">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
+                    <span class="text-sm font-semibold">YC</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 px-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold mb-2">Good morning, Yojahny 👋</h1>
+                <p class="text-gray-400">You have <span class="text-red-400 font-semibold">2 projects at ghost risk</span>. Time to take action.</p>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="glass rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Active Projects</span>
+                        <i class="fas fa-folder-open text-blue-400"></i>
+                    </div>
+                    <div class="text-3xl font-bold">5</div>
+                    <div class="text-green-400 text-sm mt-1"><i class="fas fa-arrow-up"></i> 2 this month</div>
+                </div>
+                <div class="glass rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Pending Responses</span>
+                        <i class="fas fa-clock text-yellow-400"></i>
+                    </div>
+                    <div class="text-3xl font-bold">3</div>
+                    <div class="text-yellow-400 text-sm mt-1"><i class="fas fa-exclamation-triangle"></i> 1 overdue</div>
+                </div>
+                <div class="glass rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Nudges Sent</span>
+                        <i class="fas fa-paper-plane text-purple-400"></i>
+                    </div>
+                    <div class="text-3xl font-bold">12</div>
+                    <div class="text-purple-400 text-sm mt-1">67% response rate</div>
+                </div>
+                <div class="glass rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Escrow Protected</span>
+                        <i class="fas fa-shield-alt text-green-400"></i>
+                    </div>
+                    <div class="text-3xl font-bold">$8.5k</div>
+                    <div class="text-green-400 text-sm mt-1">Safe & secure</div>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Ghost Radar Section -->
+                <div class="lg:col-span-2 glass rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                                <i class="fas fa-radar"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold">Ghost Radar</h2>
+                                <p class="text-gray-400 text-sm">Client behavior risk scoring</p>
+                            </div>
+                        </div>
+                        <button class="text-blue-400 hover:text-blue-300 text-sm font-medium">View All <i class="fas fa-arrow-right ml-1"></i></button>
+                    </div>
+
+                    <!-- Client Cards -->
+                    <div class="space-y-4" id="clientList">
+                        <!-- High Risk Client -->
+                        <div class="glass rounded-xl p-4 slide-in" style="animation-delay: 0.1s">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center">
+                                        <span class="text-lg font-bold">TC</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="font-semibold">TechCorp Inc.</h3>
+                                            <span class="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs font-medium">HIGH RISK</span>
+                                        </div>
+                                        <p class="text-gray-400 text-sm mb-3">Landing Page Redesign • Last response: 12 days ago</p>
+                                        <div class="flex items-center gap-6 text-sm">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-reply text-gray-500"></i>
+                                                <span class="text-gray-400">Response time:</span>
+                                                <span class="text-red-400 font-medium">8.2 days</span>
+                                            </span>
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-clock text-gray-500"></i>
+                                                <span class="text-gray-400">Meeting no-shows:</span>
+                                                <span class="text-red-400 font-medium">3/5</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-4xl font-bold text-red-400">78%</div>
+                                    <div class="text-gray-400 text-sm">Ghost Probability</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full ghost-risk-high rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Medium Risk Client -->
+                        <div class="glass rounded-xl p-4 slide-in" style="animation-delay: 0.2s">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center">
+                                        <span class="text-lg font-bold">SF</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="font-semibold">StartupFlow</h3>
+                                            <span class="px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-medium">MEDIUM RISK</span>
+                                        </div>
+                                        <p class="text-gray-400 text-sm mb-3">Mobile App UI • Last response: 5 days ago</p>
+                                        <div class="flex items-center gap-6 text-sm">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-reply text-gray-500"></i>
+                                                <span class="text-gray-400">Response time:</span>
+                                                <span class="text-yellow-400 font-medium">3.5 days</span>
+                                            </span>
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-clock text-gray-500"></i>
+                                                <span class="text-gray-400">Meeting no-shows:</span>
+                                                <span class="text-green-400 font-medium">0/3</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-4xl font-bold text-yellow-400">42%</div>
+                                    <div class="text-gray-400 text-sm">Ghost Probability</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full ghost-risk-medium rounded-full" style="width: 42%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Low Risk Client -->
+                        <div class="glass rounded-xl p-4 slide-in" style="animation-delay: 0.3s">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+                                        <span class="text-lg font-bold">BH</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="font-semibold">BrightHorizon</h3>
+                                            <span class="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">LOW RISK</span>
+                                        </div>
+                                        <p class="text-gray-400 text-sm mb-3">E-commerce Platform • Last response: 8 hours ago</p>
+                                        <div class="flex items-center gap-6 text-sm">
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-reply text-gray-500"></i>
+                                                <span class="text-gray-400">Response time:</span>
+                                                <span class="text-green-400 font-medium">0.8 days</span>
+                                            </span>
+                                            <span class="flex items-center gap-2">
+                                                <i class="fas fa-clock text-gray-500"></i>
+                                                <span class="text-gray-400">Meeting no-shows:</span>
+                                                <span class="text-green-400 font-medium">0/8</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-4xl font-bold text-green-400">12%</div>
+                                    <div class="text-gray-400 text-sm">Ghost Probability</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full ghost-risk-low rounded-full" style="width: 12%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="space-y-6">
+                    
+                    <!-- Smart Nudge Panel -->
+                    <div class="glass rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold">Smart Nudge</h2>
+                                <p class="text-gray-400 text-sm">Automated follow-ups</p>
+                            </div>
+                        </div>
+
+                        <!-- Tabs -->
+                        <div class="flex gap-2 mb-4">
+                            <button class="flex-1 py-2 px-3 rounded-lg text-sm font-medium tab-active" onclick="switchTab(this, 'pending')">Pending</button>
+                            <button class="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-gray-700/50 text-gray-300" onclick="switchTab(this, 'sent')">Sent</button>
+                            <button class="flex-1 py-2 px-3 rounded-lg text-sm font-medium bg-gray-700/50 text-gray-300" onclick="switchTab(this, 'templates')">Templates</button>
+                        </div>
+
+                        <!-- Pending Nudges -->
+                        <div id="pending-nudges" class="space-y-3">
+                            <div class="p-3 rounded-lg bg-red-500/10 border border-red-500/20 nudge-item cursor-pointer" onclick="showNudgeDetail()">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-red-400 text-xs font-medium">OVERDUE</span>
+                                    <span class="text-gray-400 text-xs">3 days late</span>
+                                </div>
+                                <div class="font-medium mb-1">TechCorp Inc.</div>
+                                <div class="text-gray-400 text-sm">Nudge #3 — Final Notice</div>
+                            </div>
+
+                            <div class="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 nudge-item cursor-pointer" onclick="showNudgeDetail()">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-yellow-400 text-xs font-medium">UPCOMING</span>
+                                    <span class="text-gray-400 text-xs">In 2 days</span>
+                                </div>
+                                <div class="font-medium mb-1">StartupFlow</div>
+                                <div class="text-gray-400 text-sm">Nudge #2 — Friendly Reminder</div>
+                            </div>
+                        </div>
+
+                        <!-- Send Custom Nudge -->
+                        <button class="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 font-semibold hover:opacity-90 transition">
+                            <i class="fas fa-plus mr-2"></i> Send Custom Nudge
+                        </button>
+                    </div>
+
+                    <!-- Ghost Insurance Status -->
+                    <div class="glass rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold">Ghost Insurance</h2>
+                                <p class="text-gray-400 text-sm">Protected payments</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                                <div>
+                                    <div class="font-medium">TechCorp Inc.</div>
+                                    <div class="text-gray-400 text-xs">$3,500 protected</div>
+                                </div>
+                                <div class="text-green-400">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                                <div>
+                                    <div class="font-medium">StartupFlow</div>
+                                    <div class="text-gray-400 text-xs">$5,000 protected</div>
+                                </div>
+                                <div class="text-green-400">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-lg bg-gray-700/30 border border-gray-600/30">
+                                <div>
+                                    <div class="font-medium">BrightHorizon</div>
+                                    <div class="text-gray-400 text-xs">Not protected</div>
+                                </div>
+                                <button class="text-blue-400 text-sm hover:text-blue-300">Add <i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="glass rounded-2xl p-6">
+                        <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
+                        <div class="space-y-2">
+                            <button class="w-full p-3 rounded-lg bg-gray-700/50 hover:bg-gray-700 text-left flex items-center gap-3 transition">
+                                <i class="fas fa-pause-circle text-purple-400"></i>
+                                <span>Project Hibernation</span>
+                            </button>
+                            <button class="w-full p-3 rounded-lg bg-gray-700/50 hover:bg-gray-700 text-left flex items-center gap-3 transition">
+                                <i class="fas fa-file-contract text-blue-400"></i>
+                                <span>Contract Templates</span>
+                            </button>
+                            <button class="w-full p-3 rounded-lg bg-gray-700/50 hover:bg-gray-700 text-left flex items-center gap-3 transition">
+                                <i class="fas fa-users text-green-400"></i>
+                                <span>Community Support</span>
+                            </button>
+                            <button class="w-full p-3 rounded-lg bg-gray-700/50 hover:bg-gray-700 text-left flex items-center gap-3 transition">
+                                <i class="fas fa-exclamation-circle text-red-400"></i>
+                                <span>Report Ghost Client</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Projects Table -->
+            <div class="mt-6 glass rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold">Active Projects</h2>
+                    <button class="text-blue-400 hover:text-blue-300 text-sm font-medium">
+                        <i class="fas fa-plus mr-1"></i> New Project
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-gray-400 text-sm border-b border-gray-700">
+                                <th class="text-left pb-3 font-medium">Client</th>
+                                <th class="text-left pb-3 font-medium">Project</th>
+                                <th class="text-left pb-3 font-medium">Status</th>
+                                <th class="text-left pb-3 font-medium">Last Contact</th>
+                                <th class="text-left pb-3 font-medium">Milestone</th>
+                                <th class="text-left pb-3 font-medium">Insurance</th>
+                                <th class="text-left pb-3 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="border-b border-gray-700/50">
+                                <td class="py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center text-xs font-bold">TC</div>
+                                        <span>TechCorp Inc.</span>
+                                    </div>
+                                </td>
+                                <td class="py-4">Landing Page Redesign</td>
+                                <td class="py-4"><span class="px-2 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-medium">Ghosted</span></td>
+                                <td class="py-4 text-gray-400">12 days ago</td>
+                                <td class="py-4">M2 ($2,500)</td>
+                                <td class="py-4"><i class="fas fa-shield-alt text-green-400"></i></td>
+                                <td class="py-4">
+                                    <button class="text-gray-400 hover:text-white p-1" title="Send Nudge"><i class="fas fa-paper-plane"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="Hibernate"><i class="fas fa-pause"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="More"><i class="fas fa-ellipsis-h"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-700/50">
+                                <td class="py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center text-xs font-bold">SF</div>
+                                        <span>StartupFlow</span>
+                                    </div>
+                                </td>
+                                <td class="py-4">Mobile App UI</td>
+                                <td class="py-4"><span class="px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-medium">Waiting</span></td>
+                                <td class="py-4 text-gray-400">5 days ago</td>
+                                <td class="py-4">M3 ($3,000)</td>
+                                <td class="py-4"><i class="fas fa-shield-alt text-green-400"></i></td>
+                                <td class="py-4">
+                                    <button class="text-gray-400 hover:text-white p-1" title="Send Nudge"><i class="fas fa-paper-plane"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="Hibernate"><i class="fas fa-pause"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="More"><i class="fas fa-ellipsis-h"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="border-b border-gray-700/50">
+                                <td class="py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs font-bold">BH</div>
+                                        <span>BrightHorizon</span>
+                                    </div>
+                                </td>
+                                <td class="py-4">E-commerce Platform</td>
+                                <td class="py-4"><span class="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">Active</span></td>
+                                <td class="py-4 text-gray-400">8 hours ago</td>
+                                <td class="py-4">M1 ($2,000)</td>
+                                <td class="py-4"><i class="fas fa-times-circle text-gray-500"></i></td>
+                                <td class="py-4">
+                                    <button class="text-gray-400 hover:text-white p-1" title="Send Nudge"><i class="fas fa-paper-plane"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="Hibernate"><i class="fas fa-pause"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="More"><i class="fas fa-ellipsis-h"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-xs font-bold">DL</div>
+                                        <span>DataLabs</span>
+                                    </div>
+                                </td>
+                                <td class="py-4">Dashboard Redesign</td>
+                                <td class="py-4"><span class="px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium">In Progress</span></td>
+                                <td class="py-4 text-gray-400">2 days ago</td>
+                                <td class="py-4">M2 ($1,500)</td>
+                                <td class="py-4"><i class="fas fa-shield-alt text-green-400"></i></td>
+                                <td class="py-4">
+                                    <button class="text-gray-400 hover:text-white p-1" title="Send Nudge"><i class="fas fa-paper-plane"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="Hibernate"><i class="fas fa-pause"></i></button>
+                                    <button class="text-gray-400 hover:text-white p-1 ml-2" title="More"><i class="fas fa-ellipsis-h"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Nudge Detail Modal (Hidden by default) -->
+    <div id="nudgeModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="hideNudgeDetail()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg glass rounded-2xl p-6 slide-in">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold">Nudge #3 — Final Notice</h3>
+                <button onclick="hideNudgeDetail()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <div class="flex items-center gap-2 text-red-400 mb-2">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span class="font-medium">Overdue by 3 days</span>
+                    </div>
+                    <p class="text-gray-300 text-sm">This is the final nudge before project hibernation is triggered automatically.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Subject</label>
+                    <input type="text" value="Final Follow-up: Landing Page Redesign" class="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Message</label>
+                    <textarea rows="6" class="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none">Hi [Client Name],
+
+I'm following up one more time regarding the landing page redesign project. I submitted the milestone 2 deliverables on March 5th and haven't received any feedback yet.
+
+Per our agreement, I'll be pausing work on this project if I don't hear back by [Date]. This is to ensure I can maintain my availability for other client commitments.
+
+Let me know if there's anything specific you need from me to move forward.
+
+Best,
+Yojahny</textarea>
+                </div>
+
+                <div class="flex items-center gap-3 text-sm text-gray-400">
+                    <i class="fas fa-magic"></i>
+                    <span>AI-generated copy — professional but firm</span>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="hideNudgeDetail()" class="flex-1 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition font-medium">Cancel</button>
+                    <button class="flex-1 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:opacity-90 transition font-medium">Send Nudge</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Hibernation Modal (Hidden by default) -->
+    <div id="hibernateModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="hideHibernateModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg glass rounded-2xl p-6 slide-in">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold">Project Hibernation</h3>
+                <button onclick="hideHibernateModal()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                    <div class="flex items-center gap-2 text-purple-400 mb-2">
+                        <i class="fas fa-pause-circle"></i>
+                        <span class="font-medium">Hibernation Mode</span>
+                    </div>
+                    <p class="text-gray-300 text-sm">This will send a professional notice to TechCorp Inc., pause all work, and document the current project state for your records.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Hibernation Reason</label>
+                    <select class="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                        <option>No response for 14+ days</option>
+                        <option>Client unavailable</option>
+                        <option>Payment delayed</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Internal Notes (Private)</label>
+                    <textarea rows="3" class="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 focus:border-blue-500 focus:outline-none resize-none" placeholder="Add any context for future reference..."></textarea>
+                </div>
+
+                <div class="flex items-start gap-2 text-sm text-gray-400">
+                    <input type="checkbox" id="notifyClient" checked class="mt-1">
+                    <label for="notifyClient">Send hibernation notice to client via email</label>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="hideHibernateModal()" class="flex-1 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition font-medium">Cancel</button>
+                    <button class="flex-1 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 hover:opacity-90 transition font-medium">Hibernate Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(btn, tab) {
+            // Reset all tabs
+            const tabs = btn.parentElement.querySelectorAll('button');
+            tabs.forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('bg-gray-700/50', 'text-gray-300');
+            });
+
+            // Activate clicked tab
+            btn.classList.add('tab-active');
+            btn.classList.remove('bg-gray-700/50', 'text-gray-300');
+
+            // In a full app, this would switch content
+            // For demo, just visual feedback
+        }
+
+        function showNudgeDetail() {
+            document.getElementById('nudgeModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideNudgeDetail() {
+            document.getElementById('nudgeModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Add event listeners for hibernate buttons
+        document.querySelectorAll('[title="Hibernate"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('hibernateModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function hideHibernateModal() {
+            document.getElementById('hibernateModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modals on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideNudgeDetail();
+                hideHibernateModal();
+            }
+        });
+
+        // Animate stats on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const stats = document.querySelectorAll('.text-3xl.font-bold');
+            stats.forEach(stat => {
+                stat.style.opacity = '0';
+                stat.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    stat.style.transition = 'all 0.5s ease';
+                    stat.style.opacity = '1';
+                    stat.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
