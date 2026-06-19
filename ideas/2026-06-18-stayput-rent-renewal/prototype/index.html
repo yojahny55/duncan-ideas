@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StayPut — Rent Renewal Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0F1117;--bg-2:#171A23;--bg-3:#1E2230;--bg-card:#1A1E2A;
+  --border:#262B3A;--border-2:#2F3548;
+  --text:#F2F4F8;--text-2:#A4ADBE;--text-3:#6B7589;
+  --brand:#4ADE80;--brand-2:#22D3EE;--warn:#FBBF24;--bad:#F87171;--good:#4ADE80;--accent:#A78BFA;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:22px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);background:rgba(15,17,23,.75);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.logo-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:grid;place-items:center;font-size:16px;color:#0F1117;box-shadow:0 4px 14px rgba(74,222,128,.4)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-size:14px;color:var(--text-2);font-weight:500;transition:color .15s}
+.nav-links a:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--r-md);font-weight:600;font-size:14px;transition:transform .12s,background .15s}
+.btn-primary{background:linear-gradient(135deg,var(--brand),#36CFA0);color:#0F1117;box-shadow:0 4px 16px rgba(74,222,128,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(74,222,128,.4)}
+.btn-ghost{border:1px solid var(--border-2);color:var(--text);background:var(--bg-card)}
+.btn-ghost:hover{background:var(--bg-3)}
+.hero{position:relative;padding:80px 24px 60px;max-width:1180px;margin:0 auto}
+.hero-glow{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(74,222,128,.15),transparent 60%);pointer-events:none;z-index:0}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:760px;margin:0 auto}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:99px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);font-size:12.5px;font-weight:600;color:var(--brand);margin-bottom:24px}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5.8vw,68px);line-height:1.02;letter-spacing:-.035em;font-weight:700;margin-bottom:20px}
+.gradient-text{background:linear-gradient(90deg,var(--brand),var(--brand-2) 50%,var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.sub{font-size:18px;color:var(--text-2);max-width:580px;margin:0 auto 36px}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-lg{padding:14px 26px;font-size:15px;border-radius:var(--r-md)}
+.hero-stats{display:flex;justify-content:center;gap:50px;flex-wrap:wrap;padding-top:30px;border-top:1px solid var(--border)}
+.stat{text-align:center}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;font-weight:600}
+section{max-width:1180px;margin:0 auto;padding:60px 24px}
+.section-head{text-align:center;max-width:620px;margin:0 auto 50px}
+.section-label{font-size:12px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px}
+h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,4vw,42px);letter-spacing:-.025em;line-height:1.1;margin-bottom:14px;font-weight:700}
+.section-head p{color:var(--text-2);font-size:16.5px}
+.demo-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;box-shadow:0 20px 50px -15px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03)}
+.demo-form{padding:36px;border-right:1px solid var(--border)}
+.demo-output{padding:36px;background:linear-gradient(180deg,var(--bg-2),var(--bg-card))}
+.form-step{margin-bottom:24px}
+.form-step-label{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.step-dot{width:20px;height:20px;border-radius:50%;background:var(--brand);border:1px solid var(--brand);display:grid;place-items:center;font-size:11px;color:#0F1117;font-weight:700}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:13px;color:var(--text-2);margin-bottom:6px;font-weight:500}
+input,select{width:100%;padding:11px 14px;background:var(--bg-3);border:1px solid var(--border-2);border-radius:var(--r-sm);color:var(--text);font-size:14px;font-family:inherit;transition:border .15s,background .15s}
+input:focus,select:focus{outline:none;border-color:var(--brand);background:var(--bg-2)}
+.output-label{font-size:12px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.verdict{padding:20px;border-radius:var(--r-md);background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);margin-bottom:20px}
+.verdict.good{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25)}
+.verdict.warn{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25)}
+.verdict-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-bottom:6px}
+.verdict.bad .verdict-title{color:var(--bad)}
+.verdict.good .verdict-title{color:var(--good)}
+.verdict.warn .verdict-title{color:var(--warn)}
+.verdict-desc{font-size:13.5px;color:var(--text-2);line-height:1.5}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.metric{padding:14px;background:var(--bg-3);border-radius:var(--r-sm);border:1px solid var(--border)}
+.metric-label{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:4px}
+.metric-value{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+.metric-value.up{color:var(--bad)}
+.metric-value.down{color:var(--good)}
+.neg-letter{background:var(--bg-3);border:1px solid var(--border);border-radius:var(--r-md);padding:18px;font-size:13px;line-height:1.65;color:var(--text-2);max-height:260px;overflow-y:auto}
+.neg-letter strong{color:var(--text);font-weight:600}
+.neg-letter::-webkit-scrollbar{width:6px}
+.neg-letter::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
+.email-actions{display:flex;gap:8px;margin-top:14px}
+.email-btn{flex:1;padding:8px;font-size:12.5px;font-weight:600;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--r-sm);color:var(--text-2);transition:all .15s}
+.email-btn:hover{color:var(--brand);border-color:var(--brand)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feature{padding:28px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);transition:transform .2s,border-color .2s}
+.feature:hover{transform:translateY(-3px);border-color:var(--border-2)}
+.feature-icon{width:42px;height:42px;border-radius:var(--r-sm);display:grid;place-items:center;font-size:20px;margin-bottom:18px}
+.fi-1{background:rgba(74,222,128,.1);color:var(--brand)}
+.fi-2{background:rgba(34,211,238,.1);color:var(--brand-2)}
+.fi-3{background:rgba(167,139,250,.1);color:var(--accent)}
+.fi-4{background:rgba(251,191,36,.1);color:var(--warn)}
+.fi-5{background:rgba(248,113,113,.1);color:var(--bad)}
+.fi-6{background:rgba(74,222,128,.1);color:var(--brand)}
+.feature h3{font-size:17px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.feature p{font-size:14px;color:var(--text-2);line-height:1.55}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step-card{padding:28px 24px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg)}
+.step-num{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:14px}
+.step-card h4{font-size:16px;font-weight:700;margin-bottom:8px}
+.step-card p{font-size:13.5px;color:var(--text-2);line-height:1.55}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.calc-card{padding:30px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg)}
+.calc-card h3{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.calc-line{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text-2)}
+.calc-line:last-child{border:none}
+.calc-line.total{font-weight:700;color:var(--text);font-size:16px;padding-top:14px;border-top:2px solid var(--border-2)}
+.calc-line.total .calc-amount{font-family:'Space Grotesk',sans-serif}
+.calc-amount{font-variant-numeric:tabular-nums;color:var(--text)}
+.calc-amount.up{color:var(--bad)}
+.calc-amount.down{color:var(--good)}
+.verdict-banner{margin-top:20px;padding:18px;border-radius:var(--r-md);background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);text-align:center}
+.verdict-banner strong{font-family:'Space Grotesk',sans-serif;color:var(--good);font-size:18px}
+.rights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.right-card{padding:22px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md)}
+.right-card h4{font-size:15px;font-weight:700;margin-bottom:6px}
+.right-card .state{font-size:12px;color:var(--brand);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
+.right-card p{font-size:13.5px;color:var(--text-2);line-height:1.5}
+.right-card .rule{margin-top:10px;padding:8px 10px;background:var(--bg-3);border-radius:var(--r-sm);font-size:12.5px;color:var(--text-2)}
+.right-card .rule strong{color:var(--text)}
+.cta-section{padding:80px 24px;text-align:center}
+.cta-card{max-width:780px;margin:0 auto;padding:60px 40px;background:linear-gradient(135deg,rgba(74,222,128,.06),rgba(34,211,238,.04));border:1px solid var(--border-2);border-radius:var(--r-xl);position:relative;overflow:hidden}
+.cta-card::before{content:"";position:absolute;top:-50%;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(74,222,128,.1),transparent 70%);pointer-events:none}
+.cta-content{position:relative;z-index:1}
+.cta-card h2{margin-bottom:14px}
+.cta-card p{font-size:17px;color:var(--text-2);margin-bottom:30px}
+.cta-card .btn{font-size:16px;padding:16px 32px}
+.compare-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.compare-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr)}
+.compare-cell{padding:18px 22px;border-bottom:1px solid var(--border);font-size:14px;display:flex;align-items:center}
+.compare-row:last-child .compare-cell{border-bottom:none}
+.compare-head{font-weight:700;color:var(--text);background:var(--bg-2);font-size:13px}
+.compare-head:not(:first-child){text-align:center;justify-content:center}
+.compare-cell.label{font-weight:500;color:var(--text-2)}
+.compare-cell.check{justify-content:center}
+.yes{color:var(--good);font-size:18px}
+.no{color:var(--text-3);font-size:18px}
+.stay-col{background:rgba(74,222,128,.04)}
+.compare-head.stay{color:var(--brand)}
+footer{border-top:1px solid var(--border);padding:40px 24px;text-align:center}
+footer p{font-size:13px;color:var(--text-3)}
+footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--text);margin-bottom:6px;font-size:15px}
+@media (max-width:900px){.demo-grid{grid-template-columns:1fr}.demo-form{border-right:none;border-bottom:1px solid var(--border)}.features-grid,.steps-grid,.calc-grid,.rights-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}}
+@media (max-width:560px){.features-grid,.steps-grid,.calc-grid,.rights-grid{grid-template-columns:1fr}.hero-stats{gap:24px}.hero{padding-top:50px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo"><span class="logo-mark">🏠</span><span>StayPut</span></a>
+    <div class="nav-links">
+      <a href="#how">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#rights">Rights</a>
+    </div>
+    <a href="#demo" class="btn btn-primary">Analyze My Rent →</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <span class="pill">Renewal season — 60% of leases renew June–September</span>
+    <h1>Your rent just went up <span class="gradient-text">8%</span>.<br>Don't just accept it.</h1>
+    <p class="sub">StayPut analyzes your renewal offer against local market data, generates a data-backed negotiation script, and shows whether moving is actually worth it. All in 60 seconds.</p>
+    <div class="hero-ctas">
+      <a href="#demo" class="btn btn-primary btn-lg">Check My Renewal →</a>
+      <a href="#how" class="btn btn-ghost btn-lg">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">$2,400</div><div class="stat-label">Avg. Annual Savings</div></div>
+      <div class="stat"><div class="stat-num">44M</div><div class="stat-label">US Renters</div></div>
+      <div class="stat"><div class="stat-num">5.8%</div><div class="stat-label">Avg. Renewal Hike</div></div>
+      <div class="stat"><div class="stat-num">73%</div><div class="stat-label">Never Negotiate</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="demo" style="padding-top:30px">
+  <div class="section-head">
+    <div class="section-label">Live Demo</div>
+    <h2>See exactly what StayPut tells you</h2>
+    <p>Enter your situation. Watch the analysis build in real-time.</p>
+  </div>
+  <div class="demo-grid">
+    <div class="demo-form">
+      <div class="form-step">
+        <div class="form-step-label"><span class="step-dot">1</span> Your Current Lease</div>
+        <div class="form-row">
+          <div><label>City</label>
+            <select id="city" onchange="updateAnalysis()">
+              <option value="tampa">Tampa, FL</option>
+              <option value="orlando">Orlando, FL</option>
+              <option value="miami">Miami, FL</option>
+              <option value="austin">Austin, TX</option>
+              <option value="nyc">New York, NY</option>
+              <option value="seattle">Seattle, WA</option>
+            </select>
+          </div>
+          <div><label>Unit Type</label>
+            <select id="unit" onchange="updateAnalysis()">
+              <option value="1br">1 Bedroom</option>
+              <option value="2br">2 Bedroom</option>
+              <option value="studio">Studio</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:20px">
+        <div><label>Current Rent ($/mo)</label><input type="number" id="currentRent" value="1650" oninput="updateAnalysis()"></div>
+        <div><label>Proposed Rent ($/mo)</label><input type="number" id="proposedRent" value="1795" oninput="updateAnalysis()"></div>
+      </div>
+      <div class="form-step" style="margin-bottom:20px">
+        <div class="form-step-label"><span class="step-dot">2</span> Your Tenure</div>
+        <select id="tenure" onchange="updateAnalysis()">
+          <option value="1">Less than 1 year</option>
+          <option value="2">1–2 years</option>
+          <option value="3" selected>2–3 years</option>
+          <option value="5">3–5 years</option>
+          <option value="6">5+ years</option>
+        </select>
+      </div>
+      <div class="form-step">
+        <div class="form-step-label"><span class="step-dot">3</span> Lease End Date</div>
+        <input type="date" id="leaseEnd" value="2026-08-31" onchange="updateAnalysis()">
+      </div>
+    </div>
+    <div class="demo-output">
+      <div class="output-label">Analysis Result</div>
+      <div class="verdict" id="verdict">
+        <div class="verdict-title" id="verdictTitle">⚠️ Overpaying vs Market</div>
+        <div class="verdict-desc" id="verdictDesc">Your landlord's offer is <strong>8.8% above</strong> the local median for similar units. Strong grounds to negotiate.</div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><div class="metric-label">Median 1BR (0.5mi)</div><div class="metric-value down" id="median">$1,650</div></div>
+        <div class="metric"><div class="metric-label">Your Hike</div><div class="metric-value up" id="hikePct">+8.8%</div></div>
+        <div class="metric"><div class="metric-label">Market Trend</div><div class="metric-value" id="trend" style="color:var(--text-2)">→ Flat</div></div>
+        <div class="metric"><div class="metric-label">Negotiation Power</div><div class="metric-value" id="power" style="color:var(--good)">Strong</div></div>
+      </div>
+      <div class="output-label" style="margin-top:4px">AI Negotiation Email</div>
+      <div class="neg-letter" id="negLetter"></div>
+      <div class="email-actions">
+        <button class="email-btn" onclick="copyEmail()">📋 Copy</button>
+        <button class="email-btn" onclick="reviseEmail()">🔄 Revise Tone</button>
+        <button class="email-btn" onclick="downloadEmail()">⬇ Download</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="section-head">
+    <div class="section-label">How It Works</div>
+    <h2>From renewal letter to negotiation in 60 seconds</h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-num">01</div><h4>Upload Renewal Letter</h4><p>Snap a photo or upload PDF. StayPut extracts current rent, proposed increase, and key dates automatically.</p></div>
+    <div class="step-card"><div class="step-num">02</div><h4>Get Market Comps</h4><p>We pull 10+ comparable rentals within 0.5 miles from Zillow, Apartments.com, and RentCafe. See where your offer ranks.</p></div>
+    <div class="step-card"><div class="step-num">03</div><h4>AI Negotiation Kit</h4><p>Claude writes a professional, data-cited email tailored to your situation. Tenure, payment history, local laws — all cited.</p></div>
+    <div class="step-card"><div class="step-num">04</div><h4>Move vs Stay Math</h4><p>See the real cost comparison. Moving saves $200/mo but costs $7,500 upfront — break-even in 2.9 years.</p></div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-head">
+    <div class="section-label">Features</div>
+    <h2>Everything you need at renewal time</h2>
+    <p>The highest-leverage financial decision you make each year — finally supported by data.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature"><div class="feature-icon fi-1">📊</div><h3>Market Comp Engine</h3><p>Real-time comps for your unit type within 0.5 miles. Median rent, price per sqft, and where your offer ranks.</p></div>
+    <div class="feature"><div class="feature-icon fi-2">✉️</div><h3>AI Negotiation Script</h3><p>Professional, data-cited email tailored to your situation. Long-term tenant? Maintenance issues? Local rent control? All leveraged.</p></div>
+    <div class="feature"><div class="feature-icon fi-3">🧮</div><h3>Move vs Stay Calculator</h3><p>Moving costs $3,000–$8,000. We break down first/last/security, movers, overlap rent, fees — with break-even analysis.</p></div>
+    <div class="feature"><div class="feature-icon fi-4">⚖️</div><h3>Tenant Rights Lookup</h3><p>Rent control eligibility, just-cause eviction protections, max increase caps, notice periods — for your specific city.</p></div>
+    <div class="feature"><div class="feature-icon fi-5">🔑</div><h3>Concessions Playbook</h3><p>Beyond price: parking, storage, pet rent waiver, upgraded appliances, longer lease for rate lock. Ask for the right things.</p></div>
+    <div class="feature"><div class="feature-icon fi-6">📆</div><h3>Renewal Alerts + Vault</h3><p>90/60/30-day reminders so you never miss the window. Track rent history across every apartment you've lived in.</p></div>
+  </div>
+</section>
+
+<section id="calculator">
+  <div class="section-head">
+    <div class="section-label">Move vs Stay</div>
+    <h2>The math most renters never do</h2>
+    <p>Should you actually move? Here's the real cost comparison.</p>
+  </div>
+  <div class="calc-grid">
+    <div class="calc-card">
+      <h3>💸 Cost to Move</h3>
+      <div class="calc-line"><span>First + last + security</span><span class="calc-amount up">$4,500</span></div>
+      <div class="calc-line"><span>Movers (local, 1BR)</span><span class="calc-amount up">$1,200</span></div>
+      <div class="calc-line"><span>Application fees (3-5 apts)</span><span class="calc-amount up">$300</span></div>
+      <div class="calc-line"><span>Overlap rent (half month)</span><span class="calc-amount up">$800</span></div>
+      <div class="calc-line"><span>Utility setup + deposits</span><span class="calc-amount up">$200</span></div>
+      <div class="calc-line"><span>Time off work</span><span class="calc-amount up">$500</span></div>
+      <div class="calc-line total"><span>Total Upfront</span><span class="calc-amount up">$7,500</span></div>
+    </div>
+    <div class="calc-card">
+      <h3>🏠 Cost to Stay (1yr)</h3>
+      <div class="calc-line"><span>Current rent × 12</span><span class="calc-amount">$19,800</span></div>
+      <div class="calc-line"><span>Proposed rent × 12</span><span class="calc-amount up">$21,540</span></div>
+      <div class="calc-line"><span>Annual increase cost</span><span class="calc-amount up">+$1,740</span></div>
+      <div class="calc-line"><span>Negotiated rent (target)</span><span class="calc-amount down">$20,340</span></div>
+      <div class="calc-line"><span>Potential savings</span><span class="calc-amount down">−$1,200</span></div>
+      <div class="calc-line total"><span>Stay vs Move (Yr 1)</span><span class="calc-amount down">Save $6,360</span></div>
+    </div>
+  </div>
+  <div class="verdict-banner">
+    <strong>Verdict: Stay & Negotiate.</strong> Moving saves $200/mo but costs $7,500 upfront. Break-even: 2.9 years. Negotiate hard instead.
+  </div>
+</section>
+
+<section id="rights">
+  <div class="section-head">
+    <div class="section-label">Tenant Rights</div>
+    <h2>Know your leverage by city</h2>
+    <p>Rent control, notice periods, and caps vary wildly. Here's what renters often don't know.</p>
+  </div>
+  <div class="rights-grid">
+    <div class="right-card">
+      <div class="state">🇨🇺 Florida</div>
+      <h4>Tampa / Orlando / Miami</h4>
+      <p>No state rent control. No cap on increases. Landlord can raise rent any amount at renewal.</p>
+      <div class="rule"><strong>Leverage:</strong> 60-day notice required for non-renewal. Use market data as your argument — it's all you have.</div>
+    </div>
+    <div class="right-card">
+      <div class="state">🗽 New York</div>
+      <h4>NYC Rent-Stabilized</h4>
+      <p>~1M apartments are rent-stabilized. Increases set annually by RGB (2026: 2.25% 1yr, 4.0% 2yr).</p>
+      <div class="rule"><strong>Leverage:</strong> If stabilized, landlord CANNOT charge above RGB increase. Check your registration status — many don't know they're covered.</div>
+    </div>
+    <div class="right-card">
+      <div class="state">🌲 West Coast</div>
+      <h4>Seattle / Portland / SF</h4>
+      <p>Seattle: 60-day notice for any increase. SF: rent control covers most pre-1979 buildings. Portland: 90-day notice, 10% cap.</p>
+      <div class="rule"><strong>Leverage:</strong> 3 of the 4 biggest West Coast cities have increase caps or rent boards. File a petition if yours exceeds the cap.</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-card">
+    <div class="cta-content">
+      <h2>Don't accept the first number.</h2>
+      <p>Join the 27% of renters who negotiate. Save an average of $200/month. StayPut gives you the data, the script, and the confidence.</p>
+      <a href="#demo" class="btn btn-primary">Analyze My Renewal →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">StayPut</div>
+  <p>Rent renewal companion — built for the 44M American renters who deserve data at the negotiating table.</p>
+  <p style="margin-top:8px;opacity:.5">Prototype demo. Not legal advice. Market data simulated for demonstration.</p>
+</footer>
+
+<script>
+const cityData = {
+  tampa:   { median1br: 1650, median2br: 2100, medianStudio: 1350, trend: "+1.2%", trendDir: "up", complexName: "Westshore Commons", llName: "Property Management", notice: 60 },
+  orlando: { median1br: 1550, median2br: 1950, medianStudio: 1250, trend: "+0.8%", trendDir: "up", complexName: "Lake Nona Apartments", llName: "Avalon Management", notice: 60 },
+  miami:   { median1br: 2150, median2br: 2750, medianStudio: 1750, trend: "+3.4%", trendDir: "up", complexName: "Brickell Heights", llName: "Related Group", notice: 60 },
+  austin:  { median1br: 1450, median2br: 1900, medianStudio: 1150, trend: "-1.1%", trendDir: "down", complexName: "Domain Apartments", llName: "Greystar", notice: 60 },
+  nyc:     { median1br: 3100, median2br: 3950, medianStudio: 2450, trend: "+2.1%", trendDir: "up", complexName: "Park Slope Apt", llName: "Brooklyn Realty", notice: 90 },
+  seattle: { median1br: 1950, median2br: 2550, medianStudio: 1550, trend: "-0.5%", trendDir: "down", complexName: "Capitol Hill Lofts", llName: "Greystar", notice: 60 }
+};
+const tenureLabels = { "1": "the past year", "2": "the past 2 years", "3": "the past 3 years", "5": "the past 4 years", "6": "over 5 years" };
+let toneIdx = 0;
+const tones = ["professional", "friendly", "firm"];
+
+function updateAnalysis() {
+  const city = document.getElementById('city').value;
+  const unit = document.getElementById('unit').value;
+  const current = +document.getElementById('currentRent').value;
+  const proposed = +document.getElementById('proposedRent').value;
+  const tenure = document.getElementById('tenure').value;
+  const data = cityData[city];
+  const median = unit === '1br' ? data.median1br : unit === '2br' ? data.median2br : data.medianStudio;
+  const hike = current > 0 ? ((proposed - current) / current * 100) : 0;
+  const overMarket = median > 0 ? ((proposed - median) / median * 100) : 0;
+  const verdict = document.getElementById('verdict');
+  const vTitle = document.getElementById('verdictTitle');
+  const vDesc = document.getElementById('verdictDesc');
+  verdict.className = 'verdict';
+  if (overMarket > 5) {
+    verdict.classList.add('bad');
+    vTitle.textContent = '⚠️ Overpaying vs Market';
+    vDesc.innerHTML = `Your landlord's offer is <strong>${overMarket.toFixed(1)}% above</strong> the local median for similar units. Strong grounds to negotiate.`;
+  } else if (overMarket > -3) {
+    verdict.classList.add('warn');
+    vTitle.textContent = '⚖️ Roughly at Market';
+    vDesc.innerHTML = `Your offer is close to market rate (<strong>${overMarket >= 0 ? '+' : ''}${overMarket.toFixed(1)}% vs median</strong>). Some room to negotiate, but weaker argument.`;
+  } else {
+    verdict.classList.add('good');
+    vTitle.textContent = '✅ Below Market — Keep It';
+    vDesc.innerHTML = `Your offer is <strong>${Math.abs(overMarket).toFixed(1)}% below</strong> local median. This is actually a good deal. Consider accepting.`;
+  }
+  document.getElementById('median').textContent = `$${median.toLocaleString()}`;
+  document.getElementById('hikePct').textContent = `${hike >= 0 ? '+' : ''}${hike.toFixed(1)}%`;
+  const trendEl = document.getElementById('trend');
+  trendEl.textContent = `${data.trendDir === 'up' ? '↗' : data.trendDir === 'down' ? '↘' : '→'} ${data.trend}`;
+  trendEl.style.color = data.trendDir === 'down' ? 'var(--good)' : data.trendDir === 'up' ? 'var(--bad)' : 'var(--text-2)';
+  const powerEl = document.getElementById('power');
+  let power = 'Weak';
+  let powerColor = 'var(--bad)';
+  if (overMarket > 5 || tenure >= 3) { power = 'Strong'; powerColor = 'var(--good)'; }
+  else if (overMarket > 0 || tenure >= 2) { power = 'Moderate'; powerColor = 'var(--warn)'; }
+  powerEl.textContent = power;
+  powerEl.style.color = powerColor;
+  buildEmail(city, unit, current, proposed, median, overMarket, tenure);
+}
+
+function buildEmail(city, unit, current, proposed, median, overMarket, tenure) {
+  const data = cityData[city];
+  const tenureText = tenureLabels[tenure];
+  const targetRent = Math.round((current + median) / 2 / 5) * 5;
+  const targetHike = ((targetRent - current) / current * 100).toFixed(1);
+  const unitType = unit === '1br' ? '1-bedroom' : unit === '2br' ? '2-bedroom' : 'studio';
+  const tone = tones[toneIdx];
+  let opener, tone2;
+  if (tone === 'professional') { opener = 'Thank you for the renewal offer'; tone2 = 'I would like to discuss'; }
+  else if (tone === 'friendly') { opener = 'Hope you\'re doing well! Thanks for sending over the renewal'; tone2 = 'I was hoping we could chat about'; }
+  else { opener = 'I\'m writing regarding the renewal offer'; tone2 = 'I must respectfully push back on'; }
+  const leverageParts = [];
+  if (overMarket > 3) leverageParts.push(`Based on current market data for comparable ${unitType} units within 0.5 miles, the median rent is <strong>$${median.toLocaleString()}</strong>. The proposed rate would place me <strong>${overMarket.toFixed(1)}% above market</strong>`);
+  if (+tenure >= 2) leverageParts.push(`As a reliable tenant with <strong>${tenure === '6' ? '5+' : tenure} years of on-time payments</strong> and an excellent rental history`);
+  let askLine;
+  if (overMarket > 5) askLine = `I'm hoping we can find a figure closer to <strong>$${targetRent.toLocaleString()}</strong> — a modest ${targetHike}% increase that reflects both market conditions and my track record`;
+  else if (overMarket > 0) askLine = `I'm hoping we can meet halfway at <strong>$${targetRent.toLocaleString()}</strong>, which keeps me close to market rate`;
+  else askLine = `Given that this rate is already competitive, I'd welcome the chance to lock in a longer lease at the current terms`;
+  const html = `<strong>Subject:</strong> Renewal Discussion — Unit [Your Unit #]<br><br>
+Dear ${data.llName},<br><br>
+${opener} for my unit. I've valued living at ${data.complexName} for ${tenureText} and would prefer to stay.<br><br>
+However, ${tone2} the proposed increase from <strong>$${current.toLocaleString()}</strong> to <strong>$${proposed.toLocaleString()}</strong>. ${leverageParts.join('. ')}.<br><br>
+${askLine}.<br><br>
+I'd appreciate the opportunity to discuss this before my lease ends. Thank you for your time and consideration.<br><br>
+Best regards,<br>
+<span style="color:var(--text-3)">[Your Name]</span>`;
+  document.getElementById('negLetter').innerHTML = html;
+}
+
+function copyEmail() {
+  const text = document.getElementById('negLetter').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target; const orig = btn.textContent;
+    btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+function reviseEmail() {
+  toneIdx = (toneIdx + 1) % tones.length;
+  updateAnalysis();
+  const btn = event.target; const orig = btn.textContent;
+  btn.textContent = `✓ ${tones[toneIdx].charAt(0).toUpperCase() + tones[toneIdx].slice(1)} tone`;
+  setTimeout(() => btn.textContent = orig, 1800);
+}
+function downloadEmail() {
+  const text = document.getElementById('negLetter').innerText;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'stayput-negotiation-email.txt';
+  a.click();
+}
+updateAnalysis();
+</script>
+</body>
+</html>
