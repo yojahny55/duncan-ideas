@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbit — Your Subscriptions, In Rotation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B0D14;--bg-2:#12151F;--bg-3:#191D2A;--bg-card:#151826;
+  --border:#232838;--border-2:#2E3548;
+  --text:#F2F4F8;--text-2:#A4ADBE;--text-3:#6B7589;
+  --brand:#7C9CFF;--brand-2:#5EEAD4;--warn:#FBBF24;--bad:#F87171;--good:#4ADE80;--accent:#C084FC;--pink:#F472B6;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:22px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit}
+
+/* === NAV === */
+nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);background:rgba(11,13,20,.78);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em;font-family:'Space Grotesk',sans-serif}
+.logo-mark{width:34px;height:34px;border-radius:50%;background:conic-gradient(from 0deg,var(--brand),var(--accent),var(--brand-2),var(--brand));display:grid;place-items:center;position:relative;box-shadow:0 4px 18px rgba(124,156,255,.35)}
+.logo-mark::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--bg)}
+.logo-mark::before{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--brand-2);top:6px;right:7px;z-index:2;box-shadow:0 0 8px var(--brand-2)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{font-size:14px;color:var(--text-2);font-weight:500;transition:color .15s}
+.nav-links a:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--r-md);font-weight:600;font-size:14px;transition:transform .12s,background .15s}
+.btn-primary{background:linear-gradient(135deg,var(--brand),#9B7BFF);color:#fff;box-shadow:0 4px 16px rgba(124,156,255,.4)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,156,255,.5)}
+.btn-ghost{border:1px solid var(--border-2);color:var(--text);background:var(--bg-card)}
+.btn-ghost:hover{background:var(--bg-3)}
+
+/* === HERO === */
+.hero{position:relative;padding:90px 24px 70px;max-width:1180px;margin:0 auto}
+.hero-glow{position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:700px;height:600px;background:radial-gradient(circle,rgba(124,156,255,.18),rgba(192,132,252,.08) 35%,transparent 65%);pointer-events:none;z-index:0}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:780px;margin:0 auto}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:99px;background:rgba(124,156,255,.08);border:1px solid rgba(124,156,255,.22);font-size:12.5px;font-weight:600;color:var(--brand);margin-bottom:24px}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--brand);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5.8vw,68px);line-height:1.02;letter-spacing:-.035em;font-weight:700;margin-bottom:20px}
+.gradient-text{background:linear-gradient(90deg,var(--brand),var(--accent) 45%,var(--brand-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.sub{font-size:18px;color:var(--text-2);max-width:600px;margin:0 auto 36px}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn-lg{padding:14px 26px;font-size:15px;border-radius:var(--r-md)}
+.hero-stats{display:flex;justify-content:center;gap:50px;flex-wrap:wrap;padding-top:32px;border-top:1px solid var(--border)}
+.stat{text-align:center}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;font-weight:600}
+
+/* === SECTIONS === */
+section{max-width:1180px;margin:0 auto;padding:60px 24px}
+.section-head{text-align:center;max-width:620px;margin:0 auto 50px}
+.section-label{font-size:12px;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px}
+h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,4vw,42px);letter-spacing:-.025em;line-height:1.1;margin-bottom:14px;font-weight:700}
+.section-head p{color:var(--text-2);font-size:16.5px}
+
+/* === DASHBOARD DEMO === */
+.dashboard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;box-shadow:0 24px 60px -20px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03)}
+.dash-header{padding:24px 32px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;background:linear-gradient(180deg,var(--bg-2),transparent)}
+.dash-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700}
+.dash-monthly{font-size:13px;color:var(--text-3);margin-top:2px}
+.dash-monthly strong{color:var(--bad);font-size:28px;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.savings-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);border-radius:99px;font-size:13px;color:var(--good);font-weight:600}
+.savings-badge strong{font-size:15px}
+
+/* === TABS === */
+.tabs{display:flex;gap:4px;padding:0 32px;border-bottom:1px solid var(--border);background:var(--bg-2);overflow-x:auto}
+.tab{padding:14px 18px;font-size:13.5px;color:var(--text-3);font-weight:600;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+.tab:hover{color:var(--text-2)}
+.tab .tab-badge{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:99px;background:var(--bg-3);font-size:11px;color:var(--text-2);font-weight:600}
+.tab.active .tab-badge{background:rgba(124,156,255,.15);color:var(--brand)}
+
+.tab-content{display:none;padding:32px}
+.tab-content.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* === ROTATION CALENDAR === */
+.calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.calendar-head h3{font-size:16px;font-weight:700;font-family:'Space Grotesk',sans-serif}
+.calendar-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--text-3)}
+.legend-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+
+.calendar-grid{display:grid;grid-template-columns:repeat:12,1fr);gap:2px;margin-bottom:24px}
+.cal-months{display:grid;grid-template-columns:120px repeat(12,1fr);gap:2px;margin-bottom:6px}
+.cal-months div:first-child{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;padding:4px}
+.cal-months div{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;text-align:center;padding:4px}
+
+.cal-row{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.cal-row:last-child{border-bottom:none}
+.cal-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text)}
+.cal-icon{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:12px}
+.cal-price{font-size:11px;color:var(--text-3);font-weight:500;margin-left:auto}
+.cal-bar-container{position:relative;height:32px;background:var(--bg-3);border-radius:6px;overflow:hidden;display:flex}
+.cal-month-cell{flex:1;border-right:1px solid var(--border);position:relative;transition:background .15s}
+.cal-month-cell:last-child{border-right:none}
+.cal-month-cell:hover{background:rgba(255,255,255,.02)}
+.cal-block{position:absolute;top:3px;bottom:3px;left:0;right:0;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;cursor:pointer;transition:transform .15s}
+.cal-block:hover{transform:scale(1.05);z-index:5}
+.cal-block.paused{opacity:.25}
+
+/* color-coded blocks */
+.bg-netflix{background:#E50914}
+.bg-chatgpt{background:#10A37F}
+.bg-disney{background:#0F4C9C}
+.bg-claude{background:#D97757}
+.bg-spotify{background:#1DB954}
+.bg-nyt{background:#000;background:linear-gradient(135deg,#333,#000)}
+.bg-hulu{background:#1CE783;color:#000}
+.bg-adobe{background:#FA0F00}
+.bg-youtube{background:#FF0000}
+.bg-midjourney{background:#4A64FF}
+
+/* === FORECAST === */
+.forecast-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+@media (max-width:840px){.forecast-grid{grid-template-columns:1fr}}
+.forecast-chart{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-md);padding:24px}
+.forecast-bars{display:flex;align-items:flex-end;gap:6px;height:200px;margin-top:20px;padding-bottom:30px;border-bottom:1px solid var(--border);position:relative}
+.fbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;height:100%;justify-content:flex-end}
+.fbar-fill{width:100%;border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.2,.7,.3,1);background:linear-gradient(180deg,var(--bad),#C44545);min-height:4px;position:relative}
+.fbar-fill.saved{background:linear-gradient(180deg,var(--good),#36A85F)}
+.fbar-label{position:absolute;bottom:-22px;font-size:10.5px;color:var(--text-3);font-weight:600;white-space:nowrap}
+.fbar-value{position:absolute;top:-20px;font-size:10.5px;color:var(--text-2);font-weight:700;white-space:nowrap}
+.forecast-summary{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-md);padding:24px}
+.forecast-summary h4{font-size:14px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:14px}
+.big-savings{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;background:linear-gradient(135deg,var(--good),var(--brand-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.big-savings-label{font-size:13px;color:var(--text-2);margin-bottom:24px}
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec{padding:12px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--r-sm);display:flex;align-items:center;gap:12px}
+.rec-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex-shrink:0}
+.rec-text{flex:1;font-size:13px;line-height:1.4}
+.rec-text strong{display:block;color:var(--text);margin-bottom:2px}
+.rec-text span{color:var(--text-3)}
+.rec-saved{font-size:13px;font-weight:700;color:var(--good);font-family:'Space Grotesk',sans-serif}
+
+/* === TRIALS === */
+.trials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.trial-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;position:relative;overflow:hidden}
+.trial-card.urgent::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--bad)}
+.trial-card.warning::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--warn)}
+.trial-card.safe::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--good)}
+.trial-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.trial-name{font-weight:700;font-size:15px}
+.trial-countdown{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px}
+.trial-countdown.urgent{color:var(--bad)}
+.trial-countdown.warning{color:var(--warn)}
+.trial-countdown.safe{color:var(--good)}
+.trial-bar{height:4px;background:var(--bg-3);border-radius:2px;margin-bottom:14px;overflow:hidden}
+.trial-bar-fill{height:100%;border-radius:2px;transition:width .6s}
+.trial-bar-fill.urgent{background:var(--bad)}
+.trial-bar-fill.warning{background:var(--warn)}
+.trial-bar-fill.safe{background:var(--good)}
+.trial-meta{font-size:12px;color:var(--text-3);margin-bottom:14px}
+.trial-actions{display:flex;gap:8px}
+.btn-sm{padding:8px 14px;font-size:12.5px;border-radius:var(--r-sm)}
+.btn-cancel{background:rgba(248,113,113,.12);color:var(--bad);border:1px solid rgba(248,113,113,.25);font-weight:600}
+.btn-cancel:hover{background:rgba(248,113,113,.2)}
+.btn-keep{background:var(--bg-3);color:var(--text-2);border:1px solid var(--border-2);font-weight:600}
+.btn-keep:hover{color:var(--text)}
+
+/* === FAMILY === */
+.family-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}
+@media (max-width:840px){.family-grid{grid-template-columns:1fr}}
+.family-plan{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-md);padding:24px}
+.family-plan h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+.family-plan .sub{font-size:13px;color:var(--text-3);margin-bottom:20px}
+.family-members{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.fmember{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-3);border:1px solid var(--border);border-radius:var(--r-sm)}
+.fmember-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--accent));display:grid;place-items:center;font-weight:700;color:#fff;font-size:13px;flex-shrink:0}
+.fmember-info{flex:1}
+.fmember-name{font-weight:600;font-size:14px}
+.fmember-meta{font-size:12px;color:var(--text-3)}
+.fmember-status{font-size:11px;padding:4px 8px;border-radius:99px;font-weight:600}
+.fmember-status.paid{background:rgba(74,222,128,.12);color:var(--good)}
+.fmember-status.pending{background:rgba(251,191,36,.12);color:var(--warn)}
+.fmember-status.admin{background:rgba(124,156,255,.12);color:var(--brand)}
+.family-split{background:rgba(124,156,255,.06);border:1px solid rgba(124,156,255,.2);border-radius:var(--r-sm);padding:16px;text-align:center}
+.split-amount{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--brand);margin-bottom:4px}
+.split-label{font-size:12px;color:var(--text-3)}
+.btn-request{width:100%;margin-top:14px;padding:10px;background:rgba(74,222,128,.1);color:var(--good);border:1px solid rgba(74,222,128,.25);border-radius:var(--r-sm);font-weight:600;font-size:13px}
+.btn-request:hover{background:rgba(74,222,128,.16)}
+
+.family-other{display:flex;flex-direction:column;gap:14px}
+.mini-plan{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-md);padding:18px}
+.mini-plan h4{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.mini-plan .owe{font-size:12px;color:var(--text-3)}
+.mini-plan .owe strong{color:var(--text);font-size:18px;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.mini-plan .next-up{font-size:11px;color:var(--text-3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.mini-plan .next-up strong{color:var(--brand)}
+
+/* === FEATURES === */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.feature{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);padding:28px;transition:border-color .2s,transform .2s}
+.feature:hover{border-color:rgba(124,156,255,.35);transform:translateY(-2px)}
+.feature-icon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:22px;margin-bottom:16px;background:linear-gradient(135deg,rgba(124,156,255,.16),rgba(192,132,252,.12));border:1px solid rgba(124,156,255,.2)}
+.feature h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:8px}
+.feature p{font-size:14px;color:var(--text-2);line-height:1.55}
+
+/* === CTA === */
+.cta-band{background:linear-gradient(135deg,rgba(124,156,255,.08),rgba(192,132,252,.06));border:1px solid rgba(124,156,255,.2);border-radius:var(--r-xl);padding:60px 40px;text-align:center;margin:40px 24px}
+.cta-band h2{margin-bottom:14px}
+.cta-band p{color:var(--text-2);max-width:520px;margin:0 auto 28px;font-size:16.5px}
+.cta-band .btn-primary{font-size:16px;padding:16px 30px}
+
+/* === FOOTER === */
+footer{padding:40px 24px;text-align:center;font-size:12.5px;color:var(--text-3);border-top:1px solid var(--border);max-width:1180px;margin:40px auto 0}
+footer strong{color:var(--text-2)}
+
+/* === TOAST === */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-3);border:1px solid var(--border-2);padding:14px 20px;border-radius:var(--r-md);font-size:13.5px;font-weight:600;z-index:100;box-shadow:0 12px 32px rgba(0,0,0,.5);transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;display:flex;align-items:center;gap:10px}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast-icon{width:20px;height:20px;border-radius:50%;background:var(--good);display:grid;place-items:center;font-size:12px;color:#0F1117;font-weight:900}
+
+/* === RESPONSIVE === */
+@media (max-width:720px){
+  .cal-months,.cal-row{grid-template-columns:90px 1fr}
+  .cal-months div{font-size:9.5px}
+  .cal-label{font-size:11.5px}
+  .cal-bar-container{height:28px}
+  .cal-block{font-size:0}
+  .hero{padding:60px 18px 40px}
+  section{padding:40px 18px}
+  .tab-content{padding:22px}
+  .dash-header{padding:18px 22px}
+  .tabs{padding:0 18px}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark"></span>
+      <span>Orbit</span>
+    </a>
+    <div class="nav-links">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#trends">Why Now</a>
+    </div>
+    <button class="btn btn-ghost" onclick="showToast('Beta access coming soon!')">Get Early Access</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <span class="pill">Subscription fatigue, solved by rotation</span>
+    <h1>Your subscriptions,<br><span class="gradient-text">in rotation.</span></h1>
+    <p class="sub">The average household wastes <strong>$273/month</strong> on subscriptions they barely use — and 89% don't even know it. Orbit helps you rotate, pause, and coordinate every recurring charge so you only pay for what you actually use.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary btn-lg" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">Try the Demo</button>
+      <button class="btn btn-ghost btn-lg" onclick="showToast('Joining waitlist... (prototype)')">Join Waitlist</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">$273</div>
+        <div class="stat-label">Avg Monthly Sub Spend</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">53%</div>
+        <div class="stat-label">Rotate AI Tools</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">12+</div>
+        <div class="stat-label">Subs per Household</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">~$700</div>
+        <div class="stat-label">Avg Annual Savings</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<section id="dashboard" style="padding-top:30px">
+  <div class="section-head">
+    <div class="section-label">Live Demo</div>
+    <h2>Your rotation cockpit.</h2>
+    <p>See every subscription, drag them on/off your calendar, watch your monthly spend drop — in real time.</p>
+  </div>
+
+  <div class="dashboard">
+    <div class="dash-header">
+      <div>
+        <div class="dash-title">Yojahny's Orbit</div>
+        <div class="dash-monthly">Current monthly spend: <strong>$284.91</strong> · Projected with rotation: <strong style="color:var(--good)">$162.40</strong></div>
+      </div>
+      <div class="savings-badge">
+        📉 Saving <strong>$122.51/mo</strong> · <strong>$1,470/yr</strong>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="rotation">🗓️ Rotation Calendar</button>
+      <button class="tab" data-tab="forecast">💰 Savings Forecast</button>
+      <button class="tab" data-tab="trials">⏰ Free Trials <span class="tab-badge">3</span></button>
+      <button class="tab" data-tab="family">👨‍👩‍👧 Family Plans <span class="tab-badge">2</span></button>
+    </div>
+
+    <!-- ROTATION CALENDAR TAB -->
+    <div class="tab-content active" data-content="rotation">
+      <div class="calendar-head">
+        <h3>2026 Rotation Plan</h3>
+        <div class="calendar-legend">
+          <span><span class="legend-dot" style="background:var(--good)"></span> Active</span>
+          <span><span class="legend-dot" style="background:rgba(255,255,255,.15)"></span> Paused</span>
+          <span>Click a block to toggle</span>
+        </div>
+      </div>
+
+      <div class="cal-months" id="calMonths"></div>
+      <div id="calRows"></div>
+    </div>
+
+    <!-- FORECAST TAB -->
+    <div class="tab-content" data-content="forecast">
+      <div class="forecast-grid">
+        <div class="forecast-chart">
+          <h3 style="font-family:'Space Grotesk';font-size:16px;font-weight:700">6-Month Spend Projection</h3>
+          <p style="font-size:13px;color:var(--text-3);margin-top:4px">With active rotation vs. status quo</p>
+          <div class="forecast-bars" id="forecastBars"></div>
+        </div>
+        <div class="forecast-summary">
+          <h4>Recommended This Month</h4>
+          <div class="big-savings">$122</div>
+          <div class="big-savings-label">Saved in June with current plan</div>
+          <div class="rec-list">
+            <div class="rec">
+              <div class="rec-icon" style="background:rgba(16,163,127,.15)">🤖</div>
+              <div class="rec-text">
+                <strong>Pause Claude Pro until Jul 15</strong>
+                <span>Last used 6 days ago · $20/mo</span>
+              </div>
+              <div class="rec-saved">+$20</div>
+            </div>
+            <div class="rec">
+              <div class="rec-icon" style="background:rgba(15,76,156,.15)">🏰</div>
+              <div class="rec-text">
+                <strong>Rotate Disney+ → Hulu</strong>
+                <span>No new releases until August · $11→$8</span>
+              </div>
+              <div class="rec-saved">+$3</div>
+            </div>
+            <div class="rec">
+              <div class="rec-icon" style="background:rgba(250,15,0,.15)">🎨</div>
+              <div class="rec-text">
+                <strong>Cancel Adobe CC</strong>
+                <span>Unused 61 days · Figma covers it</span>
+              </div>
+              <div class="rec-saved">+$54</div>
+            </div>
+            <div class="rec">
+              <div class="rec-icon" style="background:rgba(74,100,255,.15)">🎨</div>
+              <div class="rec-text">
+                <strong>Pause Midjourney</strong>
+                <span>Project ended · 0 images in 12 days</span>
+              </div>
+              <div class="rec-saved">+$30</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRIALS TAB -->
+    <div class="tab-content" data-content="trials">
+      <div class="trials-grid">
+        <div class="trial-card urgent">
+          <div class="trial-head">
+            <div class="trial-name">🎧 Audible Plus</div>
+            <div class="trial-countdown urgent">2 days</div>
+          </div>
+          <div class="trial-bar"><div class="trial-bar-fill urgent" style="width:92%"></div></div>
+          <div class="trial-meta">Starts charging <strong>$14.95/mo</strong> on Jun 22 · Card ending 4242</div>
+          <div class="trial-actions">
+            <button class="btn btn-sm btn-cancel" onclick="showToast('Audible trial canceled ✓')">Cancel now</button>
+            <button class="btn btn-sm btn-keep">Keep it</button>
+          </div>
+        </div>
+
+        <div class="trial-card warning">
+          <div class="trial-head">
+            <div class="trial-name">🏋️ Caliber Fitness</div>
+            <div class="trial-countdown warning">5 days</div>
+          </div>
+          <div class="trial-bar"><div class="trial-bar-fill warning" style="width:65%"></div></div>
+          <div class="trial-meta">Starts charging <strong>$19.99/mo</strong> on Jun 25 · Apple Pay</div>
+          <div class="trial-actions">
+            <button class="btn btn-sm btn-cancel" onclick="showToast('Caliber trial canceled ✓')">Cancel now</button>
+            <button class="btn btn-sm btn-keep">Keep it</button>
+          </div>
+        </div>
+
+        <div class="trial-card safe">
+          <div class="trial-head">
+            <div class="trial-name">📈 Notion AI</div>
+            <div class="trial-countdown safe">23 days</div>
+          </div>
+          <div class="trial-bar"><div class="trial-bar-fill safe" style="width:23%"></div></div>
+          <div class="trial-meta">Starts charging <strong>$10/mo</strong> on Jul 13 · Card ending 4242</div>
+          <div class="trial-actions">
+            <button class="btn btn-sm btn-cancel" onclick="showToast('Notion AI trial canceled ✓')">Cancel now</button>
+            <button class="btn btn-sm btn-keep">Keep it</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAMILY TAB -->
+    <div class="tab-content" data-content="family">
+      <div class="family-grid">
+        <div class="family-plan">
+          <h3>🎬 YouTube Premium Family</h3>
+          <p class="sub">You're the admin · $22.99/mo · 6 seats</p>
+          <div class="family-members">
+            <div class="fmember">
+              <div class="fmember-avatar">Y</div>
+              <div class="fmember-info">
+                <div class="fmember-name">Yojahny (you)</div>
+                <div class="fmember-meta">Admin · Tampa, FL</div>
+              </div>
+              <div class="fmember-status admin">Admin</div>
+            </div>
+            <div class="fmember">
+              <div class="fmember-avatar" style="background:linear-gradient(135deg,var(--good),#36A85F)">M</div>
+              <div class="fmember-info">
+                <div class="fmember-name">Maria</div>
+                <div class="fmember-meta">Added 8 months ago · Orlando, FL</div>
+              </div>
+              <div class="fmember-status paid">Paid Jul</div>
+            </div>
+            <div class="fmember">
+              <div class="fmember-avatar" style="background:linear-gradient(135deg,var(--warn),#D97706)">C</div>
+              <div class="fmember-info">
+                <div class="fmember-name">Carlos</div>
+                <div class="fmember-meta">Added 3 months ago · Same address</div>
+              </div>
+              <div class="fmember-status pending">Owes $4.58</div>
+            </div>
+            <div class="fmember">
+              <div class="fmember-avatar" style="background:linear-gradient(135deg,var(--bad),#C44545)">L</div>
+              <div class="fmember-info">
+                <div class="fmember-name">Luis</div>
+                <div class="fmember-meta">Added 1 month ago · Miami, FL</div>
+              </div>
+              <div class="fmember-status pending">Owes $4.58</div>
+            </div>
+          </div>
+          <div class="family-split">
+            <div class="split-amount">$3.83<span style="font-size:14px;color:var(--text-3)">/person</span></div>
+            <div class="split-label">6-person split · 2 members haven't paid this month</div>
+          </div>
+          <button class="btn-request" onclick="showToast('Venmo requests sent to Carlos and Luis ✓')">Send Venmo requests</button>
+        </div>
+
+        <div class="family-other">
+          <div class="mini-plan">
+            <h4>🎵 Spotify Duo <span style="font-size:11px;padding:3px 8px;background:rgba(74,222,128,.12);color:var(--good);border-radius:99px">Paid up</span></h4>
+            <div class="owe">Maria's turn to pay · You owe <strong>$6.49</strong></div>
+            <div class="next-up">Next rotation: <strong>Aug 1</strong> → Your turn</div>
+          </div>
+          <div class="mini-plan">
+            <h4>🍎 Apple One Family <span style="font-size:11px;padding:3px 8px;background:rgba(251,191,36,.12);color:var(--warn);border-radius:99px">Action needed</span></h4>
+            <div class="owe">YouTube same-household check detected · <strong>3 members</strong> outside address</div>
+            <div class="next-up">Resolution: Switch to <strong>Apple One Individual</strong> saves $16/mo</div>
+          </div>
+          <div class="mini-plan">
+            <h4>📦 Amazon Prime <span style="font-size:11px;padding:3px 8px;background:rgba(124,156,255,.12);color:var(--brand);border-radius:99px">2yr plan</span></h4>
+            <div class="owe">Shared with Maria · <strong>$69/yr</strong> each (split annual)</div>
+            <div class="next-up">Renews <strong>Jan 2027</strong> · Price-locked</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-head">
+    <div class="section-label">Why Orbit</div>
+    <h2>Built for the subscription era.</h2>
+    <p>Other apps help you cancel. Orbit helps you orchestrate.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">🗓️</div>
+      <h3>Rotation Calendar</h3>
+      <p>Drag subscriptions on and off your monthly plan. Netflix for June, Hulu for July, pause both in August. Visual, intuitive, satisfying.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔮</div>
+      <h3>Savings Forecast</h3>
+      <p>Set a monthly budget. Orbit proposes a rotation that hits it — prioritizing pain-free cuts you won't even feel.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <h3>One-Tap Pause/Cancel</h3>
+      <p>Deep-links into Apple, Google, and web platforms — with browser automation that actually executes the cancel for you.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⏰</div>
+      <h3>Free Trial Sentinel</h3>
+      <p>Every trial tracked. Day-one check-in, 24-hour warning, one-tap cancel. Missed it? Built-in refund request helper.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">👨‍👩‍👧</div>
+      <h3>Family Plan Coordination</h3>
+      <p>Manage rosters, auto-split payments, send Venmo requests, and get warnings when platforms crack down on sharing.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📺</div>
+      <h3>Release-Aware Suggestions</h3>
+      <p>Orbit knows when Stranger Things drops. It tells you to re-up Netflix the week before and cancel the week after.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h3>Usage Signals</h3>
+      <p>Connect screen time. Orbit flags subscriptions you haven't opened in 30/60/90 days and suggests a pause.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔍</div>
+      <h3>Cancel Verification</h3>
+      <p>Orbit monitors your transactions after canceling. If a charge still hits, it flags instantly and helps you dispute.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TREND / WHY NOW -->
+<section id="trends">
+  <div class="section-head">
+    <div class="section-label">The Moment</div>
+    <h2>Why Orbit, why now?</h2>
+    <p>The numbers are in. Subscription fatigue has crossed from feeling to measurable behavior.</p>
+  </div>
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px">
+    <div>
+      <div style="font-family:'Space Grotesk';font-size:36px;font-weight:700;color:var(--bad)">$273</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:4px">Average monthly subscription spend per U.S. household<br><em style="color:var(--text-3);font-size:11px">West Monroe, 2025</em></div>
+    </div>
+    <div>
+      <div style="font-family:'Space Grotesk';font-size:36px;font-weight:700;color:var(--warn)">89%</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:4px">Underestimate their subscription spend — 13% by $400+<br><em style="color:var(--text-3);font-size:11px">West Monroe</em></div>
+    </div>
+    <div>
+      <div style="font-family:'Space Grotesk';font-size:36px;font-weight:700;color:var(--accent)">53%</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:4px">Of AI subscribers cancel and restart tools as needed<br><em style="color:var(--text-3);font-size:11px">Bango, Nov 2025</em></div>
+    </div>
+    <div>
+      <div style="font-family:'Space Grotesk';font-size:36px;font-weight:700;color:var(--good)">39%</div>
+      <div style="font-size:13px;color:var(--text-3);margin-top:4px">Of streamers canceled an SVOD in the last 6 months<br><em style="color:var(--text-3);font-size:11px">Deloitte, 2025</em></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-band" id="pricing">
+  <h2>Stop paying for what you don't use.</h2>
+  <p>Orbit free tracks up to 5 subscriptions and all your free trials. Orbit Plus unlocks unlimited rotation for <strong style="color:var(--text)">$4.99/mo</strong> — most users save that in week one.</p>
+  <button class="btn btn-primary btn-lg" onclick="showToast('Welcome to Orbit! (prototype)')">Start Orbiting Free</button>
+</div>
+
+<footer>
+  Built by <strong>Duncan ⚔️</strong> — Idea generated from Reddit trend research, Jun 20 2026. · <strong>Orbit</strong> is a concept prototype, not a shipping product (yet).
+</footer>
+
+<div class="toast" id="toast">
+  <div class="toast-icon">✓</div>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script>
+// === TAB SWITCHING ===
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelector(`[data-content="${target}"]`).classList.add('active');
+  });
+});
+
+// === CALENDAR ===
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const subs = [
+  { name: 'Netflix', price: 15.49, icon: 'N', color: 'netflix', active: [0,0,0,0,0,1,1,1,1,0,0,1] },
+  { name: 'ChatGPT Plus', price: 20.00, icon: 'G', color: 'chatgpt', active: [1,1,1,1,1,0,0,1,1,1,1,1] },
+  { name: 'Claude Pro', price: 20.00, icon: 'C', color: 'claude', active: [1,1,1,1,1,1,0,0,0,1,1,1] },
+  { name: 'Disney+', price: 10.99, icon: 'D', color: 'disney', active: [0,0,0,0,0,0,0,1,1,1,0,0] },
+  { name: 'Spotify Duo', price: 14.99, icon: 'S', color: 'spotify', active: [1,1,1,1,1,1,1,1,1,1,1,1] },
+  { name: 'NYT', price: 17.00, icon: 'T', color: 'nyt', active: [1,1,1,1,1,1,1,1,1,1,1,1] },
+  { name: 'Adobe CC', price: 54.99, icon: 'A', color: 'adobe', active: [1,1,1,1,1,0,0,0,0,0,0,0] },
+  { name: 'YouTube Prem', price: 13.99, icon: 'Y', color: 'youtube', active: [1,1,1,1,1,1,1,1,1,1,1,1] },
+  { name: 'Midjourney', price: 30.00, icon: 'M', color: 'midjourney', active: [1,1,1,1,1,1,0,0,0,0,1,1] },
+];
+
+// Render months header
+const calMonths = document.getElementById('calMonths');
+calMonths.innerHTML = '<div></div>' + months.map(m => `<div>${m}</div>`).join('');
+
+// Render rows
+const calRows = document.getElementById('calRows');
+calRows.innerHTML = subs.map((sub, i) => `
+  <div class="cal-row">
+    <div class="cal-label">
+      <div class="cal-icon bg-${sub.color}" style="color:#fff;font-weight:700;background:#${getIconBg(sub.color)}">${sub.icon}</div>
+      <span>${sub.name}</span>
+      <span class="cal-price">$${sub.price.toFixed(2)}</span>
+    </div>
+    <div class="cal-bar-container" data-sub="${i}">
+      ${sub.active.map((on, m) => `
+        <div class="cal-month-cell" data-month="${m}">
+          ${on ? `<div class="cal-block bg-${sub.color}" title="${sub.name} — ${months[m]} ($${sub.price.toFixed(2)})" data-sub="${i}" data-month="${m}">ON</div>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  </div>
+`).join('');
+
+function getIconBg(color) {
+  const map = { netflix:'E50914', chatgpt:'10A37F', claude:'D97757', disney:'0F4C9C', spotify:'1DB954', nyt:'222222', adobe:'FA0F00', youtube:'FF0000', midjourney:'4A64FF' };
+  return map[color] || '7C9CFF';
+}
+
+// Click to toggle
+document.querySelectorAll('.cal-block').forEach(block => {
+  block.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const subIdx = parseInt(block.dataset.sub);
+    const monthIdx = parseInt(block.dataset.month);
+    const sub = subs[subIdx];
+    sub.active[monthIdx] = !sub.active[monthIdx];
+    const cell = block.parentElement;
+    if (sub.active[monthIdx]) {
+      block.classList.remove('paused');
+      block.textContent = 'ON';
+      cell.innerHTML = `<div class="cal-block bg-${sub.color}" data-sub="${subIdx}" data-month="${monthIdx}">ON</div>`;
+    } else {
+      cell.innerHTML = '';
+    }
+    recalcSavings();
+    updateForecast();
+    // Re-bind
+    cell.querySelector('.cal-block')?.addEventListener('click', arguments.callee.caller);
+    bindBlocks();
+  });
+});
+
+function bindBlocks() {
+  document.querySelectorAll('.cal-block').forEach(block => {
+    block.onclick = (e) => {
+      e.stopPropagation();
+      const subIdx = parseInt(block.dataset.sub);
+      const monthIdx = parseInt(block.dataset.month);
+      const sub = subs[subIdx];
+      sub.active[monthIdx] = !sub.active[monthIdx];
+      const cell = block.parentElement;
+      if (sub.active[monthIdx]) {
+        cell.innerHTML = `<div class="cal-block bg-${sub.color}" data-sub="${subIdx}" data-month="${monthIdx}">ON</div>`;
+        showToast(`${sub.name} reactivated for ${months[monthIdx]}`);
+      } else {
+        cell.innerHTML = '';
+        showToast(`${sub.name} paused for ${months[monthIdx]} — saves $${sub.price.toFixed(2)}`);
+      }
+      recalcSavings();
+      updateForecast();
+      bindBlocks();
+    };
+  });
+}
+bindBlocks();
+
+// === SAVINGS RECALC ===
+function recalcSavings() {
+  const now = new Date();
+  const currentMonth = 5; // June (0-indexed)
+  const totalAll = subs.reduce((sum, s) => sum + s.price, 0);
+  const totalActive = subs.filter((s, i) => s.active[currentMonth]).reduce((sum, s) => sum + s.price, 0);
+  const savings = totalAll - totalActive;
+  const dashMonthly = document.querySelector('.dash-monthly');
+  dashMonthly.innerHTML = `Current monthly spend: <strong style="color:var(--good)">$${totalActive.toFixed(2)}</strong> · Full price: <strong>$${totalAll.toFixed(2)}</strong>`;
+  const badge = document.querySelector('.savings-badge');
+  badge.innerHTML = `📉 Saving <strong>$${savings.toFixed(2)}/mo</strong> · <strong>$${(savings*12).toFixed(0)}/yr</strong>`;
+}
+
+// === FORECAST BARS ===
+function updateForecast() {
+  const bars = document.getElementById('forecastBars');
+  const totalAll = subs.reduce((sum, s) => sum + s.price, 0);
+  const labels = ['Jun','Jul','Aug','Sep','Oct','Nov'];
+  bars.innerHTML = labels.map((m, i) => {
+    const monthIdx = 5 + i;
+    const active = monthIdx < 12 ? subs.filter(s => s.active[monthIdx]).reduce((sum, s) => sum + s.price, 0) : totalAll;
+    const saved = totalAll - active;
+    const heightPct = Math.max(8, (active / totalAll) * 100);
+    const savedPct = Math.max(2, (saved / totalAll) * 100);
+    return `
+      <div class="fbar">
+        <div class="fbar-value">$${active.toFixed(0)}</div>
+        <div class="fbar-fill" style="height:${heightPct}%"></div>
+        ${saved > 0 ? `<div class="fbar-fill saved" style="height:${savedPct}%;position:absolute;bottom:0;width:100%;opacity:.25"></div>` : ''}
+        <div class="fbar-label">${m}</div>
+      </div>
+    `;
+  }).join('');
+}
+updateForecast();
+recalcSavings();
+
+// === TOAST ===
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
