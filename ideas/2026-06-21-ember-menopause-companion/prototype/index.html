@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ember — Perimenopause & Menopause Companion</title>
+<style>
+  /* === Design Tokens === */
+  :root {
+    /* Palette: Amber warmth + charcoal depth — not pink, not sterile */
+    --ember-50: #fff8f0;
+    --ember-100: #ffeed4;
+    --ember-200: #ffd9a8;
+    --ember-300: #ffbe70;
+    --ember-400: #ff9a37;
+    --ember-500: #f97316;
+    --ember-600: #ea580c;
+    --ember-700: #c2410c;
+    --ember-800: #9a3412;
+    --ember-900: #7c2d12;
+
+    --charcoal-50: #f8f8f8;
+    --charcoal-100: #e8e6e3;
+    --charcoal-200: #d1ccc7;
+    --charcoal-300: #a8a09a;
+    --charcoal-400: #6b635d;
+    --charcoal-500: #4a423d;
+    --charcoal-600: #36302c;
+    --charcoal-700: #2a2522;
+    --charcoal-800: #1e1a18;
+    --charcoal-900: #14110f;
+
+    --sage-400: #4ade80;
+    --sage-500: #22c55e;
+    --rose-500: #e11d48;
+    --amber-warn: #f59e0b;
+
+    --bg: #14110f;
+    --surface: #1e1a18;
+    --surface-2: #2a2522;
+    --surface-3: #36302c;
+    --border: #36302c;
+    --text: #f8f8f8;
+    --text-muted: #a8a09a;
+    --text-dim: #6b635d;
+    --accent: #f97316;
+    --accent-glow: rgba(249, 115, 22, 0.15);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-glow: 0 0 24px rgba(249, 115, 22, 0.2);
+
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-serif: Georgia, 'Times New Roman', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* === App Frame === */
+  .app-frame {
+    max-width: 420px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+    padding-bottom: 80px;
+  }
+
+  /* === Top Bar === */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(20px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--ember-400), var(--ember-600));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+  }
+
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface-3);
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ember-400);
+  }
+
+  /* === Hero / Greeting === */
+  .hero {
+    padding: 24px 20px 16px;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+  }
+
+  .greeting {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .greeting-name {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+
+  .stage-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-glow);
+    color: var(--ember-400);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(249, 115, 22, 0.2);
+  }
+
+  .stage-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--ember-400);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--ember-400);
+  }
+
+  /* === Daily Check-in Card === */
+  .checkin-card {
+    margin: 16px 20px;
+    background: linear-gradient(135deg, var(--ember-600), var(--ember-800));
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-md), var(--shadow-glow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .checkin-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(255, 154, 55, 0.3), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .checkin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    position: relative;
+  }
+
+  .checkin-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .checkin-time {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  .symptom-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    position: relative;
+  }
+
+  .symptom-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-md);
+    padding: 12px 8px;
+    color: white;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(4px);
+  }
+
+  .symptom-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+  }
+
+  .symptom-btn.active {
+    background: white;
+    color: var(--ember-700);
+  }
+
+  .symptom-icon {
+    font-size: 20px;
+  }
+
+  .checkin-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    position: relative;
+  }
+
+  .btn-primary {
+    flex: 1;
+    background: white;
+    color: var(--ember-700);
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .btn-ghost {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* === Section === */
+  .section {
+    padding: 0 20px;
+    margin-bottom: 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .section-link {
+    font-size: 13px;
+    color: var(--ember-400);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* === Insight Card === */
+  .insight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .insight-card.featured {
+    border-color: rgba(249, 115, 22, 0.3);
+    background: linear-gradient(135deg, var(--surface), var(--surface-2));
+  }
+
+  .insight-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+
+  .badge-trigger { background: rgba(249, 115, 22, 0.15); color: var(--ember-400); }
+  .badge-pattern { background: rgba(34, 197, 94, 0.15); color: var(--sage-400); }
+  .badge-progress { background: rgba(225, 29, 72, 0.15); color: #f43f5e; }
+  .badge-stage { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+
+  .insight-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .insight-body {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .insight-body strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .insight-chart {
+    margin-top: 14px;
+    height: 60px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .chart-bar {
+    flex: 1;
+    background: var(--ember-400);
+    border-radius: 4px 4px 0 0;
+    opacity: 0.6;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .chart-bar.highlight {
+    opacity: 1;
+    background: var(--ember-500);
+    box-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
+  }
+
+  .chart-labels {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .chart-labels span {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* === Symptom Trends === */
+  .trend-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .trend-row:last-child { border-bottom: none; }
+
+  .trend-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .trend-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .trend-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .trend-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .trend-spark {
+    width: 60px;
+    height: 24px;
+  }
+
+  .trend-change {
+    font-size: 13px;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .change-up { color: #f43f5e; }
+  .change-down { color: var(--sage-400); }
+  .change-flat { color: var(--text-muted); }
+
+  /* === Doctor Report CTA === */
+  .doctor-cta {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .doctor-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--ember-400), var(--ember-600));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .doctor-text { flex: 1; }
+
+  .doctor-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .doctor-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .doctor-arrow {
+    color: var(--ember-400);
+    font-size: 18px;
+  }
+
+  /* === Treatment Tracker === */
+  .treatment-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+
+  .treatment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .treatment-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .treatment-dose {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .treatment-progress {
+    height: 6px;
+    background: var(--surface-3);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .treatment-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ember-400), var(--ember-500));
+    border-radius: 3px;
+  }
+
+  .treatment-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+
+  .stat-label { color: var(--text-muted); }
+  .stat-value { font-weight: 600; }
+  .stat-positive { color: var(--sage-400); }
+
+  /* === Bottom Nav === */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0 20px;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    font-family: var(--font);
+  }
+
+  .nav-item.active { color: var(--ember-400); }
+  .nav-item:hover { color: var(--text); }
+
+  .nav-icon { font-size: 20px; }
+  .nav-label { font-size: 10px; font-weight: 600; }
+
+  /* === Modal === */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal-sheet {
+    background: var(--surface);
+    width: 100%;
+    max-width: 420px;
+    border-radius: 24px 24px 0 0;
+    padding: 24px 20px 32px;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--surface-3);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+
+  .modal-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .severity-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+  }
+
+  .severity-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .severity-btn {
+    flex: 1;
+    padding: 16px 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+
+  .severity-btn:hover { border-color: var(--ember-400); }
+
+  .severity-btn.active {
+    background: var(--ember-500);
+    border-color: var(--ember-500);
+    color: white;
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.3);
+  }
+
+  .context-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .context-btn {
+    padding: 12px 8px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+
+  .context-btn.active {
+    background: var(--surface-3);
+    border-color: var(--ember-400);
+    color: var(--ember-400);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-full {
+    flex: 1;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    font-family: var(--font);
+    transition: all 0.2s;
+  }
+
+  .btn-save {
+    background: var(--ember-500);
+    color: white;
+  }
+
+  .btn-save:hover { background: var(--ember-600); }
+
+  .btn-cancel {
+    background: var(--surface-3);
+    color: var(--text);
+  }
+
+  /* === Toast === */
+  .toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--charcoal-700);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 300;
+    opacity: 0;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* === Divider === */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 20px;
+  }
+
+  /* === Responsive === */
+  @media (max-width: 380px) {
+    .symptom-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-frame">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="logo">
+      <div class="logo-mark">🔥</div>
+      <span>Ember</span>
+    </div>
+    <div class="streak-badge">⚡ 14 days</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="greeting">Sunday afternoon</div>
+    <div class="greeting-name">Hey, Sarah</div>
+    <div class="stage-pill">
+      <div class="stage-dot"></div>
+      Late Perimenopause · Stage 3
+    </div>
+  </div>
+
+  <!-- Daily Check-in -->
+  <div class="checkin-card">
+    <div class="checkin-header">
+      <div class="checkin-title">How are you today?</div>
+      <div class="checkin-time">90 sec check-in</div>
+    </div>
+    <div class="symptom-grid">
+      <button class="symptom-btn active" onclick="toggleSymptom(this)">
+        <span class="symptom-icon">🔥</span>
+        <span>Hot Flash</span>
+      </button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">
+        <span class="symptom-icon">😴</span>
+        <span>Sleep</span>
+      </button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">
+        <span class="symptom-icon">🌫️</span>
+        <span>Brain Fog</span>
+      </button>
+      <button class="symptom-btn" onclick="toggleSymptom(this)">
+        <span class="symptom-icon">😰</span>
+        <span>Mood</span>
+      </button>
+    </div>
+    <div class="checkin-actions">
+      <button class="btn-primary" onclick="openModal()">Log Hot Flash</button>
+      <button class="btn-ghost" onclick="showToast('✅ Check-in saved!')">Skip</button>
+    </div>
+  </div>
+
+  <!-- AI Insights -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🧠 AI Insights</div>
+      <a href="#" class="section-link" onclick="showToast('📊 Full report coming soon'); return false;">View all</a>
+    </div>
+
+    <!-- Trigger Insight -->
+    <div class="insight-card featured">
+      <div class="insight-badge badge-trigger">⚡ Trigger Found</div>
+      <div class="insight-title">Wine is your #1 hot flash trigger</div>
+      <div class="insight-body">
+        Your hot flashes spike <strong>2.7x</strong> within 24 hours of drinking wine. In the last 30 days, 8 of 9 spike days followed wine consumption.
+      </div>
+      <div class="insight-chart">
+        <div class="chart-bar" style="height: 30%"></div>
+        <div class="chart-bar" style="height: 25%"></div>
+        <div class="chart-bar highlight" style="height: 85%"></div>
+        <div class="chart-bar" style="height: 35%"></div>
+        <div class="chart-bar" style="height: 20%"></div>
+        <div class="chart-bar" style="height: 28%"></div>
+        <div class="chart-bar highlight" style="height: 78%"></div>
+      </div>
+      <div class="chart-labels">
+        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+      </div>
+    </div>
+
+    <!-- Pattern Insight -->
+    <div class="insight-card">
+      <div class="insight-badge badge-pattern">📈 Pattern</div>
+      <div class="insight-title">Your sleep is improving</div>
+      <div class="insight-body">
+        After <strong>6 weeks on HRT</strong>, night sweats are down <strong>64%</strong>. Sleep quality is up 31%. This trajectory matches typical HRT response curves.
+      </div>
+    </div>
+
+    <!-- Stage Insight -->
+    <div class="insight-card">
+      <div class="insight-badge badge-stage">🔍 Stage Update</div>
+      <div class="insight-title">You're likely in late perimenopause</div>
+      <div class="insight-body">
+        Based on cycle changes (21→47 day variance) and symptom intensity, you're in <strong>Stage 3 of 4</strong>. Average transition to menopause: <strong>12-24 months</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Symptom Trends -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📊 30-Day Trends</div>
+      <a href="#" class="section-link" onclick="showToast('📈 Detailed analytics coming soon'); return false;">Details</a>
+    </div>
+    <div class="insight-card">
+      <div class="trend-row">
+        <div class="trend-info">
+          <div class="trend-icon" style="background: rgba(249,115,22,0.15)">🔥</div>
+          <div>
+            <div class="trend-name">Hot Flashes</div>
+            <div class="trend-sub">4.2/day avg</div>
+          </div>
+        </div>
+        <svg class="trend-spark" viewBox="0 0 60 24">
+          <polyline points="0,18 10,14 20,16 30,8 40,10 50,6 60,4" fill="none" stroke="#f43f5e" stroke-width="2"/>
+        </svg>
+        <div class="trend-change change-up">+12%</div>
+      </div>
+      <div class="trend-row">
+        <div class="trend-info">
+          <div class="trend-icon" style="background: rgba(96,165,250,0.15)">😴</div>
+          <div>
+            <div class="trend-name">Sleep Quality</div>
+            <div class="trend-sub">6.4/10 avg</div>
+          </div>
+        </div>
+        <svg class="trend-spark" viewBox="0 0 60 24">
+          <polyline points="0,20 10,18 20,16 30,14 40,12 50,10 60,8" fill="none" stroke="#22c55e" stroke-width="2"/>
+        </svg>
+        <div class="trend-change change-down">+31%</div>
+      </div>
+      <div class="trend-row">
+        <div class="trend-info">
+          <div class="trend-icon" style="background: rgba(168,85,247,0.15)">🌫️</div>
+          <div>
+            <div class="trend-name">Brain Fog</div>
+            <div class="trend-sub">3 days this week</div>
+          </div>
+        </div>
+        <svg class="trend-spark" viewBox="0 0 60 24">
+          <polyline points="0,12 10,14 20,10 30,16 40,12 50,14 60,10" fill="none" stroke="#a8a09a" stroke-width="2"/>
+        </svg>
+        <div class="trend-change change-flat">±0%</div>
+      </div>
+      <div class="trend-row">
+        <div class="trend-info">
+          <div class="trend-icon" style="background: rgba(225,29,72,0.15)">😰</div>
+          <div>
+            <div class="trend-name">Mood Swings</div>
+            <div class="trend-sub">2.1/day avg</div>
+          </div>
+        </div>
+        <svg class="trend-spark" viewBox="0 0 60 24">
+          <polyline points="0,6 10,10 20,8 30,12 40,14 50,16 60,18" fill="none" stroke="#22c55e" stroke-width="2"/>
+        </svg>
+        <div class="trend-change change-down">-22%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doctor Report CTA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">👩‍⚕️ For Your Doctor</div>
+    </div>
+    <div class="doctor-cta" onclick="showToast('📄 Doctor report generating...'); setTimeout(()=>showToast('✅ Report ready to share!'), 1500)">
+      <div class="doctor-icon">📋</div>
+      <div class="doctor-text">
+        <div class="doctor-title">Clinical Summary Report</div>
+        <div class="doctor-sub">Last updated 3 days ago · 12 weeks of data</div>
+      </div>
+      <div class="doctor-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- Treatment Tracker -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">💊 Treatments</div>
+      <a href="#" class="section-link" onclick="showToast('➕ Add treatment flow'); return false;">+ Add</a>
+    </div>
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <div>
+          <div class="treatment-name">Estradiol Patch</div>
+          <div class="treatment-dose">0.05mg · Twice weekly</div>
+        </div>
+        <div class="treatment-dose">6 wks</div>
+      </div>
+      <div class="treatment-progress">
+        <div class="treatment-bar" style="width: 50%"></div>
+      </div>
+      <div class="treatment-stat">
+        <span class="stat-label">Night sweats</span>
+        <span class="stat-value stat-positive">↓ 64%</span>
+      </div>
+    </div>
+    <div class="treatment-card">
+      <div class="treatment-header">
+        <div>
+          <div class="treatment-name">Magnesium Glycinate</div>
+          <div class="treatment-dose">400mg · Daily before bed</div>
+        </div>
+        <div class="treatment-dose">12 wks</div>
+      </div>
+      <div class="treatment-progress">
+        <div class="treatment-bar" style="width: 100%"></div>
+      </div>
+      <div class="treatment-stat">
+        <span class="stat-label">Sleep onset</span>
+        <span class="stat-value stat-positive">↓ 18 min</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Mission Statement -->
+  <div class="section" style="text-align: center; padding-bottom: 20px;">
+    <div style="font-family: var(--font-serif); font-style: italic; font-size: 15px; color: var(--text-muted); max-width: 300px; margin: 0 auto;">
+      "You're not crazy. You're not alone. And there's a pattern hiding in your data."
+    </div>
+    <div style="font-size: 12px; color: var(--text-dim); margin-top: 12px;">
+      🔥 Ember · v1.0 · Built for the 50M+
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-item active" onclick="setActiveNav(this)">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Today</span>
+  </button>
+  <button class="nav-item" onclick="setActiveNav(this)">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">Trends</span>
+  </button>
+  <button class="nav-item" onclick="openModal()">
+    <span class="nav-icon">➕</span>
+    <span class="nav-label">Log</span>
+  </button>
+  <button class="nav-item" onclick="setActiveNav(this); showToast('📖 Library coming soon')">
+    <span class="nav-icon">📖</span>
+    <span class="nav-label">Library</span>
+  </button>
+  <button class="nav-item" onclick="setActiveNav(this); showToast('⚙️ Settings coming soon')">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">More</span>
+  </button>
+</div>
+
+<!-- Modal: Log Hot Flash -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Log Hot Flash 🔥</div>
+    <div class="modal-sub">Today at 2:47 PM</div>
+
+    <div class="severity-label">Intensity</div>
+    <div class="severity-row">
+      <button class="severity-btn" onclick="setSeverity(this)">1</button>
+      <button class="severity-btn active" onclick="setSeverity(this)">2</button>
+      <button class="severity-btn" onclick="setSeverity(this)">3</button>
+      <button class="severity-btn" onclick="setSeverity(this)">4</button>
+      <button class="severity-btn" onclick="setSeverity(this)">5</button>
+    </div>
+
+    <div class="severity-label">Context (optional)</div>
+    <div class="context-grid">
+      <button class="context-btn" onclick="toggleContext(this)">🍷 After meal</button>
+      <button class="context-btn active" onclick="toggleContext(this)">🛋️ Resting</button>
+      <button class="context-btn" onclick="toggleContext(this)">😰 Stressed</button>
+      <button class="context-btn" onclick="toggleContext(this)">🛏️ In bed</button>
+      <button class="context-btn" onclick="toggleContext(this)">🏃 Active</button>
+      <button class="context-btn" onclick="toggleContext(this)">☕ Coffee</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-full btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-full btn-save" onclick="closeModal(); showToast('🔥 Hot flash logged · AI analyzing patterns...')">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // Symptom toggle in daily check-in
+  function toggleSymptom(btn) {
+    btn.classList.toggle('active');
+  }
+
+  // Context toggle in modal
+  function toggleContext(btn) {
+    btn.classList.toggle('active');
+  }
+
+  // Severity selection
+  function setSeverity(btn) {
+    document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Modal
+  function openModal() {
+    document.getElementById('modal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+  }
+
+  // Close modal on overlay click
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+  });
+
+  // Nav
+  function setActiveNav(btn) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Toast
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+</script>
+
+</body>
+</html>
