@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOA Shield — Know Your Rights. Fight Back.</title>
+<style>
+  :root {
+    --navy: #0f1b2d;
+    --navy-light: #1a2a42;
+    --amber: #e8a838;
+    --amber-dark: #c48a20;
+    --amber-glow: rgba(232,168,56,0.15);
+    --red: #e85454;
+    --red-bg: rgba(232,84,84,0.08);
+    --green: #38c97a;
+    --green-bg: rgba(56,201,122,0.08);
+    --yellow: #e8c838;
+    --yellow-bg: rgba(232,200,56,0.08);
+    --gray-50: #f8f9fb;
+    --gray-100: #eef0f4;
+    --gray-200: #dde1e8;
+    --gray-400: #8e95a4;
+    --gray-600: #555d6e;
+    --gray-800: #2a3140;
+    --white: #ffffff;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(15,27,45,0.08);
+    --shadow-lg: 0 8px 32px rgba(15,27,45,0.12);
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: var(--font); color: var(--gray-800); background: var(--white); line-height:1.6; }
+  
+  /* NAV */
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(15,27,45,0.95); backdrop-filter:blur(12px); padding:0 24px; height:56px; display:flex; align-items:center; justify-content:space-between; }
+  nav .logo { font-size:18px; font-weight:700; color:var(--amber); letter-spacing:-0.5px; }
+  nav .logo span { color:var(--white); }
+  nav .nav-links { display:flex; gap:24px; }
+  nav .nav-links a { color:var(--gray-400); text-decoration:none; font-size:14px; transition:color 0.2s; }
+  nav .nav-links a:hover { color:var(--white); }
+  nav .cta { background:var(--amber); color:var(--navy); border:none; padding:8px 20px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; cursor:pointer; transition:background 0.2s; }
+  nav .cta:hover { background:var(--amber-dark); }
+  
+  /* HERO */
+  .hero { background:var(--navy); padding:120px 24px 80px; text-align:center; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:600px; height:600px; background:radial-gradient(circle, var(--amber-glow) 0%, transparent 70%); pointer-events:none; }
+  .hero h1 { font-size:clamp(32px,5vw,56px); font-weight:800; color:var(--white); line-height:1.15; max-width:700px; margin:0 auto 16px; letter-spacing:-1.5px; }
+  .hero h1 em { font-style:normal; color:var(--amber); }
+  .hero .subtitle { font-size:clamp(16px,2vw,20px); color:var(--gray-400); max-width:540px; margin:0 auto 32px; }
+  .hero .stat-bar { display:flex; justify-content:center; gap:48px; flex-wrap:wrap; margin-bottom:40px; }
+  .hero .stat { text-align:center; }
+  .hero .stat .num { font-size:28px; font-weight:800; color:var(--amber); }
+  .hero .stat .label { font-size:13px; color:var(--gray-400); margin-top:2px; }
+  .hero .hero-cta { display:inline-flex; align-items:center; gap:8px; background:var(--amber); color:var(--navy); border:none; padding:16px 32px; border-radius:var(--radius); font-weight:700; font-size:17px; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 20px rgba(232,168,56,0.3); }
+  .hero .hero-cta:hover { transform:translateY(-2px); box-shadow:0 6px 28px rgba(232,168,56,0.4); background:var(--amber-dark); }
+  .hero .trust { margin-top:24px; font-size:13px; color:var(--gray-400); }
+  .hero .trust span { color:var(--gray-200); }
+  
+  /* SECTION */
+  .section { padding:80px 24px; max-width:1100px; margin:0 auto; }
+  .section-title { text-align:center; margin-bottom:48px; }
+  .section-title h2 { font-size:clamp(24px,3.5vw,36px); font-weight:800; color:var(--navy); letter-spacing:-0.8px; }
+  .section-title p { color:var(--gray-600); font-size:16px; margin-top:8px; max-width:560px; margin-left:auto; margin-right:auto; }
+  
+  /* FEATURES */
+  .features { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px; }
+  .feature-card { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); padding:28px; transition:all 0.25s; position:relative; }
+  .feature-card:hover { border-color:var(--amber); box-shadow:var(--shadow-lg); transform:translateY(-3px); }
+  .feature-card .icon { width:48px; height:48px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:16px; }
+  .feature-card .icon.amber { background:var(--amber-glow); color:var(--amber); }
+  .feature-card .icon.red { background:var(--red-bg); color:var(--red); }
+  .feature-card .icon.green { background:var(--green-bg); color:var(--green); }
+  .feature-card .icon.blue { background:rgba(59,130,246,0.1); color:#3b82f6; }
+  .feature-card h3 { font-size:17px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+  .feature-card p { font-size:14px; color:var(--gray-600); line-height:1.6; }
+  .feature-card .badge { position:absolute; top:16px; right:16px; background:var(--amber-glow); color:var(--amber-dark); font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.5px; }
+  .feature-card .badge.free { background:var(--green-bg); color:#1a9c5a; }
+  
+  /* SCANNER DEMO */
+  .scanner-demo { background:var(--gray-50); padding:80px 24px; }
+  .scanner-box { max-width:640px; margin:0 auto; background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow-lg); overflow:hidden; border:1px solid var(--gray-200); }
+  .scanner-header { background:var(--navy); padding:20px 28px; display:flex; align-items:center; gap:12px; }
+  .scanner-header .shield { font-size:28px; }
+  .scanner-header h3 { color:var(--white); font-size:16px; font-weight:700; }
+  .scanner-header p { color:var(--gray-400); font-size:13px; margin-top:2px; }
+  .scanner-body { padding:28px; }
+  .scanner-step { display:none; }
+  .scanner-step.active { display:block; animation:fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .scanner-step h4 { font-size:18px; font-weight:700; color:var(--navy); margin-bottom:16px; }
+  .scanner-step .question { font-size:15px; color:var(--gray-800); margin-bottom:12px; font-weight:500; }
+  .radio-group { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+  .radio-option { display:flex; align-items:center; gap:12px; padding:12px 16px; border:2px solid var(--gray-200); border-radius:var(--radius-sm); cursor:pointer; transition:all 0.2s; font-size:14px; }
+  .radio-option:hover { border-color:var(--amber); background:var(--amber-glow); }
+  .radio-option.selected { border-color:var(--amber); background:var(--amber-glow); }
+  .radio-option input { display:none; }
+  .radio-option .check { width:20px; height:20px; border-radius:50%; border:2px solid var(--gray-400); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+  .radio-option.selected .check { border-color:var(--amber); background:var(--amber); }
+  .radio-option.selected .check::after { content:'✓'; font-size:12px; color:var(--white); font-weight:700; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; border-radius:var(--radius-sm); font-weight:600; font-size:14px; cursor:pointer; transition:all 0.2s; border:none; }
+  .btn-primary { background:var(--amber); color:var(--navy); }
+  .btn-primary:hover { background:var(--amber-dark); transform:translateY(-1px); }
+  .btn-secondary { background:var(--gray-100); color:var(--gray-800); }
+  .btn-secondary:hover { background:var(--gray-200); }
+  .scanner-nav { display:flex; justify-content:space-between; margin-top:24px; }
+  .progress-bar { height:4px; background:var(--gray-100); border-radius:2px; margin-bottom:24px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--amber); border-radius:2px; transition:width 0.4s ease; }
+  
+  /* RESULT */
+  .result-card { padding:24px; border-radius:var(--radius-sm); border-left:4px solid; margin-top:16px; }
+  .result-card.red { background:var(--red-bg); border-color:var(--red); }
+  .result-card.yellow { background:var(--yellow-bg); border-color:var(--yellow); }
+  .result-card.green { background:var(--green-bg); border-color:var(--green); }
+  .result-card h5 { font-size:15px; font-weight:700; margin-bottom:8px; }
+  .result-card.red h5 { color:var(--red); }
+  .result-card.yellow h5 { color:#b8960a; }
+  .result-card.green h5 { color:#1a9c5a; }
+  .result-card p { font-size:14px; color:var(--gray-600); }
+  .result-card ul { font-size:14px; color:var(--gray-600); margin:8px 0 0 20px; }
+  .result-card li { margin-bottom:4px; }
+  
+  /* PRICING */
+  .pricing-cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:24px; max-width:960px; margin:0 auto; }
+  .price-card { background:var(--white); border:2px solid var(--gray-200); border-radius:var(--radius); padding:32px; text-align:center; position:relative; transition:all 0.25s; }
+  .price-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+  .price-card.popular { border-color:var(--amber); }
+  .price-card.popular::before { content:'MOST POPULAR'; position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--amber); color:var(--navy); font-size:11px; font-weight:800; padding:4px 16px; border-radius:20px; letter-spacing:0.5px; }
+  .price-card h3 { font-size:18px; font-weight:700; color:var(--navy); margin-bottom:4px; }
+  .price-card .price { font-size:40px; font-weight:800; color:var(--navy); margin:12px 0 4px; }
+  .price-card .price span { font-size:16px; font-weight:400; color:var(--gray-400); }
+  .price-card .price-note { font-size:13px; color:var(--gray-400); margin-bottom:24px; }
+  .price-card ul { list-style:none; text-align:left; margin-bottom:24px; }
+  .price-card li { font-size:14px; color:var(--gray-600); padding:8px 0; border-bottom:1px solid var(--gray-100); display:flex; align-items:center; gap:8px; }
+  .price-card li::before { content:'✓'; color:var(--green); font-weight:700; flex-shrink:0; }
+  .price-card .btn { width:100%; }
+  
+  /* HOW IT WORKS */
+  .steps { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:32px; counter-reset:step; }
+  .step { text-align:center; position:relative; }
+  .step .step-num { width:48px; height:48px; background:var(--amber-glow); color:var(--amber-dark); border-radius:50%; font-size:20px; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+  .step h4 { font-size:16px; font-weight:700; color:var(--navy); margin-bottom:6px; }
+  .step p { font-size:14px; color:var(--gray-600); }
+  
+  /* FOOTER */
+  footer { background:var(--navy); padding:48px 24px 32px; text-align:center; }
+  footer .logo { font-size:20px; font-weight:700; color:var(--amber); margin-bottom:12px; }
+  footer .logo span { color:var(--white); }
+  footer p { color:var(--gray-400); font-size:13px; max-width:480px; margin:0 auto; }
+  footer .links { display:flex; justify-content:center; gap:24px; margin-top:20px; }
+  footer .links a { color:var(--gray-400); text-decoration:none; font-size:13px; }
+  footer .links a:hover { color:var(--amber); }
+  footer .disclaimer { margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08); color:var(--gray-400); font-size:11px; }
+  
+  /* STATE SELECTOR */
+  .state-select { width:100%; padding:12px 16px; border:2px solid var(--gray-200); border-radius:var(--radius-sm); font-size:15px; font-family:var(--font); appearance:none; background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238e95a4' stroke-width='2' fill='none'/%3E%3C/svg%3E") right 16px center no-repeat; cursor:pointer; transition:border-color 0.2s; }
+  .state-select:focus { outline:none; border-color:var(--amber); }
+  
+  /* TEXTAREA */
+  textarea { width:100%; padding:12px 16px; border:2px solid var(--gray-200); border-radius:var(--radius-sm); font-size:14px; font-family:var(--font); resize:vertical; min-height:80px; transition:border-color 0.2s; }
+  textarea:focus { outline:none; border-color:var(--amber); }
+  
+  /* MOBILE */
+  @media (max-width:640px) {
+    nav .nav-links { display:none; }
+    .hero { padding:100px 20px 60px; }
+    .hero .stat-bar { gap:24px; }
+    .section { padding:48px 20px; }
+    .features { grid-template-columns:1fr; }
+    .pricing-cards { grid-template-columns:1fr; }
+    .steps { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">🛡️ HOA <span>Shield</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#scanner">Rights Scanner</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <button class="cta">Get Started Free</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Your HOA sent a fine.<br><em>You have rights.</em></h1>
+  <p class="subtitle">Know what your HOA can and can't do under your state's law. Fight back with confidence — no $500/hr lawyer needed.</p>
+  <div class="stat-bar">
+    <div class="stat"><div class="num">73M</div><div class="label">Americans in HOAs</div></div>
+    <div class="stat"><div class="num">40%</div><div class="label">of FL homes HOA-governed</div></div>
+    <div class="stat"><div class="num">55</div><div class="label">different state laws</div></div>
+    <div class="stat"><div class="num">$0</div><div class="label">to check your rights</div></div>
+  </div>
+  <button class="hero-cta" onclick="document.getElementById('scanner').scrollIntoView({behavior:'smooth'})">
+    🔍 Check Your Rights Now
+  </button>
+  <p class="trust">Free forever for basic rights lookup · <span>No account required</span></p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="section-title">
+    <h2>How It Works</h2>
+    <p>Three steps between you and your rights.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Enter Your State</h4>
+      <p>We load your state's specific HOA laws — all 50 states covered.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Describe What Happened</h4>
+      <p>Answer 5 quick questions about your HOA dispute.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Get Your Report</h4>
+      <p>Instant red/yellow/green score + next steps + dispute letter template.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-title">
+    <h2>Everything You Need to Fight Back</h2>
+    <p>Tools built for homeowners, not board members.</p>
+  </div>
+  <div class="features">
+    <div class="feature-card">
+      <span class="badge free">Free</span>
+      <div class="icon amber">⚖️</div>
+      <h3>State Rights Lookup</h3>
+      <p>Instantly see your HOA rights for your state. Know what they can fine you for, required notice periods, appeal deadlines, and caps.</p>
+    </div>
+    <div class="feature-card">
+      <span class="badge free">Free</span>
+      <div class="icon red">🚨</div>
+      <h3>"Did They Break the Law?" Scanner</h3>
+      <p>Answer 5 questions about your dispute. Get a red/yellow/green risk score with specific law citations.</p>
+    </div>
+    <div class="feature-card">
+      <span class="badge">Premium</span>
+      <div class="icon green">📝</div>
+      <h3>Dispute Letter Generator</h3>
+      <p>AI-generated dispute letters citing your state's specific laws. Choose formal legal or plain English tone. One-click export.</p>
+    </div>
+    <div class="feature-card">
+      <span class="badge">Premium</span>
+      <div class="icon blue">📸</div>
+      <h3>Violation Documentation</h3>
+      <p>Log every notice with photos, dates, and details. Track selective enforcement — what your neighbor got away with.</p>
+    </div>
+    <div class="feature-card">
+      <span class="badge">Premium</span>
+      <div class="icon amber">⏰</div>
+      <h3>Deadline Tracker</h3>
+      <p>Never miss an appeal deadline. Calendar sync, countdown timers, and hearing prep checklists.</p>
+    </div>
+    <div class="feature-card">
+      <span class="badge">Premium</span>
+      <div class="icon red">🏛️</div>
+      <h3>Attorney Directory</h3>
+      <p>Find HOA lawyers near you. Filter by state, rate, and specialty. Free consultation offers included.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCANNER DEMO -->
+<section class="scanner-demo" id="scanner">
+  <div class="section-title">
+    <h2>🔍 Rights Scanner — Try It Now</h2>
+    <p>See what your HOA can and can't do in your state.</p>
+  </div>
+  <div class="scanner-box">
+    <div class="scanner-header">
+      <div class="shield">🛡️</div>
+      <div>
+        <h3>HOA Rights Scanner</h3>
+        <p>Free · No account · 60 seconds</p>
+      </div>
+    </div>
+    <div class="scanner-body">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+      
+      <!-- STEP 1 -->
+      <div class="scanner-step active" id="step1">
+        <h4>Step 1 of 5: Your State</h4>
+        <p class="question">Which state is your HOA in?</p>
+        <select class="state-select" id="stateSelect">
+          <option value="">Select your state...</option>
+          <option value="FL">Florida</option>
+          <option value="CA">California</option>
+          <option value="TX">Texas</option>
+          <option value="AZ">Arizona</option>
+          <option value="NV">Nevada</option>
+          <option value="CO">Colorado</option>
+          <option value="NC">North Carolina</option>
+          <option value="GA">Georgia</option>
+          <option value="VA">Virginia</option>
+          <option value="IL">Illinois</option>
+        </select>
+        <div class="scanner-nav">
+          <div></div>
+          <button class="btn btn-primary" onclick="nextStep(1)">Next →</button>
+        </div>
+      </div>
+      
+      <!-- STEP 2 -->
+      <div class="scanner-step" id="step2">
+        <h4>Step 2 of 5: What Happened</h4>
+        <p class="question">What did your HOA do?</p>
+        <div class="radio-group" id="issueGroup">
+          <label class="radio-option" onclick="selectRadio(this,'issueGroup')">
+            <input type="radio" name="issue" value="fine">
+            <div class="check"></div>
+            <span>Fined me for a violation</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'issueGroup')">
+            <input type="radio" name="issue" value="selective">
+            <div class="check"></div>
+            <span>Enforcing rules selectively (neighbor got away with it)</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'issueGroup')">
+            <input type="radio" name="issue" value="denied">
+            <div class="check"></div>
+            <span>Denied my request or modification</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'issueGroup')">
+            <input type="radio" name="issue" value="assessment">
+            <div class="check"></div>
+            <span>Raised my assessment/dues without proper vote</span>
+          </label>
+        </div>
+        <div class="scanner-nav">
+          <button class="btn btn-secondary" onclick="prevStep(2)">← Back</button>
+          <button class="btn btn-primary" onclick="nextStep(2)">Next →</button>
+        </div>
+      </div>
+      
+      <!-- STEP 3 -->
+      <div class="scanner-step" id="step3">
+        <h4>Step 3 of 5: Notice</h4>
+        <p class="question">Did they give you written notice before taking action?</p>
+        <div class="radio-group" id="noticeGroup">
+          <label class="radio-option" onclick="selectRadio(this,'noticeGroup')">
+            <input type="radio" name="notice" value="no">
+            <div class="check"></div>
+            <span>No — I found out when it happened</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'noticeGroup')">
+            <input type="radio" name="notice" value="verbal">
+            <div class="check"></div>
+            <span>Only verbal notice (no paper trail)</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'noticeGroup')">
+            <input type="radio" name="notice" value="written">
+            <div class="check"></div>
+            <span>Yes — I received written notice</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'noticeGroup')">
+            <input type="radio" name="notice" value="unsure">
+            <div class="check"></div>
+            <span>I'm not sure</span>
+          </label>
+        </div>
+        <div class="scanner-nav">
+          <button class="btn btn-secondary" onclick="prevStep(3)">← Back</button>
+          <button class="btn btn-primary" onclick="nextStep(3)">Next →</button>
+        </div>
+      </div>
+      
+      <!-- STEP 4 -->
+      <div class="scanner-step" id="step4">
+        <h4>Step 4 of 5: Opportunity to Fix</h4>
+        <p class="question">Were you given a chance to fix the violation before being fined?</p>
+        <div class="radio-group" id="cureGroup">
+          <label class="radio-option" onclick="selectRadio(this,'cureGroup')">
+            <input type="radio" name="cure" value="no">
+            <div class="check"></div>
+            <span>No — they went straight to a fine</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'cureGroup')">
+            <input type="radio" name="cure" value="unreasonable">
+            <div class="check"></div>
+            <span>They gave me an unreasonably short time</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'cureGroup')">
+            <input type="radio" name="cure" value="yes">
+            <div class="check"></div>
+            <span>Yes — I had time to fix it</span>
+          </label>
+          <label class="radio-option" onclick="selectRadio(this,'cureGroup')">
+            <input type="radio" name="cure" value="notapplicable">
+            <div class="check"></div>
+            <span>Not applicable to my situation</span>
+          </label>
+        </div>
+        <div class="scanner-nav">
+          <button class="btn btn-secondary" onclick="prevStep(4)">← Back</button>
+          <button class="btn btn-primary" onclick="nextStep(4)">Next →</button>
+        </div>
+      </div>
+      
+      <!-- STEP 5 -->
+      <div class="scanner-step" id="step5">
+        <h4>Step 5 of 5: Documentation</h4>
+        <p class="question">Do you have any of the following?</p>
+        <div class="radio-group" id="docsGroup">
+          <label class="radio-option" onclick="toggleCheck(this)">
+            <input type="checkbox" name="docs" value="photos">
+            <div class="check"></div>
+            <span>Photos or evidence of the issue</span>
+          </label>
+          <label class="radio-option" onclick="toggleCheck(this)">
+            <input type="checkbox" name="docs" value="ccr">
+            <div class="check"></div>
+            <span>Copy of your CC&Rs / governing documents</span>
+          </label>
+          <label class="radio-option" onclick="toggleCheck(this)">
+            <input type="checkbox" name="docs" value="correspondence">
+            <div class="check"></div>
+            <span>Email/written correspondence with the HOA</span>
+          </label>
+          <label class="radio-option" onclick="toggleCheck(this)">
+            <input type="checkbox" name="docs" value="none">
+            <div class="check"></div>
+            <span>None of the above</span>
+          </label>
+        </div>
+        <div class="scanner-nav">
+          <button class="btn btn-secondary" onclick="prevStep(5)">← Back</button>
+          <button class="btn btn-primary" onclick="showResult()">Get My Report 🛡️</button>
+        </div>
+      </div>
+      
+      <!-- RESULT -->
+      <div class="scanner-step" id="result">
+        <h4>🛡️ Your HOA Rights Report</h4>
+        <div id="resultCard" class="result-card red">
+          <h5>⚠️ Likely Violation — Your HOA May Have Broken the Law</h5>
+          <p>Based on your answers, your HOA may have violated your state's HOA laws in the following ways:</p>
+          <ul id="resultList">
+            <li>Failure to provide written notice before enforcement action</li>
+            <li>No opportunity to cure the violation before fining</li>
+            <li>Potential selective enforcement (equal protection issue)</li>
+          </ul>
+        </div>
+        <div style="margin-top:20px; padding:16px; background:var(--amber-glow); border-radius:var(--radius-sm); border:1px solid rgba(232,168,56,0.2);">
+          <p style="font-size:14px; color:var(--navy); font-weight:600; margin-bottom:8px;">📋 Recommended Next Steps:</p>
+          <ol style="font-size:13px; color:var(--gray-600); margin-left:20px;">
+            <li style="margin-bottom:4px;">Document everything — photos, dates, all correspondence</li>
+            <li style="margin-bottom:4px;">Request a formal hearing with the board in writing</li>
+            <li style="margin-bottom:4px;">Send a dispute letter citing your state's specific laws</li>
+            <li style="margin-bottom:4px;">If unresolved, consider mediation or small claims court</li>
+          </ol>
+        </div>
+        <div class="scanner-nav" style="margin-top:24px;">
+          <button class="btn btn-secondary" onclick="resetScanner()">🔄 Start Over</button>
+          <button class="btn btn-primary">Generate Dispute Letter →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="section-title">
+    <h2>Simple, Fair Pricing</h2>
+    <p>Free to check your rights. Pay only when you need to fight back.</p>
+  </div>
+  <div class="pricing-cards">
+    <div class="price-card">
+      <h3>Free</h3>
+      <div class="price">$0</div>
+      <p class="price-note">Forever</p>
+      <ul>
+        <li>State rights lookup (all 50 states)</li>
+        <li>"Did they break the law?" scanner</li>
+        <li>Basic dispute letter template</li>
+        <li>Community knowledge base</li>
+      </ul>
+      <button class="btn btn-secondary" style="width:100%">Get Started</button>
+    </div>
+    <div class="price-card popular">
+      <h3>Shield</h3>
+      <div class="price">$19<span>/yr</span></div>
+      <p class="price-note">Less than 1 hour with a lawyer</p>
+      <ul>
+        <li>Everything in Free</li>
+        <li>AI dispute letter generator</li>
+        <li>Violation documentation</li>
+        <li>Deadline & hearing tracker</li>
+        <li>State-specific letter templates</li>
+      </ul>
+      <button class="btn btn-primary" style="width:100%">Start Shield</button>
+    </div>
+    <div class="price-card">
+      <h3>Pro</h3>
+      <div class="price">$49<span>/yr</span></div>
+      <p class="price-note">For serious disputes</p>
+      <ul>
+        <li>Everything in Shield</li>
+        <li>Attorney directory with filters</li>
+        <li>Case tracking dashboard</li>
+        <li>Priority support</li>
+        <li>Expert witness referrals</li>
+      </ul>
+      <button class="btn btn-secondary" style="width:100%">Go Pro</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">🛡️ HOA <span>Shield</span></div>
+  <p>Helping 73 million Americans in HOAs understand their rights and fight unfair fines — without hiring a lawyer.</p>
+  <div class="links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">FAQ</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> HOA Shield provides legal information, not legal advice. For specific legal questions, consult a licensed attorney in your state.
+  </div>
+</footer>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 5;
+  
+  function selectRadio(el, groupId) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input').checked = true;
+  }
+  
+  function toggleCheck(el) {
+    el.classList.toggle('selected');
+    const input = el.querySelector('input');
+    input.checked = !input.checked;
+  }
+  
+  function nextStep(from) {
+    document.getElementById('step' + from).classList.remove('active');
+    const next = from + 1;
+    document.getElementById('step' + next).classList.add('active');
+    currentStep = next;
+    document.getElementById('progressFill').style.width = (next / totalSteps * 100) + '%';
+  }
+  
+  function prevStep(from) {
+    document.getElementById('step' + from).classList.remove('active');
+    const prev = from - 1;
+    document.getElementById('step' + prev).classList.add('active');
+    currentStep = prev;
+    document.getElementById('progressFill').style.width = (prev / totalSteps * 100) + '%';
+  }
+  
+  function showResult() {
+    document.getElementById('step5').classList.remove('active');
+    document.getElementById('result').classList.add('active');
+    document.getElementById('progressFill').style.width = '100%';
+    
+    // Dynamic result based on answers
+    const issue = document.querySelector('input[name="issue"]:checked')?.value;
+    const notice = document.querySelector('input[name="notice"]:checked')?.value;
+    const cure = document.querySelector('input[name="cure"]:checked')?.value;
+    
+    const card = document.getElementById('resultCard');
+    const list = document.getElementById('resultList');
+    list.innerHTML = '';
+    
+    let violations = [];
+    
+    if (notice === 'no' || notice === 'verbal') {
+      violations.push('Failure to provide <strong>written notice</strong> before enforcement — most states require this');
+    }
+    if (cure === 'no') {
+      violations.push('No <strong>opportunity to cure</strong> the violation before fining — required in most states');
+    }
+    if (cure === 'unreasonable') {
+      violations.push('Unreasonably short cure period — may not meet "reasonable time" standard');
+    }
+    if (issue === 'selective') {
+      violations.push('Potential <strong>selective enforcement</strong> — HOAs must enforce rules equally');
+    }
+    if (issue === 'assessment') {
+      violations.push('Assessment increase may require <strong>homeowner vote</strong> per state law');
+    }
+    if (issue === 'denied') {
+      violations.push('Denial may lack <strong>valid architectural/design criteria</strong> basis');
+    }
+    
+    if (violations.length >= 2) {
+      card.className = 'result-card red';
+      card.querySelector('h5').textContent = '⚠️ Likely Violation — Your HOA May Have Broken the Law';
+    } else if (violations.length === 1) {
+      card.className = 'result-card yellow';
+      card.querySelector('h5').textContent = '⚡ Possible Violation — Worth Challenging';
+    } else {
+      card.className = 'result-card green';
+      card.querySelector('h5').textContent = '✅ Appears Legitimate — But You Still Have Rights';
+      violations.push('Action appears to follow proper procedure');
+      violations.push('You still have the right to <strong>request a hearing</strong> and <strong>appeal</strong>');
+    }
+    
+    violations.forEach(v => {
+      const li = document.createElement('li');
+      li.innerHTML = v;
+      list.appendChild(li);
+    });
+  }
+  
+  function resetScanner() {
+    document.getElementById('result').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    currentStep = 1;
+    document.getElementById('progressFill').style.width = '20%';
+    document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(i => i.checked = false);
+    document.getElementById('stateSelect').value = '';
+  }
+</script>
+</body>
+</html>
