@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tether — Behavior Change Request #247</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg-elev: #11161f;
+    --bg-elev-2: #161c27;
+    --border: #232a36;
+    --border-soft: #1c2330;
+    --text: #e6e9ef;
+    --text-muted: #8b95a8;
+    --text-dim: #5a6478;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.08);
+    --warn: #f59e0b;
+    --warn-bg: rgba(245, 158, 11, 0.08);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.08);
+    --mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  a { color: var(--accent-hover); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Top nav */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 24px;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+  .brand-mark {
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .nav-divider { width: 1px; height: 18px; background: var(--border); }
+  .crumb {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .crumb strong { color: var(--text); font-weight: 600; }
+  .topbar-spacer { flex: 1; }
+  .topbar-action {
+    padding: 6px 12px;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .topbar-action:hover { color: var(--text); border-color: var(--text-dim); }
+  .topbar-action.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .topbar-action.primary:hover { background: var(--accent-hover); }
+
+  /* Main container */
+  .container { max-width: 1380px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* BCR header */
+  .bcr-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .bcr-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .bcr-id {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .bcr-meta {
+    display: flex;
+    gap: 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .bcr-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .avatar {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-weight: 600;
+  }
+
+  /* Verdict banner */
+  .verdict {
+    padding: 16px 20px;
+    background: var(--warn-bg);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 10px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .verdict-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+  .verdict-body { flex: 1; }
+  .verdict-title {
+    font-weight: 600;
+    color: var(--warn);
+    margin-bottom: 4px;
+  }
+  .verdict-desc {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .verdict-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .verdict-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .verdict-btn.approve { background: var(--success); color: white; }
+  .verdict-btn.approve:hover { filter: brightness(1.1); }
+  .verdict-btn.reject { background: var(--danger); color: white; }
+  .verdict-btn.reject:hover { filter: brightness(1.1); }
+  .verdict-btn.comment { background: transparent; color: var(--text-muted); border-color: var(--border); }
+  .verdict-btn.comment:hover { color: var(--text); border-color: var(--text-dim); }
+
+  /* Grid */
+  .diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 900px) {
+    .diff-grid { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 12px 16px;
+    background: var(--bg-elev-2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+  .version-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .version-tag.current { border-color: var(--text-dim); color: var(--text-muted); }
+  .version-tag.proposed { border-color: var(--accent); color: var(--accent-hover); }
+
+  /* Stats strip */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 700px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .stat-delta {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .stat-delta.up { color: var(--success); background: var(--success-bg); }
+  .stat-delta.down { color: var(--danger); background: var(--danger-bg); }
+  .stat-delta.flat { color: var(--text-muted); background: var(--bg-elev-2); }
+
+  /* Trace tree */
+  .trace {
+    padding: 12px 0;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+  .trace-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    position: relative;
+  }
+  .trace-row:hover { background: var(--bg-elev-2); }
+  .trace-indent {
+    color: var(--text-dim);
+    white-space: pre;
+  }
+  .trace-tool {
+    color: var(--accent-hover);
+    font-weight: 500;
+  }
+  .trace-args {
+    color: var(--text-muted);
+  }
+  .trace-added {
+    background: var(--success-bg);
+    border-left: 2px solid var(--success);
+    padding-left: 14px;
+  }
+  .trace-removed {
+    background: var(--danger-bg);
+    border-left: 2px solid var(--danger);
+    padding-left: 14px;
+    text-decoration: line-through;
+    text-decoration-color: rgba(239, 68, 68, 0.4);
+  }
+  .trace-tag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: auto;
+    color: var(--text-dim);
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+  }
+  .trace-tag.hallucination { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); background: var(--danger-bg); }
+  .trace-tag.new { color: var(--success); border-color: rgba(16, 185, 129, 0.3); background: var(--success-bg); }
+
+  /* Eval suite */
+  .evals { padding: 0; }
+  .eval-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 16px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-soft);
+    align-items: center;
+    font-size: 13px;
+  }
+  .eval-row:last-child { border-bottom: none; }
+  .eval-name { font-weight: 500; }
+  .eval-name small { color: var(--text-muted); font-weight: 400; display: block; font-size: 11px; margin-top: 2px; }
+  .eval-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .eval-pass { color: var(--success); background: var(--success-bg); }
+  .eval-fail { color: var(--danger); background: var(--danger-bg); }
+  .eval-regress { color: var(--warn); background: var(--warn-bg); }
+  .eval-score {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    min-width: 80px;
+    text-align: right;
+  }
+  .eval-delta {
+    font-family: var(--mono);
+    font-size: 11px;
+    min-width: 60px;
+    text-align: right;
+    font-weight: 600;
+  }
+
+  /* What changed */
+  .changes {
+    padding: 16px 20px;
+    line-height: 1.6;
+  }
+  .changes ul {
+    list-style: none;
+    padding: 0;
+  }
+  .changes li {
+    padding: 6px 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .changes li strong { color: var(--text); }
+  .change-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .change-mark.added { background: var(--success-bg); color: var(--success); }
+  .change-mark.removed { background: var(--danger-bg); color: var(--danger); }
+  .change-mark.changed { background: var(--warn-bg); color: var(--warn); }
+
+  /* Footer note */
+  .footer-note {
+    margin-top: 40px;
+    padding: 16px 20px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .footer-note strong { color: var(--text); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .tab {
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Pill */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .pill-scenario {
+    background: var(--bg-elev-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🪢</div>
+    <span>Tether</span>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="crumb">
+    <strong>acme-support-agent</strong>
+    <span style="color: var(--text-dim);">/</span>
+    Behavior Change Requests
+    <span style="color: var(--text-dim);">/</span>
+    <strong>#247</strong>
+  </div>
+  <div class="topbar-spacer"></div>
+  <button class="topbar-action">← Prev</button>
+  <button class="topbar-action">Next →</button>
+  <button class="topbar-action primary">Merge</button>
+</div>
+
+<div class="container">
+
+  <!-- BCR header -->
+  <div class="bcr-header">
+    <div>
+      <h1 class="bcr-title">
+        Migrate routing layer from GPT-5 → Claude Sonnet 5.5
+        <span class="pill pill-scenario">50 scenarios replayed</span>
+      </h1>
+      <div class="bcr-meta">
+        <span class="bcr-id">BCR #247 · claude-sonnet-5.5-migration</span>
+        <span class="bcr-meta-item">
+          <span class="avatar">JR</span>
+          <span>opened by <strong style="color: var(--text);">jordan-rivera</strong></span>
+        </span>
+        <span class="bcr-meta-item">⏱ 4 minutes ago</span>
+        <span class="bcr-meta-item">🔄 auto-triggered by <code style="background: var(--bg-elev); padding: 1px 6px; border-radius: 3px; font-size: 11px;">prompt.yaml</code> change</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict">
+    <div class="verdict-icon">⚠️</div>
+    <div class="verdict-body">
+      <div class="verdict-title">Review required — 1 critical regression detected</div>
+      <div class="verdict-desc">
+        Hallucination rate improved by 65%, but a new failure mode was introduced in the
+        <code style="background: var(--bg-elev); padding: 1px 6px; border-radius: 3px;">refund-eligibility</code>
+        scenario cluster. Average token cost rose 18%. Review the diff below before promoting to production.
+      </div>
+    </div>
+    <div class="verdict-actions">
+      <button class="verdict-btn comment">Request changes</button>
+      <button class="verdict-btn reject">Block</button>
+      <button class="verdict-btn approve">Approve & promote</button>
+    </div>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Hallucination rate</div>
+      <div class="stat-value">
+        1.1%
+        <span class="stat-delta up">▼ 65%</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Avg tokens / task</div>
+      <div class="stat-value">
+        3,412
+        <span class="stat-delta down">▲ 18%</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">p95 latency</div>
+      <div class="stat-value">
+        2.4s
+        <span class="stat-delta down">▲ 14%</span>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Tool-call accuracy</div>
+      <div class="stat-value">
+        96.4%
+        <span class="stat-delta up">▲ 2.1pp</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diff grid -->
+  <div class="diff-grid">
+    <!-- BEFORE -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="version-tag current">v1.14.2 · current</span>
+          <span>GPT-5 · prompt@af3d2c</span>
+        </div>
+        <span style="color: var(--text-dim); font-size: 12px;">baseline</span>
+      </div>
+      <div class="trace">
+        <div class="trace-row">
+          <span class="trace-indent"></span>
+          <span class="trace-tool">user_intent</span>
+          <span class="trace-args">("cancel my subscription")</span>
+          <span class="trace-tag">2.1s</span>
+        </div>
+        <div class="trace-row">
+          <span class="trace-indent">└─</span>
+          <span class="trace-tool">fetch_account</span>
+          <span class="trace-args">(acct_8f31a2)</span>
+          <span class="trace-tag">180ms</span>
+        </div>
+        <div class="trace-row">
+          <span class="trace-indent">   └─</span>
+          <span class="trace-tool">check_eligibility</span>
+          <span class="trace-args">(plan: annual, day: 142)</span>
+          <span class="trace-tag">90ms</span>
+        </div>
+        <div class="trace-row trace-removed">
+          <span class="trace-indent">      └─</span>
+          <span class="trace-tool">issue_refund</span>
+          <span class="trace-args">(amount=$19.99, policy=TERMS_2024)</span>
+          <span class="trace-tag hallucination">HALLUCINATED</span>
+        </div>
+        <div class="trace-row trace-removed">
+          <span class="trace-indent">         └─</span>
+          <span class="trace-tool">email_customer</span>
+          <span class="trace-args">(template="refund_sent")</span>
+          <span class="trace-tag hallucination">HALLUCINATED</span>
+        </div>
+        <div class="trace-row">
+          <span class="trace-indent">└─</span>
+          <span class="trace-tool">respond</span>
+          <span class="trace-args">("Your refund of $19.99 has been...")</span>
+          <span class="trace-tag">340ms</span>
+        </div>
+        <div class="trace-row" style="border-top: 1px solid var(--border-soft); margin-top: 4px; padding-top: 10px;">
+          <span class="trace-indent"></span>
+          <span style="color: var(--text-dim);">⋯ 49 more scenarios</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="version-tag proposed">v1.15.0 · proposed</span>
+          <span>Claude Sonnet 5.5 · prompt@af3d2c</span>
+        </div>
+        <span style="color: var(--accent-hover); font-size: 12px;">replay completed · 38s</span>
+      </div>
+      <div class="trace">
+        <div class="trace-row">
+          <span class="trace-indent"></span>
+          <span class="trace-tool">user_intent</span>
+          <span class="trace-args">("cancel my subscription")</span>
+          <span class="trace-tag">2.4s</span>
+        </div>
+        <div class="trace-row">
+          <span class="trace-indent">└─</span>
+          <span class="trace-tool">fetch_account</span>
+          <span class="trace-args">(acct_8f31a2)</span>
+          <span class="trace-tag">210ms</span>
+        </div>
+        <div class="trace-row">
+          <span class="trace-indent">   └─</span>
+          <span class="trace-tool">check_eligibility</span>
+          <span class="trace-args">(plan: annual, day: 142)</span>
+          <span class="trace-tag">95ms</span>
+        </div>
+        <div class="trace-row trace-added">
+          <span class="trace-indent">      └─</span>
+          <span class="trace-tool">escalate_to_human</span>
+          <span class="trace-args">(reason=ANNUAL_PAST_120D, policy=REFUND_RULES_2026)</span>
+          <span class="trace-tag new">NEW</span>
+        </div>
+        <div class="trace-row">
+          <span class="trace-indent">└─</span>
+          <span class="trace-tool">respond</span>
+          <span class="trace-args">("Since your annual plan is past the 120-day...")</span>
+          <span class="trace-tag">420ms</span>
+        </div>
+        <div class="trace-row trace-removed">
+          <span class="trace-indent">└─</span>
+          <span style="color: var(--danger);">✗</span>
+          <span style="color: var(--text-muted);">issue_refund</span>
+          <span class="trace-args">(removed — correctly NOT issued)</span>
+          <span class="trace-tag" style="color: var(--success); border-color: rgba(16,185,129,0.3); background: var(--success-bg);">FIXED</span>
+        </div>
+        <div class="trace-row" style="border-top: 1px solid var(--border-soft); margin-top: 4px; padding-top: 10px;">
+          <span class="trace-indent"></span>
+          <span style="color: var(--text-dim);">⋯ 49 more scenarios · </span>
+          <span style="color: var(--success);">3 previously-hallucinated now fixed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active">Eval suite</button>
+    <button class="tab">Trace diff</button>
+    <button class="tab">Cost analysis</button>
+    <button class="tab">What changed</button>
+  </div>
+
+  <!-- Eval suite -->
+  <div class="panel" style="margin-bottom: 28px;">
+    <div class="panel-header">
+      <div class="panel-title">📊 Eval suite results</div>
+      <span style="color: var(--text-muted); font-size: 12px;">50 scenarios · 12 eval dimensions</span>
+    </div>
+    <div class="evals">
+      <div class="eval-row">
+        <div class="eval-name">
+          Refund eligibility correctness
+          <small>Critical · agent must follow REFUND_RULES_2026 policy</small>
+        </div>
+        <span class="eval-badge eval-regress">REGRESSION</span>
+        <span class="eval-score">78% <span style="color: var(--text-dim);">← 92%</span></span>
+        <span class="eval-delta down">▼ 14pp</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-name">
+          Hallucinated tool calls
+          <small>Critical · any fabricated function call</small>
+        </div>
+        <span class="eval-badge eval-pass">IMPROVED</span>
+        <span class="eval-score">99.2% <span style="color: var(--text-dim);">← 96.8%</span></span>
+        <span class="eval-delta up">▲ 2.4pp</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-name">
+          Tone &amp; brand alignment
+          <small>Non-critical · automated LLM judge</small>
+        </div>
+        <span class="eval-badge eval-pass">IMPROVED</span>
+        <span class="eval-score">94.1% <span style="color: var(--text-dim);">← 88.7%</span></span>
+        <span class="eval-delta up">▲ 5.4pp</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-name">
+          Resolution time (median)
+          <small>Non-critical · seconds to final response</small>
+        </div>
+        <span class="eval-badge eval-regress">REGRESSION</span>
+        <span class="eval-score">42s <span style="color: var(--text-dim);">← 31s</span></span>
+        <span class="eval-delta down">▼ 35%</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-name">
+          Tool call efficiency
+          <small>Non-critical · calls per resolved task</small>
+        </div>
+        <span class="eval-badge eval-pass">IMPROVED</span>
+        <span class="eval-score">3.2 <span style="color: var(--text-dim);">← 4.1</span></span>
+        <span class="eval-delta up">▲ 22%</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-name">
+          PIIdetection &amp; redaction
+          <small>Critical · never echo SSN / card numbers</small>
+        </div>
+        <span class="eval-badge eval-pass">PASS</span>
+        <span class="eval-score">100% <span style="color: var(--text-dim);">← 100%</span></span>
+        <span class="eval-delta flat">—</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-name">
+          Cost per resolution
+          <small>Non-critical · LLM spend per task</small>
+        </div>
+        <span class="eval-badge eval-regress">REGRESSION</span>
+        <span class="eval-score">$0.084 <span style="color: var(--text-dim);">← $0.061</span></span>
+        <span class="eval-delta down">▲ 38%</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-name">
+          Brand-safe language
+          <small>Non-critical · no competitors / profanity</small>
+        </div>
+        <span class="eval-badge eval-pass">PASS</span>
+        <span class="eval-score">100% <span style="color: var(--text-dim);">← 99.6%</span></span>
+        <span class="eval-delta up">▲ 0.4pp</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- What changed -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">🔍 Auto-generated change summary</div>
+      <span style="color: var(--text-muted); font-size: 12px;">LLM diff analyzer · Gemini 2.5 Flash</span>
+    </div>
+    <div class="changes">
+      <ul>
+        <li>
+          <span class="change-mark added">+</span>
+          <span><strong>New tool call path:</strong> agent now escalates annual subscriptions past day 120 to a human agent instead of auto-issuing refunds. Matches <code style="background: var(--bg-elev-2); padding: 1px 6px; border-radius: 3px; font-family: var(--mono); font-size: 11px;">REFUND_RULES_2026</code>.</span>
+        </li>
+        <li>
+          <span class="change-mark removed">−</span>
+          <span><strong>Fixed:</strong> previously hallucinated <code style="background: var(--bg-elev-2); padding: 1px 6px; border-radius: 3px; font-family: var(--mono); font-size: 11px;">issue_refund</code> + <code style="background: var(--bg-elev-2); padding: 1px 6px; border-radius: 3px; font-family: var(--mono); font-size: 11px;">email_customer</code> in 3 of 50 scenarios. New model correctly refuses.</span>
+        </li>
+        <li>
+          <span class="change-mark changed">~</span>
+          <span><strong>Regression:</strong> refund-eligibility correctness dropped 14pp. New escalation logic incorrectly triggers for <strong>monthly</strong> subscribers in grace period — edge case in scenarios #18, #22, #31.</span>
+        </li>
+        <li>
+          <span class="change-mark changed">~</span>
+          <span><strong>Cost impact:</strong> Claude Sonnet 5.5 averages 3,412 tokens/task vs. GPT-5's 2,890. At current volume (~80k tasks/mo), monthly LLM spend increases ~$1,840.</span>
+        </li>
+        <li>
+          <span class="change-mark added">+</span>
+          <span><strong>Tone improvement:</strong> responses score 5.4pp higher on empathy/brand alignment per LLM judge.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <strong>💡 Tether didn't write this review.</strong> Tether replayed your golden suite against the proposed agent change, computed the behavioral diff, and surfaced the verdict. A human still decides whether to merge.
+    <br><br>
+    <strong>Reproduce:</strong> <code style="background: var(--bg-elev-2); padding: 1px 6px; border-radius: 3px; font-family: var(--mono); font-size: 11px;">tether replay --bcr 247 --local</code>
+    &nbsp;·&nbsp;
+    <strong>Approve from CLI:</strong> <code style="background: var(--bg-elev-2); padding: 1px 6px; border-radius: 3px; font-family: var(--mono); font-size: 11px;">tether bcr approve 247 --reason "acceptable tradeoff"</code>
+    <br><br>
+    <em style="color: var(--text-dim);">Generated by Tether · 2026-06-24 · prototype v0.1 — not a real BCR</em>
+  </div>
+
+</div>
+
+<script>
+  // Simple tab switching (visual only)
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Verdict button feedback (demo only)
+  document.querySelectorAll('.verdict-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const label = btn.textContent.trim();
+      const original = btn.textContent;
+      btn.textContent = '✓ ' + label + ' (demo)';
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    });
+  });
+</script>
+
+</body>
+</html>
