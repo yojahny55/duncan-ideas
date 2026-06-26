@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boomerang 🪃 — Who Has My Stuff?</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header>
+      <div class="brand-row">
+        <div class="brand">
+          <div class="brand-logo">🪃</div>
+          <span class="brand-name">Boomerang</span>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" title="Insights">📊</button>
+          <button class="icon-btn" title="Settings">⚙️</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num amber">12</div>
+          <div class="stat-label">Lent Out</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num terra">3</div>
+          <div class="stat-label">Overdue</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num forest">$480</div>
+          <div class="stat-label">Value Out</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="lent">
+        I Lent <span class="tab-badge">12</span>
+      </button>
+      <button class="tab" data-tab="borrowed">
+        I Borrowed <span class="tab-badge">4</span>
+      </button>
+      <button class="tab" data-tab="ious">
+        IOUs <span class="tab-badge">2</span>
+      </button>
+    </div>
+
+    <!-- Content: Lent items -->
+    <div class="content" id="lent-tab">
+      <div class="section-label">Due Soon</div>
+      
+      <div class="item-card overdue" onclick="openNudgeModal('airfryer')">
+        <div class="item-photo">🍳</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Ninja Air Fryer XL</span>
+            <span class="item-value">$180</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">J</span>
+            <span>Jake M. · 23 days ago</span>
+          </div>
+          <span class="item-status status-overdue">⚠️ 23 days overdue</span>
+        </div>
+      </div>
+
+      <div class="item-card" onclick="openNudgeModal('chainsaw')">
+        <div class="item-photo">🪚</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Chainsaw (electric)</span>
+            <span class="item-value">$240</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">M</span>
+            <span>Marcus · 2 weeks ago</span>
+          </div>
+          <span class="item-status status-due">📅 Due tomorrow</span>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top: 16px;">In Good Standing</div>
+
+      <div class="item-card">
+        <div class="item-photo">📚</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Project Hail Mary</span>
+            <span class="item-value">$28</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">S</span>
+            <span>Sarah · 5 days ago</span>
+          </div>
+          <span class="item-status status-on-time">✓ 25 days remaining</span>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-photo">🥘</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Le Creuset Dutch Oven</span>
+            <span class="item-value">$350</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">M</span>
+            <span>Maria · 1 week ago</span>
+          </div>
+          <span class="item-status status-on-time">✓ 3 weeks remaining</span>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-photo">🔌</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Power drill + bits</span>
+            <span class="item-value">$85</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">A</span>
+            <span>Alex · 3 days ago</span>
+          </div>
+          <span class="item-status status-on-time">✓ 27 days remaining</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content: Borrowed items -->
+    <div class="content" id="borrowed-tab" style="display: none;">
+      <div class="insight">
+        <span class="insight-icon">✨</span>
+        <span class="insight-text">You're a <strong>great borrower</strong> — 10 items returned on time!</span>
+      </div>
+
+      <div class="section-label">Due This Week</div>
+
+      <div class="item-card">
+        <div class="item-photo">🏕️</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Coleman 4-Person Tent</span>
+            <span class="item-value">$180</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">R</span>
+            <span>Rachel lent · 2 weeks ago</span>
+          </div>
+          <span class="item-status status-due">📅 Due Saturday</span>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top: 16px;">No Rush</div>
+
+      <div class="item-card">
+        <div class="item-photo">🎸</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Martin D-28 Guitar</span>
+            <span class="item-value">$2,500</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">T</span>
+            <span>Tom · no rush set</span>
+          </div>
+          <span class="item-status status-on-time">🌿 Return when ready</span>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-photo">📖</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Design of Everyday Things</span>
+            <span class="item-value">$18</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">J</span>
+            <span>Jake · no rush set</span>
+          </div>
+          <span class="item-status status-on-time">🌿 Return when ready</span>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-photo">🔧</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">Socket set (80-piece)</span>
+            <span class="item-value">$75</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">M</span>
+            <span>Marcus · 3 days ago</span>
+          </div>
+          <span class="item-status status-on-time">✓ 27 days remaining</span>
+        </div>
+      </div>
+
+      <div class="item-card" style="opacity: 0.6;">
+        <div class="item-photo">🧥</div>
+        <div class="item-info">
+          <div class="item-top">
+            <span class="item-name">North Face Rain Jacket</span>
+            <span class="item-value">$120</span>
+          </div>
+          <div class="item-meta">
+            <span class="avatar-sm">S</span>
+            <span>Sarah · returned 2 days ago</span>
+          </div>
+          <span class="item-status status-returned">✓ Returned</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content: IOUs -->
+    <div class="content" id="ious-tab" style="display: none;">
+      <div class="section-label">You're Owed</div>
+
+      <div class="iou-card">
+        <div class="iou-left">
+          <div class="iou-amount owed">$40</div>
+          <div class="iou-desc">Concert tickets (Conor Oberst)</div>
+          <div class="iou-person">Marcus · owed since May 12</div>
+        </div>
+        <button class="pay-btn request">Request</button>
+      </div>
+
+      <div class="iou-card">
+        <div class="iou-left">
+          <div class="iou-amount owed">$15</div>
+          <div class="iou-desc">Lunch at Taqueria</div>
+          <div class="iou-person">Jake · owed since June 3</div>
+        </div>
+        <button class="pay-btn request">Nudge</button>
+      </div>
+
+      <div class="section-label" style="margin-top: 16px;">You Owe</div>
+
+      <div class="iou-card" style="background: #F5F0E8;">
+        <div class="iou-left">
+          <div class="iou-amount">$25</div>
+          <div class="iou-desc">Parking meter + gas</div>
+          <div class="iou-person">To Sarah · settled June 10</div>
+        </div>
+        <button class="pay-btn" style="background: var(--surface-2); color: var(--ink-2);">Paid ✓</button>
+      </div>
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" onclick="openAddModal()">+</button>
+
+    <!-- Bottom nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span>People</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">📈</span>
+        <span>Insights</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">📦</span>
+        <span>Archive</span>
+      </button>
+    </nav>
+
+    <!-- Nudge modal -->
+    <div class="modal-overlay" id="nudge-modal">
+      <div class="modal">
+        <div class="modal-handle"></div>
+        <h2 class="modal-title">Nudge Jake</h2>
+        <p class="modal-subtitle">About: Ninja Air Fryer XL ($180, 23 days overdue)</p>
+
+        <div class="tone-row">
+          <button class="tone-chip selected">
+            <span class="tone-icon">🌿</span>
+            Casual
+          </button>
+          <button class="tone-chip">
+            <span class="tone-icon">🌳</span>
+            Friendly
+          </button>
+          <button class="tone-chip">
+            <span class="tone-icon">🪵</span>
+            Direct
+          </button>
+          <button class="tone-chip">
+            <span class="tone-icon">🪨</span>
+            Firm
+          </button>
+        </div>
+
+        <textarea class="message-box" rows="4">Hey Jake! Just a friendly ping about the air fryer — no rush, just checking in so I remember where it is! 🪃</textarea>
+
+        <p style="font-size: 12px; color: var(--ink-3); margin-bottom: 16px;">
+          Or <a href="#" style="color: var(--ink-2); text-decoration: underline;">mark as handled in person</a>
+        </p>
+
+        <div class="send-row">
+          <button class="btn-secondary" onclick="closeModal('nudge-modal')">Cancel</button>
+          <button class="btn-primary">Send via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add item modal -->
+    <div class="modal-overlay" id="add-modal">
+      <div class="modal">
+        <div class="modal-handle"></div>
+        <h2 class="modal-title">Lend an Item</h2>
+        <p class="modal-subtitle">Snap a photo, we'll fill in the details</p>
+
+        <div class="photo-upload">📷 Tap to add photo</div>
+
+        <div class="form-group">
+          <label class="form-label">What are you lending?</label>
+          <input type="text" class="form-input" placeholder="e.g., Coffee maker">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Who are you lending to?</label>
+          <input type="text" class="form-input" placeholder="Search contacts...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">When should it be returned?</label>
+          <input type="date" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Value (optional)</label>
+          <input type="text" class="form-input" placeholder="$">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Note (optional)</label>
+          <input type="text" class="form-input" placeholder="e.g., for dinner party Saturday">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 20px;">
+          <button class="btn-secondary" style="flex: 1;" onclick="closeModal('add-modal')">Cancel</button>
+          <button class="btn-primary" style="flex: 1;">Save Item</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
