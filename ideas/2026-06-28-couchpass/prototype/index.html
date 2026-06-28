@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CouchPass — Streaming Sharing for the Crackdown Era</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #2A2520;
+            --bg-secondary: #1A1715;
+            --surface: #F4EBD9;
+            --surface-hover: #E8DFCD;
+            --accent-orange: #E07A4F;
+            --accent-orange-dark: #C96A43;
+            --sage: #8BAA92;
+            --rose: #C97B84;
+            --text-primary: #F4EBD9;
+            --text-secondary: #B8AFA0;
+            --text-dark: #2A2520;
+            --shadow: rgba(42, 37, 32, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--text-secondary);
+            opacity: 0.3;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logo .icon {
+            color: var(--accent-orange);
+            margin-right: 4px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--accent-orange);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 48px 0 32px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .section {
+            margin: 48px 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            background: var(--accent-orange);
+            color: var(--surface);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--accent-orange-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(244, 235, 217, 0.1);
+        }
+
+        .services-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .service-card {
+            background: var(--surface);
+            color: var(--text-dark);
+            border-radius: 12px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 48px 1fr auto;
+            gap: 16px;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .netflix { background: #E50914; color: white; }
+        .disney { background: #113CCF; color: white; }
+        .max { background: #9D4EDD; color: white; }
+        .hulu { background: #1CE783; color: #0d2318; }
+        .paramount { background: #0064FF; color: white; }
+
+        .service-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .service-info .owner {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .households {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .household-tag {
+            background: rgba(0,0,0,0.06);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .household-tag.primary {
+            background: var(--sage);
+            color: white;
+        }
+
+        .household-tag.extra {
+            background: var(--rose);
+            color: white;
+        }
+
+        .service-cost {
+            text-align: right;
+        }
+
+        .cost-amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cost-status {
+            font-size: 0.8rem;
+        }
+
+        .cost-status.shared {
+            color: var(--sage);
+            font-weight: 500;
+        }
+
+        .cost-status.alert {
+            color: var(--rose);
+            font-weight: 500;
+        }
+
+        .optimization-panel {
+            background: linear-gradient(135deg, var(--bg-secondary), rgba(224, 122, 79, 0.15));
+            border: 1px solid var(--accent-orange);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+        }
+
+        .optimization-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .optimization-icon {
+            font-size: 1.8rem;
+        }
+
+        .optimization-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .optimization-summary {
+            background: var(--surface);
+            color: var(--text-dark);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .optimization-summary h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--accent-orange);
+        }
+
+        .optimization-summary p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        .savings-badge {
+            display: inline-block;
+            background: var(--sage);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .cost-split {
+            margin-top: 32px;
+        }
+
+        .cost-split-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .split-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .split-item {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .split-person {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .split-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .split-name {
+            font-weight: 500;
+        }
+
+        .split-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+        }
+
+        .venmo-btn {
+            background: #008CFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 12px;
+            transition: background 0.2s;
+        }
+
+        .venmo-btn:hover {
+            background: #0075D4;
+        }
+
+        .alert-banner {
+            background: rgba(201, 123, 132, 0.15);
+            border: 1px solid var(--rose);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 24px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-icon {
+            font-size: 1.4rem;
+        }
+
+        .alert-content h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--rose);
+        }
+
+        .alert-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--text-secondary);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .service-card { grid-template-columns: 40px 1fr; }
+            .service-cost { grid-column: 2; display: flex; justify-content: space-between; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo"><span class="icon">🛋️</span>CouchPass</div>
+            <nav class="nav">
+                <a href="#">Services</a>
+                <a href="#">Households</a>
+                <a href="#">Cost Split</a>
+                <a href="#">Rules</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>Streaming Sharing, Sorted.</h1>
+            <p>The password crackdown has a body count. We're the triage.</p>
+        </section>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value">$47.96</div>
+                <div class="metric-label">Monthly Streaming Costs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">$15.98</div>
+                <div class="metric-label">Extra Member Fees</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">4</div>
+                <div class="metric-label">Households</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">5</div>
+                <div class="metric-label">Services</div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Your Services</h2>
+                    <span class="section-subtitle">Who has access, who pays, who's verified</span>
+                </div>
+                <button class="btn">+ Add Service</button>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon netflix">N</div>
+                    <div class="service-info">
+                        <h3>Netflix Premium</h3>
+                        <div class="owner">Owned by: Dad</div>
+                        <div class="households">
+                            <span class="household-tag primary">Dad's House</span>
+                            <span class="household-tag extra">Sarah's Apt</span>
+                            <span class="household-tag extra">College Dorm</span>
+                        </div>
+                    </div>
+                    <div class="service-cost">
+                        <div class="cost-amount">$22.99</div>
+                        <div class="cost-status shared">+ $7.99 × 2 extra</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon disney">D+</div>
+                    <div class="service-info">
+                        <h3>Disney+ Bundle</h3>
+                        <div class="owner">Owned by: Mom</div>
+                        <div class="households">
+                            <span class="household-tag primary">Mom's House</span>
+                            <span class="household-tag extra">Dad's Apt</span>
+                        </div>
+                    </div>
+                    <div class="service-cost">
+                        <div class="cost-amount">$14.99</div>
+                        <div class="cost-status shared">+ $7.99 × 1 extra</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon max">M</div>
+                    <div class="service-info">
+                        <h3>Max Ad-Free</h3>
+                        <div class="owner">Owned by: Sarah</div>
+                        <div class="households">
+                            <span class="household-tag primary">Sarah's Apt</span>
+                            <span class="household-tag extra">Mom's House</span>
+                            <span class="household-tag extra">College Dorm</span>
+                        </div>
+                    </div>
+                    <div class="service-cost">
+                        <div class="cost-amount">$15.99</div>
+                        <div class="cost-status shared">+ $7.99 × 2 extra</div>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon hulu">H</div>
+                    <div class="service-info">
+                        <h3>Hulu No Ads</h3>
+                        <div class="owner">Owned by: Jake (College)</div>
+                        <div class="households">
+                            <span class="household-tag primary">College Dorm</span>
+                            <span class="household-tag extra">Sarah's Apt</span>
+                        </div>
+                    </div>
+                    <div class="service-cost">
+                        <div class="cost-amount">$17.99</div>
+                        <div class="cost-status shared">+ $7.99 × 1 extra</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="alert-banner">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+                <h4>Max Household Verification Incoming</h4>
+                <p>Max is doing a verification sweep this week. Log in from your primary Wi-Fi (Sarah's Apt) within 48 hours to avoid being flagged.</p>
+            </div>
+        </div>
+
+        <section class="optimization-panel">
+            <div class="optimization-header">
+                <div class="optimization-icon">💡</div>
+                <h2>Optimization Suggestion</h2>
+            </div>
+            <div class="optimization-summary">
+                <h3>Save $15.98/month by swapping ownership</h3>
+                <p>Current setup: Dad owns Netflix, Sarah owns Max. Since Dad's household is the primary for 3 Netflix users and Sarah's is primary for 3 Max users, you're paying double extra-member fees.</p>
+                <p style="margin-top: 12px;"><strong>Recommended:</strong> Transfer Max ownership to Dad. His household is already verified for multiple users on Max-adjacent services (Hulu). Estimated savings: <span class="savings-badge">$15.98/mo</span></p>
+            </div>
+            <button class="btn">View Full Analysis</button>
+        </section>
+
+        <section class="cost-split">
+            <div class="cost-split-header">
+                <div>
+                    <h2 class="section-title">Cost Split</h2>
+                    <span class="section-subtitle">This month's extra member fees</span>
+                </div>
+                <button class="btn btn-secondary">Settle All</button>
+            </div>
+
+            <div class="split-list">
+                <div class="split-item">
+                    <div class="split-person">
+                        <div class="split-avatar">S</div>
+                        <div>
+                            <div class="split-name">Sarah</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">Owes $15.97 (Netflix + Max)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="split-amount">$15.97</span>
+                        <button class="venmo-btn">Venmo Dad</button>
+                    </div>
+                </div>
+
+                <div class="split-item">
+                    <div class="split-person">
+                        <div class="split-avatar">M</div>
+                        <div>
+                            <div class="split-name">Mom</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">Owes $7.99 (Netflix)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="split-amount">$7.99</span>
+                        <button class="venmo-btn">Venmo Dad</button>
+                    </div>
+                </div>
+
+                <div class="split-item">
+                    <div class="split-person">
+                        <div class="split-avatar">J</div>
+                        <div>
+                            <div class="split-name">Jake</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">Owes $7.99 (Max)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="split-amount">$7.99</span>
+                        <button class="venmo-btn">Venmo Sarah</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>CouchPass helps families navigate the 2026 streaming password crackdown.</p>
+            <p style="margin-top: 8px;">Built for Sunday, June 28th, 2026 · Prototype v1.0</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple interactions for demo
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 100);
+            });
+        });
+
+        document.querySelectorAll('.venmo-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const amount = btn.previousElementSibling.textContent;
+                alert(`Opening Venmo for ${amount}...`);
+            });
+        });
+    </script>
+</body>
+</html>
