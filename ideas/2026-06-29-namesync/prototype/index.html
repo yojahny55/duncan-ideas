@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NameSync — Smart Name Change Coordinator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-brand-mark">N</div>
+    NameSync
+  </div>
+  <nav class="topbar-nav">
+    <a href="#dashboard">Dashboard</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#documents">Documents</a>
+    <a href="#institutions">Institutions</a>
+    <a href="#letters">Letters</a>
+  </nav>
+  <div class="topbar-user">
+    <span>莎</span> Sarah Mitchell → <strong> Sarah Garza</strong>
+  </div>
+</header>
+
+<main class="app">
+
+  <!-- OVERVIEW -->
+  <section class="overview" id="dashboard">
+    <div class="overview-left">
+      <span class="reason-pill marriage">👰 Marriage · Filed Jun 12</span>
+      <h1>Your Name Change Project</h1>
+      <div class="overview-meta">
+        <span>📅 Started Jun 14, 2026</span>
+        <span>⏱ Est. completion: Aug 30, 2026</span>
+        <span>📍 Florida</span>
+      </div>
+    </div>
+    <div class="progress-ring">
+      <svg viewBox="0 0 120 120">
+        <circle class="bg" cx="60" cy="60" r="52"></circle>
+        <circle class="fg" cx="60" cy="60" r="52"
+          stroke-dasharray="326.7"
+          stroke-dashoffset="199.3"></circle>
+      </svg>
+      <div class="progress-ring-text">
+        <div class="progress-ring-num">14<span style="font-size:16px;color:var(--gray-3)">/47</span></div>
+        <div class="progress-ring-label">Updated</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-num sage">14</div>
+      <div class="stat-label">Confirmed Updates</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num warning">5</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">28</div>
+      <div class="stat-label">Not Started</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num danger">3</div>
+      <div class="stat-label">Deadlines Approaching</div>
+    </div>
+  </section>
+
+  <!-- ALERTS -->
+  <section class="alerts">
+    <div class="alert urgent">
+      <div class="alert-icon">⚠️</div>
+      <div>
+        <strong>DMV deadline in 6 days.</strong> Florida requires name change on driver's license within 30 days of SSA update. You're at day 24. <a href="#" style="color:inherit;text-decoration:underline">Book appointment →</a>
+      </div>
+      <button class="alert-action">Start Now</button>
+    </div>
+    <div class="alert warning">
+      <div class="alert-icon">📋</div>
+      <div>
+        <strong>You need more certified marriage certificate copies.</strong> You have 2, but most institutions require an original. Order 4 more ($5 each from your county).
+      </div>
+      <button class="alert-action">Order Copies</button>
+    </div>
+    <div class="alert info">
+      <div class="alert-icon">💳</div>
+      <div>
+        <strong>SSA confirmed your name change (2 days ago).</strong> You can now update financial institutions — they verify against SSA records.
+      </div>
+      <button class="alert-action">Unlock Financial</button>
+    </div>
+  </section>
+
+  <!-- BOARD -->
+  <section id="roadmap">
+    <div class="section-head">
+      <h2>Your Name Change Board</h2>
+      <a href="#" class="section-head-link">View as list →</a>
+    </div>
+    <div class="board">
+
+      <!-- NOT STARTED -->
+      <div class="column not-started">
+        <div class="column-head">
+          <span class="column-title">Not Started</span>
+          <span class="column-count">28</span>
+        </div>
+        <div class="card">
+          <div class="card-name">Chase Bank — Checking</div>
+          <div class="card-meta">
+            <span class="card-tag bank">BANK</span>
+            <span>📋 Form + in-person</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Amex — Platinum Card</div>
+          <div class="card-meta">
+            <span class="card-tag cc">CARD</span>
+            <span>📱 App or call</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Fidelity — 401(k)</div>
+          <div class="card-meta">
+            <span class="card-tag cc">FIN</span>
+            <span>📬 Mail form</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Blue Cross — Health Ins.</div>
+          <div class="card-meta">
+            <span class="card-tag ins">INS</span>
+            <span>📞 Call HR</span>
+          </div>
+        </div>
+        <div class="card" style="opacity:0.6">
+          <div class="card-name">+ 24 more</div>
+        </div>
+      </div>
+
+      <!-- READY -->
+      <div class="column ready">
+        <div class="column-head">
+          <span class="column-title">Docs Ready</span>
+          <span class="column-count">4</span>
+        </div>
+        <div class="card">
+          <div class="card-name">Geico — Auto Insurance</div>
+          <div class="card-meta">
+            <span class="card-tag ins">INS</span>
+            <span class="card-deadline">⚠️ Due in 12 days</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Voter Registration (FL)</div>
+          <div class="card-meta">
+            <span class="card-tag gov">GOV</span>
+            <span>📋 Form ready</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Equifax</div>
+          <div class="card-meta">
+            <span class="card-tag cc">CREDIT</span>
+            <span>📬 Letter ready</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Experian</div>
+          <div class="card-meta">
+            <span class="card-tag cc">CREDIT</span>
+            <span>📬 Letter ready</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBMITTED -->
+      <div class="column submitted">
+        <div class="column-head">
+          <span class="column-title">Submitted</span>
+          <span class="column-count">3</span>
+        </div>
+        <div class="card">
+          <div class="card-name">DMV — License</div>
+          <div class="card-meta">
+            <span class="card-tag gov">GOV</span>
+            <span class="card-deadline">⏱ ~7 days left</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Passport (State Dept)</div>
+          <div class="card-meta">
+            <span class="card-tag gov">GOV</span>
+            <span>⏱ 4-6 weeks</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Wells Fargo — Savings</div>
+          <div class="card-meta">
+            <span class="card-tag bank">BANK</span>
+            <span>⏱ 5-7 days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFIRMED -->
+      <div class="column confirmed">
+        <div class="column-head">
+          <span class="column-title">Confirmed</span>
+          <span class="column-count">10</span>
+        </div>
+        <div class="card">
+          <div class="card-name">SSA — Social Security</div>
+          <div class="card-meta">
+            <span class="card-tag gov">GOV</span>
+            <span style="color:var(--sage)">✓ Jun 24</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">IRS — Form SS-5</div>
+          <div class="card-meta">
+            <span class="card-tag gov">GOV</span>
+            <span style="color:var(--sage)">✓ Jun 25</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Employer — HR/Payroll</div>
+          <div class="card-meta">
+            <span class="card-tag pro">WORK</span>
+            <span style="color:var(--sage)">✓ Jun 18</span>
+          </div>
+        </div>
+        <div class="card" style="opacity:0.7">
+          <div class="card-name">+ 7 more confirmed</div>
+        </div>
+      </div>
+
+      <!-- VERIFIED -->
+      <div class="column verified">
+        <div class="column-head">
+          <span class="column-title">Verified</span>
+          <span class="column-count">4</span>
+        </div>
+        <div class="card">
+          <div class="card-name">Email — Gmail</div>
+          <div class="card-meta">
+            <span class="card-tag per">PER</span>
+            <span style="color:var(--navy)">✓ Verified</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Instagram</div>
+          <div class="card-meta">
+            <span class="card-tag per">PER</span>
+            <span style="color:var(--navy)">✓ Verified</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">LinkedIn</div>
+          <div class="card-meta">
+            <span class="card-tag pro">PRO</span>
+            <span style="color:var(--navy)">✓ Verified</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-name">Slack — Work</div>
+          <div class="card-meta">
+            <span class="card-tag pro">PRO</span>
+            <span style="color:var(--navy)">✓ Verified</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TWO COL: Doc Vault + Cover Letters -->
+  <div class="two-col">
+
+    <!-- DOC VAULT -->
+    <section class="panel" id="documents">
+      <h3>📁 Document Vault</h3>
+      <p class="panel-sub">Upload once. We'll tell you when you need certified copies.</p>
+
+      <div class="doc-item">
+        <div class="doc-icon">👰</div>
+        <div class="doc-info">
+          <div class="doc-name">Marriage Certificate</div>
+          <div class="doc-meta">Issued Jun 12, 2026 · Miami-Dade County</div>
+        </div>
+        <span class="doc-badge have">2 copies</span>
+        <button class="doc-action">Order more</button>
+      </div>
+
+      <div class="doc-item">
+        <div class="doc-icon">🆔</div>
+        <div class="doc-info">
+          <div class="doc-name">Current Driver's License</div>
+          <div class="doc-meta">FL Class E · Expires 2028</div>
+        </div>
+        <span class="doc-badge have">On file</span>
+        <button class="doc-action">View</button>
+      </div>
+
+      <div class="doc-item">
+        <div class="doc-icon">📄</div>
+        <div class="doc-info">
+          <div class="doc-name">SSA Confirmation Letter</div>
+          <div class="doc-meta">Received Jun 24, 2026</div>
+        </div>
+        <span class="doc-badge have">On file</span>
+        <button class="doc-action">View</button>
+      </div>
+
+      <div class="cert-notice">
+        <span>💡</span>
+        <div>
+          <strong>Heads up:</strong> You'll need <strong>4-6 more certified copies</strong> of your marriage certificate. Most banks and insurance companies require an original (not a photocopy). Order from Miami-Dade County: <strong>$5 each, ships in 5-7 days</strong>.
+        </div>
+      </div>
+    </section>
+
+    <!-- COVER LETTERS -->
+    <section class="panel" id="letters">
+      <h3>✉️ AI Cover Letters</h3>
+      <p class="panel-sub">Pre-filled, legally formatted, ready to print & mail.</p>
+
+      <div class="letter-item">
+        <div class="letter-icon">🏦</div>
+        <div class="letter-info">
+          <div class="letter-name">Chase Bank — Name Change Request</div>
+          <div class="letter-meta">Generated · 1 page · PDF ready</div>
+        </div>
+        <button class="doc-action">Download</button>
+      </div>
+
+      <div class="letter-item">
+        <div class="letter-icon">📈</div>
+        <div class="letter-info">
+          <div class="letter-name">Equifax — Name Update Letter</div>
+          <div class="letter-meta">Generated · 1 page · PDF ready</div>
+        </div>
+        <button class="doc-action">Download</button>
+      </div>
+
+      <div class="letter-preview">
+        <strong>Equifax Inc.</strong><br>
+        P.O. Box 740256, Atlanta, GA 30374<br><br>
+        Dear Equifax,<br><br>
+        I am writing to formally request that my name be updated on all credit files maintained under my Social Security Number. My legal name has changed due to marriage.<br><br>
+        <span class="filled">Previous name:</span> Sarah Elizabeth Mitchell<br>
+        <span class="filled">New legal name:</span> Sarah Elizabeth Garza<br>
+        <span class="filled">SSN:</span> XXX-XX-1234<br>
+        <span class="filled">Date of birth:</span> March 15, 1992<br><br>
+        I have enclosed a certified copy of my marriage certificate as documentation...
+      </div>
+    </section>
+  </div>
+
+  <!-- INSTITUTION LIST -->
+  <section class="inst-section" id="institutions">
+    <div class="section-head">
+      <h2>All Institutions (47)</h2>
+      <a href="#" class="section-head-link">Filter & sort →</a>
+    </div>
+
+    <div class="inst-tabs">
+      <button class="inst-tab active">All (47)</button>
+      <button class="inst-tab">🏛 Government (12)</button>
+      <button class="inst-tab">🏦 Financial (12)</button>
+      <button class="inst-tab">🛡 Insurance (5)</button>
+      <button class="inst-tab">💼 Work (4)</button>
+      <button class="inst-tab">🏠 Personal (14)</button>
+    </div>
+
+    <div class="inst-list">
+      <div class="inst-row">
+        <div class="inst-cat gov">🏛</div>
+        <div>
+          <div class="inst-name">Social Security Administration</div>
+          <div class="inst-detail">Form SS-5 · Requires certified marriage cert</div>
+        </div>
+        <span class="inst-status done">✓ Confirmed</span>
+        <span class="inst-fee">Free</span>
+        <span class="inst-time">Done Jun 24</span>
+        <button class="doc-action">View</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat gov">🏛</div>
+        <div>
+          <div class="inst-name">DMV — Florida Driver's License</div>
+          <div class="inst-detail">In-person appointment · Bring cert + current license</div>
+        </div>
+        <span class="inst-status progress">⏱ Submitted</span>
+        <span class="inst-fee">$25</span>
+        <span class="inst-time">~7 days left</span>
+        <button class="doc-action">Track</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat gov">🏛</div>
+        <div>
+          <div class="inst-name">U.S. Passport — State Department</div>
+          <div class="inst-detail">Form DS-5504 (within 1 yr) or DS-82 · Mail-in</div>
+        </div>
+        <span class="inst-status progress">⏱ Submitted</span>
+        <span class="inst-fee">$0-130</span>
+        <span class="inst-time">4-6 weeks</span>
+        <button class="doc-action">Track</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat gov">🏛</div>
+        <div>
+          <div class="inst-name">IRS — Update Records</div>
+          <div class="inst-detail">No form needed — SSA update propagates. Verify with next tax return</div>
+        </div>
+        <span class="inst-status done">✓ Confirmed</span>
+        <span class="inst-fee">Free</span>
+        <span class="inst-time">Auto</span>
+        <button class="doc-action">Verify</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat gov">🏛</div>
+        <div>
+          <div class="inst-name">Voter Registration — Florida</div>
+          <div class="inst-detail">FL voter reg form · Mail or online portal</div>
+        </div>
+        <span class="inst-status todo">📋 Ready</span>
+        <span class="inst-fee">Free</span>
+        <span class="inst-time">10 min</span>
+        <button class="doc-action">Start</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat bank">🏦</div>
+        <div>
+          <div class="inst-name">Chase Bank — Checking & Savings</div>
+          <div class="inst-detail">In-person branch visit · Bring cert + ID</div>
+        </div>
+        <span class="inst-status blocked">📋 Needs SSA</span>
+        <span class="inst-fee">Free</span>
+        <span class="inst-time">30-45 min</span>
+        <button class="doc-action">Unlocked</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat cc">💳</div>
+        <div>
+          <div class="inst-name">Amex — Platinum Card</div>
+          <div class="inst-detail">App: Profile → Account → Name Change · Upload cert</div>
+        </div>
+        <span class="inst-status todo">📋 Not started</span>
+        <span class="inst-fee">Free</span>
+        <span class="inst-time">5 min</span>
+        <button class="doc-action">Start</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat cc">📈</div>
+        <div>
+          <div class="inst-name">Equifax — Credit Bureau</div>
+          <div class="inst-detail">Mail letter + cert copy · P.O. Box 740256</div>
+        </div>
+        <span class="inst-status todo">📋 Ready</span>
+        <span class="inst-fee">$0</span>
+        <span class="inst-time">Mail + 30 days</span>
+        <button class="doc-action">Mail</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat ins">🛡</div>
+        <div>
+          <div class="inst-name">Blue Cross Blue Shield — Health</div>
+          <div class="inst-detail">Call member services or HR portal · Depends on employer plan</div>
+        </div>
+        <span class="inst-status todo">📋 Not started</span>
+        <span class="inst-fee">Free</span>
+        <span class="inst-time">20 min</span>
+        <button class="doc-action">Start</button>
+      </div>
+      <div class="inst-row">
+        <div class="inst-cat pro">💼</div>
+        <div>
+          <div class="inst-name">HR / Payroll — Mobilerider</div>
+          <div class="inst-detail">Email HR with cert copy · They update W-2, direct deposit, benefits</div>
+        </div>
+        <span class="inst-status done">✓ Confirmed</span>
+        <span class="inst-fee">Free</span>
+        <span class="inst-time">Done Jun 18</span>
+        <button class="doc-action">View</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="cta-text">
+      <h3>Unlock all 47 institutions + AI cover letters</h3>
+      <p>Complete your name change in half the time. One-time $29.99. No subscription.</p>
+    </div>
+    <button class="cta-btn">Upgrade to Complete →</button>
+  </section>
+
+</main>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.inst-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.inst-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Animate progress ring on load
+  window.addEventListener('load', () => {
+    const ring = document.querySelector('.progress-ring .fg');
+    if (ring) {
+      const total = 326.7;
+      const offset = 199.3;
+      ring.style.strokeDashoffset = total;
+      setTimeout(() => {
+        ring.style.strokeDashoffset = offset;
+      }, 200);
+    }
+  });
+</script>
+
+</body>
+</html>
