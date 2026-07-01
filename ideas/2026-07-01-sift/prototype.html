@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sift — AI-Slop Filter Prototype</title>
+<style>
+  :root {
+    --sift-bg: #0d1117;
+    --sift-card: #161b22;
+    --sift-border: #30363d;
+    --sift-text: #e6edf3;
+    --sift-text-dim: #8b949e;
+    --sift-green: #3fb950;
+    --sift-yellow: #d29922;
+    --sift-red: #f85149;
+    --sift-accent: #58a6ff;
+    --amazon-bg: #ffffff;
+    --amazon-text: #0f1111;
+    --amazon-link: #007185;
+    --amazon-price: #b12704;
+    --amazon-yellow: #f5a623;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f0f2f5;
+    color: var(--amazon-text);
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Browser chrome mockup */
+  .browser-frame {
+    max-width: 1280px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .browser-bar {
+    background: #dee1e6;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #d0d3d8;
+  }
+  .browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .browser-dot.r { background: #ff5f57; }
+  .browser-dot.y { background: #febc2e; }
+  .browser-dot.g { background: #28c940; }
+  .url-bar {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: #444;
+    margin-left: 16px;
+    border: 1px solid #d0d3d8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .url-bar::before { content: '🔒'; font-size: 10px; }
+  .sift-icon {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #58a6ff, #3fb950);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+  }
+  .sift-icon::after {
+    content: 'Sift';
+    position: absolute;
+    bottom: -16px;
+    font-size: 8px;
+    color: #444;
+    font-weight: 500;
+  }
+
+  /* Sift extension overlay bar */
+  .sift-bar {
+    background: linear-gradient(90deg, #161b22 0%, #0d1117 100%);
+    color: var(--sift-text);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    border-bottom: 2px solid var(--sift-green);
+  }
+  .sift-bar.warning { border-bottom-color: var(--sift-yellow); }
+  .sift-bar.danger { border-bottom-color: var(--sift-red); }
+  .sift-logo {
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sift-logo::before {
+    content: '';
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #58a6ff, #3fb950);
+    border-radius: 5px;
+    display: inline-block;
+  }
+  .sift-score-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+  .sift-score-num {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .sift-score-num.good { color: var(--sift-green); }
+  .sift-score-num.mid { color: var(--sift-yellow); }
+  .sift-score-num.bad { color: var(--sift-red); }
+  .sift-score-label {
+    font-size: 11px;
+    color: var(--sift-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .sift-score-label strong { color: var(--sift-text); font-size: 13px; display: block; text-transform: none; letter-spacing: 0; }
+  .sift-flags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 2;
+  }
+  .sift-flag {
+    background: rgba(248,81,73,0.15);
+    color: var(--sift-red);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid rgba(248,81,73,0.3);
+    cursor: help;
+  }
+  .sift-flag.warn { background: rgba(210,153,34,0.15); color: var(--sift-yellow); border-color: rgba(210,153,34,0.3); }
+  .sift-flag.ok { background: rgba(63,185,80,0.15); color: var(--sift-green); border-color: rgba(63,185,80,0.3); }
+  .sift-cta {
+    background: var(--sift-green);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .sift-cta:hover { background: #2ea043; }
+
+  /* Amazon-style page content */
+  .amazon-page {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    background: var(--amazon-bg);
+  }
+  .amazon-section { padding: 0; }
+  .amazon-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    border: 1px solid #e0e0e0;
+    position: relative;
+  }
+  .amazon-img .sift-highlight {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    background: rgba(248,81,73,0.95);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    max-width: 80%;
+    line-height: 1.3;
+  }
+  .amazon-title {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--amazon-text);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .amazon-brand { color: var(--amazon-link); font-size: 13px; margin-bottom: 8px; }
+  .amazon-stars { color: var(--amazon-yellow); font-size: 14px; margin-bottom: 4px; }
+  .amazon-stars .count { color: var(--amazon-link); font-size: 13px; margin-left: 6px; }
+  .amazon-price-row { display: flex; align-items: baseline; gap: 10px; margin: 10px 0; }
+  .amazon-was { color: #565959; text-decoration: line-through; font-size: 13px; }
+  .amazon-price { color: var(--amazon-price); font-size: 24px; font-weight: 500; }
+  .amazon-prime { color: var(--amazon-link); font-size: 12px; font-weight: 600; }
+  .amazon-deal { background: #7fda19; color: #0f1111; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+
+  /* Sift detail panel — slides in below bar when CTA clicked */
+  .sift-detail {
+    background: var(--sift-bg);
+    color: var(--sift-text);
+    padding: 20px;
+    display: none;
+    border-top: 1px solid var(--sift-border);
+  }
+  .sift-detail.open { display: block; }
+  .sift-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .sift-metric {
+    background: var(--sift-card);
+    border: 1px solid var(--sift-border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .sift-metric-label {
+    font-size: 10px;
+    color: var(--sift-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .sift-metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .sift-metric-detail { font-size: 11px; color: var(--sift-text-dim); line-height: 1.3; }
+
+  /* Alternatives section */
+  .sift-alts {
+    background: var(--sift-card);
+    border: 1px solid var(--sift-border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .sift-alts-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sift-alt-item {
+    display: grid;
+    grid-template-columns: 50px 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--sift-border);
+  }
+  .sift-alt-item:first-of-type { border-top: none; }
+  .sift-alt-img {
+    width: 50px;
+    height: 50px;
+    background: #30363d;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+  .sift-alt-name { font-size: 13px; font-weight: 500; color: var(--sift-text); }
+  .sift-alt-source { font-size: 11px; color: var(--sift-text-dim); margin-top: 2px; }
+  .sift-alt-score {
+    font-size: 18px;
+    font-weight: 700;
+    padding: 0 8px;
+  }
+  .sift-alt-link {
+    color: var(--sift-accent);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .sift-alts-list-link {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    color: var(--sift-accent);
+    font-size: 12px;
+    text-decoration: none;
+    padding: 8px;
+    border: 1px solid var(--sift-border);
+    border-radius: 6px;
+  }
+
+  /* Hallucination highlights on listing itself */
+  .hallucination-mark {
+    background: rgba(248,81,73,0.15);
+    border-bottom: 2px dotted var(--sift-red);
+    cursor: help;
+    position: relative;
+    padding: 1px 2px;
+  }
+  .hallucination-mark:hover::after {
+    content: attr(data-reason);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: #161b22;
+    color: #e6edf3;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: normal;
+    width: 280px;
+    z-index: 100;
+    border: 1px solid var(--sift-border);
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  /* Price chart mock */
+  .price-chart {
+    background: var(--sift-card);
+    border: 1px solid var(--sift-border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+  .price-chart-title { font-size: 12px; color: var(--sift-text-dim); margin-bottom: 8px; }
+  .price-bars { display: flex; align-items: flex-end; gap: 3px; height: 60px; }
+  .price-bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--sift-accent), rgba(88,166,255,0.3));
+    border-radius: 2px 2px 0 0;
+    min-height: 8px;
+  }
+  .price-bar.now { background: linear-gradient(180deg, var(--sift-green), rgba(63,185,80,0.3)); }
+
+  /* Community feed mock */
+  .community-feed {
+    background: var(--sift-card);
+    border: 1px solid var(--sift-border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+  .community-comment {
+    padding: 10px 0;
+    border-top: 1px solid var(--sift-border);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .community-comment:first-of-type { border-top: none; }
+  .community-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    color: var(--sift-text-dim);
+    font-size: 11px;
+  }
+  .community-badge {
+    background: rgba(63,185,80,0.2);
+    color: var(--sift-green);
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  /* Toggle button */
+  .toggle-detail {
+    background: transparent;
+    border: 1px solid var(--sift-border);
+    color: var(--sift-text-dim);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: auto;
+  }
+  .toggle-detail:hover { color: var(--sift-text); border-color: var(--sift-text-dim); }
+
+  /* Footer hint */
+  .prototype-note {
+    max-width: 1280px;
+    margin: 14px auto 40px;
+    padding: 14px 20px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #665500;
+    line-height: 1.5;
+  }
+  .prototype-note strong { color: #5a4700; }
+
+  @media (max-width: 768px) {
+    .amazon-page { grid-template-columns: 1fr; }
+    .sift-detail-grid { grid-template-columns: repeat(2, 1fr); }
+    .sift-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .sift-flags { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="browser-frame">
+  <div class="browser-bar">
+    <span class="browser-dot r"></span>
+    <span class="browser-dot y"></span>
+    <span class="browser-dot g"></span>
+    <div class="url-bar">https://www.amazon.com/dp/B0FakeAI2026</div>
+    <div class="sift-icon">S</div>
+  </div>
+
+  <!-- Sift extension overlay bar -->
+  <div class="sift-bar danger" id="siftBar">
+    <div class="sift-logo">Sift</div>
+    <div class="sift-score-block">
+      <div class="sift-score-num bad" id="scoreNum">23</div>
+      <div class="sift-score-label">
+        Sift Score<br>
+        <strong id="scoreVerdict">High AI-slop risk — do not buy</strong>
+      </div>
+    </div>
+    <div class="sift-flags">
+      <span class="sift-flag" title="68% of 5-star reviews use identical phrasing patterns">68% fake-review signal</span>
+      <span class="sift-flag" title="Listing description matches GPT-4 fingerprint with 91% confidence">AI-generated listing</span>
+      <span class="sift-flag" title="Spec sheet claims 10,000mAh; FCC filing shows 6,200mAh">Spec hallucination</span>
+      <span class="sift-flag" title="Seller registered 47 days ago; 31% return rate">Seller risk</span>
+      <span class="sift-flag warn" title="Strikethrough price $129.99 was never actually offered — listing launched at $49.99">Fake "was" price</span>
+    </div>
+    <button class="sift-cta" onclick="toggleDetail()">Show me the real version</button>
+    <button class="toggle-detail" onclick="toggleDetail()">▾ details</button>
+  </div>
+
+  <!-- Sift detail panel -->
+  <div class="sift-detail" id="siftDetail">
+    <div class="sift-detail-grid">
+      <div class="sift-metric">
+        <div class="sift-metric-label">Review Authenticity</div>
+        <div class="sift-metric-value" style="color: var(--sift-red);">32%</div>
+        <div class="sift-metric-detail">68% of 5-star reviews flagged as unnatural language patterns or duplicate clusters across unrelated ASINs.</div>
+      </div>
+      <div class="sift-metric">
+        <div class="sift-metric-label">Listing Authenticity</div>
+        <div class="sift-metric-value" style="color: var(--sift-red);">9%</div>
+        <div class="sift-metric-detail">Title keyword-stuffed. Description matches GPT-4 generation fingerprint. Images match 4 other listings under different seller names.</div>
+      </div>
+      <div class="sift-metric">
+        <div class="sift-metric-label">Seller Trust</div>
+        <div class="sift-metric-value" style="color: var(--sift-yellow);">41%</div>
+        <div class="sift-metric-detail">Seller account created Apr 2026. No trademark filing. 31% return rate (3x category average). Business address is a mailbox service.</div>
+      </div>
+      <div class="sift-metric">
+        <div class="sift-metric-label">Spec Verified</div>
+        <div class="sift-metric-value" style="color: var(--sift-red);">2 / 7</div>
+        <div class="sift-metric-detail">Only weight and dimensions match FCC filing. Battery capacity, charging speed, material, water-resistance, and warranty all contradicted by manufacturer docs.</div>
+      </div>
+    </div>
+
+    <!-- Real alternatives -->
+    <div class="sift-alts">
+      <div class="sift-alts-title">🟢 Real alternatives — human-verified</div>
+
+      <div class="sift-alt-item">
+        <div class="sift-alt-img">🔋</div>
+        <div>
+          <div class="sift-alt-name">Anker PowerCore 10000 PD Redux</div>
+          <div class="sift-alt-source">r/BuyItForLife top mention · Wirecutter pick · 4.8★ verified</div>
+        </div>
+        <div class="sift-alt-score" style="color: var(--sift-green);">96</div>
+        <a href="#" class="sift-alt-link">View →</a>
+      </div>
+
+      <div class="sift-alt-item">
+        <div class="sift-alt-img">🔋</div>
+        <div>
+          <div class="sift-alt-name">INIU 10000mAh Power Bank, BI-B41</div>
+          <div class="sift-alt-source">r/Frugal recommendation · Project Farm top 3 · FCC-verified</div>
+        </div>
+        <div class="sift-alt-score" style="color: var(--sift-green);">91</div>
+        <a href="#" class="sift-alt-link">View →</a>
+      </div>
+
+      <div class="sift-alt-item">
+        <div class="sift-alt-img">🔋</div>
+        <div>
+          <div class="sift-alt-name">UGREEN 10000mAh 30W Power Bank, PB142</div>
+          <div class="sift-alt-source">r/SomebodyMakeThis user-tested · 3-yr warranty confirmed</div>
+        </div>
+        <div class="sift-alt-score" style="color: var(--sift-green);">89</div>
+        <a href="#" class="sift-alt-link">View →</a>
+      </div>
+
+      <a href="#" class="sift-alts-list-link">See all 8 verified options for "10,000mAh USB-C power bank under $50" →</a>
+    </div>
+
+    <!-- Price chart -->
+    <div class="price-chart">
+      <div class="price-chart-title">📈 Real 90-day price history (CamelCamelCamel + Keepa data)</div>
+      <div class="price-bars" id="priceBars"></div>
+      <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--sift-text-dim);">
+        <span>Apr 2026 — avg $41</span>
+        <span style="color: var(--sift-green);">Now: $49 (above average)</span>
+        <span>Low: $34 (May 12)</span>
+      </div>
+      <div style="margin-top: 10px; padding: 8px 10px; background: rgba(210,153,34,0.15); border-radius: 6px; font-size: 11px; color: var(--sift-yellow);">
+        ⚠️ The "$129.99 was" price shown on this listing was never actually offered. This product launched at $49.99 on June 8, 2026.
+      </div>
+    </div>
+
+    <!-- Community feed -->
+    <div class="community-feed">
+      <div class="sift-alts-title">💬 Community Trust Feed — 3 verified-purchase notes</div>
+
+      <div class="community-comment">
+        <div class="community-author">
+          <span>u/throwaway_phone_charger</span>
+          <span class="community-badge">Verified Purchase</span>
+          <span>· 4 days ago</span>
+        </div>
+        Actual capacity is ~5,800mAh, not 10,000. Charged my iPhone 15 about 1.2x before dying. Returning.
+      </div>
+
+      <div class="community-comment">
+        <div class="community-author">
+          <span>u/camping_dad_77</span>
+          <span class="community-badge">Verified Purchase</span>
+          <span>· 9 days ago</span>
+        </div>
+        Stopped working after 11 days. Seller offered a $5 gift card to change my review to 5 stars. Reported to Amazon.
+      </div>
+
+      <div class="community-comment">
+        <div class="community-author">
+          <span>u/elektronik_nerd</span>
+          <span class="community-badge">Verified Teardown</span>
+          <span>· 12 days ago</span>
+        </div>
+        Opened mine up. Cells labeled "LG 18650" but they're unbranded generic — weighs 142g vs. Anker's 218g. The USB-C port maxes at 12W, not the advertised 30W.
+      </div>
+    </div>
+  </div>
+
+  <!-- Amazon-style product page (fake listing, AI-slop flavor) -->
+  <div class="amazon-page">
+    <div class="amazon-section">
+      <div class="amazon-img">
+        🔋
+        <div class="sift-highlight">⚠️ Image matches 4 other listings under different seller names</div>
+      </div>
+    </div>
+
+    <div class="amazon-section">
+      <div class="amazon-brand">Visit the VOLTREX Store</div>
+      <h1 class="amazon-title">
+        VOLTREX UltraSlim 10000mAh <span class="hallucination-mark" data-reason="⚠️ Sift: FCC filing shows actual capacity is 6,200mAh — this claim is 61% overstated.">10,000mAh Capacity</span> Portable Charger Power Bank <span class="hallucination-mark" data-reason="⚠️ Sift: Manufacturer docs confirm max output is 12W, not 30W. USB-C Power Delivery not supported.">30W PD Fast Charging USB-C</span> for iPhone 15 14 13 Samsung Galaxy S24 S23 Pixel 8 7 iPad Air Pro MacBook <span class="hallucination-mark" data-reason="⚠️ Sift: No MacBook charging is possible at 12W. Claim contradicts physics.">MacBook Charging Compatible</span> LED Display <span class="hallucination-mark" data-reason="⚠️ Sift: Listing photo shows green LED. Product ships without any LED display per verified buyers.">LED Display</span> <span class="hallucination-mark" data-reason="⚠️ Sift: No IP rating filed. Multiple verified reviews report failure after light splashes.">IP67 Waterproof</span> Aluminum Alloy <span class="hallucination-mark" data-reason="⚠️ Sift: Teardown by u/elektronik_nerd confirms plastic shell, not aluminum. Weighs 142g vs. category average 218g.">Aerospace Grade</span> Travel Essential TSA Approved <span class="hallucination-mark" data-reason="⚠️ Sift: No TSA filing or certification number found. Claim is fabricated.">TSA Approved</span> B0FakeAI2026
+      </h1>
+
+      <div class="amazon-stars">
+        ★★★★★ <span class="count">4.8 out of 5 · 12,847 ratings</span>
+      </div>
+      <div style="font-size: 11px; color: #565959; margin-bottom: 12px;">
+        ⚠️ <strong>Sift:</strong> 8,743 of these ratings (68%) were posted in clusters within 72-hour windows by accounts with &lt;3 lifetime reviews.
+      </div>
+
+      <div class="amazon-price-row">
+        <span class="amazon-deal">-62% Deal</span>
+        <span class="amazon-was">$129.99</span>
+        <span class="amazon-price">$49.99</span>
+      </div>
+      <div style="font-size: 11px; color: #565959; margin-bottom: 10px;">
+        ⚠️ <strong>Sift:</strong> This product launched at $49.99 on June 8, 2026. The $129.99 strikethrough was never offered — this is a fake "deal."
+      </div>
+
+      <div class="amazon-prime">✓ prime FREE delivery Tomorrow</div>
+
+      <div style="margin-top: 16px; padding: 14px; background: #f7f8f8; border-radius: 6px; font-size: 13px; line-height: 1.6;">
+        <strong>About this item</strong><br>
+        • <span class="hallucination-mark" data-reason="Battery cell manufacturer not declared. Teardown shows generic unbranded cells.">Premium Samsung 21700 cells</span><br>
+        • <span class="hallucination-mark" data-reason="Output is 5V/2.4A max per spec sheet. 30W claim is false.">30W USB-C Power Delivery</span><br>
+        • <span class="hallucination-mark" data-reason="Charges a 5000mAh phone approximately 1.1x, not 3x.">Charges iPhone 15 up to 3 times</span><br>
+        • <span class="hallucination-mark" data-reason="Verified by 3 community teardowns — no display shipped.">Smart LED capacity display</span><br>
+        • <span class="hallucination-mark" data-reason="Trademark search shows VOLTREX is not a registered US trademark.">VOLTREX™ lifetime warranty</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="prototype-note">
+  <strong>Prototype walkthrough — Sift browser extension on an AI-slop Amazon listing.</strong>
+  The Sift Score banner appears at the top of every product page. Red flags show detected issues. Click <em>"Show me the real version"</em> to expand the detail panel with: (1) breakdown of all four trust metrics, (2) human-verified alternative products from Reddit / Wirecutter / Project Farm, (3) real 90-day price history exposing the fake "deal," and (4) verified-purchase community notes. Dotted red underlines on the listing title and bullet points show hallucination highlights — hover any underline to see the specific contradiction.
+</div>
+
+<script>
+  // Generate fake 90-day price chart
+  (function() {
+    const bars = document.getElementById('priceBars');
+    const prices = [42, 41, 43, 40, 39, 38, 37, 36, 34, 35, 37, 36, 38, 40, 41, 43, 45, 44, 46, 47, 45, 46, 47, 48, 49, 48, 49, 49, 50, 49];
+    const max = Math.max(...prices);
+    const min = Math.min(...prices);
+    prices.forEach((p, i) => {
+      const bar = document.createElement('div');
+      bar.className = 'price-bar' + (i === prices.length - 1 ? ' now' : '');
+      const heightPct = ((p - min + 4) / (max - min + 4)) * 100;
+      bar.style.height = heightPct + '%';
+      bar.title = '$' + p.toFixed(2);
+      bars.appendChild(bar);
+    });
+  })();
+
+  function toggleDetail() {
+    const d = document.getElementById('siftDetail');
+    d.classList.toggle('open');
+    const btn = document.querySelector('.sift-cta');
+    btn.textContent = d.classList.contains('open') ? 'Hide details' : 'Show me the real version';
+  }
+  // Auto-open for demo
+  setTimeout(() => toggleDetail(), 600);
+</script>
+
+</body>
+</html>
