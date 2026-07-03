@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlackoutReady — Personal Power Outage Preparedness</title>
+  <meta name="description" content="The personal power outage preparedness & survival app. Grid stress monitoring, fridge food safety, medical device tracking, and family reconnect plans.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">🔦</div>
+        BlackoutReady
+      </div>
+      <div class="nav-links">
+        <a class="nav-link active" data-tab="home">Overview</a>
+        <a class="nav-link" data-tab="features">Features</a>
+        <a class="nav-link" data-tab="pricing">Pricing</a>
+      </div>
+      <button class="nav-cta">Get Started Free</button>
+    </div>
+  </nav>
+
+  <!-- ============================================ -->
+  <!-- HOME / HERO                                   -->
+  <!-- ============================================ -->
+  <section data-section="home" id="home">
+    <div class="hero">
+      <div class="hero-bg-glow"></div>
+      <div class="app-container">
+        <div class="hero-content">
+          <!-- Left: Copy -->
+          <div>
+            <div class="hero-badge" id="outage-badge" style="display: none;">
+              <span class="hero-badge-pulse"></span>
+              OUTAGE ACTIVE
+            </div>
+            <div class="hero-badge" style="background: rgba(230,57,70,0.12); border-color: rgba(230,57,70,0.3); color: var(--color-signal-red);">
+              <span class="hero-badge-pulse"></span>
+              LIVE: Grid stress HIGH in your area
+            </div>
+            <h1 class="hero-title">
+              When the grid fails,<br>
+              <span class="hero-title-highlight">you're already ready.</span>
+            </h1>
+            <p class="hero-subtitle">
+              Record heatwaves and AI-driven power demand are pushing the grid to its limits. BlackoutReady tracks your preparedness, monitors grid stress in real-time, and guides you through every hour of an outage — before food spoils, before medical devices die, before panic sets in.
+            </p>
+            <div class="hero-actions">
+              <button class="btn-primary" data-cta="features">
+                See How It Works →
+              </button>
+              <button class="btn-secondary" id="outage-toggle" onclick="toggleOutage()">
+                Simulate Power Outage
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Live Dashboard Preview -->
+          <div class="hero-preview">
+            <div class="preview-header">
+              <span class="preview-title">Your Grid · ZIP 33604</span>
+              <span class="preview-live">
+                <span class="preview-live-dot"></span>
+                LIVE
+              </span>
+            </div>
+
+            <!-- Grid Stress Gauge -->
+            <div class="grid-gauge">
+              <div class="gauge-circle">
+                <svg class="gauge-svg" width="140" height="140">
+                  <circle class="gauge-track" cx="70" cy="70" r="60"/>
+                  <circle id="gauge-fill" class="gauge-fill" cx="70" cy="70" r="60"/>
+                </svg>
+                <div class="gauge-center">
+                  <div class="gauge-value" id="gauge-value">78%</div>
+                  <div class="gauge-label">Grid Load</div>
+                </div>
+              </div>
+              <div class="gauge-status" id="gauge-status">HIGH DEMAND</div>
+            </div>
+
+            <!-- Mini Stats -->
+            <div class="preview-stats">
+              <div class="preview-stat">
+                <div class="preview-stat-label">Fridge Risk</div>
+                <div class="preview-stat-value warning" id="fridge-at-risk">$34.50</div>
+                <div class="preview-stat-sub">if power lost now</div>
+              </div>
+              <div class="preview-stat">
+                <div class="preview-stat-label">CPAP Battery</div>
+                <div class="preview-stat-value warning">6 hrs</div>
+                <div class="preview-stat-sub">charge recommended</div>
+              </div>
+              <div class="preview-stat">
+                <div class="preview-stat-label">Prep Score</div>
+                <div class="preview-stat-value safe">6/10</div>
+                <div class="preview-stat-sub">2 items expired</div>
+              </div>
+              <div class="preview-stat">
+                <div class="preview-stat-label">Next Alert</div>
+                <div class="preview-stat-value danger">3-7 PM</div>
+                <div class="preview-stat-sub">peak demand window</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- FEATURES                                      -->
+    <!-- ============================================ -->
+    <div id="features" class="section">
+      <div class="app-container">
+        <div class="section-header">
+          <span class="section-eyebrow">Complete Preparedness System</span>
+          <h2 class="section-title">Everything you need<br>before, during, and after</h2>
+          <p class="section-subtitle">
+            Most people have a flashlight and a vague memory of a checklist they made once. BlackoutReady turns that into a living, monitored system.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon amber">📊</div>
+            <h3 class="feature-title">Grid Stress Dashboard</h3>
+            <p class="feature-description">
+              Real-time data from your regional grid operator (ERCOT, PJM, CAISO, etc.). See demand vs. capacity, get alerts before rolling blackouts, and know exactly when to conserve.
+            </p>
+            <span class="feature-tag">Real-time API</span>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon red">🧊</div>
+            <h3 class="feature-title">Fridge Time Machine</h3>
+            <p class="feature-description">
+              Log your fridge contents. When the power dies, get a prioritized "eat this first" list based on FDA food safety guidelines — with exact spoilage timers and dollar values for insurance.
+            </p>
+            <span class="feature-tag">FDA Database</span>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon blue">🏥</div>
+            <h3 class="feature-title">Medical Device Registry</h3>
+            <p class="feature-description">
+              Track CPAP machines, oxygen concentrators, insulin pumps, and power wheelchairs. Get charge reminders before high-risk grid days. Never let a battery die in the dark.
+            </p>
+            <span class="feature-tag">Life-critical</span>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon green">🎒</div>
+            <h3 class="feature-title">Smart Preparedness Kit</h3>
+            <p class="feature-description">
+              Track water, food, batteries, and first aid with expiration dates. Get rotation reminders before they go bad. Season-specific checklists for hurricanes, winter storms, and heatwaves.
+            </p>
+            <span class="feature-tag">Auto-reminders</span>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon amber">👨‍👩‍👧‍👦</div>
+            <h3 class="feature-title">Family Reconnect Plan</h3>
+            <p class="feature-description">
+              Pre-agreed meeting points, communication tree, offline radio channels, and one-tap "I'm safe" broadcasts. When cell towers are congested, you already have a plan.
+            </p>
+            <span class="feature-tag">Offline-first</span>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon blue">🏘️</div>
+            <h3 class="feature-title">Neighborhood Power Map</h3>
+            <p class="feature-description">
+              See who on your block has a generator, solar panels, or an EV with vehicle-to-load. Request power for medical devices. Coordinate mutual aid when the grid fails.
+            </p>
+            <span class="feature-tag">Community</span>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon green">📸</div>
+            <h3 class="feature-title">Insurance Prep & Claims</h3>
+            <p class="feature-description">
+              One-tap photo inventory stored in the cloud. When an outage hits, track spoiled food, hotel costs, and fuel receipts. Generate a formatted PDF claim in minutes.
+            </p>
+            <span class="feature-tag">Saves $300+/claim</span>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon red">🔔</div>
+            <h3 class="feature-title">Active Outage Mode</h3>
+            <p class="feature-description">
+              Automatically triggers when your grid goes dark. Survival dashboard with fridge countdown, device battery trackers, family check-ins, nearest charging stations, and restoration estimates.
+            </p>
+            <span class="feature-tag">When it matters most</span>
+          </div>
+        </div>
+
+        <!-- Fridge Time Machine Interactive Demo -->
+        <div class="fridge-demo" id="fridge-demo">
+          <div class="fridge-demo-header">
+            <div>
+              <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 4px;">🧊 Fridge Time Machine — Live Demo</h3>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Power went out 2 hours ago. Here's what's at risk.</p>
+            </div>
+            <div class="fridge-timer">
+              <span class="fridge-timer-icon">⏱️</span>
+              <div class="fridge-timer-text">
+                <span class="fridge-timer-value">2h 14m</span>
+                <span class="fridge-timer-label">since outage started</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: var(--space-md); padding: var(--space-md); background: rgba(230, 57, 70, 0.08); border-radius: var(--radius-md); border: 1px solid rgba(230, 57, 70, 0.2); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; color: var(--color-signal-red); font-size: 0.9rem;">⚠️ Toss these now — unsafe to eat</div>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 2px;">FDA: perishables over 40°F for 2+ hours must be discarded</div>
+            </div>
+            <div style="font-family: var(--font-mono); font-weight: 800; color: var(--color-signal-red); font-size: 1.2rem;">$16.50</div>
+          </div>
+
+          <div class="fridge-items" id="fridge-items"></div>
+
+          <div style="margin-top: var(--space-lg); display: flex; justify-content: space-between; align-items: center; padding-top: var(--space-md); border-top: 1px solid var(--color-border);">
+            <div style="font-size: 0.85rem; color: var(--color-text-secondary);">
+              Total at risk if power not restored in 4h: <strong style="color: var(--color-amber);">$34.50</strong>
+            </div>
+            <button class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Export for Insurance →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STATS BAND                                    -->
+    <!-- ============================================ -->
+    <div class="stats-band">
+      <div class="app-container">
+        <div class="stats-grid">
+          <div>
+            <div class="stat-number">131M</div>
+            <div class="stat-label">US households exposed to<br>power outages annually</div>
+          </div>
+          <div>
+            <div class="stat-number">+67%</div>
+            <div class="stat-label">Increase in weather-driven<br>outages since 2000</div>
+          </div>
+          <div>
+            <div class="stat-number">$42B</div>
+            <div class="stat-label">Annual US losses from<br>spoilage, damage, lodging</div>
+          </div>
+          <div>
+            <div class="stat-number">4 hrs</div>
+            <div class="stat-label">Average outage duration<br>(8+ hrs for weather events)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- CHECKLIST & DEVICES                           -->
+    <!-- ============================================ -->
+    <div class="section">
+      <div class="app-container">
+        <div class="section-header">
+          <span class="section-eyebrow">Living Preparedness</span>
+          <h2 class="section-title">Checklists that don't forget</h2>
+          <p class="section-subtitle">
+            A static checklist expires the moment you write it. BlackoutReady tracks expiration dates, battery levels, and rotating supplies — so you don't discover your emergency water is 3 years old during a hurricane.
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-top: var(--space-xl);">
+
+          <!-- Checklist -->
+          <div style="background: var(--color-midnight); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-xl);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+              <div>
+                <h3 style="font-size: 1.2rem; font-weight: 700;">🎒 Hurricane Season Kit</h3>
+                <p style="color: var(--color-text-muted); font-size: 0.8rem; margin-top: 2px;">Tampa, FL · Updated June 2026</p>
+              </div>
+              <div style="text-align: right;">
+                <div id="checklist-progress" style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--color-amber);">6/10</div>
+                <div style="font-size: 0.7rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.08em;">Complete</div>
+              </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div style="background: var(--color-charcoal-light); border-radius: 100px; height: 6px; margin-bottom: var(--space-lg); overflow: hidden;">
+              <div id="checklist-progress-bar" style="background: linear-gradient(90deg, var(--color-amber), var(--color-amber-light)); height: 100%; border-radius: 100px; transition: width 0.5s ease; width: 60%;"></div>
+            </div>
+
+            <div id="checklist-items" style="display: flex; flex-direction: column; gap: var(--space-sm);"></div>
+          </div>
+
+          <!-- Medical Devices -->
+          <div style="background: var(--color-midnight); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-xl);">
+            <div style="margin-bottom: var(--space-lg);">
+              <h3 style="font-size: 1.2rem; font-weight: 700;">🏥 Medical Device Registry</h3>
+              <p style="color: var(--color-text-muted); font-size: 0.8rem; margin-top: 2px;">Battery levels monitored · Critical alerts active</p>
+            </div>
+
+            <div id="device-list" style="display: flex; flex-direction: column; gap: var(--space-md);"></div>
+
+            <div style="margin-top: var(--space-lg); padding: var(--space-md); background: rgba(232, 163, 61, 0.08); border-radius: var(--radius-md); border: 1px solid rgba(232, 163, 61, 0.2); display: flex; gap: var(--space-md); align-items: flex-start;">
+              <span style="font-size: 1.2rem;">⚡</span>
+              <div>
+                <div style="font-weight: 600; font-size: 0.85rem; color: var(--color-amber);">Charge Recommended</div>
+                <div style="font-size: 0.75rem; color: var(--color-text-secondary); margin-top: 2px;">Grid stress is HIGH for 3–7 PM today. Charge CPAP battery and power bank before peak demand window.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- PRICING                                       -->
+    <!-- ============================================ -->
+    <div id="pricing" class="section">
+      <div class="app-container">
+        <div class="section-header">
+          <span class="section-eyebrow">Pricing</span>
+          <h2 class="section-title">Cheaper than spoiled groceries</h2>
+          <p class="section-subtitle">
+            One spoiled fridge load costs $200+. One hotel night during an outage: $120. BlackoutReady costs less than $3/month.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="pricing-name">Free</div>
+            <div class="pricing-price">$0</div>
+            <div class="pricing-period">forever</div>
+            <ul class="pricing-features">
+              <li class="pricing-feature">Grid stress dashboard (basic)</li>
+              <li class="pricing-feature">Preparedness checklist</li>
+              <li class="pricing-feature">Family reconnect plan</li>
+              <li class="pricing-feature">Outage alerts (push)</li>
+              <li class="pricing-feature disabled">Fridge Time Machine</li>
+              <li class="pricing-feature disabled">Medical device tracking</li>
+              <li class="pricing-feature disabled">Insurance inventory</li>
+              <li class="pricing-feature disabled">Neighborhood power map</li>
+            </ul>
+          </div>
+
+          <div class="pricing-card featured">
+            <div class="pricing-name">BlackoutReady+</div>
+            <div class="pricing-price">$29.99</div>
+            <div class="pricing-period">per year · up to 6 family members</div>
+            <ul class="pricing-features">
+              <li class="pricing-feature">Everything in Free, plus:</li>
+              <li class="pricing-feature">Fridge Time Machine (unlimited)</li>
+              <li class="pricing-feature">Medical device registry</li>
+              <li class="pricing-feature">Expiration tracking & reminders</li>
+              <li class="pricing-feature">Neighborhood power map</li>
+              <li class="pricing-feature">Insurance photo inventory</li>
+              <li class="pricing-feature">Post-outage claim helper</li>
+              <li class="pricing-feature">Active Outage Mode</li>
+            </ul>
+            <button class="btn-primary" style="width: 100%; margin-top: var(--space-lg); justify-content: center;">Start 14-Day Free Trial</button>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: var(--space-xl); color: var(--color-text-muted); font-size: 0.85rem;">
+          🔒 Available through select insurance providers at no cost · Cancel anytime
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="app-container">
+      <p>BlackoutReady 🔦 — Personal power outage preparedness & survival</p>
+      <p class="footer-tag">When the grid fails, you're already ready.</p>
+      <p style="margin-top: var(--space-md); opacity: 0.5;">Prototype by Duncan · July 2, 2026 · Tampa, FL 🌴</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+
+  <!-- Inline styles for checklist & devices (prototype-specific) -->
+  <style>
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0.75rem;
+      background: var(--color-charcoal-light);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+    }
+    .checklist-item:hover {
+      border-color: var(--color-border-strong);
+    }
+    .checklist-item.unchecked {
+      opacity: 0.6;
+    }
+    .checklist-item input[type="checkbox"] {
+      display: none;
+    }
+    .checklist-checkbox {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--color-text-muted);
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+    .checklist-item input:checked ~ .checklist-checkbox {
+      background: var(--color-forest);
+      border-color: var(--color-forest);
+    }
+    .checklist-item input:checked ~ .checklist-checkbox::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+    .checklist-label {
+      flex: 1;
+      font-size: 0.875rem;
+    }
+    .checklist-expiry {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .checklist-expiry.danger {
+      background: rgba(230, 57, 70, 0.15);
+      color: var(--color-signal-red);
+    }
+    .checklist-expiry.warning {
+      background: rgba(232, 163, 61, 0.12);
+      color: var(--color-amber);
+    }
+    .checklist-expiry.safe {
+      background: rgba(58, 125, 68, 0.12);
+      color: var(--color-forest-light);
+    }
+
+    .device-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-charcoal-light);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+    }
+    .device-card.low {
+      border-color: rgba(230, 57, 70, 0.3);
+    }
+    .device-icon {
+      font-size: 1.5rem;
+    }
+    .device-info {
+      flex: 1;
+    }
+    .device-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .device-critical {
+      font-size: 0.6rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(230, 57, 70, 0.15);
+      color: var(--color-signal-red);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+    .device-meta {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .device-battery-ring {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .device-battery-text {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      #fridge-demo + .section,
+      .section > .app-container > div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</body>
+</html>
