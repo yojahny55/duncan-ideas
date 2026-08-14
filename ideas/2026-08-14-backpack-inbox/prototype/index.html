@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backpack — The One Inbox for Everything School</title>
+<style>
+  :root{
+    --paper:#FBF7F0;
+    --paper-card:#FFFDF8;
+    --crayon:#E8663C;
+    --crayon-soft:#F9DED2;
+    --navy:#1E2A44;
+    --navy-60:rgba(30,42,68,.6);
+    --sage:#5F8B6E;
+    --sage-soft:#E3EDE5;
+    --gold:#D9A441;
+    --gold-soft:#F7EBD3;
+    --line:rgba(30,42,68,.10);
+    --shadow:0 6px 24px rgba(30,42,68,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;}
+  body{background:radial-gradient(ellipse at top,#243352,#141d31 70%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;flex-wrap:wrap;gap:40px;}
+
+  /* ---------- marketing side ---------- */
+  .pitch{color:#F4EFE6;max-width:400px;}
+  .pitch .logo{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .pitch .logo .bag{width:52px;height:52px;border-radius:14px;background:var(--crayon);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 8px 20px rgba(232,102,60,.4);}
+  .pitch h1{font-size:34px;line-height:1.1;letter-spacing:-.5px;}
+  .pitch .tag{color:var(--crayon);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+  .pitch p.sub{margin-top:14px;color:rgba(244,239,230,.75);font-size:15px;line-height:1.6;}
+  .pitch .stats{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;}
+  .pitch .stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:12px 14px;flex:1;min-width:110px;}
+  .pitch .stat b{display:block;font-size:20px;color:#fff;}
+  .pitch .stat span{font-size:11.5px;color:rgba(244,239,230,.6);line-height:1.35;display:block;margin-top:2px;}
+
+  /* ---------- phone frame ---------- */
+  .phone{width:390px;height:820px;background:var(--paper);border-radius:44px;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 10px #0b1120,0 0 0 12px #2a3a5e;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:30px;background:#0b1120;border-radius:0 0 18px 18px;z-index:50;}
+  .statusbar{height:50px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 4px;font-size:12px;font-weight:700;color:var(--navy);}
+  .app-header{padding:10px 20px 8px;display:flex;justify-content:space-between;align-items:center;}
+  .app-header h2{font-size:22px;color:var(--navy);letter-spacing:-.4px;display:flex;align-items:center;gap:8px;}
+  .app-header h2 .bag{width:34px;height:34px;border-radius:10px;background:var(--crayon);display:inline-flex;align-items:center;justify-content:center;font-size:18px;}
+  .kids{display:flex;gap:6px;}
+  .kid{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;border:2px solid #fff;box-shadow:0 2px 6px rgba(30,42,68,.2);}
+  .kid.k1{background:var(--sage);} .kid.k2{background:var(--gold);} .kid.k3{background:#7A6BC4;}
+
+  .digest{margin:4px 20px 10px;background:var(--navy);border-radius:16px;padding:12px 14px;color:#fff;display:flex;gap:10px;align-items:flex-start;box-shadow:var(--shadow);}
+  .digest .ic{font-size:20px;}
+  .digest b{font-size:13px;}
+  .digest p{font-size:11.5px;color:rgba(255,255,255,.72);margin-top:2px;line-height:1.4;}
+
+  .tabs{display:flex;margin:0 20px;background:#EFE7D8;border-radius:12px;padding:4px;gap:4px;}
+  .tab{flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:8px 0;border-radius:9px;color:var(--navy-60);cursor:pointer;transition:.18s;white-space:nowrap;}
+  .tab.active{background:#fff;color:var(--navy);box-shadow:0 2px 8px rgba(30,42,68,.12);}
+  .tab .n{display:inline-block;min-width:18px;padding:1px 5px;border-radius:9px;background:var(--crayon);color:#fff;font-size:10.5px;margin-left:4px;}
+
+  .feed{flex:1;overflow-y:auto;padding:14px 20px 90px;}
+  .feed::-webkit-scrollbar{width:0;}
+  .section-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--navy-60);margin:14px 2px 8px;}
+
+  .card{background:var(--paper-card);border:1px solid var(--line);border-radius:16px;padding:13px 14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(30,42,68,.05);position:relative;transition:.2s;}
+  .card.urgent{border-left:4px solid var(--crayon);}
+  .card.money{border-left:4px solid var(--gold);}
+  .card.done{border-left:4px solid var(--sage);opacity:.65;}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .card h3{font-size:14px;color:var(--navy);line-height:1.3;}
+  .card .meta{font-size:11.5px;color:var(--navy-60);margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .src{background:#EFE7D8;border-radius:6px;padding:1.5px 6px;font-size:10.5px;font-weight:700;color:var(--navy);}
+  .src.photo{background:var(--crayon-soft);color:#B24A26;}
+  .src.email{background:var(--sage-soft);color:#3F6A4E;}
+  .src.app{background:#E4E0F5;color:#5A4DA0;}
+  .chip{font-size:10.5px;font-weight:800;border-radius:20px;padding:3px 9px;white-space:nowrap;}
+  .chip.due{background:var(--crayon-soft);color:#B24A26;}
+  .chip.ok{background:var(--sage-soft);color:#3F6A4E;}
+  .chip.pay{background:var(--gold-soft);color:#96691A;}
+  .card .actions{display:flex;gap:8px;margin-top:10px;}
+  .btn{flex:1;border:none;border-radius:10px;padding:8px 0;font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s;}
+  .btn.primary{background:var(--crayon);color:#fff;}
+  .btn.primary:hover{background:#D1552D;}
+  .btn.ghost{background:transparent;color:var(--navy-60);border:1px solid var(--line);}
+  .btn.sage{background:var(--sage);color:#fff;}
+  .signedby{font-size:11px;color:var(--sage);font-weight:700;margin-top:8px;display:flex;align-items:center;gap:4px;}
+  .countdown{font-weight:800;color:#B24A26;}
+
+  .fab{position:absolute;bottom:22px;right:22px;width:60px;height:60px;border-radius:20px;background:var(--crayon);border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 10px 24px rgba(232,102,60,.45);transition:.15s;z-index:40;}
+  .fab:hover{transform:scale(1.06) rotate(4deg);}
+  .fab-label{position:absolute;bottom:34px;right:92px;background:var(--navy);color:#fff;font-size:11px;padding:5px 10px;border-radius:8px;z-index:40;pointer-events:none;}
+
+  /* scan modal */
+  .modal{position:absolute;inset:0;background:rgba(20,29,49,.55);backdrop-filter:blur(3px);z-index:60;display:none;align-items:flex-end;}
+  .modal.open{display:flex;}
+  .sheet{background:var(--paper);width:100%;border-radius:26px 26px 0 0;padding:22px 22px 30px;animation:rise .3s ease;}
+  @keyframes rise{from{transform:translateY(100%);}to{transform:translateY(0);}}
+  .sheet h3{color:var(--navy);font-size:17px;display:flex;align-items:center;gap:8px;}
+  .sheet p{font-size:12.5px;color:var(--navy-60);margin-top:4px;}
+  .scanzone{margin-top:14px;border:2px dashed var(--crayon);border-radius:16px;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--crayon);font-weight:700;font-size:13px;gap:8px;background:var(--crayon-soft);cursor:pointer;}
+  .scanzone small{color:var(--navy-60);font-weight:500;}
+  .extract{margin-top:14px;display:none;}
+  .extract.show{display:block;}
+  .extract .row{display:flex;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12.5px;margin-bottom:6px;}
+  .extract .row b{color:var(--navy);}
+  .extract .row span{color:var(--navy-60);}
+  .close-x{position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;color:var(--navy-60);cursor:pointer;}
+
+  /* money tab */
+  .money-total{background:linear-gradient(135deg,var(--navy),#2E4068);color:#fff;border-radius:18px;padding:16px 18px;margin-bottom:12px;}
+  .money-total small{font-size:11px;opacity:.7;letter-spacing:1px;text-transform:uppercase;}
+  .money-total b{display:block;font-size:30px;margin-top:2px;}
+  .money-total .bar{height:6px;background:rgba(255,255,255,.15);border-radius:4px;margin-top:12px;overflow:hidden;}
+  .money-total .fill{height:100%;width:62%;background:var(--gold);border-radius:4px;}
+  .money-total .lbl{display:flex;justify-content:space-between;font-size:10.5px;margin-top:6px;opacity:.8;}
+
+  /* toast */
+  .toast{position:absolute;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 18px;border-radius:30px;font-size:12.5px;font-weight:600;opacity:0;transition:.3s;z-index:70;pointer-events:none;white-space:nowrap;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:900px){
+    body{flex-direction:column;padding:20px 0;}
+    .pitch{text-align:center;padding:0 20px;}
+    .pitch .logo{justify-content:center;}
+    .phone{height:760px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="pitch">
+  <div class="tag">Back-to-school 2026</div>
+  <div class="logo"><div class="bag">🎒</div><h1>Backpack</h1></div>
+  <p class="sub">Everything your kid crumples into their backpack — digitized, sorted, and impossible to miss. <b>One inbox for every school, every app, every scrap of paper.</b></p>
+  <div class="stats">
+    <div class="stat"><b>3–7</b><span>school apps per district, per family</span></div>
+    <div class="stat"><b>55M</b><span>US households in the annual chaos loop</span></div>
+    <div class="stat"><b>0</b><span>apps that serve the drowning parent</span></div>
+  </div>
+  <p class="sub" style="margin-top:20px;font-size:13px;">Snap the paper · Forward the email · Get the Sunday digest<br>Free for 1 kid · Backpack+ $24.99/yr</p>
+</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="statusbar"><span>9:41</span><span>▲ ▮ ▮</span></div>
+
+  <div class="app-header">
+    <h2><span class="bag">🎒</span>Backpack</h2>
+    <div class="kids">
+      <div class="kid k1" title="Maya — Lincoln Elementary">M</div>
+      <div class="kid k2" title="Leo — Jefferson Middle">L</div>
+      <div class="kid k3" title="Zoe — Bay Travel Soccer">Z</div>
+    </div>
+  </div>
+
+  <div class="digest">
+    <div class="ic">📅</div>
+    <div><b>Sunday digest</b><p>3 deadlines this week · 2 events · 1 payment ($28). Field trip slip for Maya is due <b>tomorrow</b>.</p></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="you" onclick="switchTab('you')">Needs You<span class="n">3</span></div>
+    <div class="tab" data-tab="fyi" onclick="switchTab('fyi')">FYI<span class="n" style="background:var(--navy-60)">5</span></div>
+    <div class="tab" data-tab="money" onclick="switchTab('money')">Money<span class="n" style="background:var(--gold)">$</span></div>
+  </div>
+
+  <div class="feed" id="feed-you">
+    <div class="section-label">🔴 Due this week</div>
+
+    <div class="card urgent">
+      <div class="top">
+        <h3>Zoo field trip permission slip</h3>
+        <span class="chip due">Due tomorrow</span>
+      </div>
+      <div class="meta"><span class="src photo">📷 Scanned paper</span> Maya · Lincoln Elementary · <span class="countdown">26h left</span></div>
+      <div class="actions">
+        <button class="btn primary" onclick="sign(this)">✍️ Sign now</button>
+        <button class="btn ghost" onclick="toast('Reminder set for 7:30am')">Remind me</button>
+      </div>
+    </div>
+
+    <div class="card urgent">
+      <div class="top">
+        <h3>Sports physical form — Leo can't practice until it's in</h3>
+        <span class="chip due">Due Fri</span>
+      </div>
+      <div class="meta"><span class="src email">📧 Email</span> Leo · Jefferson Middle · 3 days left</div>
+      <div class="actions">
+        <button class="btn primary" onclick="toast('Form pre-filled with last year\'s medical info ✓')">Fill with saved info</button>
+        <button class="btn ghost" onclick="toast('Shared with Alex (co-parent) ✓')">Share</button>
+      </div>
+    </div>
+
+    <div class="card urgent">
+      <div class="top">
+        <h3>Bake sale: bring a store-bought treat Friday</h3>
+        <span class="chip due">Fri AM</span>
+      </div>
+      <div class="meta"><span class="src app">ClassDojo</span> Maya · Room 12</div>
+      <div class="actions">
+        <button class="btn sage" onclick="done(this)">✓ I'll handle it</button>
+        <button class="btn ghost" onclick="toast('Added to Friday 7am checklist')">Add to checklist</button>
+      </div>
+    </div>
+
+    <div class="section-label">✅ Already handled</div>
+    <div class="card done">
+      <div class="top"><h3>Picture day order form</h3><span class="chip ok">Signed</span></div>
+      <div class="meta"><span class="src app">ParentSquare</span> Maya · Lincoln Elementary</div>
+      <div class="signedby">✓ Signed by Alex (co-parent) · Mon 8:14pm</div>
+    </div>
+  </div>
+
+  <div class="feed" id="feed-fyi" style="display:none;">
+    <div class="section-label">📣 From the school — no action needed</div>
+    <div class="card"><div class="top"><h3>Weekly newsletter: new pickup lane opens Monday</h3></div><div class="meta"><span class="src email">📧 Email</span> Lincoln Elementary</div></div>
+    <div class="card"><div class="top"><h3>Maya's class published 4 new photos</h3></div><div class="meta"><span class="src app">ClassDojo</span> Room 12 · today</div></div>
+    <div class="card"><div class="top"><h3>PTA meeting moved to Thursday 6pm</h3></div><div class="meta"><span class="src photo">📷 Scanned flyer</span> Auto-added to calendar ✓</div></div>
+    <div class="card"><div class="top"><h3>Lunch menu — September</h3></div><div class="meta"><span class="src email">📧 Email</span> Archived automatically</div></div>
+    <div class="card"><div class="top"><h3>Zoe scored a hat trick 🎉</h3></div><div class="meta"><span class="src app">Team app</span> Bay Travel Soccer</div></div>
+  </div>
+
+  <div class="feed" id="feed-money" style="display:none;">
+    <div class="money-total">
+      <small>This month, all schools</small>
+      <b>$28.00 <span style="font-size:13px;opacity:.6;font-weight:500;">still due</span></b>
+      <div class="bar"><div class="fill"></div></div>
+      <div class="lbl"><span>Paid $46.00</span><span>$74.00 total</span></div>
+    </div>
+    <div class="card money">
+      <div class="top"><h3>Zoo field trip fee — Maya</h3><span class="chip pay">$8.00</span></div>
+      <div class="meta"><span class="src photo">📷 Scanned paper</span> Due with signed slip tomorrow</div>
+      <div class="actions"><button class="btn primary" onclick="toast('Paid $8.00 via lunch account ✓')">Pay $8.00</button></div>
+    </div>
+    <div class="card money">
+      <div class="top"><h3>Soccer tournament snack duty — Zoe</h3><span class="chip pay">$20.00</span></div>
+      <div class="meta"><span class="src app">Team app</span> Due Sep 2</div>
+      <div class="actions"><button class="btn primary" onclick="toast('Paid $20.00 ✓')">Pay $20.00</button><button class="btn ghost" onclick="toast('Remind Aug 30 ✓')">Remind</button></div>
+    </div>
+    <div class="card done">
+      <div class="top"><h3>School supply kit — Maya</h3><span class="chip ok">Paid ✓</span></div>
+      <div class="meta"><span class="src email">📧 Email</span> $26.00 · Aug 8</div>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openSheet()">📷</button>
+  <div class="fab-label">Snap a paper slip</div>
+
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <button class="close-x" onclick="closeSheet()">✕</button>
+      <h3>📷 Snap the backpack paper</h3>
+      <p>Crumpled, half-eaten, upside down — we can read it.</p>
+      <div class="scanzone" id="scanzone" onclick="runScan()">
+        <span style="font-size:34px;">📄</span>
+        Tap to scan the permission slip
+        <small>OCR extracts deadline, event & who it's for</small>
+      </div>
+      <div class="extract" id="extract">
+        <div class="row"><b>Event</b><span>Zoo field trip · Sep 5</span></div>
+        <div class="row"><b>Needs</b><span>✍️ Signature + $8.00</span></div>
+        <div class="row"><b>For</b><span>Maya (auto-matched)</span></div>
+        <div class="row"><b>Deadline</b><span class="countdown">Tomorrow, Aug 15</span></div>
+        <div class="actions" style="display:flex;gap:8px;margin-top:10px;">
+          <button class="btn primary" style="flex:1;" onclick="closeSheet();toast('Added to Needs You ✓')">Add to Backpack</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+  function switchTab(name){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+    ['you','fyi','money'].forEach(n=>document.getElementById('feed-'+n).style.display=n===name?'block':'none');
+  }
+  function toast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
+  function sign(btn){
+    const card=btn.closest('.card');
+    card.classList.remove('urgent');card.classList.add('done');
+    card.querySelector('.chip').className='chip ok';card.querySelector('.chip').textContent='Signed';
+    const cd=card.querySelector('.countdown');if(cd)cd.remove();
+    card.querySelector('.actions').innerHTML='<div class="signedby">✓ Signed by you · just now · sent to school automatically</div>';
+    toast('Signed & returned to the school ✓');
+  }
+  function done(btn){
+    const card=btn.closest('.card');
+    card.classList.remove('urgent');card.classList.add('done');
+    card.querySelector('.chip').className='chip ok';card.querySelector('.chip').textContent='Handled';
+    card.querySelector('.actions').innerHTML='<div class="signedby">✓ Marked handled</div>';
+    toast('Nice. One less thing.');
+  }
+  function openSheet(){document.getElementById('modal').classList.add('open');}
+  function closeSheet(){
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('extract').classList.remove('show');
+    document.getElementById('scanzone').style.display='flex';
+  }
+  function runScan(){
+    const z=document.getElementById('scanzone');
+    z.innerHTML='⏳ Reading crumpled paper…';
+    setTimeout(()=>{z.style.display='none';document.getElementById('extract').classList.add('show');},900);
+  }
+</script>
+</body>
+</html>
