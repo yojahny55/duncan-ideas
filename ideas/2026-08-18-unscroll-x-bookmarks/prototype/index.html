@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unscroll — Your X Bookmarks, Finally Searchable</title>
+<style>
+  :root{
+    --bg:#0B0F14; --panel:#12181F; --panel2:#182028; --line:#232D38;
+    --amber:#F5A623; --amber-soft:rgba(245,166,35,.12);
+    --text:#E8EAED; --muted:#8B98A5; --green:#3ECF8E; --red:#FF6B6B; --blue:#5BA3F5;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;min-height:100vh}
+  a{color:var(--blue);text-decoration:none}
+
+  /* ---------- layout ---------- */
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  @media(max-width:800px){.app{grid-template-columns:1fr}.sidebar{display:none}}
+
+  /* ---------- sidebar ---------- */
+  .sidebar{background:var(--panel);border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;letter-spacing:-.3px;margin-bottom:4px}
+  .logo .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--amber),#ff8c42);display:grid;place-items:center;font-size:16px;color:#14100a}
+  .tagline{color:var(--muted);font-size:11.5px;margin-bottom:22px;line-height:1.4}
+  .navsec{font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin:18px 8px 8px}
+  .navitem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:9px;color:var(--text);font-size:13.5px;cursor:pointer;transition:background .15s}
+  .navitem:hover{background:var(--panel2)}
+  .navitem.active{background:var(--amber-soft);color:var(--amber);font-weight:600}
+  .navitem .cnt{font-size:11px;color:var(--muted);background:var(--bg);padding:2px 7px;border-radius:20px}
+  .navitem.active .cnt{color:var(--amber)}
+  .upgrade{margin-top:24px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:12px;color:var(--muted);line-height:1.5}
+  .upgrade b{color:var(--text)}
+  .upgrade button{margin-top:10px;width:100%;background:var(--amber);color:#14100a;border:none;font-weight:700;padding:8px;border-radius:8px;cursor:pointer;font-size:12.5px}
+
+  /* ---------- main ---------- */
+  .main{padding:26px 34px 60px;max-width:980px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+  .stats{display:flex;gap:26px}
+  .stat .n{font-size:22px;font-weight:800}
+  .stat .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+  .sync{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--green);background:rgba(62,207,142,.08);padding:6px 12px;border-radius:20px;border:1px solid rgba(62,207,142,.25)}
+
+  /* ---------- hero search ---------- */
+  .hero{text-align:center;margin:8px 0 26px}
+  .hero h1{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .hero h1 em{color:var(--amber);font-style:normal}
+  .hero p{color:var(--muted);font-size:13.5px;margin-top:6px}
+  .searchwrap{position:relative;max-width:640px;margin:20px auto 0}
+  .searchwrap input{width:100%;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:16px 110px 16px 48px;font-size:15px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+  .searchwrap input:focus{border-color:var(--amber);box-shadow:0 0 0 4px var(--amber-soft)}
+  .searchwrap .icon{position:absolute;left:17px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.7}
+  .searchwrap .btn{position:absolute;right:7px;top:50%;transform:translateY(-50%);background:var(--amber);border:none;color:#14100a;font-weight:700;padding:9px 16px;border-radius:9px;cursor:pointer;font-size:13px}
+  .chips{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+  .chip{font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:6px 13px;border-radius:20px;cursor:pointer;transition:all .15s}
+  .chip:hover,.chip.on{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+
+  /* ---------- toolbar ---------- */
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin:26px 0 14px;flex-wrap:wrap;gap:10px}
+  .toolbar h2{font-size:16px;font-weight:700}
+  .toolbar .meta{color:var(--muted);font-size:12px}
+  .toolbar .actions{display:flex;gap:8px}
+  .tbtn{font-size:12px;color:var(--text);background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:8px;cursor:pointer}
+  .tbtn.primary{background:var(--amber);color:#14100a;border-color:var(--amber);font-weight:700}
+
+  /* ---------- cards ---------- */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;transition:border-color .15s}
+  .card:hover{border-color:#33404e}
+  .chead{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+  .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
+  .cwho .name{font-size:13.5px;font-weight:700}
+  .cwho .handle{font-size:12px;color:var(--muted)}
+  .cwhen{margin-left:auto;font-size:11.5px;color:var(--muted)}
+  .ctext{font-size:14px;line-height:1.55;color:#CFD6DD}
+  .ctext mark{background:var(--amber-soft);color:var(--amber);border-radius:3px;padding:0 2px}
+  .cfoot{display:flex;gap:16px;margin-top:11px;font-size:12px;color:var(--muted);align-items:center;flex-wrap:wrap}
+  .tag{font-size:10.5px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:3px 9px;border-radius:20px}
+  .tag.t-amber{color:var(--amber);border-color:rgba(245,166,35,.4);background:var(--amber-soft)}
+  .cfoot .right{margin-left:auto;display:flex;gap:8px}
+  .mini{font-size:11px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:4px 10px;border-radius:7px;cursor:pointer}
+  .mini:hover{color:var(--text)}
+
+  /* tombstone */
+  .card.tomb{border-color:rgba(255,107,107,.3);background:linear-gradient(180deg,var(--panel),rgba(255,107,107,.04))}
+  .card.tomb .ctext{color:var(--muted);font-style:italic}
+  .rip{color:var(--red);font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+  .recover{font-size:11.5px;background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.35);padding:5px 11px;border-radius:7px;cursor:pointer;font-weight:600}
+
+  /* collections grid */
+  .collgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
+  .collcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .15s}
+  .collcard:hover{border-color:var(--amber);transform:translateY(-2px)}
+  .collcard .emoji{font-size:22px}
+  .collcard h3{font-size:14.5px;margin:8px 0 3px}
+  .collcard p{font-size:12px;color:var(--muted)}
+  .collcard .bar{height:4px;background:var(--panel2);border-radius:3px;margin-top:12px;overflow:hidden}
+  .collcard .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),#ff8c42);border-radius:3px}
+
+  /* export panel */
+  .exportpanel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;text-align:center}
+  .exportpanel h3{font-size:18px;margin-bottom:6px}
+  .exportpanel p{color:var(--muted);font-size:13px;margin-bottom:20px}
+  .expgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:600px;margin:0 auto}
+  .expopt{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:15px 10px;cursor:pointer;transition:all .15s;font-size:13px}
+  .expopt:hover{border-color:var(--amber);background:var(--amber-soft)}
+  .expopt .e{font-size:20px;display:block;margin-bottom:6px}
+  .expopt small{display:block;color:var(--muted);font-size:10.5px;margin-top:3px}
+
+  .hidden{display:none}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--amber);color:var(--text);padding:12px 22px;border-radius:12px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1}
+  .footer{text-align:center;color:var(--muted);font-size:11px;margin-top:40px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="logo"><span class="mark">🔍</span> Unscroll</div>
+    <div class="tagline">Your X bookmarks, finally searchable. Never scroll again.</div>
+
+    <div class="navsec">Library</div>
+    <div class="navitem active" data-tab="library">📚 All bookmarks <span class="cnt" id="navCount">1,247</span></div>
+    <div class="navitem" data-tab="collections">🗂️ Collections <span class="cnt">14</span></div>
+    <div class="navitem" data-tab="tombstones">🪦 Tombstones <span class="cnt">23</span></div>
+
+    <div class="navsec">Data</div>
+    <div class="navitem" data-tab="export">📤 Export</div>
+    <div class="navitem" onclick="toast('🧵 Thread stitcher coming in MVP')">🧵 Thread stitcher</div>
+    <div class="navitem" onclick="toast('🧠 AI Librarian: Keeper plan')">🧠 AI Librarian</div>
+
+    <div class="upgrade">
+      <b>Free plan</b><br>200 bookmarks · keyword search<br>1 export/month
+      <button onclick="toast('Keeper: $6/mo — semantic search, unlimited exports, tombstone recovery')">Upgrade to Keeper</button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="topbar">
+      <div class="stats">
+        <div class="stat"><div class="n">1,247</div><div class="l">Saved</div></div>
+        <div class="stat"><div class="n" style="color:var(--green)">9</div><div class="l">Recovered</div></div>
+        <div class="stat"><div class="n" style="color:var(--red)">23</div><div class="l">Deleted</div></div>
+      </div>
+      <div class="sync">● Synced with X · 2 min ago</div>
+    </div>
+
+    <div class="hero">
+      <h1>You saved <em>1,247</em> posts. Found <em>0</em> of them.</h1>
+      <p>Until now. Search by meaning — not just keywords.</p>
+      <div class="searchwrap">
+        <span class="icon">🔍</span>
+        <input id="search" type="text" placeholder='Try: "that thread about churn for onboarding"…' autofocus>
+        <button class="btn" onclick="doSearch()">Search</button>
+      </div>
+      <div class="chips">
+        <span class="chip on" data-f="all">All</span>
+        <span class="chip" data-f="ai">🤖 AI agents</span>
+        <span class="chip" data-f="startup">🚀 Startup</span>
+        <span class="chip" data-f="design">🎨 Design</span>
+        <span class="chip" data-f="recipe">🍜 Recipes</span>
+      </div>
+    </div>
+
+    <!-- LIBRARY VIEW -->
+    <section id="view-library">
+      <div class="toolbar">
+        <h2>Recent saves <span class="meta" id="resultMeta"></span></h2>
+        <div class="actions">
+          <button class="tbtn" onclick="toast('Sorted by save date')">⇅ Sort</button>
+          <button class="tbtn" onclick="toast('Filters: author, date, media, topic')">⚙ Filter</button>
+          <button class="tbtn primary" onclick="showTab('export')">📤 Export all</button>
+        </div>
+      </div>
+      <div id="cards"></div>
+    </section>
+
+    <!-- COLLECTIONS VIEW -->
+    <section id="view-collections" class="hidden">
+      <div class="toolbar"><h2>Auto-collections</h2><span class="meta">AI-clustered from 1,247 saves · updated 2 min ago</span></div>
+      <div class="collgrid" id="colls"></div>
+    </section>
+
+    <!-- TOMBSTONES VIEW -->
+    <section id="view-tombstones" class="hidden">
+      <div class="toolbar"><h2>🪦 Tombstones</h2><span class="meta">Posts deleted by authors — we found 9 recoverable via mirrors</span></div>
+      <div id="tombs"></div>
+    </section>
+
+    <!-- EXPORT VIEW -->
+    <section id="view-export" class="hidden">
+      <div class="exportpanel">
+        <h3>📤 The Export Button</h3>
+        <p>The feature X never gave you. One tap — your whole library, yours forever.</p>
+        <div class="expgrid">
+          <div class="expopt" onclick="toast('📦 Exporting 1,247 bookmarks as Markdown bundle…')"><span class="e">📝</span>Markdown<small>.zip · readable anywhere</small></div>
+          <div class="expopt" onclick="toast('📓 Pushing to Notion database…')"><span class="e">📓</span>Notion<small>database + media</small></div>
+          <div class="expopt" onclick="toast('🗄️ Writing to Obsidian vault…')"><span class="e">🗄️</span>Obsidian<small>linked vault</small></div>
+          <div class="expopt" onclick="toast('📊 Exporting CSV…')"><span class="e">📊</span>CSV<small>full metadata</small></div>
+          <div class="expopt" onclick="toast('🔗 Generating shareable collection link…')"><span class="e">🌐</span>Public link<small>curated highlights</small></div>
+          <div class="expopt" onclick="toast('🧊 Full JSON archive downloaded — your data, your machine.')"><span class="e">🧊</span>JSON archive<small>everything, forever</small></div>
+        </div>
+        <p style="margin-top:22px;font-size:12px">Free plan: 1 export/month · <b style="color:var(--amber)">Keeper: unlimited</b></p>
+      </div>
+    </section>
+
+    <div class="footer">Unscroll prototype · duncan-ideas · 2026-08-18 · "X makes you save. Then makes you scroll."</div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BOOKMARKS=[
+ {who:"Ethan Mollick",handle:"@emollick",av:"EM",color:"#7C5CFF",time:"Aug 14",topic:"ai",text:"The most underrated skill in the AI era isn't prompting — it's knowing when NOT to use AI. Judgment is the new bottleneck.",likes:"4.2K",rt:"891"},
+ {who:"levelsio",handle:"@levelsio",av:"L",color:"#FF6B4A",time:"Aug 12",topic:"startup",text:"Made $127K MRR with Photo AI this month. Solo. The trick is shipping ugly things fast and letting users tell you what to polish.",likes:"9.1K",rt:"2.3K"},
+ {who:"Sahil Bloom",handle:"@SahilBloom",av:"SB",color:"#3ECF8E",time:"Aug 10",topic:"startup",text:"Churn is not a retention problem. It's an onboarding problem. Users churn when the gap between signup and 'aha moment' is too wide. Fix the first 5 minutes.",likes:"3.7K",rt:"742"},
+ {who:"Meng To",handle:"@MengTo",av:"MT",color:"#5BA3F5",time:"Aug 9",topic:"design",text:"AI slop design has a tell: perfect symmetry, zero hierarchy, and nothing you remember 10 seconds later. Restraint is the new skill.",likes:"2.8K",rt:"518"},
+ {who:"Sam Altman",handle:"@sama",av:"SA",color:"#F5A623",time:"Aug 7",topic:"ai",text:"Agents that can do real work end-to-end are the next unlock. Not chat. Completion.",likes:"28K",rt:"6.4K"},
+ {who:"Nisha's Kitchen",handle:"@nishcooks",av:"NK",color:"#FF8FB1",time:"Aug 5",topic:"recipe",text:"15-minute garlic butter noodles: boil, then pan-fry the noodles in butter till crispy edges. Game changer. Thread 🧵",likes:"1.9K",rt:"486"},
+ {who:"Gergely Orosz",handle:"@GergelyOrosz",av:"GO",color:"#9B7BFF",time:"Aug 3",topic:"startup",text:"Every 'AI wrapper' that survives has one thing in common: proprietary data nobody else can get. Moats are datasets, not prompts.",likes:"5.3K",rt:"1.1K"},
+ {who:"dhh",handle:"@dhh",av:"D",color:"#2EA88A",time:"Aug 1",topic:"design",text:"Your operating system should be more fun! Software with zero personality is software with zero love.",likes:"6.7K",rt:"1.4K"},
+];
+const TOMBS=[
+ {who:"Alex Finnick",handle:"@alexfinnick",time:"saved Mar 2 · deleted Aug 2",recover:true},
+ {who:"Crypto Daily",handle:"@cryptodaily",time:"saved Jan 19 · deleted Jul 28",recover:true},
+ {who:"Priya Nair",handle:"@priyabuilds",time:"saved May 11 · deleted Aug 9",recover:false},
+];
+const COLLS=[
+ {e:"🤖",n:"AI agents",c:214,p:92},{e:"🚀",n:"Startup & pricing",c:187,p:80},
+ {e:"🎨",n:"Design inspo",c:143,p:61},{e:"📈",n:"Growth & churn",c:121,p:52},
+ {e:"🍜",n:"Recipes",c:96,p:41},{e:"🧠",n:"Mental models",c:74,p:32},
+ {e:"📚",n:"Book recs",c:58,p:25},{e:"💼",n:"Hiring & teams",c:41,p:18},
+];
+
+const $=s=>document.querySelector(s);
+let filter="all";
+
+function hi(t,q){if(!q)return t;const r=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");return t.replace(r,"<mark>$1</mark>")}
+function cardHTML(b,q){return `<div class="card"><div class="chead"><div class="avatar" style="background:${b.color}22;color:${b.color};border:1.5px solid ${b.color}55">${b.av}</div><div class="cwho"><div class="name">${b.who}</div><div class="handle">${b.handle}</div></div><div class="cwhen">${b.time}</div></div><div class="ctext">${hi(b.text,q)}</div><div class="cfoot"><span>❤️ ${b.likes}</span><span>🔁 ${b.rt}</span><span class="tag ${b.topic==="ai"?"t-amber":""}">${{ai:"AI agents",startup:"Startup",design:"Design",recipe:"Recipes"}[b.topic]}</span><span class="right"><button class="mini" onclick="toast('🏷️ Added to collection')">+ Collect</button><button class="mini" onclick="toast('📋 Copied as Markdown')">Copy</button></span></div></div>`}
+function render(q=""){
+ const list=BOOKMARKS.filter(b=>(filter==="all"||b.topic===filter)&&(!q||b.text.toLowerCase().includes(q)||b.who.toLowerCase().includes(q)));
+ $("#cards").innerHTML=list.length?list.map(b=>cardHTML(b,q)).join(""):'<div class="card" style="text-align:center;color:var(--muted);padding:34px">No matches — on X you\'d be scrolling forever. 🕳️</div>';
+ $("#resultMeta").textContent=q?`· ${list.length} match${list.length===1?"":"es"} for "${q}" in 0.04s`:"";
+}
+function doSearch(){render($("#search").value.trim().toLowerCase())}
+$("#search").addEventListener("input",e=>render(e.target.value.trim().toLowerCase()));
+
+document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");filter=c.dataset.f;render($("#search").value.trim().toLowerCase());showTab("library")});
+
+$("#colls").innerHTML=COLLS.map(c=>`<div class="collcard" onclick="toast('🗂️ Opening ${c.n} — ${c.c} saves')"><span class="emoji">${c.e}</span><h3>${c.n}</h3><p>${c.c} saves · auto-clustered</p><div class="bar"><i style="width:${c.p}%"></i></div></div>`).join("");
+
+$("#tombs").innerHTML=TOMBS.map(t=>`<div class="card tomb"><div class="chead"><div class="avatar" style="background:#FF6B6B22;color:#FF6B6B;border:1.5px solid #FF6B6B55">🪦</div><div class="cwho"><div class="name">${t.who}</div><div class="handle">${t.handle}</div></div><div class="cwhen">${t.time}</div></div><div class="ctext">"This post is unavailable."</div><div class="cfoot"><span class="rip">✝ Deleted by author</span><span class="right">${t.recover?'<button class="recover" onclick="toast(\'✅ Recovered from Wayback mirror — restored to your library\')">⚡ Recover from mirror</button>':'<button class="mini" onclick="toast(\'No mirrors found — logged for community snapshots\')">No mirror found</button>'}</span></div></div>`).join("");
+
+function showTab(t){["library","collections","tombstones","export"].forEach(v=>$("#view-"+v).classList.toggle("hidden",v!==t));document.querySelectorAll(".navitem[data-tab]").forEach(n=>n.classList.toggle("active",n.dataset.tab===t))}
+document.querySelectorAll(".navitem[data-tab]").forEach(n=>n.onclick=()=>showTab(n.dataset.tab));
+
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2600)}
+render();
+</script>
+</body>
+</html>
