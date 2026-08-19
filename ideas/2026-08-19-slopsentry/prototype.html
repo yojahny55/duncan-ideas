@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SlopSentry — Authenticity Scanner for AI Slop</title>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --border: #2d333b;
+    --text: #e6edf3; --muted: #8b949e;
+    --green: #3fb950; --yellow: #d29922; --red: #f85149;
+    --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5; padding: 2rem 1rem;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 2rem; }
+  header h1 { font-size: 2.2rem; letter-spacing: -0.02em; }
+  header h1 span { color: var(--accent); }
+  header p { color: var(--muted); margin-top: .5rem; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+  }
+  textarea {
+    width: 100%; min-height: 140px; background: #0a0d12; color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px; padding: .9rem;
+    font-size: .95rem; font-family: inherit; resize: vertical;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  .row { display: flex; gap: .75rem; align-items: center; margin-top: 1rem; flex-wrap: wrap; }
+  button {
+    background: var(--accent); color: #04121f; border: none; border-radius: 8px;
+    padding: .6rem 1.2rem; font-weight: 600; font-size: .95rem; cursor: pointer;
+  }
+  button:hover { filter: brightness(1.1); }
+  button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  button.ghost:hover { color: var(--text); }
+  #result { display: none; }
+  .score-wrap { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+  .gauge { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+  .gauge svg { transform: rotate(-90deg); }
+  .gauge .num {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; font-size: 1.6rem; font-weight: 700;
+  }
+  .gauge .num small { font-size: .65rem; color: var(--muted); font-weight: 400; }
+  .verdict { font-size: 1.25rem; font-weight: 700; }
+  .verdict small { display: block; font-weight: 400; color: var(--muted); font-size: .85rem; margin-top: .25rem; }
+  .triggers { margin-top: 1.25rem; }
+  .triggers h3 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .6rem; }
+  .trigger {
+    display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0;
+    border-bottom: 1px solid var(--border); font-size: .9rem;
+  }
+  .trigger:last-child { border-bottom: none; }
+  .trigger .pts { color: var(--red); font-weight: 600; white-space: nowrap; }
+  mark { background: rgba(248,81,73,.25); color: #ffa198; border-radius: 3px; padding: 0 2px; }
+  h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+  .feed-post { border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; position: relative; }
+  .feed-post .author { font-weight: 600; font-size: .9rem; }
+  .feed-post .role { color: var(--muted); font-size: .8rem; margin-bottom: .5rem; }
+  .feed-post .body { font-size: .92rem; white-space: pre-line; }
+  .chip {
+    position: absolute; top: .8rem; right: .8rem; font-size: .72rem; font-weight: 700;
+    padding: .25rem .6rem; border-radius: 999px; white-space: nowrap;
+  }
+  .chip.green { background: rgba(63,185,80,.15); color: var(--green); border: 1px solid rgba(63,185,80,.4); }
+  .chip.yellow { background: rgba(210,153,34,.15); color: var(--yellow); border: 1px solid rgba(210,153,34,.4); }
+  .chip.red { background: rgba(248,81,73,.15); color: var(--red); border: 1px solid rgba(248,81,73,.4); }
+  footer { text-align: center; color: var(--muted); font-size: .8rem; margin-top: 2rem; }
+  .highlighted { font-size: .92rem; white-space: pre-line; margin-top: 1rem; padding: .9rem; background: #0a0d12; border-radius: 8px; border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Slop<span>Sentry</span> 🛡️</h1>
+    <p>Heuristic authenticity scanner for AI slop in social feeds. Prototype for the browser extension.</p>
+  </header>
+
+  <div class="card">
+    <h2>Analyze any post</h2>
+    <textarea id="input" placeholder="Paste a LinkedIn post, tweet, or caption here..."></textarea>
+    <div class="row">
+      <button onclick="analyzeInput()">Scan for Slop</button>
+      <button class="ghost" onclick="loadSample()">Load slop sample</button>
+      <button class="ghost" onclick="loadHuman()">Load human sample</button>
+    </div>
+    <div id="result" style="margin-top:1.5rem">
+      <div class="score-wrap">
+        <div class="gauge">
+          <svg width="110" height="110">
+            <circle cx="55" cy="55" r="48" fill="none" stroke="#2d333b" stroke-width="10"/>
+            <circle id="arc" cx="55" cy="55" r="48" fill="none" stroke="#3fb950" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="301.6"/>
+          </svg>
+          <div class="num"><span id="scoreNum">0</span><small>/ 100</small></div>
+        </div>
+        <div class="verdict"><span id="verdictText"></span><small id="verdictSub"></small></div>
+      </div>
+      <div class="highlighted" id="highlighted"></div>
+      <div class="triggers">
+        <h3>Triggered patterns</h3>
+        <div id="triggerList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Simulated LinkedIn feed (live-scored)</h2>
+    <div id="feed"></div>
+  </div>
+
+  <footer>SlopSentry prototype · heuristics run 100% in your browser · Duncan ⚔️ idea lab · 2026-08-19</footer>
+</div>
+
+<script>
+const CLICHES = [
+  ["thrilled to announce", 14], ["humbled and honored", 14], ["i'm excited to share", 10],
+  ["in today's fast-paced world", 18], ["in today's world", 12], ["game-changer", 12],
+  ["game changer", 12], ["unlock the full potential", 12], ["take it to the next level", 10],
+  ["delve", 8], ["landscape", 4], ["let that sink in", 10], ["here's the thing", 5],
+  ["agree?", 6], ["thoughts?", 4], ["the future of", 8], ["revolutionize", 10],
+  ["journey", 3], ["unleash", 8], ["elevate", 5], ["hustle", 3], ["grind never stops", 10],
+  ["i didn't expect", 6], ["nobody told me", 8], ["what happened next", 12],
+  ["if i can do it, anyone can", 12], ["lessons i learned", 5], ["swipeable lessons", 8],
+];
+const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu;
+
+function scoreText(text) {
+  const triggers = [];
+  let score = 0;
+  const lower = text.toLowerCase();
+
+  // 1. Cliché phrases
+  for (const [phrase, pts] of CLICHES) {
+    if (lower.includes(phrase)) { score += pts; triggers.push({ label: `Cliché: "${phrase}"`, pts }); }
+  }
+  // 2. Em-dash density
+  const emdashes = (text.match(/—/g) || []).length;
+  const words = text.split(/\s+/).filter(Boolean).length || 1;
+  const emRatio = emdashes / words;
+  if (emRatio > 0.03) { const p = Math.min(15, Math.round(emRatio * 400)); score += p; triggers.push({ label: `Em-dash abuse (${emdashes} in ${words} words)`, pts: p }); }
+  // 3. Emoji density
+  const emojis = (text.match(EMOJI_RE) || []).length;
+  const lines = text.split(/\n/).filter(l => l.trim()).length || 1;
+  if (emojis / lines > 1.2) { const p = Math.min(12, Math.round((emojis / lines) * 6)); score += p; triggers.push({ label: `Emoji spam (${emojis} emojis, ${lines} lines)`, pts: p }); }
+  // 4. Decorative bullets
+  if (/[▸✦✅❗🔥]\s/.test(text) && (text.match(/[▸✦]/g) || []).length >= 2) {
+    score += 10; triggers.push({ label: "Decorative bullet patterns (▸ ✦)", pts: 10 });
+  }
+  // 5. Formulaic structure: hook + epiphany + CTA
+  if (/^(i (almost|nearly) (quit|gave up)|nobody talks about|hot take)/i.test(text.trim())) {
+    score += 8; triggers.push({ label: "Formulaic viral hook", pts: 8 });
+  }
+  if (/(link in comments|comment .* and i'?ll (send|dm)|dm me .* to get)/i.test(lower)) {
+    score += 10; triggers.push({ label: "Engagement-bait CTA", pts: 10 });
+  }
+  if (/♻️\s*repost|repost .* to help/i.test(text)) {
+    score += 8; triggers.push({ label: "Repost beg", pts: 8 });
+  }
+  // 6. One-word-per-line drama spacing
+  const singleWordLines = text.split(/\n/).filter(l => l.trim().split(/\s+/).length <= 2 && l.trim()).length;
+  if (singleWordLines / lines > 0.5 && lines > 6) { score += 8; triggers.push({ label: "One-word-per-line dramatic pacing", pts: 8 }); }
+
+  score = Math.min(100, score);
+  return { score, triggers, words };
+}
+
+function verdict(score) {
+  if (score < 30) return { cls: "green", icon: "🟢", text: "Human-ish", sub: "Low slop pattern density. Reads like a person wrote it." };
+  if (score < 60) return { cls: "yellow", icon: "🟡", text: "Sus", sub: "Some AI-ish patterns. Could be AI-assisted or just LinkedIn-brained." };
+  return { cls: "red", icon: "🔴", text: "Slop", sub: "High density of generated-content patterns. Approach with skepticism." };
+}
+
+function escapeHtml(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function highlight(text) {
+  let out = escapeHtml(text);
+  const sorted = CLICHES.map(c => c[0]).sort((a,b) => b.length - a.length);
+  for (const p of sorted) {
+    const re = new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+    out = out.replace(re, m => `<mark>${m}</mark>`);
+  }
+  return out;
+}
+
+function analyzeInput() {
+  const text = document.getElementById("input").value.trim();
+  if (!text) return;
+  const { score, triggers } = scoreText(text);
+  const v = verdict(score);
+  document.getElementById("result").style.display = "block";
+  document.getElementById("scoreNum").textContent = score;
+  const arc = document.getElementById("arc");
+  const color = v.cls === "green" ? "#3fb950" : v.cls === "yellow" ? "#d29922" : "#f85149";
+  arc.style.stroke = color;
+  arc.style.strokeDashoffset = 301.6 * (1 - score / 100);
+  document.getElementById("verdictText").innerHTML = `${v.icon} ${v.text}`;
+  document.getElementById("verdictSub").textContent = v.sub;
+  document.getElementById("highlighted").innerHTML = highlight(text);
+  const list = document.getElementById("triggerList");
+  list.innerHTML = triggers.length
+    ? triggers.map(t => `<div class="trigger"><span>${escapeHtml(t.label)}</span><span class="pts">+${t.pts}</span></div>`).join("")
+    : `<div class="trigger"><span>No known slop patterns detected 🎉</span><span class="pts">+0</span></div>`;
+}
+
+function loadSample() {
+  document.getElementById("input").value =
+`I'm thrilled to announce 🚀 a journey that will revolutionize the landscape of synergy! 💡✨
+
+In today's fast-paced world — where innovation meets determination — nobody talks about the real grind.
+
+I almost quit.
+Twice.
+But I didn't.
+
+Here are the lessons I learned:
+
+✅ Delve deeper
+✅ Unleash your potential
+✅ Agree? Comment below and I'll send you my free playbook!
+
+♻️ Repost to help someone in your network unlock their full potential 🔥`;
+  analyzeInput();
+}
+
+function loadHuman() {
+  document.getElementById("input").value =
+"Spent the weekend debugging a race condition in our webhook handler. Turns out two retries were hitting the same row within 40ms and the optimistic lock silently dropped one write. Fixed it with a SELECT FOR UPDATE. Two days for a one-line fix. Classic.";
+  analyzeInput();
+}
+
+const FEED = [
+  { author: "Dana R.", role: "Staff Engineer", body: "Shipped the migration to Postgres 17 today. Downtime was 47 seconds instead of the 5 minutes we budgeted. Docs on the approach are in the internal wiki, ask me anything here." },
+  { author: "Chad Synergy", role: "Growth Visionary | 10x Thought Leader", body: "I'm thrilled to announce something that will change everything 🚀\n\nIn today's fast-paced world — most leaders miss this — the real game-changer is mindset.\n\nAgree?\n\n♻️ Repost to inspire your network 🔥" },
+  { author: "Priya M.", role: "Product Designer", body: "Hot take from user research this week: our 'simplified' onboarding confused 6 of 8 participants. They kept hunting for the settings we moved. Sometimes simplifying means adding the thing back. Rewriting the flow next sprint." },
+  { author: "AI Bro", role: "Content Machine 🤖", body: "Nobody talks about this journey 💡\n\nI almost quit.\n\nWhat happened next will revolutionize how you think about hustle.\n\n✅ Delve into focus\n✅ Unleash consistency\n✅ Elevate daily\n\nComment FOCUS and I'll DM you my playbook 🚀🔥💯" },
+];
+
+function renderFeed() {
+  const feed = document.getElementById("feed");
+  feed.innerHTML = FEED.map(p => {
+    const { score } = scoreText(p.body);
+    const v = verdict(score);
+    return `<div class="feed-post">
+      <span class="chip ${v.cls}">${v.icon} ${score} · ${v.text}</span>
+      <div class="author">${escapeHtml(p.author)}</div>
+      <div class="role">${escapeHtml(p.role)}</div>
+      <div class="body">${highlight(p.body)}</div>
+    </div>`;
+  }).join("");
+}
+renderFeed();
+</script>
+</body>
+</html>
