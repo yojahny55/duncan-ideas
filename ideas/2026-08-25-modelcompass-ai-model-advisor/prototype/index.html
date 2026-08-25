@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ModelCompass 🧭 — Your AI Stack Radar</title>
+<style>
+  :root{
+    --bg:#0A0E1A; --bg2:#0F1526; --card:#131B30; --card2:#18223C;
+    --line:#223052; --txt:#E8EDF7; --mut:#8FA0C2; --dim:#5B6B8F;
+    --cyan:#22D3EE; --amber:#F59E0B; --green:#34D399; --red:#F87171; --violet:#A78BFA;
+    --mono:'SF Mono','JetBrains Mono',ui-monospace,Menlo,monospace;
+    --sans:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.5}
+  a{color:var(--cyan);text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* nav */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--line)}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px}
+  .logo .c{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--cyan),var(--violet));display:grid;place-items:center;font-size:16px}
+  .navlinks{display:flex;gap:22px;font-size:14px;color:var(--mut)}
+  .navlinks a{color:var(--mut)} .navlinks a:hover{color:var(--txt)}
+  .btn{display:inline-block;padding:9px 18px;border-radius:9px;font-size:14px;font-weight:600;border:1px solid var(--line);color:var(--txt);background:var(--card);cursor:pointer}
+  .btn.pri{background:linear-gradient(135deg,var(--cyan),#0EA5C9);color:#04121A;border:none}
+  .btn:hover{filter:brightness(1.12)}
+
+  /* hero */
+  header{padding:64px 0 44px;text-align:center;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;inset:-40% -20%;background:radial-gradient(ellipse at 50% 0%,rgba(34,211,238,.13),transparent 60%);pointer-events:none}
+  .kicker{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--cyan);border:1px solid rgba(34,211,238,.35);border-radius:999px;padding:5px 14px;margin-bottom:18px;letter-spacing:.06em}
+  h1{font-size:46px;line-height:1.1;font-weight:800;letter-spacing:-.02em}
+  h1 .grad{background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--mut);font-size:18px;max-width:640px;margin:16px auto 28px}
+  .heroctas{display:flex;gap:12px;justify-content:center}
+  .ticker{margin-top:40px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-family:var(--mono);font-size:12.5px;color:var(--mut);padding:12px 16px;text-align:left;overflow-x:auto;white-space:nowrap}
+  .ticker b{color:var(--txt)} .up{color:var(--green)} .dn{color:var(--red)} .ch{color:var(--amber)}
+
+  /* sections */
+  section{padding:52px 0}
+  .stitle{font-size:27px;font-weight:800;letter-spacing:-.01em;margin-bottom:8px}
+  .ssub{color:var(--mut);margin-bottom:26px;font-size:15px}
+
+  /* stack radar scatter */
+  .radar{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:22px}
+  .radar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .radar-head h3{font-size:16px}
+  .radar-legend{display:flex;gap:14px;font-size:12px;color:var(--mut)}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+  .plot{position:relative;height:340px;border-left:1px solid var(--line);border-bottom:1px solid var(--line);margin:10px 6px 26px 46px}
+  .axis-y{position:absolute;left:-46px;top:50%;transform:rotate(-90deg) translateX(50%);transform-origin:left;font-size:11px;color:var(--dim);font-family:var(--mono)}
+  .axis-x{position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);font-size:11px;color:var(--dim);font-family:var(--mono)}
+  .node{position:absolute;transform:translate(-50%,50%);text-align:center;cursor:pointer}
+  .node .b{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:12px;margin:0 auto;border:2px solid;background:var(--bg2)}
+  .node span{display:block;font-size:11px;color:var(--mut);margin-top:4px;font-family:var(--mono)}
+  .node .youtag{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;font-family:var(--mono);background:var(--amber);color:#1A1203;padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:700}
+
+  /* switch signal cards */
+  .signals{display:grid;gap:16px}
+  .sig{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;position:relative;overflow:hidden}
+  .sig::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green)}
+  .sig.warn::before{background:var(--amber)}
+  .sig.hold::before{background:var(--dim)}
+  .sig-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .sig h4{font-size:16px;margin-bottom:4px}
+  .sig p{color:var(--mut);font-size:14px}
+  .verdict{font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:999px;font-weight:700;white-space:nowrap}
+  .v-switch{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.4)}
+  .v-warn{background:rgba(245,158,11,.14);color:var(--amber);border:1px solid rgba(245,158,11,.4)}
+  .v-hold{background:rgba(91,107,143,.15);color:var(--mut);border:1px solid var(--line)}
+  .receipts{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:11.5px;color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:5px 10px;background:var(--bg2)}
+  .chip b{color:var(--cyan)}
+  .confbar{margin-top:14px}
+  .confbar .lab{display:flex;justify-content:space-between;font-size:11px;font-family:var(--mono);color:var(--dim);margin-bottom:4px}
+  .bar{height:6px;border-radius:99px;background:var(--bg2);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--green))}
+
+  /* digest */
+  .digest{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:24px;font-family:var(--mono);font-size:13px}
+  .digest h3{font-family:var(--sans);font-size:16px;margin-bottom:14px;display:flex;justify-content:space-between}
+  .digest h3 small{color:var(--dim);font-family:var(--mono);font-weight:400;font-size:12px}
+  .digest li{list-style:none;padding:10px 0;border-bottom:1px dashed var(--line);display:flex;gap:12px;align-items:baseline}
+  .digest li:last-child{border:none}
+  .digest .n{color:var(--cyan);font-weight:700;min-width:22px}
+  .digest .tag{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:700}
+  .t-ship{background:rgba(34,211,238,.15);color:var(--cyan)}
+  .t-drop{background:rgba(248,113,113,.14);color:var(--red)}
+  .t-price{background:rgba(245,158,11,.14);color:var(--amber)}
+  .t-ignore{background:rgba(91,107,143,.2);color:var(--mut)}
+
+  /* playbook */
+  .play{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .pcode{border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px;font-family:var(--mono);font-size:12.5px;overflow-x:auto}
+  .pcode .h{color:var(--dim);margin-bottom:10px;font-size:11px;letter-spacing:.05em}
+  .del{color:var(--red)} .add{color:var(--green)} .ctx{color:var(--mut)}
+  .psteps{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px}
+  .psteps h4{font-size:15px;margin-bottom:14px}
+  .step{display:flex;gap:12px;padding:9px 0;align-items:baseline}
+  .step .num{font-family:var(--mono);font-size:12px;color:var(--cyan);min-width:20px}
+  .step p{font-size:13.5px;color:var(--mut)}
+  .step p b{color:var(--txt)}
+
+  /* pricing */
+  .price{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .tier{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:24px}
+  .tier.hot{border-color:rgba(34,211,238,.5);background:linear-gradient(180deg,rgba(34,211,238,.06),transparent)}
+  .tier h4{font-size:15px;color:var(--mut);font-weight:600}
+  .tier .amt{font-size:34px;font-weight:800;margin:8px 0 2px}
+  .tier .amt small{font-size:14px;color:var(--dim);font-weight:500}
+  .tier ul{list-style:none;margin:16px 0 20px;display:grid;gap:8px}
+  .tier li{font-size:13.5px;color:var(--mut);padding-left:20px;position:relative}
+  .tier li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700}
+  .tier .btn{width:100%;text-align:center}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  @media(max-width:760px){
+    h1{font-size:32px} .play,.price{grid-template-columns:1fr} .navlinks{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="logo"><span class="c">🧭</span>ModelCompass</div>
+    <div class="navlinks">
+      <a href="#radar">Stack Radar</a><a href="#signals">Switch Signals</a>
+      <a href="#digest">Churn Digest</a><a href="#playbook">Playbooks</a><a href="#pricing">Pricing</a>
+    </div>
+    <button class="btn pri">Add my stack</button>
+  </nav>
+
+  <header>
+    <span class="kicker">LIVE · AUG 25 2026 · 128 MODELS TRACKED</span>
+    <h1>Stop rebuilding your stack<br><span class="grad">every Tuesday.</span></h1>
+    <p class="sub">ModelCompass watches the leaderboard churn, the price shocks, and what practitioners actually say on X — then tells <b style="color:var(--txt)">you</b> when to switch, and gives you the migration playbook. Receipts included. Vibes excluded.</p>
+    <div class="heroctas">
+      <button class="btn pri">Scan my stack — free</button>
+      <button class="btn">See this week's churn</button>
+    </div>
+    <div class="ticker">
+      <b>THIS WEEK</b> &nbsp;·&nbsp; Gemini 3.7 Flash <span class="up">▲ fastest-growing ever</span> &nbsp;·&nbsp; Kimi K3 <span class="ch">~70% cheaper/task vs frontier</span> &nbsp;·&nbsp; Ox Alpha <span class="ch">? mystery model, 63% DeepSWE</span> &nbsp;·&nbsp; ChatGPT+Codex <span class="dn">bundled $20 plan</span> &nbsp;·&nbsp; open-weight share <span class="up">62% of Vercel gateway tokens</span> &nbsp;·&nbsp; Harvey <span class="dn">→ open models</span>
+    </div>
+  </header>
+
+  <section id="radar">
+    <h2 class="stitle">Your Stack Radar</h2>
+    <p class="ssub">Your 6 active models, plotted by quality-on-your-tasks vs. cost. One is badly misplaced. We found it.</p>
+    <div class="radar">
+      <div class="radar-head">
+        <h3>quality-on-your-tasks ↑ &nbsp;/&nbsp; cost per 1M tokens →</h3>
+        <div class="radar-legend">
+          <span><span class="dot" style="background:var(--cyan)"></span>coding</span>
+          <span><span class="dot" style="background:var(--violet)"></span>writing</span>
+          <span><span class="dot" style="background:var(--amber)"></span>agents</span>
+        </div>
+      </div>
+      <div class="plot">
+        <span class="axis-y">QUALITY (your task mix)</span>
+        <span class="axis-x">COST PER 1M TOKENS →</span>
+        <div class="node" style="left:18%;bottom:82%"><div class="youtag">💡 switch candidate</div><div class="b" style="border-color:var(--green);color:var(--green)">K3</div><span>Kimi K3</span></div>
+        <div class="node" style="left:78%;bottom:86%"><div class="b" style="border-color:var(--cyan);color:var(--cyan)">CL</div><span>Claude (current)</span></div>
+        <div class="node" style="left:64%;bottom:70%"><div class="b" style="border-color:var(--violet);color:var(--violet)">GP</div><span>GPT-5.6</span></div>
+        <div class="node" style="left:30%;bottom:58%"><div class="b" style="border-color:var(--amber);color:var(--amber)">Gf</div><span>Gemini 3.7 Flash</span></div>
+        <div class="node" style="left:46%;bottom:40%"><div class="b" style="border-color:var(--dim);color:var(--mut)">Qw</div><span>Qwen 3.8</span></div>
+        <div class="node" style="left:12%;bottom:30%"><div class="b" style="border-color:var(--dim);color:var(--mut)">Ll</div><span>llama-4</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="signals">
+    <h2 class="stitle">Switch Signals</h2>
+    <p class="ssub">Not "Model X is #1." What matters is the delta between your current stack and the frontier — for <i>your</i> task mix. Every signal shows its receipts.</p>
+    <div class="signals">
+      <div class="sig">
+        <div class="sig-top">
+          <div>
+            <h4>Move bulk agent runs: Claude → Kimi K3</h4>
+            <p>Your agent workloads (71% of spend) run at ~equal pass rate on Kimi K3. At your volume that's <b style="color:var(--green)">−$41/mo (−68%)</b> with no quality regression detected over 14 days of shadow evals.</p>
+          </div>
+          <span class="verdict v-switch">SWITCH · SAVE $41/MO</span>
+        </div>
+        <div class="receipts">
+          <span class="chip">benchmark: <b>pass@1 94.1 vs 94.8</b></span>
+          <span class="chip">price: <b>$0.6 vs $2.4 /1M out</b></span>
+          <span class="chip">X sentiment: <b>+212 practitioner posts, 89% positive</b></span>
+          <span class="chip">shadow-eval: <b>14 days, 1,204 runs</b></span>
+        </div>
+        <div class="confbar">
+          <div class="lab"><span>CONFIDENCE</span><span>HIGH · 0.91</span></div>
+          <div class="bar"><i style="width:91%"></i></div>
+        </div>
+      </div>
+
+      <div class="sig warn">
+        <div class="sig-top">
+          <div>
+            <h4>⚠ ChatGPT plan rebundle affects your $20 seat</h4>
+            <p>OpenAI's Aug 11 bundle folds Codex into the $20 plan you already pay for — but your team's second seat is now redundant. <b style="color:var(--amber)">Cancel seat #2 before Sep 1</b> or you'll overpay $20/mo.</p>
+          </div>
+          <span class="verdict v-warn">ACT BY SEP 1</span>
+        </div>
+        <div class="receipts">
+          <span class="chip">source: <b>TechCrunch, Aug 11 2026</b></span>
+          <span class="chip">your spend: <b>2 × $20/mo</b></span>
+        </div>
+        <div class="confbar">
+          <div class="lab"><span>CONFIDENCE</span><span>CERTAIN · 0.99</span></div>
+          <div class="bar"><i style="width:99%"></i></div>
+        </div>
+      </div>
+
+      <div class="sig hold">
+        <div class="sig-top">
+          <div>
+            <h4>Stay on Claude for interactive coding</h4>
+            <p>Ox Alpha is trending hard on X, but on your repo's TypeScript-heavy profile it scores below your current model and the API surface is unverified. <b style="color:var(--txt)">Don't switch on hype.</b> We'll re-evaluate in 2 weeks.</p>
+          </div>
+          <span class="verdict v-hold">HOLD · RE-CHECK AUG 30</span>
+        </div>
+        <div class="receipts">
+          <span class="chip">hype index: <b>94/100 (X)</b></span>
+          <span class="chip">your-task score: <b>−6 pts vs current</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="digest">
+    <h2 class="stitle">The Churn Digest</h2>
+    <p class="ssub">A 2-minute weekly brief. What shipped, what dropped, and — most importantly — what to ignore. Kills tab-hoarding.</p>
+    <div class="digest">
+      <h3>#34 — week of Aug 25 <small>read time: 1:54</small></h3>
+      <ul>
+        <li><span class="n">01</span><span class="tag t-ship">SHIP</span><span>Gemini 3.7 Flash is the fastest-growing Gemini ever. Genuinely strong at long-context summarization — relevant to your "docs" workload.</span></li>
+        <li><span class="n">02</span><span class="tag t-price">PRICE</span><span>Kimi K3 lands ~70% under frontier pricing at comparable quality. Your Switch Signal #1 is based on this.</span></li>
+        <li><span class="n">03</span><span class="tag t-drop">DROP</span><span>Harvey is migrating off OpenAI toward open models. If you use their stack pattern, expect endpoint churn.</span></li>
+        <li><span class="n">04</span><span class="tag t-ignore">IGNORE</span><span>Ox Alpha mystery-model speculation. No API, no pricing, no docs. Pure vibes until further notice.</span></li>
+        <li><span class="n">05</span><span class="tag t-ignore">IGNORE</span><span>The "local dev is dead" discourse. Your M-series Mac is still the cheapest sandbox. mattpocockuk's take ≠ your infra.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="playbook">
+    <h2 class="stitle">Migration Playbooks</h2>
+    <p class="ssub">Deciding to switch is half the job. The other half is the config diff. ModelCompass generates it for your actual tools.</p>
+    <div class="play">
+      <div class="pcode">
+        <div class="h">~/.claude/settings.json — bulk-agent route</div>
+<span class="ctx">  "env": {</span><br>
+<span class="del">-   "ANTHROPIC_MODEL": "claude-4.6-sonnet",</span><br>
+<span class="add">+   "ANTHROPIC_MODEL": "kimi-k3",</span><br>
+<span class="add">+   "ANTHROPIC_BASE_URL": "https://api.moonshot.ai/v1",</span><br>
+<span class="ctx">    "MAX_TOKENS": 8192</span><br>
+<span class="ctx">  },</span><br>
+<span class="ctx">  // ⚠ gotcha: Kimi uses `roles`, not `system:` blocks —</span><br>
+<span class="ctx">  // run `modelcompass fix-prompts --from claude --to kimi`</span>
+      </div>
+      <div class="psteps">
+        <h4>Switch: bulk agents → Kimi K3</h4>
+        <div class="step"><span class="num">1</span><p><b>Shadow-run first.</b> Compass replays 200 of your recent agent runs against K3 in read-only mode.</p></div>
+        <div class="step"><span class="num">2</span><p><b>Patch configs.</b> One diff for Claude Code / Codex / OpenRouter, with tool-format gotchas flagged.</p></div>
+        <div class="step"><span class="num">3</span><p><b>Roll 10%.</b> Route a slice of traffic, watch quality + cost deltas live.</p></div>
+        <div class="step"><span class="num">4</span><p><b>Full cutover.</b> If 7-day delta stays green, flip the rest. Rollback stays one click.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2 class="stitle">Pricing</h2>
+    <p class="ssub">Cheaper than one wrong model bill.</p>
+    <div class="price">
+      <div class="tier">
+        <h4>Scout</h4>
+        <div class="amt">$0</div>
+        <ul>
+          <li>1 stack, up to 3 models</li>
+          <li>Weekly Churn Digest</li>
+          <li>Public leaderboard deltas</li>
+        </ul>
+        <button class="btn">Start free</button>
+      </div>
+      <div class="tier hot">
+        <h4>Pro</h4>
+        <div class="amt">$9<small>/mo · or $79/yr</small></div>
+        <ul>
+          <li>Unlimited stacks</li>
+          <li>Personalized Switch Signals + savings math</li>
+          <li>Migration playbooks for your tools</li>
+          <li>X sentiment feed & deprecation alerts</li>
+        </ul>
+        <button class="btn pri">Go Pro</button>
+      </div>
+      <div class="tier">
+        <h4>Team</h4>
+        <div class="amt">$29<small>/mo</small></div>
+        <ul>
+          <li>Shared stack registry</li>
+          <li>Blast-radius deprecation alerts</li>
+          <li>Decision log / audit trail</li>
+        </ul>
+        <button class="btn">Start trial</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>ModelCompass 🧭 — prototype concept · Duncan's Daily App Ideas · 2026-08-25</span>
+    <span>Source: X/Twitter trend archives (Aug 20–22, 2026) · techtwitter.com · TechCrunch</span>
+  </footer>
+</div>
+</body>
+</html>
