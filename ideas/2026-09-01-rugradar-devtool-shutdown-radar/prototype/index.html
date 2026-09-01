@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RugRadar — Dev-Tool Shutdown Radar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-radar">◎</span> RugRadar <span class="brand-tag">v0.1 prototype</span></div>
+  <nav class="tabs">
+    <button class="tab active" data-view="stack">My Stack</button>
+    <button class="tab" data-view="alerts">Rumor Watch <span class="badge" id="alertBadge">3</span></button>
+    <button class="tab" data-view="playbooks">Exit Playbooks</button>
+  </nav>
+  <div class="stack-scan">
+    <button id="scanBtn" class="btn-primary">⟳ Run Stack Scan</button>
+  </div>
+</header>
+
+<main id="view-stack" class="view active">
+  <section class="summary-strip">
+    <div class="stat"><div class="stat-num" id="depCount">6</div><div class="stat-label">dependencies tracked</div></div>
+    <div class="stat"><div class="stat-num rug" id="highRisk">2</div><div class="stat-label">high rug risk</div></div>
+    <div class="stat"><div class="stat-num amber" id="watchCount">3</div><div class="stat-label">on rumor watch</div></div>
+    <div class="stat"><div class="stat-num ok" id="avgScore">58</div><div class="stat-label">avg rug score (lower = safer)</div></div>
+  </section>
+
+  <section class="alert-banner" id="banner">
+    <span class="banner-dot"></span>
+    <div><strong>CONFIRMED:</strong> OpenAI ending Cursor model access in 90 days. Your exposure: <strong>Cursor → OpenAI GPT-5</strong> is your #1 dependency. <a href="#" onclick="switchView('playbooks');return false;">Open exit playbook →</a></div>
+  </section>
+
+  <section class="grid" id="depGrid"></section>
+</main>
+
+<main id="view-alerts" class="view">
+  <h2>Rumor Watch</h2>
+  <p class="muted">Signals graded by confidence. You hear it the day tech Twitter does — with your exposure attached.</p>
+  <div id="alertFeed" class="feed"></div>
+</main>
+
+<main id="view-playbooks" class="view">
+  <h2>Exit Playbooks</h2>
+  <p class="muted">When a Rug Score spikes, the plan is already open. Curated alternatives, effort estimates, cost deltas.</p>
+  <div id="playbookList"></div>
+</main>
+
+<footer>Duncan's Daily App Ideas · 2026-09-01 · Prototype with simulated data. Sources: techtwitter.com archives Aug 27–29, 2026.</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
