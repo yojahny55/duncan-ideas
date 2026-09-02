@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoopClose 🪢 — The Paper Trail for Verbal Work</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b23; --panel2:#1d242f; --line:#2a3342;
+    --ink:#e8edf4; --mut:#8b97a8; --acc:#e8734a; --ok:#46d160; --warn:#f5b942; --bad:#ff5d5d;
+    --radius:14px; --mono:'SF Mono',ui-monospace,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;padding-bottom:90px}
+  .wrap{max-width:520px;margin:0 auto;padding:18px 16px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:6px 0 16px}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .logo span{color:var(--acc)}
+  .badge{font-size:11px;color:var(--mut);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mut);margin-bottom:12px}
+  /* people rail */
+  .rail{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+  .person{min-width:64px;text-align:center;cursor:pointer}
+  .avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;margin:0 auto 6px;border:2px solid transparent;transition:.15s}
+  .person.active .avatar{border-color:var(--acc)}
+  .person small{color:var(--mut);font-size:11px}
+  .person .dot{display:inline-block;background:var(--bad);color:#fff;font-size:10px;border-radius:99px;padding:1px 6px;font-weight:700}
+  /* briefing */
+  .brief{border-left:3px solid var(--acc);background:var(--panel2);border-radius:0 var(--radius) var(--radius) 0;padding:12px 14px;font-size:14px;line-height:1.5}
+  .brief b{color:var(--acc)}
+  /* loops */
+  .loop{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .loop:last-child{border-bottom:none}
+  .check{width:24px;height:24px;border:2px solid var(--mut);border-radius:8px;flex:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;transition:.15s;margin-top:2px}
+  .loop.done .check{border-color:var(--ok);background:rgba(70,209,96,.15);color:var(--ok)}
+  .loop.done .lt{text-decoration:line-through;color:var(--mut)}
+  .lt{font-size:14.5px;font-weight:600;line-height:1.35}
+  .meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+  .tag{font-size:11px;padding:2px 8px;border-radius:99px;font-family:var(--mono)}
+  .who{background:#243247;color:#9ec5ff}
+  .due-ok{background:#16321f;color:var(--ok)}
+  .due-soon{background:#3a2e14;color:var(--warn)}
+  .due-late{background:#3a1616;color:var(--bad)}
+  .dir-out{background:#2d2338;color:#c9a6ff}
+  .dir-in{background:#173036;color:#7fd6d2}
+  /* capture */
+  .capture{position:fixed;bottom:0;left:0;right:0;padding:14px 16px 20px;background:linear-gradient(transparent,var(--bg) 30%)}
+  .cap-inner{max-width:520px;margin:0 auto;display:flex;gap:10px;align-items:center}
+  .mic{flex:none;width:58px;height:58px;border-radius:50%;background:var(--acc);border:none;font-size:24px;cursor:pointer;box-shadow:0 6px 24px rgba(232,115,74,.35);transition:.15s}
+  .mic.rec{background:var(--bad);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .cap-txt{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--mut)}
+  .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--panel2);border:1px solid var(--ok);color:var(--ink);padding:10px 18px;border-radius:12px;font-size:13.5px;transition:.3s;z-index:9;opacity:0}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .stats{display:flex;gap:10px}
+  .stat{flex:1;background:var(--panel2);border-radius:10px;padding:12px;text-align:center}
+  .stat .n{font-size:24px;font-weight:800}
+  .stat .l{font-size:11px;color:var(--mut);margin-top:2px}
+  .n.green{color:var(--ok)} .n.orange{color:var(--acc)} .n.red{color:var(--bad)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Loop<span>Close</span> 🪢</div>
+    <div class="badge">Tue, Sep 2 · 3 open loops</div>
+  </header>
+
+  <!-- 1:1 briefing -->
+  <div class="card">
+    <h2>🎯 1:1 Briefing — Sarah, in 25 min</h2>
+    <div class="brief" id="brief">
+      You owe Sarah a <b>headcount answer</b> — promised 6 days ago.<br>
+      She owes you <b>Q3 numbers</b> — due Friday.<br>
+      Last 1:1 (Aug 26): agreed to revisit her conference budget.
+    </div>
+  </div>
+
+  <!-- people rail -->
+  <div class="card">
+    <h2>👥 Your People</h2>
+    <div class="rail" id="rail"></div>
+  </div>
+
+  <!-- open loops -->
+  <div class="card">
+    <h2>🪢 Open Loops</h2>
+    <div id="loops"></div>
+  </div>
+
+  <!-- receipts -->
+  <div class="card">
+    <h2>📇 This Month</h2>
+    <div class="stats">
+      <div class="stat"><div class="n green" id="closed-n">0</div><div class="l">closed</div></div>
+      <div class="stat"><div class="n orange" id="open-n">0</div><div class="l">open</div></div>
+      <div class="stat"><div class="n red" id="late-n">0</div><div class="l">overdue</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- capture bar -->
+<div class="capture">
+  <div class="cap-inner">
+    <button class="mic" id="mic" title="Capture a verbal commitment">🎙️</button>
+    <div class="cap-txt" id="captxt">Tap the mic after a meeting — speak the promise, LoopClose files it.</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const people = [
+  {n:'Sarah', c:'#e8734a', open:2},
+  {n:'Marcus', c:'#7fd6d2', open:1},
+  {n:'Priya', c:'#c9a6ff', open:0},
+  {n:'Leo', c:'#f5b942', open:0},
+  {n:'Dana', c:'#46d160', open:0},
+];
+let loops = [
+  {t:'Answer Sarah on Q4 headcount request', who:'Sarah', dir:'out', due:'Overdue · 6d', dueCls:'due-late'},
+  {t:'Get Q3 revenue numbers from Sarah', who:'Sarah', dir:'in', due:'Due Fri', dueCls:'due-soon'},
+  {t:'Send Marcus the onboarding doc link', who:'Marcus', dir:'out', due:'Due today', dueCls:'due-soon'},
+];
+let closed = 11;
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+function renderRail(){
+  document.getElementById('rail').innerHTML = people.map((p,i)=>`
+    <div class="person ${i===0?'active':''}" onclick="pick(this)">
+      <div class="avatar" style="background:${p.c}22;color:${p.c}">${p.n[0]}</div>
+      <small>${p.n}</small><br><small class="dot">${p.open} open</small>
+    </div>`).join('');
+}
+function pick(el){
+  document.querySelectorAll('.person').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+function renderLoops(){
+  const box = document.getElementById('loops');
+  box.innerHTML = loops.map((l,i)=>`
+    <div class="loop ${l.done?'done':''}" id="lp${i}">
+      <div class="check" onclick="toggle(${i})">✓</div>
+      <div style="flex:1">
+        <div class="lt">${esc(l.t)}</div>
+        <div class="meta">
+          <span class="tag who">@${esc(l.who)}</span>
+          <span class="tag ${l.dir==='out'?'dir-out':'dir-in'}">${l.dir==='out'?'→ you owe':'← owed to you'}</span>
+          <span class="tag ${l.dueCls}">${esc(l.due)}</span>
+        </div>
+      </div>
+    </div>`).join('') || '<div style="color:var(--mut);font-size:14px;padding:8px 0">All loops closed. Legendary. 🏆</div>';
+  document.getElementById('closed-n').textContent = closed;
+  document.getElementById('open-n').textContent = loops.filter(l=>!l.done).length;
+  document.getElementById('late-n').textContent = loops.filter(l=>!l.done && l.dueCls==='due-late').length;
+}
+function toggle(i){
+  loops[i].done = !loops[i].done;
+  if(loops[i].done){ closed++; toast('Loop closed ✓ — logged to '+loops[i].who+"'s ledger"); }
+  renderLoops();
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// simulated voice capture
+const demoMemo = "Sarah will send the Q3 numbers by Friday. I promised Marcus the onboarding doc today.";
+const mic = document.getElementById('mic'), captxt = document.getElementById('captxt');
+let rec=false, timer=null;
+mic.onclick = ()=>{
+  rec=!rec; mic.classList.toggle('rec',rec);
+  if(rec){
+    captxt.textContent='Listening…'; mic.textContent='⏹️';
+    timer=setTimeout(()=>{ if(rec) mic.onclick(); }, 3200);
+  } else {
+    clearTimeout(timer); mic.textContent='🎙️';
+    captxt.textContent='“'+demoMemo+'”';
+    setTimeout(()=>{
+      captxt.innerHTML='🤖 Extracted <b style="color:var(--ok)">2 loops</b>:<br>1. Get Q3 numbers ← @Sarah (Fri)<br>2. Send onboarding doc → @Marcus (today)<br><span style="color:var(--mut)">swipe to confirm…</span>';
+      toast('2 loops captured & filed 🪢');
+    }, 900);
+    setTimeout(()=>{ captxt.textContent='Tap the mic after a meeting — speak the promise, LoopClose files it.'; }, 6000);
+  }
+};
+
+renderRail(); renderLoops();
+</script>
+</body>
+</html>
