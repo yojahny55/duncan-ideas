@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BillProof 🩺 — Your Medical Bill Is Probably Wrong. Prove It.</title>
+<style>
+  :root{
+    --bg:#0d1017; --panel:#151a23; --panel2:#1c2330; --line:#2a3342;
+    --ink:#e9eef5; --mut:#8b97a8; --acc:#4cc9a4; --acc2:#38b2ce;
+    --ok:#46d160; --warn:#f5b942; --bad:#ff5d5d;
+    --radius:14px; --mono:'SF Mono',ui-monospace,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;padding-bottom:84px}
+  .wrap{max-width:520px;margin:0 auto;padding:18px 16px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:6px 0 14px}
+  .logo{font-size:20px;font-weight:800;letter-spacing:-.5px}
+  .logo span{color:var(--acc)}
+  .badge{font-size:11px;color:var(--mut);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mut);margin-bottom:12px}
+  /* verdict banner */
+  .verdict{border:1px solid rgba(255,93,93,.4);background:linear-gradient(135deg,#2a1520,#1c1320);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+  .verdict .big{font-size:34px;font-weight:800;color:var(--bad);letter-spacing:-1px}
+  .verdict .sub{font-size:13px;color:var(--mut);margin-top:2px;line-height:1.45}
+  .verdict .sub b{color:var(--ink)}
+  .strike{text-decoration:line-through;color:var(--mut)}
+  /* stats */
+  .stats{display:flex;gap:10px;margin-bottom:14px}
+  .stat{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px;text-align:center}
+  .stat .n{font-size:22px;font-weight:800}
+  .stat .l{font-size:10.5px;color:var(--mut);margin-top:3px;line-height:1.3}
+  .n.green{color:var(--ok)} .n.red{color:var(--bad)} .n.orange{color:var(--warn)} .n.blue{color:var(--acc2)}
+  /* bill table */
+  .doc-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .doc-label .src{font-size:11px;color:var(--mut);font-family:var(--mono)}
+  .row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .row:last-child{border-bottom:none}
+  .row .desc{flex:1;line-height:1.4}
+  .row .desc small{display:block;color:var(--mut);font-size:11px;font-family:var(--mono);margin-top:2px}
+  .row .amt{font-family:var(--mono);font-weight:600;white-space:nowrap}
+  .row.flagged{background:rgba(255,93,93,.06);margin:0 -10px;padding:9px 10px;border-radius:8px}
+  .row.flagged .amt{color:var(--bad)}
+  .pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:1px}
+  .pill.dup{background:#3a1616;color:var(--bad)}
+  .pill.up{background:#3a2e14;color:var(--warn)}
+  .pill.bal{background:#2d1f3a;color:#c9a6ff}
+  .pill.ok{background:#16321f;color:var(--ok)}
+  .total{display:flex;justify-content:space-between;padding-top:10px;font-weight:800;font-size:15px}
+  .total .amt{font-family:var(--mono)}
+  /* error cards */
+  .err{border-left:3px solid var(--bad);background:var(--panel2);border-radius:0 10px 10px 0;padding:11px 13px;margin-bottom:10px;font-size:13px;line-height:1.5}
+  .err.warn{border-left-color:var(--warn)}
+  .err b{color:var(--ink)}
+  .err .why{color:var(--mut);margin-top:4px;font-size:12px}
+  .err .law{display:inline-block;margin-top:6px;font-size:10.5px;font-family:var(--mono);color:var(--acc2);background:#12242e;padding:3px 8px;border-radius:6px}
+  /* deadline */
+  .deadline{display:flex;align-items:center;gap:14px}
+  .ring{flex:none;width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+  .ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+  .ring .days{font-size:17px;font-weight:800;color:var(--warn)}
+  .deadline .txt{font-size:13px;line-height:1.5;color:var(--mut)}
+  .deadline .txt b{color:var(--ink);font-size:14px}
+  /* letter */
+  .btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-primary{background:var(--acc);color:#08281e}
+  .btn-primary:active{transform:scale(.98)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--mut);margin-top:10px;font-size:13px;padding:11px}
+  .letter{display:none;background:#f7f4ec;color:#222;border-radius:10px;padding:18px;font-family:Georgia,serif;font-size:12.5px;line-height:1.55;white-space:pre-wrap;margin-top:12px}
+  .letter.show{display:block;animation:fade .3s}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  /* timeline */
+  .tl-item{display:flex;gap:12px;padding:7px 0;font-size:13px}
+  .tl-dot{flex:none;width:10px;height:10px;border-radius:50%;margin-top:5px;background:var(--line)}
+  .tl-dot.done{background:var(--ok)}
+  .tl-dot.now{background:var(--warn);box-shadow:0 0 0 4px rgba(245,185,66,.15)}
+  .tl-item .when{color:var(--mut);font-size:11px;font-family:var(--mono)}
+  .tl-item.pending{color:var(--mut)}
+  /* capture bar */
+  .capture{position:fixed;bottom:0;left:0;right:0;padding:12px 16px 20px;background:linear-gradient(transparent,var(--bg) 35%)}
+  .cap-inner{max-width:520px;margin:0 auto;display:flex;gap:10px}
+  .cap-btn{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;text-align:center}
+  .cap-btn b{color:var(--acc);display:block;font-size:16px;margin-bottom:2px}
+  .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-90px);background:var(--panel2);border:1px solid var(--ok);padding:11px 18px;border-radius:12px;font-size:13.5px;transition:.3s;z-index:9;opacity:0;max-width:90%}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .foot{text-align:center;color:var(--mut);font-size:11px;margin:22px 0 10px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">🩺 Bill<span>Proof</span></div>
+    <div class="badge">demo data · local-first</div>
+  </header>
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--mut);margin-bottom:6px">Audit verdict · Tampa General ER · Aug 14, 2026</div>
+    <div class="big">They overbilled you $1,347.20</div>
+    <div class="sub">Bill says <b class="strike">$1,622.45</b> · Your EOB says you owe <b>$275.25</b> · 3 errors found, 1 possibly illegal under the No Surprises Act</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="n red" id="savedStat">$0</div><div class="l">disputed so far</div></div>
+    <div class="stat"><div class="n green">2</div><div class="l">cases resolved</div></div>
+    <div class="stat"><div class="n orange">1</div><div class="l">deadline pending</div></div>
+    <div class="stat"><div class="n blue">14</div><div class="l">days to appeal</div></div>
+  </div>
+
+  <!-- RECONCILED BILL -->
+  <div class="card">
+    <div class="doc-label">
+      <h2 style="margin:0">Reconciled bill vs EOB</h2>
+      <span class="src">2 docs matched · 8 lines</span>
+    </div>
+    <div class="row"><div class="desc">ER visit — facility fee<small>CPT 99284 · 08/14/26</small></div><div class="amt">$860.00</div></div>
+    <div class="row"><div class="desc">ER visit — facility fee<span class="pill dup">DUPLICATE</span><small>CPT 99284 · 08/14/26 · billed twice</small></div><div class="amt">$860.00</div></div>
+    <div class="row flagged"><div class="desc">Radiology — chest X-ray, 2 views<span class="pill up">UPCODED</span><small>CPT 71047 billed · EOB processed 71045</small></div><div class="amt">$184.00</div></div>
+    <div class="row"><div class="desc">Lab — CBC w/ differential<small>CPT 85025 · 08/14/26</small></div><div class="amt">$42.00</div></div>
+    <div class="row"><div class="desc">Nurse observation — 45 min<small>HCPCS G0378 · out-of-network at in-network facility</small></div><div class="amt">$310.00</div></div>
+    <div class="row"><div class="desc">Supplies — IV start kit<small>HCPCS A4550</small></div><div class="amt">$28.45</div></div>
+    <div class="total"><div>Billed total</div><div class="amt strike">$2,284.45</div></div>
+    <div class="total" style="padding-top:4px"><div>After plan adj. · per EOB <span class="pill ok">MATCHES</span></div><div class="amt" style="color:var(--ok)">$275.25</div></div>
+    <div class="total" style="padding-top:4px"><div style="color:var(--bad)">Statement demands</div><div class="amt" style="color:var(--bad)">$1,622.45</div></div>
+  </div>
+
+  <!-- ERRORS -->
+  <div class="card">
+    <h2>What's wrong, in plain English</h2>
+    <div class="err">
+      <b>1. The ER visit is billed twice.</b> Line 2 is an exact duplicate of line 1 — same code, same date, same $860.
+      <div class="why">Duplicate billing is the single most common hospital error. Insurance paid once; the provider is billing you twice.</div>
+      <div class="law">Ref: EOB adj. code CO-16 · patient owes $0 on duplicate</div>
+    </div>
+    <div class="err warn">
+      <b>2. X-ray upcoded: 71047 → 71045.</b> Your bill lists "2 views" but the EOB shows the plan processed a single-view code — and the radiology report in your portal says one view was taken.
+      <div class="why">Upcoding inflates the allowed amount and, in high-deductible plans, what lands on you. The radiology report is your receipt.</div>
+      <div class="law">Ref: request corrected claim w/ CPT 71045</div>
+    </div>
+    <div class="err">
+      <b>3. Balance billing on the nurse observation line.</b> The $310 out-of-network line at an <i>in-network</i> ER facility is exactly what the No Surprises Act prohibits — your cost-share must equal the in-network rate.
+      <div class="why">This is the strongest card you hold. Providers know it; they bank on you not knowing it.</div>
+      <div class="law">Ref: No Surprises Act §149(a) · 42 U.S.C. 300gg-111</div>
+    </div>
+  </div>
+
+  <!-- DEADLINE -->
+  <div class="card">
+    <h2>⏳ Appeal window</h2>
+    <div class="deadline">
+      <div class="ring">
+        <svg width="64" height="64"><circle cx="32" cy="32" r="28" stroke="#2a3342" stroke-width="5" fill="none"/><circle cx="32" cy="32" r="28" stroke="#f5b942" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="100.5"/></svg>
+        <div class="days">14d</div>
+      </div>
+      <div class="txt"><b>Internal appeal due Oct 10, 2026</b><br>Your plan's EOB grants 30 days from statement to dispute. If this hits collections, FCRA §1681i gives you a 30-day credit-report dispute window. BillProof tracks both.</div>
+    </div>
+  </div>
+
+  <!-- LETTER GENERATOR -->
+  <div class="card">
+    <h2>Take action</h2>
+    <button class="btn btn-primary" onclick="genLetter()">✉️ Generate dispute letter (free demo)</button>
+    <button class="btn btn-ghost" onclick="toast('Demo: would send to USPS click2mail for $3')">📮 Mail it for me — $3 via click2mail</button>
+    <button class="btn btn-ghost" onclick="toast('Demo: escalates to state DOI complaint — template ready')">⚖️ Escalate to FL Dept. of Insurance</button>
+    <div class="letter" id="letter"></div>
+  </div>
+
+  <!-- CASE TIMELINE -->
+  <div class="card">
+    <h2>Case timeline · Tampa General ER</h2>
+    <div class="tl-item"><div class="tl-dot done"></div><div>Docs captured &amp; reconciled · 3 errors found<div class="when">Sep 26, 6:12 AM</div></div></div>
+    <div class="tl-item"><div class="tl-dot now"></div><div>Dispute letter ready to send<div class="when">now</div></div></div>
+    <div class="tl-item pending"><div class="tl-dot"></div><div>Provider response due (30d follow-up set)<div class="when">Oct 26</div></div></div>
+    <div class="tl-item pending"><div class="tl-dot"></div><div>Escalate: insurer appeal or state DOI<div class="when">if no response</div></div></div>
+  </div>
+
+  <div class="foot">BillProof · prototype · all data is fake<br>Not legal advice. Statutes cited are public and templates are illustrative. ⚔️</div>
+</div>
+
+<!-- CAPTURE BAR -->
+<div class="capture">
+  <div class="cap-inner">
+    <div class="cap-btn" onclick="toast('Demo: camera opens → OCR bill on-device')"><b>📄</b>Snap bill</div>
+    <div class="cap-btn" onclick="toast('Demo: camera opens → OCR EOB on-device')"><b>🧾</b>Snap EOB</div>
+    <div class="cap-btn" onclick="toast('Demo: PDF import → server-side ephemeral parse')"><b>📁</b>Import PDF</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let toastT;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(()=>t.classList.remove('show'), 2600);
+  }
+  function genLetter(){
+    const el = document.getElementById('letter');
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    el.textContent =
+`[YOUR NAME] · [ADDRESS] · [PHONE]
+${today}
+
+Tampa General Hospital — Patient Financial Services
+RE: Account #TGH-88213 · Statement dated Aug 28, 2026
+Subject: Written dispute of billing errors — response requested within 30 days
+
+To Whom It May Concern:
+
+I am disputing the balance of $1,622.45 on the above account. My insurer's Explanation of Benefits for the Aug 14, 2026 emergency department visit shows a patient responsibility of $275.25. The statement contains three errors:
+
+1. DUPLICATE CHARGE — CPT 99284 (ER visit) is billed twice at $860.00. The EOB processed this service once (adj. code CO-16). Please remove the duplicate line.
+
+2. INCORRECT CODE — Radiology is billed as CPT 71047 (2 views); the plan processed and the radiology report documents CPT 71045 (1 view). Please submit a corrected claim and re-bill at the processed amount.
+
+3. BALANCE BILLING ABOVE IN-NETWORK COST-SHARE — The $310.00 "nurse observation" line (HCPCS G0378) bills an out-of-network rate for ancillary services at an in-network emergency facility. This is prohibited by the No Surprises Act, 42 U.S.C. § 300gg-111(a). My cost-share for this line must equal the in-network rate reflected on my EOB.
+
+Corrected patient responsibility per EOB: $275.25. I request a corrected itemized statement within 30 days. Until resolved, I request that this account not be referred to collections, and I reserve all rights including appeal to my insurer and a complaint to the Florida Department of Financial Services and the federal No Surprises Help Desk (1-800-985-3059).
+
+Sincerely,
+[YOUR NAME]
+Enclosures: statement copy, EOB copy`;
+    el.classList.add('show');
+    el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    // animate the "disputed so far" stat
+    const s = document.getElementById('savedStat'); let v = 0;
+    const iv = setInterval(()=>{ v += 43; if(v>=1347){v=1347;clearInterval(iv);} s.textContent = '$'+v.toLocaleString(); }, 18);
+    toast('Letter ready — cites EOB + No Surprises Act');
+  }
+</script>
+</body>
+</html>
