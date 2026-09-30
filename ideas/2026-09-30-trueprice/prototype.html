@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TruePrice — Your Personal Price Memory</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#181b22; --card2:#1f232c; --border:#2a2f3a;
+    --text:#e8eaf0; --muted:#9aa3b2; --accent:#4ade80; --accent-dim:#166534;
+    --green:#4ade80; --yellow:#fbbf24; --red:#f87171; --blue:#60a5fa;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--text);max-width:440px;margin:0 auto;min-height:100vh;
+    padding-bottom:84px;
+  }
+  header{
+    padding:20px 16px 12px;position:sticky;top:0;background:linear-gradient(var(--bg) 80%,transparent);z-index:10;
+  }
+  header h1{font-size:22px;display:flex;align-items:center;gap:8px}
+  header h1 span.tag{font-size:10px;background:var(--accent-dim);color:var(--accent);padding:3px 8px;border-radius:99px;font-weight:600;letter-spacing:.5px}
+  header p{color:var(--muted);font-size:13px;margin-top:4px}
+
+  nav.tabs{
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;
+    display:flex;background:var(--card);border-top:1px solid var(--border);z-index:20;
+  }
+  nav.tabs button{
+    flex:1;background:none;border:none;color:var(--muted);padding:12px 4px 14px;font-size:11px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-weight:600;
+  }
+  nav.tabs button .ico{font-size:20px}
+  nav.tabs button.active{color:var(--accent)}
+
+  .view{display:none;padding:8px 16px 16px}
+  .view.active{display:block}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+
+  /* ── Sale checker ── */
+  .checker-hero{background:linear-gradient(135deg,#16231a,#181b22 60%);border-color:#2c4433}
+  .checker-hero h2{font-size:15px;margin-bottom:10px;color:var(--accent)}
+  .row{display:flex;gap:8px}
+  select,input{
+    background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;
+    padding:11px 12px;font-size:15px;width:100%;outline:none;
+  }
+  input:focus,select:focus{border-color:var(--accent)}
+  .btn{
+    background:var(--accent);color:#0a1f10;border:none;border-radius:10px;padding:12px 16px;
+    font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--border);font-weight:600}
+
+  .verdict{display:none;margin-top:14px;text-align:center;padding:18px 14px;border-radius:var(--radius)}
+  .verdict.show{display:block;animation:pop .25s ease}
+  @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+  .verdict .big{font-size:26px;font-weight:800;letter-spacing:.5px}
+  .verdict .sub{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .verdict.deal{background:#0d2818;border:1px solid #1e5c38}
+  .verdict.deal .big{color:var(--green)}
+  .verdict.meh{background:#2a2310;border:1px solid #5c4a1e}
+  .verdict.meh .big{color:var(--yellow)}
+  .verdict.fake{background:#2b1414;border:1px solid #6b2626}
+  .verdict.fake .big{color:var(--red)}
+  .verdict .savings{display:inline-block;margin-top:10px;background:rgba(255,255,255,.06);padding:6px 12px;border-radius:99px;font-size:12px;color:var(--text)}
+
+  /* ── Price book ── */
+  .item{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer}
+  .item .emoji{font-size:26px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:10px;flex-shrink:0}
+  .item .info{flex:1;min-width:0}
+  .item .name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item .meta{font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+  .item .meta b{color:var(--text);font-weight:600}
+  .item .right{text-align:right;flex-shrink:0}
+  .item .unit{font-size:15px;font-weight:800;color:var(--accent)}
+  .item .low{font-size:10px;color:var(--muted);margin-top:2px}
+  .trend{font-size:11px;font-weight:700}
+  .trend.up{color:var(--red)}.trend.down{color:var(--green)}.trend.flat{color:var(--muted)}
+  .section-label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px}
+
+  /* sparkline */
+  .spark{display:flex;align-items:flex-end;gap:2px;height:22px;margin-top:5px}
+  .spark i{width:4px;background:var(--blue);border-radius:2px;opacity:.85}
+
+  /* ── Receipt modal ── */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;z-index:30;align-items:flex-end;justify-content:center}
+  .overlay.show{display:flex}
+  .sheet{background:var(--card);width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:20px 16px 28px;animation:slide .25s ease;max-height:85vh;overflow-y:auto}
+  @keyframes slide{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .sheet h3{font-size:16px;margin-bottom:4px}
+  .sheet p.hint{font-size:12px;color:var(--muted);margin-bottom:14px}
+  .scanbox{border:2px dashed var(--border);border-radius:12px;padding:26px 16px;text-align:center;color:var(--muted);font-size:13px;margin-bottom:14px;cursor:pointer}
+  .scanbox:hover{border-color:var(--accent)}
+  .scan-lines{font-size:30px;margin-bottom:6px}
+  .parsed{display:none}
+  .parsed.show{display:block}
+  .parsed-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+  .parsed-row .e{font-size:20px}
+  .parsed-row .n{flex:1;font-weight:600}
+  .parsed-row .sz{color:var(--muted);font-size:11px}
+  .parsed-row .p{font-weight:700;color:var(--accent)}
+  .badge{font-size:9px;padding:2px 7px;border-radius:99px;font-weight:800;letter-spacing:.4px}
+  .badge.upd{background:#1e3a5c;color:var(--blue)}
+  .badge.new{background:#3d2b10;color:var(--yellow)}
+  .processing{text-align:center;padding:30px 10px;display:none}
+  .processing.show{display:block}
+  .spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── Alerts ── */
+  .alert-row{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px}
+  .alert-row .txt{flex:1;font-size:13px}
+  .alert-row .txt b{display:block;font-size:14px;margin-bottom:2px}
+  .alert-row .txt span{color:var(--muted);font-size:11px}
+  .pill{font-size:10px;padding:4px 10px;border-radius:99px;font-weight:700}
+  .pill.hit{background:var(--accent-dim);color:var(--accent)}
+  .pill.wait{background:var(--card2);color:var(--muted);border:1px solid var(--border)}
+
+  .stat-row{display:flex;gap:10px;margin-bottom:14px}
+  .stat{flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
+  .stat .v{font-size:20px;font-weight:800;color:var(--accent)}
+  .stat .l{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+
+  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#0a1f10;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;opacity:0;transition:.3s;z-index:50;pointer-events:none;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏷️ TruePrice <span class="tag">PRICE MEMORY</span></h1>
+  <p>Know what you actually pay. Grade every "sale" in 2 seconds.</p>
+</header>
+
+<!-- ═══════════ SALE CHECKER ═══════════ -->
+<div class="view active" id="view-check">
+  <div class="card checker-hero">
+    <h2>⚡ Sale Checker</h2>
+    <div class="row">
+      <select id="chk-item"></select>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="chk-price" type="number" step="0.01" min="0" placeholder="Shelf price, e.g. 5.49" inputmode="decimal">
+    </div>
+    <button class="btn" onclick="checkSale()">Grade this "sale"</button>
+    <div class="verdict" id="verdict"></div>
+  </div>
+
+  <div class="card" style="font-size:12px;color:var(--muted);line-height:1.6">
+    💡 <b style="color:var(--text)">How grading works:</b> your verdict is compared against <i>your</i> history — normal price and all-time low, normalized to unit price. A "$5.99 → $5.49" sticker means nothing if you've paid $4.79 twice this year.
+  </div>
+</div>
+
+<!-- ═══════════ PRICE BOOK ═══════════ -->
+<div class="view" id="view-book">
+  <div class="stat-row">
+    <div class="stat"><div class="v" id="st-items">0</div><div class="l">Tracked</div></div>
+    <div class="stat"><div class="v" id="st-trips">0</div><div class="l">Trips logged</div></div>
+    <div class="stat"><div class="v" id="st-saved">$0</div><div class="l">Saved YTD</div></div>
+  </div>
+  <div class="section-label">Your price book · tap for history</div>
+  <div id="book-list"></div>
+</div>
+
+<!-- ═══════════ ALERTS ═══════════ -->
+<div class="view" id="view-alerts">
+  <div class="section-label">Target prices on your staples</div>
+  <div id="alert-list"></div>
+  <div class="card" style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px">
+    🔔 Set a target unit price on anything you buy repeatedly. TruePrice pings you when a flyer or your latest receipt hits it — buy in bulk, skip the theater.
+  </div>
+</div>
+
+<!-- ═══════════ RECEIPT FAB + SHEET ═══════════ -->
+<div class="overlay" id="sheet-overlay" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <h3>📸 Snap your receipt</h3>
+    <p class="hint">TruePrice reads it, matches items to your price book, and updates baselines — no typing.</p>
+    <div class="scanbox" id="scanbox" onclick="startScan()">
+      <div class="scan-lines">🧾</div>
+      Tap to simulate a receipt scan<br><small style="opacity:.6">(demo — real app uses camera OCR)</small>
+    </div>
+    <div class="processing" id="processing">
+      <div class="spinner"></div>
+      <div style="font-size:13px;color:var(--muted)" id="proc-text">Reading receipt…</div>
+    </div>
+    <div class="parsed" id="parsed">
+      <div class="section-label" style="margin-top:4px">Found 4 items · Winn-Dixie</div>
+      <div id="parsed-rows"></div>
+      <button class="btn" onclick="commitScan()">Add to my price book</button>
+      <button class="btn ghost" onclick="closeSheet()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<nav class="tabs">
+  <button class="active" data-view="check" onclick="switchTab(this)"><span class="ico">⚡</span>Checker</button>
+  <button data-view="book" onclick="switchTab(this)"><span class="ico">📖</span>Price Book</button>
+  <button style="color:var(--accent)" onclick="openSheet()"><span class="ico">📸</span>Scan</button>
+  <button data-view="alerts" onclick="switchTab(this)"><span class="ico">🔔</span>Alerts</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Demo data: your price book (built from past receipts) ─────────────
+const DB = [
+  { id:'coffee', emoji:'☕', name:'Folgers Classic Roast', sizes:'30.5 oz', unit:'oz',
+    normal:0.42, low:0.36, unitLabel:'$/oz', history:[0.44,0.42,0.39,0.43,0.42,0.36,0.42,0.42] },
+  { id:'eggs', emoji:'🥚', name:'Large Eggs, dozen', sizes:'12 ct', unit:'ct',
+    normal:0.33, low:0.21, unitLabel:'$/egg', history:[0.42,0.38,0.35,0.33,0.31,0.29,0.33,0.21] },
+  { id:'oj', emoji:'🍊', name:'Tropicana Orange Juice', sizes:'52 oz', unit:'oz',
+    normal:0.09, low:0.07, unitLabel:'$/oz', history:[0.08,0.09,0.10,0.09,0.09,0.07,0.09,0.09] },
+  { id:'pasta', emoji:'🍝', name:'Barilla Spaghetti', sizes:'16 oz', unit:'oz',
+    normal:0.11, low:0.08, unitLabel:'$/oz', history:[0.12,0.11,0.10,0.11,0.11,0.08,0.11,0.11] },
+  { id:'chicken', emoji:'🍗', name:'Chicken Breast, boneless', sizes:'per lb', unit:'lb',
+    normal:3.49, low:1.99, unitLabel:'$/lb', history:[3.99,3.79,3.49,3.29,3.49,2.99,3.49,1.99] },
+  { id:'tp', emoji:'🧻', name:'Charmin Ultra Soft', sizes:'12 mega rolls', unit:'roll',
+    normal:1.08, low:0.83, unitLabel:'$/roll', history:[1.16,1.08,1.00,1.08,1.08,0.92,1.08,0.83] },
+];
+let trips = 14, savedYTD = 212.47;
+
+// Simulated receipt scan results
+const SCAN = [
+  { emoji:'☕', name:'FOLGERS CLSC ROAST 30.5OZ', size:'30.5 oz', price:11.49, match:'coffee', badge:'upd' },
+  { emoji:'🥚', name:'LARGE EGGS GRADE A', size:'12 ct', price:3.29, match:'eggs', badge:'upd' },
+  { emoji:'🧀', name:'KRAFT SHRD CHEDDAR 8OZ', size:'8 oz', price:3.99, match:null, badge:'new' },
+  { emoji:'🍝', name:'BARILLA SPAGHETTI 16OZ', size:'16 oz', price:1.50, match:'pasta', badge:'upd' },
+];
+
+const $ = s => document.querySelector(s);
+const fmt = n => '$' + n.toFixed(2);
+
+// ── Tabs ───────────────────────────────────────────────────────────────
+function switchTab(btn){
+  document.querySelectorAll('nav.tabs button[data-view]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('#view-'+btn.dataset.view).classList.add('active');
+}
+
+// ── Sale checker ───────────────────────────────────────────────────────
+function initChecker(){
+  $('#chk-item').innerHTML = DB.map(i=>`<option value="${i.id}">${i.emoji} ${i.name} (${i.sizes})</option>`).join('');
+}
+
+function checkSale(){
+  const item = DB.find(i=>i.id===$('#chk-item').value);
+  const raw = parseFloat($('#chk-price').value);
+  const v = $('#verdict');
+  if(isNaN(raw) || raw<=0){ toast('Enter the shelf price first'); return; }
+
+  // normalize to unit price using the item's reference size
+  const refQty = parseFloat(item.sizes) || 1;
+  const unit = raw / refQty;
+  const vsNormal = (unit - item.normal) / item.normal * 100;
+  const near = Math.abs(unit - item.low) / item.low < 0.04;
+
+  let cls, big, sub, extra='';
+  if (near || unit <= item.low){
+    cls='deal'; big='🟢 REAL DEAL';
+    sub=`${fmt(unit)} ${item.unitLabel} — ${unit<=item.low ? 'a NEW all-time low for you.' : 'matches your best price ever.'}`;
+    extra=` vs your normal ${fmt(item.normal)} → saves ${Math.round((1-unit/item.normal)*100)}%`;
+  } else if (vsNormal <= 5){
+    cls='meh'; big='🟡 MEH';
+    sub=`${fmt(unit)} ${item.unitLabel} is basically your normal ${fmt(item.normal)}. The "was" price is theater.`;
+    extra=`Only ${Math.round((1-unit/item.normal)*100)}% off what you already pay`;
+  } else {
+    cls='fake'; big='🔴 FAKE SALE';
+    sub=`${fmt(unit)} ${item.unitLabel} is ${Math.round(vsNormal)}% ABOVE your normal ${fmt(item.normal)}. The anchor price is inflated.`;
+    extra=`You've paid as low as ${fmt(item.low)}`;
+  }
+
+  v.className = 'verdict show ' + cls;
+  v.innerHTML = `<div class="big">${big}</div><div class="sub">${sub}</div><div class="savings">${extra.replace(/^ /,'')}</div>`;
+}
+
+// ── Price book ─────────────────────────────────────────────────────────
+function spark(hist){
+  const max=Math.max(...hist), min=Math.min(...hist), range=(max-min)||1;
+  return `<div class="spark">${hist.map(h=>`<i style="height:${4+((h-min)/range)*18}px"></i>`).join('')}</div>`;
+}
+function trendOf(i){
+  const d = i.history[i.history.length-1] - i.history[0];
+  const pct = Math.round(d / i.history[0] * 100);
+  if (pct>2) return `<span class="trend up">▲ +${pct}%</span>`;
+  if (pct<-2) return `<span class="trend down">▼ ${pct}%</span>`;
+  return `<span class="trend flat">— stable</span>`;
+}
+function renderBook(){
+  $('#book-list').innerHTML = DB.map(i=>`
+    <div class="item" onclick="toast('Full history view — see ${i.name} across every trip')">
+      <div class="emoji">${i.emoji}</div>
+      <div class="info">
+        <div class="name">${i.name}</div>
+        <div class="meta"><span>normal <b>${fmt(i.normal)}</b></span><span>low <b>${fmt(i.low)}</b></span>${trendOf(i)}</div>
+        ${spark(i.history)}
+      </div>
+      <div class="right">
+        <div class="unit">${fmt(i.normal)}</div>
+        <div class="low">${i.unitLabel}</div>
+      </div>
+    </div>`).join('');
+  $('#st-items').textContent = DB.length;
+  $('#st-trips').textContent = trips;
+  $('#st-saved').textContent = '$' + Math.round(savedYTD);
+}
+
+// ── Alerts ─────────────────────────────────────────────────────────────
+const ALERTS = [
+  { emoji:'🍗', name:'Chicken breast ≤ $2.50/lb', state:'hit', note:'HIT at Winn-Dixie — $1.99/lb on Sep 27 receipt' },
+  { emoji:'☕', name:'Folgers ≤ $0.40/oz', state:'wait', note:'Waiting — your normal is $0.42/oz' },
+  { emoji:'🧻', name:'Charmin ≤ $0.90/roll', state:'wait', note:'Last hit: Aug 2026 ($0.83/roll)' },
+];
+function renderAlerts(){
+  $('#alert-list').innerHTML = ALERTS.map(a=>`
+    <div class="alert-row">
+      <div class="emoji" style="font-size:22px">${a.emoji}</div>
+      <div class="txt"><b>${a.name}</b><span>${a.note}</span></div>
+      <span class="pill ${a.state}">${a.state==='hit'?'🟢 HIT':'WAITING'}</span>
+    </div>`).join('');
+}
+
+// ── Receipt scan simulation ────────────────────────────────────────────
+function openSheet(){
+  $('#sheet-overlay').classList.add('show');
+  $('#scanbox').style.display='block';
+  $('#processing').classList.remove('show');
+  $('#parsed').classList.remove('show');
+}
+function closeSheet(){ $('#sheet-overlay').classList.remove('show'); }
+
+function startScan(){
+  $('#scanbox').style.display='none';
+  const p=$('#processing'); p.classList.add('show');
+  const steps=['Reading receipt…','Matching items to your price book…','Normalizing unit prices…'];
+  let s=0; $('#proc-text').textContent=steps[0];
+  const iv=setInterval(()=>{ s++; if(s<steps.length) $('#proc-text').textContent=steps[s]; else clearInterval(iv); },700);
+  setTimeout(()=>{
+    p.classList.remove('show');
+    $('#parsed-rows').innerHTML = SCAN.map(r=>`
+      <div class="parsed-row">
+        <span class="e">${r.emoji}</span>
+        <span class="n">${r.name}<br><span class="sz">${r.size} → ${r.match? fmt(DB.find(i=>i.id===r.match).normal)+' ' + DB.find(i=>i.id===r.match).unitLabel + ' normal':'new item'}</span></span>
+        <span class="p">${fmt(r.price)}</span>
+        <span class="badge ${r.badge}">${r.badge==='upd'?'UPDATE':'NEW'}</span>
+      </div>`).join('');
+    $('#parsed').classList.add('show');
+  }, 2200);
+}
+
+function commitScan(){
+  // apply updates: push new unit price into history
+  SCAN.forEach(r=>{
+    if(!r.match) return;
+    const i = DB.find(x=>x.id===r.match);
+    const refQty = parseFloat(i.sizes) || 1;
+    const unit = +(r.price/refQty).toFixed(2);
+    i.history.push(unit); i.history.shift();
+    i.low = Math.min(i.low, unit);
+    i.normal = +(i.history.slice(-4).reduce((a,b)=>a+b,0)/4).toFixed(2);
+  });
+  trips++; savedYTD += 6.20;
+  renderBook();
+  closeSheet();
+  toast('✅ Price book updated — 4 items from Winn-Dixie');
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────
+let toastT;
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+initChecker(); renderBook(); renderAlerts();
+</script>
+</body>
+</html>
