@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HoldOrGo — Should you update?</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#131826; --panel2:#1a2133; --line:#232c42;
+    --txt:#e8ecf5; --dim:#8b94ab; --go:#2ecc71; --wait:#f5b942; --hold:#ff5c5c;
+    --accent:#5b8cff; --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.5;min-height:100vh}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .logo{font-size:22px;font-weight:800;letter-spacing:-.5px}
+  .logo span{color:var(--accent)}
+  .bell{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;color:var(--txt);cursor:pointer;font-size:14px}
+  .bell.on{border-color:var(--go);color:var(--go)}
+  .bell .dot{position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:var(--go);display:none}
+  .bell.on .dot{display:block}
+
+  .devices{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;scrollbar-width:none}
+  .devices::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--dim);padding:8px 16px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .chip small{display:block;font-weight:400;opacity:.75;font-size:11px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+
+  .verdict-hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+  .ring{position:relative;width:132px;height:132px;flex:0 0 auto}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .score{font-size:32px;font-weight:800}
+  .ring .lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+  .verdict-text{flex:1;min-width:240px}
+  .badge{display:inline-block;font-size:13px;font-weight:800;letter-spacing:1.5px;padding:6px 14px;border-radius:8px;margin-bottom:8px}
+  .badge.GO{background:rgba(46,204,113,.15);color:var(--go)}
+  .badge.WAIT{background:rgba(245,185,66,.15);color:var(--wait)}
+  .badge.HOLD{background:rgba(255,92,92,.15);color:var(--hold)}
+  .verdict-text h2{font-size:18px;margin-bottom:4px}
+  .verdict-text p{color:var(--dim);font-size:14px}
+  .upd-name{font-size:13px;color:var(--dim);margin-bottom:2px}
+  .action-btn{margin-top:12px;display:inline-block;background:var(--accent);color:#fff;border:none;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;cursor:pointer}
+  .action-btn.hold{background:var(--hold)}
+  .action-btn.ghost{background:transparent;border:1px solid var(--line);color:var(--dim);margin-left:8px}
+
+  h3.sec{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:12px}
+
+  .profile-toggle{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+  .tag{background:var(--panel2);border:1px solid var(--line);color:var(--dim);padding:7px 13px;border-radius:999px;font-size:13px;cursor:pointer;user-select:none;transition:.15s}
+  .tag.on{border-color:var(--accent);color:var(--txt);background:rgba(91,140,255,.12)}
+
+  .issue{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--panel2)}
+  .issue.matched{border-color:rgba(255,92,92,.5)}
+  .issue-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+  .issue-title{font-weight:700;font-size:14px}
+  .status{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap}
+  .status.confirmed{background:rgba(255,92,92,.15);color:var(--hold)}
+  .status.investigating{background:rgba(245,185,66,.15);color:var(--wait)}
+  .status.fixed{background:rgba(46,204,113,.15);color:var(--go)}
+  .issue-meta{font-size:12px;color:var(--dim);margin-bottom:8px}
+  .matched-flag{color:var(--hold);font-weight:700}
+  .spark{display:flex;align-items:flex-end;gap:3px;height:34px;margin-bottom:6px}
+  .spark i{flex:1;background:var(--line);border-radius:2px 2px 0 0;min-height:3px}
+  .spark i.hot{background:var(--hold)}
+  .spark i.warm{background:var(--wait)}
+  .spark-row{display:flex;justify-content:space-between;font-size:11px;color:var(--dim)}
+  .sources{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .src{font-size:11px;background:var(--panel);border:1px solid var(--line);color:var(--dim);padding:3px 9px;border-radius:6px}
+
+  .allclear{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .allclear p{font-size:13px;color:var(--dim)}
+  .switch{width:46px;height:26px;background:var(--line);border-radius:999px;position:relative;cursor:pointer;transition:.2s;flex:0 0 auto}
+  .switch.on{background:var(--go)}
+  .switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s}
+  .switch.on::after{left:23px}
+
+  .fleet{text-align:center;border-style:dashed}
+  .fleet p{font-size:13px;color:var(--dim);margin-bottom:10px}
+  .fleet .price{color:var(--txt);font-weight:700}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--panel2);border:1px solid var(--go);color:var(--txt);padding:12px 20px;border-radius:12px;font-size:13px;opacity:0;transition:.3s;max-width:90%;z-index:9}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  footer{text-align:center;color:var(--dim);font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Hold<span>Or</span>Go 🚦</div>
+    <button class="bell" id="bellBtn">🔔 All-clear alerts<span class="dot"></span></button>
+  </header>
+
+  <div class="devices" id="deviceChips"></div>
+
+  <div class="card verdict-hero" id="verdictCard"></div>
+
+  <div class="card">
+    <h3 class="sec">Your risk profile — tap what applies to this device</h3>
+    <div class="profile-toggle" id="profileTags"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="sec">Active issues <span id="issueCount" style="color:var(--txt)"></span></h3>
+    <div id="issueList"></div>
+  </div>
+
+  <div class="card allclear">
+    <div>
+      <h3 class="sec" style="margin-bottom:4px">All-clear notification</h3>
+      <p>Push the moment your blocking issues are patched. Hold once — we watch it for you.</p>
+    </div>
+    <div class="switch on" id="allclearSwitch"></div>
+  </div>
+
+  <div class="card fleet">
+    <h3 class="sec">Fleet mode — for IT admins</h3>
+    <p>All managed devices × pending updates in one matrix, with GPO/MDM deferral recipes and Slack alerts.</p>
+    <button class="action-btn ghost" style="margin:0">Join Teams waitlist · <span class="price">$4/seat</span></button>
+  </div>
+
+  <footer>HoldOrGo — community + official signals, not a warranty. Evidence linked on every verdict.</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DEVICES = [
+  { id:'gaming',  name:'🎮 Gaming Rig',    sub:'Win 11 · RTX 4080 · BT headset' },
+  { id:'work',    name:'💼 Work Laptop',   sub:'Win 11 · RDP · Dell docking audio' },
+  { id:'family',  name:'👨‍👩‍👧 Family PC',   sub:'Win 11 · integrated GPU' },
+];
+
+const ISSUES = [
+  { id:'gpu', title:'GPU driver crashes / black screens (TDR)',
+    status:'confirmed', statusLabel:'CONFIRMED',
+    desc:'NVIDIA & AMD drivers fault after 26H2; black screens and TDR resets reported by gamers.',
+    affects:['discrete-gpu'], affectLabel:'Discrete GPU (NVIDIA/AMD)',
+    sources:['r/pcmasterrace · 1.2k posts','Windows Release Health','TechRadar'],
+    volume:[2,3,3,5,9,14,18], spike:5 },
+  { id:'audio', title:'Audio driver failure — "Device cannot start"',
+    status:'investigating', statusLabel:'INVESTIGATING',
+    desc:'Headphones/mic dead; Sound settings crash when troubleshooting. Microsoft says a future update will patch it.',
+    affects:['bt-audio','dock-audio'], affectLabel:'Bluetooth headset / docking-station audio',
+    sources:['r/WindowsUpdate · 640 posts','WindowsLatest','affects 26H2/25H2/24H2'],
+    volume:[1,2,4,7,11,13,12], spike:4 },
+  { id:'rdp', title:'RDP logon failures & machine isolation resets',
+    status:'confirmed', statusLabel:'CONFIRMED',
+    desc:'September carry-over: RDP sessions drop, machine isolation toggles itself off.',
+    affects:['rdp'], affectLabel:'Remote Desktop / VPN use',
+    sources:['r/sysadmin · 310 posts','Windows Release Health'],
+    volume:[3,4,4,6,8,7,6], spike:3 },
+  { id:'print', title:'Microsoft Print to PDF driver broken',
+    status:'investigating', statusLabel:'INVESTIGATING',
+    desc:'Old print dialog fails; workaround requires Edge 153.',
+    affects:[], affectLabel:'Legacy print dialog users',
+    sources:['r/pcmasterrace · 180 posts'],
+    volume:[1,1,2,3,4,4,3], spike:2 },
+  { id:'explorer', title:'Explorer crashes on file operations',
+    status:'fixed', statusLabel:'FIXED in KB5065',
+    desc:'Was spiking at launch; patched in first cumulative update.',
+    affects:[], affectLabel:'—',
+    sources:['r/techsupport · 90 posts','Windows Release Health'],
+    volume:[6,8,5,2,1,0,0], spike:0 },
+];
+
+const PROFILE = [
+  { id:'discrete-gpu', label:'🎮 Discrete GPU' },
+  { id:'bt-audio',     label:'🎧 Bluetooth audio' },
+  { id:'dock-audio',   label:'🔌 Docking station' },
+  { id:'rdp',          label:'🖥️ RDP / VPN' },
+  { id:'gaming',       label:'🕹️ Daily gaming' },
+];
+
+let state = {
+  device: 'gaming',
+  tags: new Set(['discrete-gpu','bt-audio','gaming']),
+  bell: false,
+  allclear: true,
+};
+
+function matchedIssues(){ return ISSUES.filter(i => i.status!=='fixed' && i.affects.some(a => state.tags.has(a))); }
+
+function verdict(){
+  const m = matchedIssues();
+  const active = ISSUES.filter(i=>i.status!=='fixed').length;
+  if (m.some(i=>i.status==='confirmed')) return { v:'HOLD', color:'var(--hold)', score:22,
+    msg:`${m.length} confirmed issue${m.length>1?'s':''} match your profile. Defer now — we'll ping you when it's safe.` };
+  if (m.length || active >= 2) return { v:'WAIT', color:'var(--wait)', score:52,
+    msg:`Issues exist but none are confirmed against your exact setup. Re-check in ~7 days, or hold if you can.` };
+  return { v:'GO', color:'var(--go)', score:88,
+    msg:`No active issues match this device. Update at your convenience.` };
+}
+
+function ring(color, score){
+  const r=56, c=2*Math.PI*r, off=c*(1-score/100);
+  return `<div class="ring"><svg width="132" height="132"><circle cx="66" cy="66" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/>
+  <circle cx="66" cy="66" r="${r}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .6s"/></svg>
+  <div class="val"><div class="score" style="color:${color}">${score}</div><div class="lbl">safety</div></div></div>`;
+}
+
+function sparkBars(vol, spike){
+  const max=Math.max(...vol,1);
+  return `<div class="spark">${vol.map((v,i)=>{
+    const h=Math.max(3,Math.round(v/max*34));
+    const cls = i>=vol.length-3 && spike>=4 ? 'hot' : (spike>=2?'warm':'');
+    return `<i class="${cls}" style="height:${h}px"></i>`;
+  }).join('')}</div>
+  <div class="spark-row"><span>7-day complaint volume</span><span>${vol[vol.length-1]>0?'↑ spiking':'↓ calming'}</span></div>`;
+}
+
+function render(){
+  const d = DEVICES.find(x=>x.id===state.device);
+  document.getElementById('deviceChips').innerHTML = DEVICES.map(x=>
+    `<button class="chip ${x.id===state.device?'active':''}" data-dev="${x.id}">${x.name}<small>${x.sub}</small></button>`).join('');
+
+  const vd = verdict();
+  document.getElementById('verdictCard').innerHTML = `
+    ${ring(vd.color, vd.score)}
+    <div class="verdict-text">
+      <div class="upd-name">${d.name} · Windows 11 26H2 (released Sep 30)</div>
+      <span class="badge ${vd.v}">${vd.v}</span>
+      <h2>${vd.v==='HOLD'?'Don\'t update yet.':vd.v==='WAIT'?'Hold if you can.':'Safe to update.'}</h2>
+      <p>${vd.msg}</p>
+      ${vd.v==='HOLD'
+        ? `<button class="action-btn hold" data-act="defer">⏸ Defer + show me how (GPO)</button>`
+        : `<button class="action-btn" data-act="check">✓ Mark as checked</button>`}
+      <button class="action-btn ghost" data-act="evidence">Evidence</button>
+    </div>`;
+
+  document.getElementById('profileTags').innerHTML = PROFILE.map(t=>
+    `<span class="tag ${state.tags.has(t.id)?'on':''}" data-tag="${t.id}">${t.label}</span>`).join('');
+
+  document.getElementById('issueCount').textContent = `· ${matchedIssues().length} matching your profile`;
+  document.getElementById('issueList').innerHTML = ISSUES.map(i=>{
+    const isMatch = i.status!=='fixed' && i.affects.some(a=>state.tags.has(a));
+    return `<div class="issue ${isMatch?'matched':''}">
+      <div class="issue-head"><span class="issue-title">${i.title}</span>
+      <span class="status ${i.status}">${i.statusLabel}</span></div>
+      <div class="issue-meta">${i.desc}<br>
+      ${isMatch ? `<span class="matched-flag">⚠ Matches your setup: ${i.affectLabel}</span>` : `Affects: ${i.affectLabel} — <em>not your config</em>`}</div>
+      ${sparkBars(i.volume, i.spike)}
+      <div class="sources">${i.sources.map(s=>`<span class="src">${s}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+document.addEventListener('click', e=>{
+  const dev=e.target.closest('[data-dev]'); if(dev){ state.device=dev.dataset.dev; render(); return; }
+  const tag=e.target.closest('[data-tag]'); if(tag){ const id=tag.dataset.tag; state.tags.has(id)?state.tags.delete(id):state.tags.add(id); render(); return; }
+  const act=e.target.closest('[data-act]');
+  if(act){
+    if(act.dataset.act==='defer') toast('⏸ Deferred. Settings → Windows Update → Pause. We\'ll notify you on the all-clear.');
+    if(act.dataset.act==='check') toast('✓ Logged. Verdict refreshed weekly for this device.');
+    if(act.dataset.act==='evidence') toast('🔗 Opening linked threads: r/WindowsUpdate, Release Health, WindowsLatest…');
+    return;
+  }
+  if(e.target.closest('#bellBtn')){
+    state.bell=!state.bell;
+    document.getElementById('bellBtn').classList.toggle('on',state.bell);
+    toast(state.bell?'🔔 Push enabled — "26H2 audio fix shipped → GO for your Gaming Rig"':'🔕 Push disabled');
+    return;
+  }
+  if(e.target.closest('#allclearSwitch')){
+    state.allclear=!state.allclear;
+    document.getElementById('allclearSwitch').classList.toggle('on',state.allclear);
+  }
+});
+
+render();
+</script>
+</body>
+</html>
