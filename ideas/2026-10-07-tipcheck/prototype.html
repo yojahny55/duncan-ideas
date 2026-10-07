@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TipCheck 💸 — Know before you tap</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --card: #1a2233;
+    --card2: #212b42;
+    --ink: #e8edf7;
+    --muted: #94a3b8;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --accent: #60a5fa;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink);
+    max-width: 480px; margin: 0 auto; min-height: 100vh;
+    padding-bottom: 90px;
+  }
+  header {
+    padding: 20px 16px 12px;
+    background: linear-gradient(135deg, #1e2a45, #16203a);
+    border-bottom: 1px solid #2a3550;
+    position: sticky; top: 0; z-index: 10;
+  }
+  header h1 { font-size: 22px; letter-spacing: -0.5px; }
+  header p { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .tabs {
+    display: flex; position: fixed; bottom: 0; left: 50%;
+    transform: translateX(-50%); width: 100%; max-width: 480px;
+    background: #141b2c; border-top: 1px solid #2a3550; z-index: 20;
+  }
+  .tab {
+    flex: 1; padding: 12px 4px; text-align: center; cursor: pointer;
+    color: var(--muted); font-size: 11px; user-select: none;
+  }
+  .tab .ico { font-size: 20px; display: block; margin-bottom: 2px; }
+  .tab.active { color: var(--accent); }
+  .view { display: none; padding: 16px; }
+  .view.active { display: block; }
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 12px; border: 1px solid #263149;
+  }
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .chip {
+    background: var(--card2); border: 1px solid #303d5c; border-radius: 999px;
+    padding: 8px 14px; font-size: 13px; cursor: pointer; color: var(--ink);
+    transition: all .15s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.selected { background: var(--accent); color: #0b1220; border-color: var(--accent); font-weight: 600; }
+  .verdict { text-align: center; padding: 22px 16px; }
+  .verdict .badge {
+    display: inline-block; font-size: 18px; font-weight: 700;
+    padding: 10px 22px; border-radius: 999px; margin-bottom: 10px;
+  }
+  .badge.green { background: rgba(52,211,153,.15); color: var(--green); border: 1px solid var(--green); }
+  .badge.yellow { background: rgba(251,191,36,.12); color: var(--yellow); border: 1px solid var(--yellow); }
+  .badge.red { background: rgba(248,113,113,.12); color: var(--red); border: 1px solid var(--red); }
+  .verdict .why { color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 340px; margin: 0 auto; }
+  .verdict .range { font-size: 14px; margin-top: 10px; color: var(--ink); }
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  input[type=number], select {
+    width: 100%; background: #0e1524; border: 1px solid #303d5c;
+    color: var(--ink); border-radius: 10px; padding: 12px; font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .pct-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .pct-btn {
+    flex: 1; padding: 12px 0; text-align: center; border-radius: 10px;
+    background: var(--card2); border: 1px solid #303d5c; cursor: pointer;
+    font-size: 15px; font-weight: 600;
+  }
+  .pct-btn.selected { background: var(--green); color: #0b1220; border-color: var(--green); }
+  .calc-out { font-size: 15px; line-height: 1.9; }
+  .calc-out .big { font-size: 26px; font-weight: 700; color: var(--green); }
+  .warn-box {
+    background: rgba(248,113,113,.1); border: 1px solid var(--red);
+    border-radius: 10px; padding: 12px; font-size: 13px; color: #fecaca;
+    margin-bottom: 12px; display: none; line-height: 1.5;
+  }
+  .warn-box.show { display: block; }
+  .merchant {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 13px 0; border-bottom: 1px solid #263149;
+  }
+  .merchant:last-child { border-bottom: none; }
+  .merchant .name { font-size: 14px; font-weight: 600; }
+  .merchant .meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .score { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+  .score.aggr { background: rgba(248,113,113,.15); color: var(--red); }
+  .score.norm { background: rgba(251,191,36,.12); color: var(--yellow); }
+  .score.fair { background: rgba(52,211,153,.15); color: var(--green); }
+  .pre-added-tag { color: var(--red); font-weight: 700; }
+  .budget-bar {
+    height: 14px; background: #0e1524; border-radius: 999px; overflow: hidden;
+    margin: 10px 0 6px; border: 1px solid #303d5c;
+  }
+  .budget-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--yellow)); border-radius: 999px; transition: width .4s; }
+  .budget-fill.over { background: var(--red); }
+  .row-between { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+  .log-item { display: flex; justify-content: space-between; font-size: 13px; padding: 9px 0; border-bottom: 1px solid #263149; }
+  .log-item:last-child { border-bottom: none; }
+  .log-item .amt { font-weight: 700; color: var(--green); }
+  .btn {
+    width: 100%; background: var(--accent); color: #0b1220; border: none;
+    border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 700;
+    cursor: pointer; margin-top: 4px;
+  }
+  .btn.ghost { background: transparent; color: var(--muted); border: 1px solid #303d5c; font-weight: 500; }
+  h3 { font-size: 15px; margin-bottom: 10px; }
+  .small { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .footer-note { text-align: center; color: var(--muted); font-size: 11px; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💸 TipCheck</h1>
+  <p>Know before you tap — verdicts, intel, budget.</p>
+</header>
+
+<!-- ============ VERDICT ============ -->
+<section id="view-verdict" class="view active">
+  <div class="card">
+    <h3>Where are you tipping?</h3>
+    <div class="chip-grid" id="scenario-chips"></div>
+    <div id="verdict-out" style="display:none">
+      <div class="verdict card" style="background:var(--card2); margin-bottom:0">
+        <div class="badge" id="v-badge"></div>
+        <div class="range" id="v-range"></div>
+        <p class="why" id="v-why"></p>
+      </div>
+    </div>
+  </div>
+  <p class="small">Verdicts are crowd-informed etiquette consensus, not law. When in doubt: tipping for personal service is never wrong — it's the manufactured guilt screens we call out.</p>
+</section>
+
+<!-- ============ CALCULATOR ============ -->
+<section id="view-calc" class="view">
+  <div class="card">
+    <h3>Smart tip calculator</h3>
+    <label>Bill amount ($)</label>
+    <input type="number" id="bill" placeholder="42.50" min="0" step="0.01">
+    <label>⚠️ Was gratuity pre-added? (check receipt!)</label>
+    <select id="preadded">
+      <option value="0">No / not sure</option>
+      <option value="15">Yes — 15% auto-gratuity</option>
+      <option value="18">Yes — 18% auto-gratuity</option>
+      <option value="20">Yes — 20% auto-gratuity</option>
+      <option value="-1">Yes — amount unknown (enter $ below)</option>
+    </select>
+    <input type="number" id="preadded-amt" placeholder="Pre-added gratuity $ (if known)" style="display:none">
+    <label>Tip percentage</label>
+    <div class="pct-row" id="pct-row">
+      <div class="pct-btn" data-pct="0">0%</div>
+      <div class="pct-btn" data-pct="15">15%</div>
+      <div class="pct-btn selected" data-pct="18">18%</div>
+      <div class="pct-btn" data-pct="20">20%</div>
+      <div class="pct-btn" data-pct="25">25%</div>
+    </div>
+    <div class="warn-box" id="calc-warn"></div>
+    <div class="calc-out card" style="background:var(--card2); margin-bottom:0">
+      <div class="row-between"><span>Bill</span><span id="out-bill">$0.00</span></div>
+      <div class="row-between"><span>Pre-added gratuity</span><span id="out-pre">$0.00</span></div>
+      <div class="row-between"><span>Extra tip</span><span id="out-tip">$0.00</span></div>
+      <div class="row-between" style="margin-top:8px"><span>Total</span><span class="big" id="out-total">$0.00</span></div>
+    </div>
+    <button class="btn" style="margin-top:12px" onclick="logTip()">Log this tip to my budget →</button>
+  </div>
+</section>
+
+<!-- ============ MERCHANT INTEL ============ -->
+<section id="view-intel" class="view">
+  <div class="card">
+    <h3>🕵️ Merchant intel <span class="small">(user-reported)</span></h3>
+    <div id="merchant-list"></div>
+  </div>
+  <div class="card">
+    <h3>Report a tip screen</h3>
+    <label>Merchant</label>
+    <input type="text" id="rep-name" placeholder="e.g. Corner Café" style="width:100%;background:#0e1524;border:1px solid #303d5c;color:var(--ink);border-radius:10px;padding:12px;font-size:16px;margin-bottom:12px">
+    <label>What % does the screen prompt?</label>
+    <select id="rep-pct">
+      <option>15 / 20 / 25</option>
+      <option>18 / 22 / 27</option>
+      <option>20 / 25 / 30</option>
+      <option>Custom only</option>
+      <option>No tip screen</option>
+    </select>
+    <label>Gratuity pre-added to bill?</label>
+    <select id="rep-pre">
+      <option>No</option>
+      <option>Yes — disclosed on receipt</option>
+      <option>Yes — NOT disclosed / hidden</option>
+      <option>Unsure</option>
+    </select>
+    <button class="btn" onclick="submitReport()">Submit report</button>
+    <p class="small" style="margin-top:8px">Reports are structured facts, not free-text reviews — keeps intel useful and legally clean.</p>
+  </div>
+</section>
+
+<!-- ============ BUDGET ============ -->
+<section id="view-budget" class="view">
+  <div class="card">
+    <h3>🎯 Monthly tip budget</h3>
+    <label>Budget ($ / month)</label>
+    <input type="number" id="budget-input" placeholder="80" min="0">
+    <div class="budget-bar"><div class="budget-fill" id="budget-fill" style="width:0%"></div></div>
+    <div class="row-between"><span id="budget-spent">$0 spent</span><span id="budget-left">$0 left</span></div>
+  </div>
+  <div class="card">
+    <h3>Recent tips</h3>
+    <div id="tip-log"><p class="small">No tips logged yet. Use the calculator and tap "Log this tip".</p></div>
+    <button class="btn ghost" style="margin-top:10px" onclick="clearLog()">Clear log</button>
+  </div>
+  <p class="small">TipCheck turns a diffuse guilt tax into a number you control. Pro version adds yearly "where your tips went" breakdown + pre-added-gratuity watchlists.</p>
+</section>
+
+<nav class="tabs">
+  <div class="tab active" data-view="verdict"><span class="ico">⚖️</span>Verdict</div>
+  <div class="tab" data-view="calc"><span class="ico">🧮</span>Calculator</div>
+  <div class="tab" data-view="intel"><span class="ico">🕵️</span>Intel</div>
+  <div class="tab" data-view="budget"><span class="ico">🎯</span>Budget</div>
+</nav>
+
+<p class="footer-note">Prototype — data stays in your browser (localStorage). Not financial advice.</p>
+
+<script>
+// ---------- Scenario verdict engine ----------
+const SCENARIOS = [
+  { id:'coffee', label:'☕ Coffee counter', verdict:'yellow', title:'Optional', range:'$1 or round up', why:'Counter service with no table service: tipping is optional. The screen defaults are merchant-configured, not etiquette. $1 for a complicated order is generous; $0 for a black coffee is fine.' },
+  { id:'selfcheckout', label:'🛒 Self-checkout', verdict:'red', title:'No tip needed', range:'$0', why:'You did the labor. A tip screen at self-checkout is a pure guilt prompt — skip it without hesitation.' },
+  { id:'sitdown', label:'🍽️ Sit-down restaurant', verdict:'green', title:'Tip expected', range:'18–22% of pre-tax total', why:'Servers in the US typically earn a sub-minimum wage and depend on tips. Check the receipt first: parties of 6+ often have 18% auto-gratuity already added — don\u2019t double-tip.' },
+  { id:'takeout', label:'🥡 Takeout / pickup', verdict:'yellow', title:'Optional', range:'$1–3 or 10%', why:'Someone packed your order correctly — a small tip is a nice gesture, not an obligation. Big or complex orders lean higher.' },
+  { id:'delivery', label:'🛵 Delivery', verdict:'green', title:'Tip expected', range:'15–20%, min $3–5', why:'Drivers pay their own gas, insurance, and wear. Tip on the app at order time — it\u2019s shown to the driver and affects how fast your food moves. Bad weather: tip more.' },
+  { id:'bar', label:'🍸 Bar', verdict:'green', title:'Tip expected', range:'$1–2 per drink, 18–20% of tab', why:'Bartenders are tipped-wage workers. Cash per drink gets you remembered; card tab follows restaurant norms.' },
+  { id:'salon', label:'💇 Salon / barber', verdict:'green', title:'Tip expected', range:'15–20%', why:'Personal service where tips are a major part of income. If the owner does your hair, tipping the owner is optional but appreciated.' },
+  { id:'rideshare', label:'🚗 Rideshare / taxi', verdict:'green', title:'Tip expected', range:'15–20%', why:'Drivers are contractors covering all vehicle costs. The in-app tip goes directly to them.' },
+  { id:'hotel', label:'🏨 Hotel staff', verdict:'yellow', title:'Situational', range:'$2–5 per bag / $2–5 per night housekeeping', why:'Bellhop per bag, housekeeping per night (left daily, they rotate), valet on retrieval. No tip needed at the front desk.' },
+  { id:'retail', label:'👕 Retail store', verdict:'red', title:'No tip needed', range:'$0', why:'Ring-feeding the terminal? Retail counter tip screens are a 2020s invention with zero etiquette basis. Decline guilt-free.' },
+  { id:'bakery', label:'🧁 Bakery / ice cream', verdict:'yellow', title:'Optional', range:'Round up or $1', why:'Counter service — optional. Round up for a custom cake order; skip it for a single scoop.' },
+  { id:'foodtruck', label:'🚚 Food truck', verdict:'yellow', title:'Optional', range:'10–15%', why:'Owner-operators often keep what they make. A 10–15% tip on a big order is generous; not mandatory.' },
+];
+
+const chipGrid = document.getElementById('scenario-chips');
+SCENARIOS.forEach(s => {
+  const c = document.createElement('div');
+  c.className = 'chip'; c.textContent = s.label; c.dataset.id = s.id;
+  c.onclick = () => showVerdict(s, c);
+  chipGrid.appendChild(c);
+});
+
+function showVerdict(s, chip) {
+  document.querySelectorAll('.chip').forEach(x => x.classList.remove('selected'));
+  chip.classList.add('selected');
+  const out = document.getElementById('verdict-out');
+  const badge = document.getElementById('v-badge');
+  badge.textContent = s.title;
+  badge.className = 'badge ' + s.verdict;
+  document.getElementById('v-range').textContent = '📏 Typical: ' + s.range;
+  document.getElementById('v-why').textContent = s.why;
+  out.style.display = 'block';
+}
+
+// ---------- Calculator ----------
+let selectedPct = 18;
+document.querySelectorAll('.pct-btn').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('.pct-btn').forEach(x => x.classList.remove('selected'));
+    b.classList.add('selected');
+    selectedPct = parseFloat(b.dataset.pct);
+    recalc();
+  };
+});
+const preSel = document.getElementById('preadded');
+const preAmt = document.getElementById('preadded-amt');
+preSel.onchange = () => {
+  preAmt.style.display = preSel.value === '-1' ? 'block' : 'none';
+  recalc();
+};
+['bill','preadded-amt'].forEach(id => document.getElementById(id).addEventListener('input', recalc));
+
+function recalc() {
+  const bill = parseFloat(document.getElementById('bill').value) || 0;
+  const pv = preSel.value;
+  let pre = 0;
+  if (pv === '-1') pre = parseFloat(preAmt.value) || 0;
+  else if (pv !== '0') pre = bill * (parseFloat(pv) / 100);
+
+  let desired = bill * (selectedPct / 100);
+  let extra = Math.max(0, desired - pre);
+
+  const warn = document.getElementById('calc-warn');
+  if (pre > 0 && desired > 0) {
+    warn.innerHTML = '⚠️ <b>Gratuity already pre-added ($' + pre.toFixed(2) + ').</b> Your chosen ' + selectedPct + '% is already covered' + (extra < 0.005 ? ' — extra tip is $0. Don\u2019t let the screen guilt you into double-tipping.' : ' — only $' + extra.toFixed(2) + ' more to reach it.') + ' If you want to tip MORE than ' + selectedPct + '%, add the difference in cash so it goes straight to the staff.';
+    warn.classList.add('show');
+  } else if (pre > 0) {
+    warn.innerHTML = '✅ Gratuity pre-added ($' + pre.toFixed(2) + ') and you chose 0% extra — total is correct. Decline the screen prompt guilt-free.';
+    warn.classList.add('show');
+  } else {
+    warn.classList.remove('show');
+  }
+
+  document.getElementById('out-bill').textContent = '$' + bill.toFixed(2);
+  document.getElementById('out-pre').textContent = '$' + pre.toFixed(2);
+  document.getElementById('out-tip').textContent = '$' + extra.toFixed(2);
+  document.getElementById('out-total').textContent = '$' + (bill + pre + extra).toFixed(2);
+  return extra;
+}
+
+// ---------- Merchant intel (seeded) ----------
+const SEED_MERCHANTS = [
+  { name:'Subway (some locations)', pct:'20 / 25 / 30', pre:'hidden', score:'aggr', scoreLabel:'🔴 Aggressive', meta:'Auto-grat reports on app orders in multiple states — check receipt before tapping the screen.' },
+  { name:'Chili\u2019s', pct:'18 / 20 / 22', pre:'disclosed', score:'aggr', scoreLabel:'🔴 Aggressive', meta:'Recent user reports: tip prompt appears AFTER a service-related charge on some checks. Read the line items.' },
+  { name:'Starbucks', pct:'$0.50 / $1 / $2', pre:'no', score:'norm', scoreLabel:'🟡 Normal', meta:'Flat-dollar prompts at counter pickup. Etiquette consensus: optional.' },
+  { name:'Local sit-down (party 6+)', pct:'—', pre:'disclosed', score:'fair', scoreLabel:'🟢 Fair', meta:'18% auto-gratuity disclosed clearly on the bill. Tip screen asks for MORE on top — $0 extra is correct.' },
+  { name:'Self-checkout (big-box grocery)', pct:'15 / 20 / 25', pre:'no', score:'aggr', scoreLabel:'🔴 Aggressive', meta:'Tip prompt at a machine you operated yourself. Decline freely.' },
+];
+let userReports = JSON.parse(localStorage.getItem('tc_reports') || '[]');
+
+function renderIntel() {
+  const list = document.getElementById('merchant-list');
+  list.innerHTML = '';
+  userReports.forEach(r => list.appendChild(merchantRow(r)));
+  SEED_MERCHANTS.forEach(m => list.appendChild(merchantRow(m)));
+}
+function merchantRow(m) {
+  const d = document.createElement('div');
+  d.className = 'merchant';
+  const preTag = m.pre === 'hidden' ? ' <span class="pre-added-tag">· PRE-ADDED (hidden!)</span>'
+    : m.pre === 'disclosed' ? ' · gratuity disclosed' : '';
+  d.innerHTML = '<div><div class="name">' + m.name + '</div><div class="meta">Prompts: ' + m.pct + preTag + '<br>' + (m.meta||'') + '</div></div><span class="score ' + m.score + '">' + m.scoreLabel + '</span>';
+  return d;
+}
+function submitReport() {
+  const name = document.getElementById('rep-name').value.trim();
+  if (!name) { alert('Enter a merchant name'); return; }
+  const pre = document.getElementById('rep-pre').value;
+  userReports.unshift({
+    name: name + ' (your report)',
+    pct: document.getElementById('rep-pct').value,
+    pre: pre.startsWith('Yes — NOT') ? 'hidden' : pre.startsWith('Yes') ? 'disclosed' : 'no',
+    score: pre.startsWith('Yes — NOT') ? 'aggr' : 'norm',
+    scoreLabel: pre.startsWith('Yes — NOT') ? '🔴 Aggressive' : '🟡 Normal',
+    meta: 'You reported this tip screen. Thanks — every report keeps intel honest.'
+  });
+  localStorage.setItem('tc_reports', JSON.stringify(userReports));
+  renderIntel();
+  document.getElementById('rep-name').value = '';
+  alert('Report submitted ✅ (stored locally in this prototype)');
+}
+
+// ---------- Budget ----------
+let tips = JSON.parse(localStorage.getItem('tc_tips') || '[]');
+const budgetInput = document.getElementById('budget-input');
+budgetInput.value = localStorage.getItem('tc_budget') || '';
+budgetInput.addEventListener('input', () => {
+  localStorage.setItem('tc_budget', budgetInput.value);
+  renderBudget();
+});
+
+function logTip() {
+  const amt = parseFloat(document.getElementById('out-tip').textContent.replace('$','')) +
+              parseFloat(document.getElementById('out-pre').textContent.replace('$',''));
+  if (!amt || amt <= 0) { alert('Nothing to log — calculate a tip first.'); return; }
+  tips.unshift({ amt: Math.round(amt*100)/100, ts: Date.now() });
+  localStorage.setItem('tc_tips', JSON.stringify(tips));
+  renderBudget();
+  switchView('budget');
+}
+function clearLog() {
+  if (confirm('Clear all logged tips?')) { tips = []; localStorage.removeItem('tc_tips'); renderBudget(); }
+}
+function renderBudget() {
+  const budget = parseFloat(budgetInput.value) || 0;
+  const spent = tips.reduce((s,t) => s + t.amt, 0);
+  const pct = budget > 0 ? Math.min(100, (spent / budget) * 100) : 0;
+  const fill = document.getElementById('budget-fill');
+  fill.style.width = pct + '%';
+  fill.classList.toggle('over', budget > 0 && spent > budget);
+  document.getElementById('budget-spent').textContent = '$' + spent.toFixed(2) + ' spent';
+  document.getElementById('budget-left').textContent = budget > 0
+    ? (spent > budget ? '$' + (spent-budget).toFixed(2) + ' OVER' : '$' + (budget-spent).toFixed(2) + ' left')
+    : 'set a budget ↑';
+  const log = document.getElementById('tip-log');
+  log.innerHTML = tips.length
+    ? tips.slice(0,10).map(t => '<div class="log-item"><span>' + new Date(t.ts).toLocaleString() + '</span><span class="amt">+$' + t.amt.toFixed(2) + '</span></div>').join('')
+    : '<p class="small">No tips logged yet. Use the calculator and tap "Log this tip".</p>';
+}
+
+// ---------- Tabs ----------
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelector('.tab[data-view="' + v + '"]').classList.add('active');
+}
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => switchView(t.dataset.view));
+
+renderIntel();
+renderBudget();
+recalc();
+</script>
+</body>
+</html>
