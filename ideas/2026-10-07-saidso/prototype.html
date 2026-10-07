@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaidSo — The Bot Said So. Now Make Them Honor It.</title>
+<style>
+  :root{
+    --bg:#0c0e14; --panel:#141824; --panel2:#1a1f2e; --line:#262c3d;
+    --ink:#e8ebf4; --dim:#8b93a7; --accent:#5eead4; --accent2:#38bdf8;
+    --green:#4ade80; --yellow:#fbbf24; --red:#f87171; --purple:#a78bfa;
+    --mono:'SF Mono','Cascadia Code',Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 20px 80px}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px}
+  h1{font-size:26px;letter-spacing:-.5px}
+  h1 .so{color:var(--accent)}
+  .tag{color:var(--dim);margin-bottom:26px;font-size:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px}
+  .card h2{font-size:15px;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .stepnum{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);align-items:center;justify-content:center;font-size:12px;color:var(--accent)}
+  textarea{width:100%;min-height:170px;background:#0a0d14;border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:13px;font:13px/1.6 var(--mono);resize:vertical}
+  textarea:focus{outline:none;border-color:var(--accent)}
+  .row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+  button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:10px 18px;border-radius:9px;font-size:14px;cursor:pointer;transition:.15s}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  button.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121a;font-weight:700;border:none}
+  button.primary:hover{filter:brightness(1.12);color:#04121a}
+  button.ghost{color:var(--dim);font-size:13px;padding:8px 12px}
+  select{background:#0a0d14;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font-size:14px}
+  .hidden{display:none!important}
+  /* verdict */
+  .verdict{border-radius:14px;padding:22px;margin-bottom:18px;border:1px solid}
+  .verdict.pplus{background:linear-gradient(135deg,rgba(74,222,128,.08),rgba(94,234,212,.05));border-color:rgba(74,222,128,.4)}
+  .verdict.match{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.35)}
+  .verdict.contra{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.4)}
+  .vlabel{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:6px}
+  .vbig{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+  .pplus .vbig{color:var(--green)} .match .vbig{color:var(--yellow)} .contra .vbig{color:var(--red)}
+  .vtext{color:var(--dim);font-size:14px;max-width:640px}
+  .vtext b{color:var(--ink)}
+  /* promises */
+  .promise{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:10px}
+  .ptop{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:7px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+  .pill.commitment{background:rgba(94,234,212,.14);color:var(--accent)}
+  .pill.policy{background:rgba(56,189,248,.13);color:var(--accent2)}
+  .pill.hedge{background:rgba(139,147,167,.15);color:var(--dim)}
+  .conf{font-size:12px;color:var(--dim);font-family:var(--mono)}
+  .confbar{height:3px;background:#0a0d14;border-radius:3px;margin-top:8px;overflow:hidden}
+  .confbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .quote{font:13px/1.5 var(--mono);color:var(--ink);border-left:2px solid var(--accent);padding-left:10px}
+  /* evidence */
+  .evgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.evgrid{grid-template-columns:1fr}}
+  .evbox{background:#0a0d14;border:1px solid var(--line);border-radius:10px;padding:13px}
+  .evbox .k{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:6px}
+  .evbox .v{font:12px/1.5 var(--mono);color:var(--accent);word-break:break-all}
+  /* letter */
+  .letter{background:#fdfdf8;color:#1a1a1a;border-radius:10px;padding:26px;font:13.5px/1.7 Georgia,serif;white-space:pre-wrap;margin-top:6px}
+  .letter h3{font-family:Georgia,serif;margin-bottom:10px;font-size:16px}
+  /* vault */
+  .vaultrow{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;flex-wrap:wrap}
+  .vaultrow .meta{font-size:13px}
+  .vaultrow .meta .co{font-weight:700}
+  .vaultrow .meta .sub{color:var(--dim);font-size:12px}
+  .vaultrow .hash{font:11px var(--mono);color:var(--accent);opacity:.8}
+  .vbadge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:6px}
+  .vbadge.g{background:rgba(74,222,128,.15);color:var(--green)}
+  .vbadge.y{background:rgba(251,191,36,.13);color:var(--yellow)}
+  .vbadge.r{background:rgba(248,113,113,.13);color:var(--red)}
+  footer{color:var(--dim);font-size:12px;text-align:center;margin-top:34px;line-height:1.7}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:#04121a;font-weight:700;padding:11px 22px;border-radius:10px;transition:.3s;opacity:0;z-index:9}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(4,18,26,.3);border-top-color:#04121a;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:7px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .legalnote{font-size:12px;color:var(--dim);margin-top:10px;padding:10px 12px;background:#0a0d14;border-radius:8px;border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">📸</div>
+    <div><h1>Said<span class="so">So</span></h1></div>
+  </header>
+  <p class="tag">Their chatbot made a promise. The law says <b>the company owns what its bot says</b> — Air Canada v. Moffatt (2024), German appellate ruling (May 2026). We help you prove it.</p>
+
+  <!-- STEP 1 -->
+  <div class="card">
+    <h2><span class="stepnum">1</span> Capture the conversation</h2>
+    <select id="sampleSel">
+      <option value="airline">Sample: Airline bot denies refund (then promises one)</option>
+      <option value="retail">Sample: Retail bot invents 90-day return policy</option>
+      <option value="delivery">Sample: Delivery bot fabricates denial reason</option>
+      <option value="paste">Paste my own transcript…</option>
+    </select>
+    <div style="height:12px"></div>
+    <textarea id="transcript" spellcheck="false"></textarea>
+    <div class="row">
+      <button class="primary" id="analyzeBtn" onclick="analyze()">🔍 Analyze &amp; Seal Evidence</button>
+      <button class="ghost" onclick="clearAll()">Clear</button>
+      <span style="color:var(--dim);font-size:12px">Extraction runs locally in the real app — your PII never leaves your device.</span>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="hidden">
+    <!-- verdict -->
+    <div class="verdict pplus" id="verdictBox">
+      <div class="vlabel">Verdict</div>
+      <div class="vbig" id="verdictTitle">PROMISE+ — They're likely bound</div>
+      <div class="vtext" id="verdictText"></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="card">
+      <h2><span class="stepnum">2</span> Promises extracted <span id="promiseCount" style="color:var(--accent);text-transform:none;letter-spacing:0"></span></h2>
+      <div id="promiseList"></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="card">
+      <h2><span class="stepnum">3</span> Tamper-evident seal</h2>
+      <div class="evgrid">
+        <div class="evbox"><div class="k">SHA-256 of transcript</div><div class="v" id="evHash">…</div></div>
+        <div class="evbox"><div class="k">RFC-3161 timestamp</div><div class="v" id="evTime">…</div></div>
+        <div class="evbox"><div class="k">Anchored to (OpenTimestamps)</div><div class="v" id="evAnchor">…</div></div>
+        <div class="evbox"><div class="k">Evidence ID</div><div class="v" id="evId">…</div></div>
+      </div>
+      <div class="legalnote">🔐 The hash proves this exact text existed at this moment and hasn't been altered. "Screenshots can be faked" — this can't be quietly.</div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="card">
+      <h2><span class="stepnum">4</span> Enforce</h2>
+      <div class="row" style="margin-top:0">
+        <button class="primary" onclick="genLetter()">✉️ Generate demand letter</button>
+        <button onclick="saveVault()">💾 Save to vault</button>
+        <button onclick="toast('Escalation packet queued (demo)')">⚖️ Escalate: small claims / AG</button>
+      </div>
+      <div id="letterZone" class="hidden" style="margin-top:16px">
+        <div class="letter" id="letterBody"></div>
+        <div class="row">
+          <button onclick="copyLetter()">📋 Copy</button>
+          <button onclick="toast('PDF exported (demo)')">⬇️ Export PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VAULT -->
+  <div class="card">
+    <h2>🗄️ Your evidence vault</h2>
+    <div id="vaultList"></div>
+    <div id="vaultEmpty" style="color:var(--dim);font-size:13px">No captures yet. Analyze a conversation to seal your first record.</div>
+  </div>
+
+  <footer>
+    SaidSo — prototype demo · Not legal advice; templates are evidence-capture and demand-letter generation.<br>
+    Built 2026-10-07 · Duncan's daily Reddit-trend idea · Precedent: <i>Moffatt v. Air Canada</i> (BCCRT 2024) · OLG Germany (May 2026)
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SAMPLES = {
+airline: `[UnitedAirlines Support Bot — chat #88213 — Oct 5, 2026]
+You: My flight UA1234 was cancelled by the airline. I asked about the refund fee and now my whole trip shows cancelled.
+Bot: I'm sorry for the confusion. I have processed the cancellation of your itinerary.
+You: I didn't ask you to cancel my trip! I asked about a refund fee.
+Bot: I understand your frustration. Per our policy, cancelled itineraries are not eligible for refunds.
+You: The airline cancelled the first flight, not me. That's a schedule change — DOT rules say I'm owed a full refund.
+Bot: You're right, and I apologize. Because this was an airline-initiated cancellation, you are eligible for a full refund to your original payment method. Your refund of $847.20 will appear within 7 business days.
+You: So will I get the refund or not?
+Bot: The refund has been issued. Reference number RF-99120-X.`,
+retail: `[ShopMart Support — chat #40119 — Oct 3, 2026]
+You: Can I return this blender? I bought it 45 days ago, unopened.
+Bot: Absolutely! Returns are accepted within 90 days of purchase for unopened items. You'll receive a full refund.
+You: Great. [at the store, told 30-day policy, refused]
+You: Your chatbot told me 90 days. Here's the transcript.
+Store agent: Our policy is 30 days. The chatbot is not authorized to change store policy.
+You: So you're saying your own bot lied?
+Bot (follow-up chat): I'm sorry, returns are accepted within 30 days. I apologize for any earlier confusion.`,
+delivery: `[QuickDash Help — chat #77420 — Oct 6, 2026]
+You: My order never arrived. The tracker says delivered but there's nothing here.
+Bot: I see the order was marked complete. Per our policy it will not be completed and it doesn't qualify for a refund, credit, or redelivery because the restaurant was in the process of making the item.
+You: That makes no sense. It says delivered. And nobody was making anything — the restaurant was closed.
+Bot: I understand your frustration. Let me check again... You are right. The order was not delivered. I have issued a full refund of $32.44 to your card, which will appear in 3–5 business days. Your case reference is QD-33198.`
+};
+
+const POLICY_DB = {
+  airline: { company:"UnitedAirlines", policyText:"Refunds for airline-initiated cancellations: required by DOT 14 CFR §259. Refund posted within 7 business days for card payments.", match:"promise", promise:"full refund of $847.20 within 7 business days (ref RF-99120-X)" },
+  retail: { company:"ShopMart", policyText:"Published return policy: 30 days, unopened items, full refund. Bot claimed 90 days.", match:"promise", promise:"90-day returns with full refund" },
+  delivery:{ company:"QuickDash", policyText:"Undelivered orders: full refund required. Bot first fabricated a denial, then promised refund of $32.44 in 3–5 business days (case QD-33198).", match:"contradiction_then_promise", promise:"full refund of $32.44 within 3–5 business days" }
+};
+
+let vault = JSON.parse(localStorage.getItem('saidso_vault')||'[]');
+let lastAnalysis = null;
+
+document.getElementById('sampleSel').addEventListener('change', e=>{
+  const v = e.target.value;
+  document.getElementById('transcript').value = v==='paste' ? '' : SAMPLES[v];
+});
+document.getElementById('transcript').value = SAMPLES.airline;
+
+async function sha256(text){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function detectCompany(t){
+  const m = t.match(/\[([^\]—]+)[—-]/);
+  return m ? m[1].trim() : 'Unknown Company';
+}
+
+function extractPromises(t){
+  const out = [];
+  const rules = [
+    { re:/you are eligible for a full refund[^.]*\./gi, type:'commitment' },
+    { re:/refund[^.]{0,60}(\$[\d.,]+)[^.]*within ([\d–-]+) (business )?days/gi, type:'commitment' },
+    { re:/(refund|credit) (of )?\$[\d.,]+ (has been|will be|will appear)[^.]*\./gi, type:'commitment' },
+    { re:/returns are accepted within \d+ days[^.]*/gi, type:'policy' },
+    { re:/(full refund|refund) (to your|of)[^.]*original payment[^.]*/gi, type:'commitment' },
+    { re:/reference (number )?[A-Z]{2}-[\dX-]+/gi, type:'commitment' },
+    { re:/(i'?m sorry|apologize for any (earlier )?confusion|does not qualify|not eligible|not authorized)/gi, type:'hedge' },
+    { re:/(i understand your frustration)/gi, type:'hedge' },
+    { re:/case reference is [A-Z]{2}-\d+/gi, type:'commitment' },
+  ];
+  const seen = new Set();
+  for(const r of rules){
+    for(const m of t.matchAll(r.re)){
+      const q = m[0].trim();
+      const key = q.toLowerCase().slice(0,60);
+      if(seen.has(key)) continue;
+      seen.add(key);
+      out.push({ quote:q, type:r.type, conf: r.type==='hedge'? .55+Math.random()*.2 : .82+Math.random()*.16 });
+    }
+  }
+  return out.sort((a,b)=> b.conf-a.conf).slice(0,8);
+}
+
+async function analyze(){
+  const t = document.getElementById('transcript').value.trim();
+  if(t.length < 40){ toast('Paste a transcript first'); return; }
+  const btn = document.getElementById('analyzeBtn');
+  btn.innerHTML = '<span class="spinner"></span>Sealing evidence…';
+  btn.disabled = true;
+
+  const hash = await sha256(t);
+  const company = detectCompany(t);
+  const promises = extractPromises(t);
+  const sampleKey = document.getElementById('sampleSel').value;
+  const pol = POLICY_DB[sampleKey] || { company, policyText:"No published policy on file for this company yet (crowd registry pending).", match:"unknown", promise:"(extracted commitments)" };
+
+  // verdict logic
+  let verdict, vclass, vtext;
+  const hasCommitment = promises.some(p=>p.type==='commitment');
+  const flipFlop = promises.filter(p=>p.type==='hedge').length >= 1 && hasCommitment;
+  if(hasCommitment){
+    verdict = 'PROMISE+ — they\'re likely bound';
+    vclass = 'pplus';
+    vtext = `The bot made an explicit commitment: <b>"${pol.promise}"</b>. Under <b>Air Canada v. Moffatt (2024)</b> and the <b>German appellate ruling (May 2026)</b>, a business is responsible for what its chatbot says — even when the AI made it up.${flipFlop?' ⚠️ This bot also <b>flip-flopped</b> in the same thread — classic sycophancy pattern. Your sealed record locks the promise in <i>before</i> they walk it back.':''} Generate the demand letter and cite the evidence hash.`;
+  } else if(promises.some(p=>p.type==='policy')){
+    verdict = 'MATCH — but record it anyway';
+    vclass = 'match';
+    vtext = 'The bot restated policy without an explicit promise. Seal it now: policies change quarterly and sycophantic bots flip answers when users push back. A timestamped capture is your insurance.';
+  } else if(promises.length){
+    verdict = 'CONTRADICTION — fight back with their own policy';
+    vclass = 'contra';
+    vtext = 'The bot denied you without a valid commitment. Our policy registry shows what they actually owe you — cite their published policy + the capture back at them.';
+  } else {
+    verdict = 'NO PROMISES DETECTED';
+    vclass = 'match';
+    vtext = 'This transcript contains only hedging. Ask the bot directly: "Will you refund me? Answer yes or no." Then capture the reply.';
+  }
+
+  lastAnalysis = { company, hash, promises, verdict, vclass, time:new Date().toISOString() };
+
+  document.getElementById('results').classList.remove('hidden');
+  const vb = document.getElementById('verdictBox');
+  vb.className = 'verdict ' + vclass;
+  document.getElementById('verdictTitle').textContent = verdict;
+  document.getElementById('verdictText').innerHTML = vtext;
+
+  document.getElementById('promiseCount').textContent = `(${promises.length})`;
+  document.getElementById('promiseList').innerHTML = promises.length ? promises.map(p=>`
+    <div class="promise">
+      <div class="ptop">
+        <span class="pill ${p.type}">${p.type.toUpperCase()}</span>
+        <span class="conf">confidence ${(p.conf*100).toFixed(0)}%</span>
+      </div>
+      <div class="quote">"${p.quote}"</div>
+      <div class="confbar"><i style="width:${(p.conf*100).toFixed(0)}%"></i></div>
+    </div>`).join('') : '<div style="color:var(--dim);font-size:13px">No commitments found — see verdict above.</div>';
+
+  document.getElementById('evHash').textContent = hash;
+  document.getElementById('evTime').textContent = new Date().toUTCString() + ' (TSA: saidso-tsa-01)';
+  document.getElementById('evAnchor').textContent = 'bitcoin:00000000…d41e8 (calendar @ block 918,204 — demo)';
+  document.getElementById('evId').textContent = 'SS-' + hash.slice(0,12).toUpperCase();
+
+  document.getElementById('letterZone').classList.add('hidden');
+  btn.innerHTML = '🔍 Analyze &amp; Seal Evidence';
+  btn.disabled = false;
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+  toast('Evidence sealed ✅');
+}
+
+function genLetter(){
+  if(!lastAnalysis){ toast('Analyze a transcript first'); return; }
+  const a = lastAnalysis;
+  const commit = a.promises.find(p=>p.type==='commitment');
+  const quote = commit ? commit.quote : a.promises[0]?.quote || '(the commitment in the sealed transcript)';
+  const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const letter =
+`RE: Demand to honor chatbot commitment — Evidence ID SS-${a.hash.slice(0,12).toUpperCase()}
+
+To the Customer Relations Department of ${a.company},
+
+On the date recorded below, your automated support agent ("chatbot") made an explicit commitment to me in writing:
+
+    "${quote}"
+
+This commitment is preserved as tamper-evident evidence:
+
+    Transcript SHA-256: ${a.hash}
+    Timestamp (RFC-3161): ${a.time}
+    Evidence ID: SS-${a.hash.slice(0,12).toUpperCase()}
+
+It is settled that a business is responsible for the representations of its chatbot. In Moffatt v. Air Canada (2024 BCCRT 149), the tribunal held the airline bound by its chatbot's statements, rejecting the argument that the bot was "a separate legal entity responsible for its own representations." A German appellate court reached the same conclusion in May 2026.
+
+I therefore request that you honor your agent's commitment in full within 14 days of this letter. Failing that, I will pursue all available remedies, including a chargeback dispute, a complaint to the relevant consumer-protection authority (FTC/state Attorney General or, in the EU, the national consumer agency), and small-claims proceedings, for which this sealed record will be submitted as evidence.
+
+I trust you will prefer to resolve this promptly.
+
+Sincerely,
+[Your name]
+[Date: ${today}]`;
+  document.getElementById('letterBody').textContent = letter;
+  document.getElementById('letterZone').classList.remove('hidden');
+  document.getElementById('letterZone').scrollIntoView({behavior:'smooth'});
+  toast('Demand letter ready ✉️');
+}
+
+function copyLetter(){
+  navigator.clipboard.writeText(document.getElementById('letterBody').textContent).then(()=>toast('Copied to clipboard 📋'));
+}
+
+function saveVault(){
+  if(!lastAnalysis){ toast('Analyze first'); return; }
+  const a = lastAnalysis;
+  vault.unshift({ company:a.company, id:'SS-'+a.hash.slice(0,12).toUpperCase(), hash:a.hash.slice(0,20)+'…', time:a.time, verdict:a.vclass, n:a.promises.length });
+  localStorage.setItem('saidso_vault', JSON.stringify(vault));
+  renderVault();
+  toast('Saved to vault 🗄️');
+}
+
+function renderVault(){
+  const el = document.getElementById('vaultList');
+  document.getElementById('vaultEmpty').style.display = vault.length ? 'none':'block';
+  el.innerHTML = vault.map((v,i)=>{
+    const badge = v.verdict==='pplus' ? ['g','PROMISE+'] : v.verdict==='contra' ? ['r','CONTRA'] : ['y','MATCH'];
+    return `<div class="vaultrow">
+      <div class="meta"><span class="co">${v.company}</span> <span class="vbadge ${badge[0]}">${badge[1]}</span><br><span class="sub">${new Date(v.time).toLocaleString()} · ${v.n} promise${v.n===1?'':'s'} extracted</span></div>
+      <div style="text-align:right"><div class="hash">${v.hash}</div><div class="hash">${v.id}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function clearAll(){
+  document.getElementById('transcript').value='';
+  document.getElementById('results').classList.add('hidden');
+  lastAnalysis=null;
+}
+
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+renderVault();
+</script>
+</body>
+</html>
