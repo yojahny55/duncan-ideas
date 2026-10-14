@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeaseLens 🔍 — Catch landlord lease changes before they bite</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b23;
+    --panel-2: #1c2330;
+    --line: #2a3342;
+    --text: #e8edf4;
+    --muted: #8b97a8;
+    --accent: #4f8cff;
+    --red: #ff5d5d;
+    --red-bg: rgba(255,93,93,.10);
+    --amber: #ffb84f;
+    --amber-bg: rgba(255,184,79,.10);
+    --green: #4fdda0;
+    --green-bg: rgba(79,221,160,.10);
+    --radius: 14px;
+    font-size: 15px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display:flex; justify-content:center; min-height:100vh;
+  }
+  .phone {
+    width:100%; max-width:430px; padding:16px 14px 90px; position:relative;
+  }
+  header.top {
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;
+  }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; font-size:1.05rem; }
+  .brand .logo {
+    width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4f8cff,#7c4fff);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+  }
+  .state-pill {
+    font-size:.72rem;color:var(--muted);border:1px solid var(--line);
+    padding:4px 10px;border-radius:99px;background:var(--panel);
+  }
+  .card {
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px; margin-bottom:12px;
+  }
+  .card h2 { font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:10px; }
+  .addr { font-weight:600; margin-bottom:2px; }
+  .sub { color:var(--muted); font-size:.82rem; }
+  .clause-list { margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+  .clause {
+    display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+  }
+  .clause .name { font-size:.78rem; color:var(--muted); }
+  .clause .val { font-size:.88rem; font-weight:600; margin-top:2px; }
+  .clause .cite { font-size:.7rem; color:var(--accent); white-space:nowrap; margin-top:2px; }
+
+  .alert-banner {
+    display:flex; gap:10px; align-items:flex-start;
+    background:var(--red-bg); border:1px solid rgba(255,93,93,.35);
+    border-radius:var(--radius); padding:12px 14px; margin-bottom:12px;
+    animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 0 0 rgba(255,93,93,0); }
+    50% { box-shadow:0 0 0 5px rgba(255,93,93,.08); }
+  }
+  .alert-banner .icon { font-size:1.2rem; }
+  .alert-banner .txt { font-size:.86rem; line-height:1.4; }
+  .alert-banner b { color:var(--red); }
+
+  .diff { display:flex; flex-direction:column; gap:10px; }
+  .diff-row { border-radius:10px; overflow:hidden; border:1px solid var(--line); }
+  .diff-side { padding:10px 12px; font-size:.85rem; line-height:1.45; }
+  .diff-old { background:var(--red-bg); }
+  .diff-old .tag { color:var(--red); }
+  .diff-new { background:var(--amber-bg); border-top:1px dashed var(--line); }
+  .diff-new .tag { color:var(--amber); }
+  .diff-side .tag { font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; font-weight:700; display:block; margin-bottom:4px; }
+  del { color:var(--red); text-decoration-color:rgba(255,93,93,.6); }
+  ins { color:var(--amber); text-decoration:none; background:rgba(255,184,79,.12); border-radius:3px; padding:0 3px; }
+
+  .verdict {
+    border-radius:var(--radius); padding:14px; margin-bottom:12px;
+    background:var(--red-bg); border:1px solid rgba(255,93,93,.4);
+  }
+  .verdict .row1 { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .verdict .dot { font-size:1.3rem; }
+  .verdict h3 { font-size:1rem; color:var(--red); }
+  .verdict p { font-size:.84rem; line-height:1.5; color:var(--text); }
+  .verdict .law {
+    margin-top:10px; font-size:.78rem; color:var(--muted);
+    border-left:3px solid var(--red); padding-left:10px; line-height:1.5;
+  }
+  .meter { margin-top:10px; }
+  .meter .bar { height:8px; border-radius:99px; background:var(--panel-2); overflow:hidden; display:flex; }
+  .meter .bar span { height:100%; }
+  .meter .labels { display:flex; justify-content:space-between; font-size:.68rem; color:var(--muted); margin-top:5px; }
+  .risk-fill { width:82%; background:linear-gradient(90deg,var(--amber),var(--red)); }
+
+  .letter {
+    background:#f6f4ee; color:#1d1b16; border-radius:var(--radius); padding:16px; margin-bottom:12px;
+    font-family:Georgia, "Times New Roman", serif; font-size:.84rem; line-height:1.55;
+  }
+  .letter .l-head { display:flex; justify-content:space-between; margin-bottom:10px; font-family:inherit; }
+  .letter .l-tag { font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:#8a8371; }
+  .letter p { margin-bottom:8px; }
+  .letter .sig { margin-top:10px; color:#5a554a; }
+  .letter mark { background:rgba(79,140,255,.25); border-radius:3px; padding:0 2px; }
+
+  .actions { display:flex; gap:10px; margin-bottom:12px; }
+  .btn {
+    flex:1; padding:13px; border-radius:12px; border:none; font-size:.92rem; font-weight:700;
+    cursor:pointer; transition:transform .1s, filter .15s;
+  }
+  .btn:active { transform:scale(.97); }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { filter:brightness(1.1); }
+  .btn-ghost { background:var(--panel); color:var(--text); border:1px solid var(--line); }
+  .btn-ghost:hover { border-color:var(--accent); }
+
+  .timeline { display:flex; flex-direction:column; gap:0; }
+  .t-item { display:flex; gap:12px; }
+  .t-item .t-rail { display:flex; flex-direction:column; align-items:center; }
+  .t-item .t-dot { width:10px; height:10px; border-radius:99px; background:var(--accent); margin-top:4px; flex-shrink:0; }
+  .t-item .t-line { width:2px; flex:1; background:var(--line); min-height:22px; }
+  .t-item:last-child .t-line { display:none; }
+  .t-item .t-body { padding-bottom:14px; font-size:.83rem; }
+  .t-item .t-when { color:var(--muted); font-size:.72rem; }
+  .t-item .t-what { margin-top:1px; }
+  .t-item .urgent .t-what, .t-what b { color:var(--amber); }
+
+  .disclaimer { text-align:center; font-size:.68rem; color:var(--muted); line-height:1.5; padding:0 20px 10px; }
+
+  nav.tabs {
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:430px; display:flex; background:var(--panel);
+    border-top:1px solid var(--line); padding:8px 6px 14px; z-index:10;
+  }
+  nav.tabs button {
+    flex:1; background:none; border:none; color:var(--muted); font-size:.66rem;
+    display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 0;
+  }
+  nav.tabs button .ic { font-size:1.15rem; }
+  nav.tabs button.active { color:var(--accent); }
+
+  .toast {
+    position:fixed; bottom:96px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--green); color:#06130c; font-weight:700; font-size:.85rem;
+    padding:11px 20px; border-radius:99px; opacity:0; pointer-events:none;
+    transition:all .3s ease; z-index:20; max-width:90%; text-align:center;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <header class="top">
+    <div class="brand"><div class="logo">🔍</div> LeaseLens</div>
+    <div class="state-pill">📍 Colorado pack v2.1</div>
+  </header>
+
+  <!-- Lease summary -->
+  <div class="card">
+    <h2>Your Lease — parsed</h2>
+    <div class="addr">Maple Court Apartments, Unit 412</div>
+    <div class="sub">12-mo term · Mar 2026 → Feb 2027 · $1,840/mo</div>
+    <div class="clause-list">
+      <div class="clause">
+        <div><div class="name">Parking</div><div class="val">Reserved spot #42, included in rent</div></div>
+        <div class="cite">§ 7.3</div>
+      </div>
+      <div class="clause">
+        <div><div class="name">Fees</div><div class="val">Trash $15/mo — no other recurring fees</div></div>
+        <div class="cite">§ 4.1</div>
+      </div>
+      <div class="clause">
+        <div><div class="name">Modifications</div><div class="val">Changes require written mutual consent</div></div>
+        <div class="cite">§ 18.2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New document alert -->
+  <div class="alert-banner">
+    <div class="icon">📬</div>
+    <div class="txt">New document detected: <b>“Parking Policy Addendum”</b> — posted to resident portal Oct 12, effective <b>Nov 1</b>. Accept-by: <b>Oct 20</b>. Comparing against your lease…</div>
+  </div>
+
+  <!-- Diff -->
+  <div class="card">
+    <h2>Clause-level diff</h2>
+    <div class="diff">
+      <div class="diff-row">
+        <div class="diff-side diff-old">
+          <span class="tag">Your lease · § 7.3</span>
+          “Tenant is assigned <del>reserved parking space #42</del> for the full term, <del>included in monthly rent</del>.”
+        </div>
+        <div class="diff-side diff-new">
+          <span class="tag">Addendum · ¶ 2</span>
+          “All spaces become <ins>unassigned ‘hybrid’ parking</ins>. A <ins>$75/mo permit fee</ins> applies for any guaranteed space.”
+        </div>
+      </div>
+      <div class="diff-row">
+        <div class="diff-side diff-old">
+          <span class="tag">Your lease · § 18.2</span>
+          “No modification except by <del>written instrument signed by both parties</del>.”
+        </div>
+        <div class="diff-side diff-new">
+          <span class="tag">Addendum · ¶ 5</span>
+          “Management may update policies <ins>by portal notice with 15 days’ posting</ins>.”
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict">
+    <div class="row1">
+      <span class="dot">🔴</span>
+      <h3>Likely unenforceable mid-lease</h3>
+    </div>
+    <p>The addendum removes a material term you already paid for (reserved parking, included in rent) and tries to override your lease's own modification clause. Under Colorado law, landlords generally <b>cannot impose unilateral mid-lease changes</b> to material terms. They <i>can</i> propose it for your next renewal — you're not obligated to sign now.</p>
+    <div class="law">📖 C.R.S. § 38-12-103 (lease as binding contract) · § 18.2 of your lease · Rule pack: CO v2.1 (attorney-reviewed Aug 2026)</div>
+    <div class="meter">
+      <div class="bar"><span class="risk-fill"></span></div>
+      <div class="labels"><span>Comply silently</span><span>Fight-back odds: strong (82%)</span></div>
+    </div>
+  </div>
+
+  <!-- Generated letter -->
+  <div class="letter">
+    <div class="l-head">
+      <span class="l-tag">Draft response · generated</span>
+      <span class="l-tag">Oct 14, 2026</span>
+    </div>
+    <p>To: Maple Court Management</p>
+    <p>Re: “Parking Policy Addendum” (posted Oct 12, 2026) — Unit 412</p>
+    <p>I am in receipt of the referenced addendum. My current lease, executed <mark>March 1, 2026</mark>, assigns me <mark>reserved parking space #42, included in monthly rent, for the full lease term (§ 7.3)</mark>, and permits modification only <mark>by written instrument signed by both parties (§ 18.2)</mark>.</p>
+    <p>I do not consent to this mid-lease modification and will continue to perform under the lease as written through <mark>February 28, 2027</mark>. I am open to discussing parking arrangements for any renewal term, consistent with applicable Colorado law.</p>
+    <p>Please confirm in writing that space #42 remains assigned for the current term.</p>
+    <p class="sig">— Jordan R.<br>Resident, Unit 412</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="toast('✉️ Letter copied + emailed to management (demo)')">Send Letter</button>
+    <button class="btn btn-ghost" onclick="toast('⚖️ Matched 3 flat-fee tenant attorneys near Denver (demo)')">Escalate 🔴</button>
+  </div>
+
+  <!-- Deadline radar -->
+  <div class="card">
+    <h2>Deadline radar</h2>
+    <div class="timeline">
+      <div class="t-item">
+        <div class="t-rail"><div class="t-dot" style="background:var(--red)"></div><div class="t-line"></div></div>
+        <div class="t-body urgent">
+          <div class="t-when">Oct 20 — 6 days left</div>
+          <div class="t-what"><b>Addendum “accept-by” date.</b> Doing nothing ≠ consent for mid-lease changes, but sending your response removes all doubt.</div>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-rail"><div class="t-dot"></div><div class="t-line"></div></div>
+        <div class="t-body">
+          <div class="t-when">Nov 30</div>
+          <div class="t-what">Renewal-decision window opens (lease § 2.1 — 90 days’ notice). LeaseLens will diff the renewal offer too.</div>
+        </div>
+      </div>
+      <div class="t-item">
+        <div class="t-rail"><div class="t-dot" style="background:var(--green)"></div><div class="t-line"></div></div>
+        <div class="t-body">
+          <div class="t-when">Feb 28, 2027</div>
+          <div class="t-what">Lease term ends. Any changes are fair game at renewal — start comparing offers 60 days out.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">LeaseLens provides legal <b>information</b>, not legal advice. Rule packs are attorney-reviewed but your situation may differ. For contested cases, use Escalate to reach a licensed tenant attorney.</div>
+
+</div>
+
+<nav class="tabs">
+  <button class="active"><span class="ic">🏠</span>Lease</button>
+  <button onclick="toast('📬 Inbox: 1 new document pending review (demo)')"><span class="ic">📬</span>Inbox</button>
+  <button onclick="toast('🔍 Scan a document with your camera (demo)')"><span class="ic">➕</span>Scan</button>
+  <button onclick="toast('⏰ Radar: 2 upcoming deadlines (demo)')"><span class="ic">⏰</span>Radar</button>
+  <button onclick="toast('⚙️ Settings: state packs, vault encryption (demo)')"><span class="ic">⚙️</span>Settings</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+  }
+  // Simple tab toggle for demo feel
+  document.querySelectorAll('nav.tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('nav.tabs button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
