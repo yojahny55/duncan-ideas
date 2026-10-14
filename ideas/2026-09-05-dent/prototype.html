@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dent 🔨 — The Procrastination Shrinker (Prototype)</title>
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --card: #fffdf8;
+    --ink: #33302a;
+    --ink-soft: #7a746a;
+    --sage: #7c9a80;
+    --sage-deep: #5c7d61;
+    --clay: #c98a5e;
+    --line: #e5dfd2;
+    --shadow: 0 2px 14px rgba(51, 48, 42, 0.08);
+    --radius: 18px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #dcd6c8;
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px 0;
+  }
+  /* Mobile frame */
+  .phone {
+    width: 390px; max-width: 100vw; height: 800px; max-height: 96vh;
+    background: var(--bg); border-radius: 36px; overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0,0,0,.28); display: flex; flex-direction: column;
+    position: relative;
+  }
+  @media (max-width: 430px) {
+    body { padding: 0; background: var(--bg); }
+    .phone { width: 100vw; height: 100vh; max-height: none; border-radius: 0; box-shadow: none; }
+  }
+  header {
+    padding: 22px 22px 10px; display: flex; justify-content: space-between; align-items: baseline;
+    background: var(--bg); flex-shrink: 0;
+  }
+  header .logo { font-size: 20px; font-weight: 800; letter-spacing: -.5px; }
+  header .ratio {
+    font-size: 12px; color: var(--ink-soft); background: var(--card);
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer;
+  }
+  header .ratio b { color: var(--sage-deep); }
+  main { flex: 1; overflow-y: auto; padding: 8px 22px 30px; }
+  .screen { display: none; animation: fade .35s ease; }
+  .screen.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- HOME ---------- */
+  .prompt-q { font-size: 26px; font-weight: 800; letter-spacing: -.6px; margin: 14px 0 4px; }
+  .prompt-sub { color: var(--ink-soft); font-size: 14px; margin-bottom: 16px; line-height: 1.45; }
+  .dump-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+  .dump-card textarea {
+    width: 100%; border: none; resize: none; font: inherit; font-size: 16px; background: transparent;
+    color: var(--ink); outline: none; min-height: 64px;
+  }
+  .dump-card textarea::placeholder { color: #b6ae9e; }
+  .dump-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .hint { font-size: 11.5px; color: var(--ink-soft); }
+  .btn {
+    border: none; cursor: pointer; font: inherit; font-weight: 700; border-radius: 14px;
+    transition: transform .12s ease, opacity .2s;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn-primary { background: var(--sage); color: #fff; padding: 13px 22px; font-size: 15px; }
+  .btn-primary:disabled { opacity: .4; cursor: default; }
+  .btn-ghost { background: transparent; color: var(--ink-soft); padding: 10px 14px; font-size: 13.5px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 4px; }
+  .chip {
+    font-size: 12.5px; color: var(--ink-soft); background: var(--card); border: 1px dashed var(--line);
+    border-radius: 999px; padding: 7px 13px; cursor: pointer;
+  }
+  .chip:hover { border-color: var(--sage); color: var(--sage-deep); }
+  .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--ink-soft); margin: 26px 0 12px; }
+  .wall-empty { color: var(--ink-soft); font-size: 14px; line-height: 1.5; background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); padding: 18px; }
+  .dent-item {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .dent-item .t { font-weight: 700; font-size: 14.5px; margin-bottom: 6px; }
+  .bars { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink-soft); }
+  .bar-row .lbl { width: 52px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 9px; background: #efeade; border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; }
+  .bar-dread .bar-fill { background: #d9b8a5; }
+  .bar-actual .bar-fill { background: var(--sage); }
+  .bar-row .val { width: 64px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .dent-item .r { font-size: 12px; color: var(--sage-deep); font-weight: 700; }
+  .open-task {
+    background: linear-gradient(135deg, #eef3ec, #e8efe6); border: 1px solid #d5e0d2;
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .open-task .t { font-weight: 700; font-size: 14.5px; }
+  .open-task .na { font-size: 12.5px; color: var(--sage-deep); margin-top: 3px; line-height: 1.4; }
+
+  /* ---------- SHRINK ---------- */
+  .shrinking { text-align: center; padding: 60px 20px; }
+  .shrinking .emoji { font-size: 44px; animation: pulse 1.1s ease infinite; display: inline-block; }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+  .shrinking p { margin-top: 18px; color: var(--ink-soft); font-size: 14.5px; min-height: 42px; line-height: 1.5; }
+  .report-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .report-dread { font-size: 18px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 2px; }
+  .report-tag { font-size: 11.5px; color: var(--ink-soft); margin-bottom: 14px; }
+  .report-big {
+    font-size: 34px; font-weight: 800; color: var(--sage-deep); letter-spacing: -1px;
+  }
+  .report-big small { font-size: 14px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0; }
+  .report-line { font-size: 13px; color: var(--ink-soft); margin-top: 4px; margin-bottom: 14px; }
+  .field { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+  .field .k { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--clay); margin-bottom: 5px; }
+  .field .v { font-size: 14.5px; line-height: 1.5; }
+  .field .v.soft { color: var(--ink-soft); font-size: 13.5px; }
+  .actions { display: flex; gap: 10px; margin-top: 4px; }
+  .actions .btn-primary { flex: 1; }
+  .actions .btn-ghost { border: 1px solid var(--line); background: var(--card); }
+
+  /* ---------- TIMER ---------- */
+  .timer-wrap { text-align: center; padding-top: 26px; }
+  .timer-task { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .timer-action { font-size: 13.5px; color: var(--sage-deep); margin-bottom: 24px; line-height: 1.45; padding: 0 10px; }
+  .ring-box { position: relative; width: 230px; height: 230px; margin: 0 auto 8px; }
+  .ring-box svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: #e8e2d2; stroke-width: 14; }
+  .ring-fg { fill: none; stroke: var(--sage); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset .4s linear; }
+  .ring-time {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .ring-time .clock { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; font-variant-numeric: tabular-nums; }
+  .ring-time .of { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .permission {
+    font-size: 13px; color: var(--ink-soft); background: var(--card); border: 1px dashed var(--line);
+    border-radius: var(--radius); padding: 12px 16px; margin: 18px 6px; line-height: 1.5;
+  }
+  .timer-btns { display: flex; gap: 10px; justify-content: center; margin-top: 6px; }
+  .timer-btns .btn { padding: 13px 20px; font-size: 14.5px; }
+  .btn-stop { background: var(--card); border: 1px solid var(--line) !important; color: var(--ink); }
+  .btn-done { background: var(--sage); color: #fff; }
+  .demo-speed { margin-top: 22px; font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .parked-list { margin-top: 20px; text-align: left; }
+  .parked-list .section-title { margin-top: 0; }
+  .parked-item {
+    font-size: 13px; background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 9px 13px; margin-bottom: 7px; color: var(--ink-soft); display: flex; justify-content: space-between; align-items: center;
+  }
+  .parked-item button { background: none; border: none; color: var(--clay); cursor: pointer; font-size: 15px; padding: 0 2px; }
+
+  /* ---------- LOG ---------- */
+  .log-wrap { padding-top: 20px; text-align: center; }
+  .log-wrap .celebrate { font-size: 46px; margin-bottom: 10px; }
+  .log-wrap h2 { font-size: 21px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 6px; }
+  .log-wrap .sub { font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 22px; padding: 0 8px; }
+  .stepper {
+    display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 10px;
+  }
+  .stepper button {
+    width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: var(--card);
+    font-size: 22px; cursor: pointer; color: var(--ink);
+  }
+  .stepper .mins { font-size: 44px; font-weight: 800; min-width: 110px; letter-spacing: -1px; }
+  .stepper .mins small { font-size: 15px; color: var(--ink-soft); font-weight: 600; }
+  .quick-times { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+  .quick-times .chip { background: var(--card); }
+  .result-preview { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .result-preview .big-ratio { font-size: 26px; font-weight: 800; color: var(--sage-deep); }
+  .result-preview p { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.45; }
+
+  /* ---------- RATIO MODAL ---------- */
+  .modal-bg {
+    position: absolute; inset: 0; background: rgba(51,48,42,.45); display: none;
+    align-items: flex-end; z-index: 10;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--bg); width: 100%; border-radius: 26px 26px 0 0; padding: 24px 22px 32px;
+    animation: slideup .3s ease;
+  }
+  @keyframes slideup { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .modal h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+  .modal .desc { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 16px; }
+  .modal .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 8px; text-align: center; }
+  .stat .n { font-size: 21px; font-weight: 800; color: var(--sage-deep); }
+  .stat .l { font-size: 10.5px; color: var(--ink-soft); margin-top: 3px; line-height: 1.3; }
+  .toast {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: #fff; font-size: 13px; border-radius: 999px; padding: 11px 20px;
+    transition: transform .3s ease; z-index: 20; white-space: nowrap; max-width: 90%;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="phone">
+  <header>
+    <div class="logo">Dent 🔨</div>
+    <div class="ratio" id="ratioBadge" onclick="openRatio()" title="Your Dread Ratio">Dread Ratio <b id="ratioVal">—</b></div>
+  </header>
+
+  <main>
+    <!-- ============ HOME ============ -->
+    <section class="screen active" id="screen-home">
+      <div class="prompt-q">What are you avoiding?</div>
+      <div class="prompt-sub">Type the dread exactly as it lives in your head. Vague is fine — vague is the point.</div>
+      <div class="dump-card">
+        <textarea id="dumpInput" placeholder="e.g. clean the condo, file taxes, reply to that email from July…" oninput="onDumpInput()"></textarea>
+        <div class="dump-row">
+          <span class="hint">No due dates. No tags. Nothing can be late here.</span>
+          <button class="btn btn-primary" id="shrinkBtn" disabled onclick="startShrink()">Shrink it</button>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
+
+      <div id="openTasks"></div>
+
+      <div class="section-title">Wall of Dents</div>
+      <div id="wall"></div>
+    </section>
+
+    <!-- ============ SHRINK ============ -->
+    <section class="screen" id="screen-shrink">
+      <div class="shrinking" id="shrinkingAnim">
+        <span class="emoji">🔨</span>
+        <p id="shrinkingMsg"></p>
+      </div>
+      <div id="reportBox" style="display:none">
+        <div class="report-card">
+          <div class="report-dread" id="repDread"></div>
+          <div class="report-tag" id="repCat"></div>
+          <div class="report-big" id="repMins"></div>
+          <div class="report-line" id="repLine"></div>
+          <div class="field">
+            <div class="k">Smallest next physical action</div>
+            <div class="v" id="repAction"></div>
+          </div>
+          <div class="field">
+            <div class="k">Your stop rule</div>
+            <div class="v soft" id="repStop"></div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost" onclick="go('home')">Not now</button>
+          <button class="btn btn-primary" onclick="startTimer()">⏱ 10-minute Dent</button>
+        </div>
+        <div style="text-align:center; margin-top:8px">
+          <button class="btn btn-ghost" onclick="retireTask()">Retire it forever — that's allowed</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TIMER ============ -->
+    <section class="screen" id="screen-timer">
+      <div class="timer-wrap">
+        <div class="timer-task" id="tmTask"></div>
+        <div class="timer-action" id="tmAction"></div>
+        <div class="ring-box">
+          <svg width="230" height="230" viewBox="0 0 230 230">
+            <circle class="ring-bg" cx="115" cy="115" r="101"></circle>
+            <circle class="ring-fg" id="ringFg" cx="115" cy="115" r="101"></circle>
+          </svg>
+          <div class="ring-time">
+            <div class="clock" id="tmClock">10:00</div>
+            <div class="of">you're only committing to this</div>
+          </div>
+        </div>
+        <div class="permission" id="tmPermission"></div>
+        <div class="timer-btns">
+          <button class="btn btn-stop" onclick="stopDent(false)">Stop — no guilt</button>
+          <button class="btn btn-done" onclick="stopDent(true)">I went further ✓</button>
+        </div>
+        <div class="demo-speed">
+          <label><input type="checkbox" id="demoSpeed" onchange="toggleSpeed()"> demo speed (10×)</label>
+        </div>
+        <div class="parked-list">
+          <div class="section-title">Parking lot <span style="text-transform:none;font-weight:400;letter-spacing:0">— sub-tasks go here, not into your session</span></div>
+          <div id="parkedList"></div>
+          <button class="btn btn-ghost" style="border:1px dashed var(--line);width:100%" onclick="parkPrompt()">+ Park a sub-task that just popped up</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LOG ============ -->
+    <section class="screen" id="screen-log">
+      <div class="log-wrap">
+        <div class="celebrate" id="logEmoji">🎉</div>
+        <h2 id="logTitle">That's a dent.</h2>
+        <div class="sub" id="logSub"></div>
+        <div style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">How many minutes did it <b>actually</b> take?</div>
+        <div class="stepper">
+          <button onclick="bumpActual(-1)">−</button>
+          <div class="mins"><span id="actualMins">10</span><small> min</small></div>
+          <button onclick="bumpActual(1)">+</button>
+        </div>
+        <div class="quick-times" id="quickTimes"></div>
+        <div class="result-preview">
+          <div class="big-ratio" id="previewRatio"></div>
+          <p id="previewLine"></p>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="logDent()">Add to my Wall of Dents</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Ratio modal -->
+  <div class="modal-bg" id="ratioModal" onclick="if(event.target===this)closeRatio()">
+    <div class="modal">
+      <h3>Your Dread Ratio™</h3>
+      <div class="desc">Across every dent you've logged, this is how much longer tasks <b>felt</b> than they <b>were</b>. Your dread is a bad estimator. This is the receipt.</div>
+      <div class="stat-grid">
+        <div class="stat"><div class="n" id="stRatio">—</div><div class="l">dread ratio (felt ÷ actual)</div></div>
+        <div class="stat"><div class="n" id="stDents">0</div><div class="l">dents made</div></div>
+        <div class="stat"><div class="n" id="stSaved">0h</div><div class="l">dread-time never existed</div></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="closeRatio()">Back to making dents</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+"use strict";
+/* =============== State =============== */
+const state = {
+  dents: [
+    // seeded history so the Wall + Ratio are alive on first open
+    { dread: "file taxes", dreaded: 240, actual: 38, cat: "admin" },
+    { dread: "call the insurance company", dreaded: 60, actual: 9, cat: "social" },
+    { dread: "fix the portfolio site hero section", dreaded: 180, actual: 22, cat: "dev" },
+  ],
+  open: [],          // shrunk-but-not-started tasks
+  current: null,     // task being shrunk / timed
+  parked: [],
+  actualInput: 10,
+};
+
+/* =============== Heuristic shrink engine (offline fallback) ===============
+   Real app: LLM via Cloudflare Worker proxy → { actualMinutes, nextAction, stopRule }.
+   Prototype: keyword-classified templates. */
+const CATS = {
+  cleaning: {
+    match: /clean|tidy|laundry|dishes|condo|apartment|room|house|garage|declutter|organize/i,
+    label: "cleaning / space",
+    est: d => 25 + Math.floor(d.length / 4) % 3 * 10,
+    action: "Stand up and put exactly FIVE things where they belong. Just five. Count them out loud if it helps.",
+    stop: "After the five things, you may stop. A room 5-objects-tidier is a real dent, not a half job.",
+    dreadMult: 6,
+  },
+  admin: {
+    match: /tax|invoice|form|bill|paperwork|renew|passport|dmv|insurance|bank|account|document|file/i,
+    label: "admin / paperwork",
+    est: () => 15 + Math.floor(Math.random() * 20),
+    action: "Open the tab / find the document. That's the whole first action — locate the thing, don't finish the thing.",
+    stop: "Once the document is open, you may close it and stop. Tomorrow's shrink starts from 'already open'.",
+    dreadMult: 9,
+  },
+  dev: {
+    match: /code|bug|repo|site|portfolio|deploy|refactor|project|app|feature|test|migration|api/i,
+    label: "build / dev work",
+    est: () => 30 + Math.floor(Math.random() * 30),
+    action: "Write the failing case or open the file and read the last 20 lines you wrote. No fixing yet — just re-enter the context.",
+    stop: "Context re-entry is a complete dent. You don't owe the fix today.",
+    dreadMult: 5,
+  },
+  social: {
+    match: /call|email|reply|text|message|apologize|schedule|appointment|thank|congratulate|reach out/i,
+    label: "social / reply",
+    est: () => 8 + Math.floor(Math.random() * 10),
+    action: "Open the thread and type only the first sentence. You're allowed to send a two-sentence version.",
+    stop: "A short, warm, imperfect reply beats a perfect one sent in three weeks. Send short or stop — both count.",
+    dreadMult: 12,
+  },
+  study: {
+    match: /study|exam|thesis|essay|homework|read|chapter|assignment|dissertation|prep/i,
+    label: "study / writing",
+    est: () => 35 + Math.floor(Math.random() * 25),
+    action: "Open the material and read ONLY the first paragraph out loud, then write one sentence about what it said.",
+    stop: "One paragraph + one sentence is the dent. Stamina is built by returns, not marathons.",
+    dreadMult: 7,
+  },
+  generic: {
+    match: /.*/,
+    label: "life / misc",
+    est: () => 20 + Math.floor(Math.random() * 20),
+    action: "Do the smallest physical move that touches this task. Touch it, don't finish it.",
+    stop: "Touching the task breaks the seal. You may stop right after — sealed-broken is the win.",
+    dreadMult: 6,
+  },
+};
+function classify(text) {
+  for (const k of ["cleaning","admin","dev","social","study"]) {
+    if (CATS[k].match.test(text)) return CATS[k];
+  }
+  return CATS.generic;
+}
+function shrink(text) {
+  const cat = classify(text);
+  const actual = cat.est(text);
+  return {
+    dread: text.trim(),
+    cat: cat.label,
+    actualMinutes: actual,
+    dreadedMinutes: Math.max(60, actual * cat.dreadMult), // what the dread *feels* like
+    nextAction: cat.action,
+    stopRule: cat.stop,
+  };
+}
+
+/* =============== Navigation =============== */
+function go(name) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("screen-" + name).classList.add("active");
+  if (name === "home") renderHome();
+}
+
+/* =============== Home =============== */
+const EXAMPLES = ["clean the condo", "file taxes", "reply to that email from July", "fix my portfolio site", "
