@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lamppost — Everything happening near you this weekend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF3E6;
+  --paper-2:#F3E9D6;
+  --ink:#1B2434;
+  --ink-soft:#4A5468;
+  --flyer:#E8542F;
+  --flyer-deep:#C93E1C;
+  --sage:#5B7A5E;
+  --gold:#E9A13B;
+  --staple:#9AA3B2;
+  --card:#FFFDF8;
+  --shadow:0 2px 0 rgba(27,36,52,.12), 0 10px 24px rgba(27,36,52,.10);
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--ink);
+  background-image:
+    radial-gradient(circle at 20% 10%, #24314a 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, #212c42 0%, transparent 40%);
+  color:var(--ink);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:28px 16px;
+}
+.shell{display:flex;gap:48px;align-items:center;flex-wrap:wrap;justify-content:center}
+
+/* ---------- pitch column ---------- */
+.pitch{max-width:400px;color:#EDE6D8}
+.pitch .logo{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.pitch .lamp{width:44px;height:44px;border-radius:12px;background:var(--flyer);display:grid;place-items:center;font-size:22px;box-shadow:4px 4px 0 rgba(232,84,47,.25)}
+.pitch h1{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;letter-spacing:-.02em;color:#FFF9EE}
+.pitch h1 span{color:var(--gold)}
+.pitch .tag{font-size:16.5px;line-height:1.55;color:#C9CFDC;margin-bottom:22px}
+.pitch .tag b{color:#FFF9EE}
+.pitch ul{list-style:none;display:grid;gap:10px;margin-bottom:22px}
+.pitch li{display:flex;gap:10px;font-size:14px;color:#B9C1D0;line-height:1.5}
+.pitch li::before{content:"📌";flex-shrink:0}
+.pitch .stat{display:flex;gap:10px;flex-wrap:wrap}
+.pitch .stat span{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,249,238,.08);border:1px solid rgba(255,249,238,.15);color:#D8DEE9;padding:6px 10px;border-radius:99px}
+
+/* ---------- phone ---------- */
+.phone{
+  width:390px;height:844px;background:var(--paper);
+  border-radius:44px;border:10px solid #0D1220;
+  box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 0 2px #2A3550 inset;
+  overflow:hidden;position:relative;display:flex;flex-direction:column;flex-shrink:0;
+}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#0D1220;border-radius:0 0 16px 16px;z-index:50}
+
+/* digest strip */
+.digest{background:var(--ink);color:var(--paper);padding:44px 20px 14px;position:relative;z-index:5}
+.digest .row{display:flex;justify-content:space-between;align-items:baseline}
+.digest .city{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.digest .city small{display:block;font-family:'Inter';font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#98A2B8;margin-bottom:3px}
+.digest .date{font-size:11px;font-weight:700;background:var(--flyer);padding:5px 10px;border-radius:99px;letter-spacing:.05em;text-transform:uppercase}
+.digest .line{margin-top:12px;font-size:14.5px;line-height:1.5;color:#E7E0D2}
+.digest .line b{color:#FFD9A0;font-weight:700}
+.digest .weather{margin-top:10px;display:flex;gap:8px;align-items:center;background:rgba(233,161,59,.14);border:1px dashed rgba(233,161,59,.55);border-radius:10px;padding:8px 10px;font-size:12px;color:#FFE3B8;cursor:pointer;transition:.15s}
+.digest .weather:hover{background:rgba(233,161,59,.24)}
+.digest .weather .wx{font-size:16px}
+.digest .weather u{text-decoration:none;color:var(--gold);font-weight:700;white-space:nowrap}
+
+/* chips */
+.chips{display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto;background:var(--paper);scrollbar-width:none;position:relative;z-index:4}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:99px;
+  border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer;
+  box-shadow:2px 2px 0 rgba(27,36,52,.85);transition:.12s;user-select:none;font-family:'Inter';
+}
+.chip:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(27,36,52,.85)}
+.chip.on{background:var(--ink);color:var(--paper)}
+
+/* feed */
+.feed{flex:1;overflow-y:auto;padding:12px 16px 96px;scrollbar-width:none}
+.feed::-webkit-scrollbar{display:none}
+.sec-label{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--staple);margin:14px 2px 10px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:"";flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--staple) 0 4px,transparent 4px 8px);opacity:.5}
+
+/* flyer cards */
+.card{
+  position:relative;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);
+  padding:14px 14px 12px;margin-bottom:16px;cursor:pointer;
+  box-shadow:var(--shadow);transition:transform .15s, box-shadow .15s;
+}
+.card:hover{transform:translateY(-2px) rotate(0deg) !important;box-shadow:0 4px 0 rgba(27,36,52,.12),0 16px 30px rgba(27,36,52,.16);z-index:2}
+.card.r1{transform:rotate(-.7deg)}
+.card.r2{transform:rotate(.5deg)}
+.card.r3{transform:rotate(-.35deg)}
+.tape{position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(-1.5deg);width:86px;height:18px;background:rgba(233,161,59,.42);border-left:1px dashed rgba(27,36,52,.2);border-right:1px dashed rgba(27,36,52,.2);border-radius:2px}
+.card .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:8px}
+.card .when{display:flex;align-items:center;gap:8px}
+.card .day{background:var(--ink);color:var(--paper);border-radius:9px;min-width:44px;text-align:center;padding:5px 7px;line-height:1.1}
+.card .day .d{font-family:'Space Grotesk';font-size:17px;font-weight:700;display:block}
+.card .day .m{font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#B9C1D0}
+.card .time{font-size:11.5px;font-weight:700;color:var(--ink-soft)}
+.card .time small{display:block;font-weight:500;color:var(--staple);font-size:10.5px}
+.stamp{
+  font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  border:2px solid;border-radius:7px;padding:3px 7px;transform:rotate(3deg);white-space:nowrap;flex-shrink:0;
+  background:rgba(255,255,255,.4);
+}
+.stamp.eb{color:#B45309;border-color:#B45309}
+.stamp.city{color:#1D4ED8;border-color:#1D4ED8}
+.stamp.reddit{color:#C2410C;border-color:#C2410C}
+.stamp.lib{color:#15803D;border-color:#15803D}
+.stamp.snap{color:var(--flyer-deep);border-color:var(--flyer-deep)}
+.stamp.loafing{color:#7C3AED;border-color:#7C3AED}
+.card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.25;margin-bottom:6px}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pill{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:99px;background:var(--paper-2);color:var(--ink-soft)}
+.pill.free{background:#E3EFE3;color:#33613A}
+.pill.hot{background:#FBE3DB;color:var(--flyer-deep)}
+.card .bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px dashed rgba(27,36,52,.2);padding-top:9px}
+.save{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--ink);cursor:pointer;border:2px solid var(--ink);border-radius:99px;padding:5px 11px;background:var(--card);box-shadow:2px 2px 0 rgba(27,36,52,.85);transition:.12s;user-select:none}
+.save:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(27,36,52,.85)}
+.save.on{background:var(--flyer);border-color:var(--flyer);color:#fff;box-shadow:2px 2px 0 rgba(201,62,28,.9)}
+.going{font-size:10.5px;font-weight:700;color:var(--staple)}
+.going b{color:var(--sage)}
+
+/* flyer snap card */
+.snap-card{background:repeating-linear-gradient(45deg,#FBE3DB 0 10px,#FAEAE2 10px 20px);border:2px dashed var(--flyer-deep)}
+.snap-card h3{color:var(--flyer-deep)}
+.snap-btn{
+  display:block;width:100%;text-align:center;margin-top:8px;
+  background:var(--flyer);color:#fff;font-weight:800;font-size:13.5px;border:none;border-radius:10px;padding:11px;
+  cursor:pointer;box-shadow:0 3px 0 var(--flyer-deep);transition:.12s;font-family:'Inter';
+}
+.snap-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--flyer-deep)}
+
+/* bottom bar */
+.tabbar{
+  position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:2px solid var(--ink);
+  display:flex;justify-content:space-around;padding:10px 8px 22px;z-index:20;
+}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9.5px;font-weight:800;color:var(--staple);cursor:pointer;letter-spacing:.02em;transition:.12s}
+.tab .ic{font-size:19px;filter:grayscale(1);opacity:.55;transition:.12s}
+.tab.on{color:var(--ink)}
+.tab.on .ic{filter:none;opacity:1}
+.fab{
+  position:absolute;bottom:74px;right:18px;width:58px;height:58px;border-radius:50%;
+  background:var(--flyer);border:2.5px solid var(--ink);display:grid;place-items:center;font-size:24px;
+  box-shadow:0 4px 0 var(--flyer-deep),0 12px 24px rgba(232,84,47,.4);cursor:pointer;z-index:25;transition:.12s;
+}
+.fab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--flyer-deep)}
+
+/* toast */
+.toast{
+  position:absolute;left:50%;bottom:120px;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--paper);font-size:12.5px;font-weight:700;padding:10px 18px;border-radius:99px;
+  opacity:0;pointer-events:none;transition:.25s;z-index:60;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:92%;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* flyer snap modal */
+.modal{position:absolute;inset:0;background:rgba(13,18,32,.72);z-index:70;display:none;align-items:center;justify-content:center;padding:26px;backdrop-filter:blur(3px)}
+.modal.show{display:flex}
+.modal .sheet{background:var(--paper);border:2.5px solid var(--ink);border-radius:20px;padding:24px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.modal h2{font-family:'Space Grotesk';font-size:20px;margin-bottom:6px}
+.modal p{font-size:13px;color:var(--ink-soft);line-height:1.5;margin-bottom:18px}
+.viewfinder{border:3px dashed var(--staple);border-radius:14px;height:190px;display:grid;place-items:center;background:var(--paper-2);margin-bottom:18px;position:relative;overflow:hidden}
+.viewfinder .poster{width:124px;background:#fff;border:2px solid var(--ink);border-radius:6px;padding:10px 8px;transform:rotate(-3deg);box-shadow:6px 6px 0 rgba(27,36,52,.15);font-size:8.5px;text-align:left;line-height:1.45}
+.viewfinder .poster .pt{font-family:'Space Grotesk';font-weight:700;font-size:12px;margin-bottom:4px}
+.viewfinder.scanning::after{content:"";position:absolute;left:0;right:0;height:3px;background:var(--flyer);box-shadow:0 0 12px var(--flyer);animation:scan 1.4s ease-in-out infinite}
+@keyframes scan{0%{top:8%}50%{top:88%}100%{top:8%}}
+.modal .acts{display:flex;gap:10px}
+.modal button{flex:1;font-family:'Inter';font-weight:800;font-size:13px;padding:12px;border-radius:11px;border:2px solid var(--ink);cursor:pointer;transition:.12s}
+.modal .ghost{background:var(--card);color:var(--ink);box-shadow:2px 2px 0 rgba(27,36,52,.85)}
+.modal .primary{background:var(--flyer);color:#fff;border-color:var(--flyer-deep);box-shadow:0 3px 0 var(--flyer-deep)}
+.extracted{display:none;text-align:left;background:var(--card);border:2px solid var(--sage);border-radius:12px;padding:14px;margin-bottom:16px}
+.extracted.show{display:block;animation:pop .3s}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.extracted .h{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);margin-bottom:8px}
+.extracted .f{font-size:12.5px;line-height:1.7}
+.extracted .f b{font-family:'Space Grotesk'}
+
+.hidden{display:none !important}
+@media(max-width:980px){.pitch{order:2}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- PITCH -->
+  <div class="pitch">
+    <div class="logo">
+      <div class="lamp">📌</div>
+      <h1>Lamp<span>post</span></h1>
+    </div>
+    <p class="tag">Everything happening near you this weekend — <b>no Facebook required</b>. One feed pulling from Eventbrite, city &amp; library calendars, alt-weeklies, r/[city] threads, and <b>photos of actual flyers</b>.</p>
+    <ul>
+      <li><b style="color:#FFF9EE">Thursday Digest</b> — “14 things happening in Tampa, picked for you.” The habit, not the browse.</li>
+      <li><b style="color:#FFF9EE">Flyer Snap</b> — photograph a poster at a coffee shop; it joins the city feed. The dark-events moat.</li>
+      <li><b style="color:#FFF9EE">Weather-swap</b> — rain Sunday? Indoor swaps for your saved outdoor plans, automatically.</li>
+    </ul>
+    <div class="stat">
+      <span>🏙️ City-by-city launch: Tampa first</span>
+      <span>💸 Free + $29.99/yr Plus</span>
+      <span>📈 Year-1 SOM ≈ $180K ARR</span>
+    </div>
+  </div>
+
+  <!-- PHONE -->
+  <div class="phone">
+    <div class="notch"></div>
+
+    <div class="digest">
+      <div class="row">
+        <div class="city"><small>Your city</small>Tampa, FL</div>
+        <div class="date">Thu Digest</div>
+      </div>
+      <div class="line"><b>14 things</b> happening this weekend, picked for you. 5 are free, 2 end tonight.</div>
+      <div class="weather" onclick="toast('☔ 3 indoor swaps found for your saved Saturday plans')">
+        <span class="wx">🌦️</span>
+        <span>Rain likely Sat 2–6pm — <u>swap 2 saved outdoor picks →</u></span>
+      </div>
+    </div>
+
+    <div class="chips" id="chips">
+      <button class="chip on" data-f="all">All weekend</button>
+      <button class="chip" data-f="free">Free 🆓</button>
+      <button class="chip" data-f="tonight">Tonight only 🔥</button>
+      <button class="chip" data-f="outdoor">Outdoors</button>
+      <button class="chip" data-f="music">Live music</button>
+      <button class="chip" data-f="nerdy">Nerdy &amp; quiet</button>
+      <button class="chip" data-f="kid">Kid-OK</button>
+    </div>
+
+    <div class="feed" id="feed">
+      <div class="sec-label">Picked for you</div>
+
+      <div class="card r1" data-tags="free outdoor kid">
+        <div class="tape"></div>
+        <div class="top">
+          <div class="when">
+            <div class="day"><span class="d">18</span><span class="m">Oct</span></div>
+            <div class="time">9:00 AM – 1:00 PM<small>Sat · 4.2 mi</small></div>
+          </div>
+          <span class="stamp city">City of Tampa</span>
+        </div>
+        <h3>Riverwalk Morning Market — 60+ local vendors</h3>
+        <div class="meta"><span class="pill free">FREE</span><span class="pill">🛍️ Market</span><span class="pill">🐕 Dog OK</span></div>
+        <div class="bottom">
+          <div class="save" onclick="toggleSave(event,this)"><span>♡</span> Save</div>
+          <div class="going"><b>142</b> neighbors going</div>
+        </div>
+      </div>
+
+      <div class="card r2" data-tags="tonight music">
+        <div class="top">
+          <div class="when">
+            <div class="day" style="background:var(--flyer)"><span class="d">17</span><span class="m">Oct</span></div>
+            <div class="time">8:00 PM – LATE<small>TONIGHT · 1.8 mi</small></div>
+          </div>
+          <span class="stamp eb">Eventbrite</span>
+        </div>
+        <h3>Salsa Night on the Patio @ Copa Wine Bar (live band)</h3>
+        <div class="meta"><span class="pill hot">ENDS TONIGHT</span><span class="pill">$12</span><span class="pill">💃 Live music</span></div>
+        <div class="bottom">
+          <div class="save" onclick="toggleSave(event,this)"><span>♡</span> Save</div>
+          <div class="going"><b>38</b> neighbors going</div>
+        </div>
+      </div>
+
+      <div class="card r3" data-tags="free nerdy kid">
+        <div class="tape"></div>
+        <div class="top">
+          <div class="when">
+            <div class="day"><span class="d">18</span><span class="m">Oct</span></div>
+            <div class="time">10:30 AM – 12:00 PM<small>Sat · 2.9 mi</small></div>
+          </div>
+          <span class="stamp lib">HCPLC Library</span>
+        </div>
+        <h3>Repair Café — bring your broken stuff, free fixes</h3>
+        <div class="meta"><span class="pill free">FREE</span><span class="pill">🔧 Nerdy</span><span class="pill">👨‍👩‍👧 Kid-OK</span></div>
+        <div class="bottom">
+          <div class="save" onclick="toggleSave(event,this)"><span>♡</span> Save</div>
+          <div class="going"><b>27</b> neighbors going</div>
+        </div>
+      </div>
+
+      <div class="sec-label">Snapped by neighbors 📸</div>
+
+      <div class="card r2 snap-card" data-tags="music tonight" onclick="openSnap()">
+        <div class="top">
+          <div class="when">
+            <div class="day" style="background:var(--flyer-deep)"><span class="d">18</span><span class="m">Oct</span></div>
+            <div class="time">7:30 PM<small>Sat · Ybor City</small></div>
+          </div>
+          <span class="stamp snap">Flyer Snap</span>
+        </div>
+        <h3>Found on a lamppost: Vinyl Swap + DJ set, 7th Ave</h3>
+        <div class="meta"><span class="pill">📸 Snapped by @marisolr</span><span class="pill">$5</span><span class="pill">🎧 Live music</span></div>
+        <button class="snap-btn" onclick="event.stopPropagation();openSnap()">📸 Snap a flyer — +20 karma</button>
+      </div>
+
+      <div class="card r1" data-tags="nerdy free">
+        <div class="top">
+          <div class="when">
+            <div class="day"><span class="d">19</span><span class="m">Oct</span></div>
+            <div class="time">4:00 PM<small>Sun · 0.6 mi</small></div>
+          </div>
+          <span class="stamp reddit">r/tampa</span>
+        </div>
+        <h3>Board Game Sunday @ Crow &amp; Company (from weekly thread)</h3>
+        <div class="meta"><span class="pill free">FREE entry</span><span class="pill">🎲 Nerdy</span><span class="pill">☕ Café</span></div>
+        <div class="bottom">
+          <div class="save" onclick="toggleSave(event,this)"><span>♡</span> Save</div>
+          <div class="going"><b>19</b> neighbors going</div>
+        </div>
+      </div>
+
+      <div class="card r3" data-tags="outdoor music">
+        <div class="tape"></div>
+        <div class="top">
+          <div class="when">
+            <div class="day"><span class="d">19</span><span class="m">Oct</span></div>
+            <div class="time">6:30 PM<small>Sun · 5.1 mi</small></div>
+          </div>
+          <span class="stamp loafing">CL Tampa</span>
+        </div>
+        <h3>Sunset Jazz on the Pier — trio + food trucks</h3>
+        <div class="meta"><span class="pill">🎷 Live music</span><span class="pill">🌅 Outdoors</span><span class="pill">$0–20</span></div>
+        <div class="bottom">
+          <div class="save" onclick="toggleSave(event,this)"><span>♡</span> Save</div>
+          <div class="going"><b>86</b> neighbors going</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fab" onclick="openSnap()" title="Snap a flyer">📸</div>
+
+    <div class="tabbar">
+      <div class="tab on"><span class="ic">📌</span>Feed</div>
+      <div class="tab" onclick="toast('🗓️ Thursday Digest — 14 picks for this weekend')"><span class="ic">✉️</span>Digest</div>
+      <div class="tab" onclick="toast('🗺️ Map view — coming in beta week 4')"><span class="ic">🗺️</span>Map</div>
+      <div class="tab" onclick="toast('👥 Plans — share a shortlist, collect I\'m-ins')"><span class="ic">👥</span>Plans</div>
+      <div class="tab" onclick="toast('🏅 Your karma: 340 — #3 snapper in Tampa')"><span class="ic">🏅</span>Karma</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Flyer Snap modal -->
+    <div class="modal" id="snapModal">
+      <div class="sheet">
+        <h2>📸 Flyer Snap</h2>
+        <p id="snapP">Point at any poster — coffee shop, lamppost, gym board. We'll read it so the whole city can see it.</p>
+        <div class="viewfinder" id="vf">
+          <div class="poster">
+            <div class="pt">VINYL SWAP</div>
+            + DJ SET<br>SAT OCT 18 · 7:30PM<br>7th Ave, Ybor<br>$5 · all ages<br>🎧 bring records
+          </div>
+        </div>
+        <div class="extracted" id="extracted">
+          <div class="h">✓ Extracted · 1.2s · on-device</div>
+          <div class="f">
+            <b>Vinyl Swap + DJ Set</b><br>
+            🗓️ Sat Oct 18, 7:30 PM · 📍 7th Ave, Ybor City<br>
+            💵 $5 · 👥 All ages · 🏷️ Live music, Market
+          </div>
+        </div>
+        <div class="acts">
+          <button class="ghost" onclick="closeSnap()">Cancel</button>
+          <button class="primary" id="snapAct" onclick="doSnap()">Snap &amp; Scan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* chip filtering */
+document.getElementById('chips').addEventListener('click', function(e){
+  var chip = e.target.closest('.chip'); if(!chip) return;
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')});
+  chip.classList.add('on');
+  var f = chip.dataset.f;
+  document.querySelectorAll('.card').forEach(function(card){
+    card.classList.toggle('hidden', f!=='all' && (card.dataset.tags||'').split(' ').indexOf(f)===-1);
+  });
+  if(f!=='all') toast('🔎 ' + document.querySelectorAll('.card:not(.hidden)').length + ' picks match this vibe');
+});
+
+/* save toggle */
+function toggleSave(e, el){
+  e.stopPropagation();
+  var on = el.classList.toggle('on');
+  el.innerHTML = on ? '<span>♥</span> Saved' : '<span>♡</span> Save';
+  toast(on ? '♥ Saved — reminder 2h before + weather-swap watch on' : 'Removed from your weekend plan');
+}
+
+/* toast */
+var tTimer;
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(tTimer); tTimer = setTimeout(function(){t.classList.remove('show')}, 2400);
+}
+
+/* flyer snap flow */
+var snapped = false;
+function openSnap(){
+  snapped = false;
+  document.getElementById('extracted').classList.remove('show');
+  document.getElementById('vf').classList.remove('scanning');
+  document.getElementById('snapAct').textContent = 'Snap & Scan';
+  document.getElementById('snapP').style.display = 'block';
+  document.getElementById('snapModal').classList.add('show');
+}
+function closeSnap(){
+  document.getElementById('snapModal').classList.remove('show');
+}
+function doSnap(){
+  var vf = document.getElementById('vf'), ex = document.getElementById('extracted'),
+      act = document.getElementById('snapAct'), p = document.getElementById('snapP');
+  if(!snapped){
+    snapped = true;
+    vf.classList.add('scanning');
+    p.style.display = 'none';
+    act.textContent = 'Scanning…';
+    act.style.opacity = '.6';
+    setTimeout(function(){
+      vf.classList.remove('scanning');
+      ex.classList.add('show');
+      act.textContent = 'Post to Tampa feed ✓';
+      act.style.opacity = '1';
+    }, 1600);
+  } else {
+    closeSnap();
+    toast('📌 Posted! Vinyl Swap is live in Tampa — +20 karma');
+  }
+}
+</script>
+</body>
+</html>
