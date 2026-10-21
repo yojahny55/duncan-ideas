@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SparkProof — Chat Vet (Prototype)</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#131826; --panel2:#1a2133; --line:#253049;
+    --text:#e8ecf5; --muted:#8a94ad; --accent:#ff4d6d; --accent2:#7c5cff;
+    --safe:#2ecc8f; --warn:#f5a623; --danger:#ff4757;
+    --money:#ffd166; --rush:#ff8fab; --evade:#8ecae6; --bomb:#c77dff; --script:#ffb4a2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--text); min-height:100vh;
+    background-image:radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124,92,255,.15), transparent),
+                     radial-gradient(ellipse 60% 40% at 90% 110%, rgba(255,77,109,.08), transparent);
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:24px 16px 80px}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 20px rgba(255,77,109,.35)}
+  h1{font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+  h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tagline{color:var(--muted);font-size:.9rem;margin-bottom:28px}
+  .tagline b{color:var(--text);font-weight:600}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .card h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+  textarea{width:100%;min-height:280px;background:var(--bg);border:1px solid var(--line);border-radius:10px;
+    color:var(--text);font-family:'Consolas','SF Mono',monospace;font-size:.85rem;line-height:1.6;padding:14px;resize:vertical}
+  textarea:focus{outline:none;border-color:var(--accent2)}
+
+  .btnrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  button{cursor:pointer;border:none;border-radius:10px;font-weight:700;font-size:.9rem;padding:12px 20px;transition:all .15s}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;flex:1;
+    box-shadow:0 4px 16px rgba(255,77,109,.3)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,77,109,.45)}
+  .btn-primary:disabled{opacity:.5;cursor:wait;transform:none}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--muted);padding:12px 16px}
+  .btn-ghost:hover{border-color:var(--accent2);color:var(--text)}
+
+  /* ---- Results ---- */
+  #results{margin-top:24px;display:none}
+  #results.show{display:block;animation:fadeUp .5s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .gauge-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+  .gauge{position:relative;width:150px;height:150px;flex-shrink:0}
+  .gauge svg{transform:rotate(-90deg)}
+  .gauge circle{fill:none;stroke-width:12}
+  .gauge .track{stroke:var(--panel2)}
+  .gauge .bar{stroke:url(#gg);stroke-linecap:round;transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)}
+  .gauge .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .num{font-size:2.2rem;font-weight:800;font-variant-numeric:tabular-nums}
+  .gauge .lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+  .verdict{flex:1;min-width:240px}
+  .verdict h3{font-size:1.25rem;margin-bottom:6px}
+  .verdict p{color:var(--muted);font-size:.9rem;line-height:1.6}
+  .verdict p b{color:var(--text)}
+
+  .signals{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+  .signal{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+    display:flex;gap:12px;align-items:flex-start;animation:fadeUp .4s ease both}
+  .signal .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex-shrink:0}
+  .signal .cat{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:2px}
+  .signal .quote{font-size:.85rem;color:var(--muted);font-style:italic;line-height:1.5}
+  .signal .quote mark{background:rgba(255,77,109,.22);color:var(--text);border-radius:3px;padding:0 3px;font-style:normal}
+  .signal .pts{margin-left:auto;font-size:.75rem;color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums}
+  .cat-money{color:var(--money)} .cat-rush{color:var(--rush)} .cat-evade{color:var(--evade)}
+  .cat-bomb{color:var(--bomb)} .cat-script{color:var(--script)}
+
+  .plan{margin-top:24px}
+  .plan h2{margin-bottom:14px}
+  .plan ol{list-style:none;counter-reset:pl;display:flex;flex-direction:column;gap:10px}
+  .plan li{counter-increment:pl;background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px 12px 52px;position:relative;font-size:.9rem;line-height:1.55;color:var(--muted)}
+  .plan li::before{content:counter(pl);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:8px;
+    background:rgba(46,204,143,.15);color:var(--safe);font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+  .plan li b{color:var(--text)}
+
+  .disclaimer{margin-top:20px;font-size:.75rem;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;line-height:1.6}
+  .scanning{display:none;align-items:center;gap:12px;margin-top:16px;color:var(--muted);font-size:.9rem}
+  .scanning.on{display:flex}
+  .spinner{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  footer{margin-top:48px;text-align:center;color:var(--muted);font-size:.75rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🛡️</div>
+    <h1>Spark<span>Proof</span></h1>
+  </header>
+  <p class="tagline"><b>Chat Vet</b> — paste a conversation, get an instant risk dossier. 100% client-side in this demo; the shipping app runs the rule engine on-device too.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>💬 Conversation</h2>
+      <textarea id="chat" placeholder="Paste messages here, one per line. Prefix with a name if you like (e.g. 'Alex: ...')"></textarea>
+      <div class="btnrow">
+        <button class="btn-ghost" id="sample">Load scam sample</button>
+        <button class="btn-ghost" id="clean">Load clean sample</button>
+        <button class="btn-ghost" id="clear">Clear</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>⚙️ Engine</h2>
+      <p style="color:var(--muted);font-size:.88rem;line-height:1.7">
+        Weighted pattern matcher across <b style="color:var(--text)">5 signal categories</b>:
+      </p>
+      <ul style="list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:.85rem">
+        <li><span class="dot cat-money" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--money);margin-right:8px"></span><b>Money signals</b> — crypto, gift cards, emergencies, wire talk</li>
+        <li><span class="dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--rush);margin-right:8px"></span><b>Off-platform rush</b> — Telegram/WhatsApp within days</li>
+        <li><span class="dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--evade);margin-right:8px"></span><b>Evasion</b> — can't video call, deployed, broken camera</li>
+        <li><span class="dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--bomb);margin-right:8px"></span><b>Love bombing</b> — soulmate speed, future-faking</li>
+        <li><span class="dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--script);margin-right:8px"></span><b>Script tells</b> — phrasing from confirmed scam corpora</li>
+      </ul>
+      <div class="scanning" id="scanning"><div class="spinner"></div><span>Analyzing patterns…</span></div>
+      <button class="btn-primary" id="vet" style="margin-top:18px;width:100%">🔎 Run Investigation</button>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <h2>📋 Risk Dossier</h2>
+      <div class="gauge-row">
+        <div class="gauge">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2ecc8f"/><stop offset="50%" stop-color="#f5a623"/><stop offset="100%" stop-color="#ff4757"/>
+            </linearGradient></defs>
+            <circle class="track" cx="75" cy="75" r="63"/>
+            <circle class="bar" id="gaugeBar" cx="75" cy="75" r="63" stroke-dasharray="396" stroke-dashoffset="396"/>
+          </svg>
+          <div class="val"><span class="num" id="score">0</span><span class="lbl">risk score</span></div>
+        </div>
+        <div class="verdict"><h3 id="verdictTitle">—</h3><p id="verdictText">—</p></div>
+      </div>
+      <div class="signals" id="signals"></div>
+    </div>
+
+    <div class="card plan" id="planCard">
+      <h2>🗓️ First-Date Plan</h2>
+      <ol id="plan"></ol>
+    </div>
+
+    <p class="disclaimer"><b>Not an accusation.</b> SparkProof reports pattern matches against known manipulation and scam scripts — it never claims to know a specific person's intent. False positives happen. Use it as one signal, not a verdict on a human being.</p>
+  </div>
+
+  <footer>SparkProof prototype · Duncan ⚔️ · 2026-10-21 · Rule engine is a miniature version of the shipping on-device scanner</footer>
+</div>
+
+<script>
+// ================= Rule engine (miniature) =================
+const RULES = [
+  // --- Money signals (weight 25 each — the smoking gun) ---
+  {cat:'money', w:25, re:/\b(crypto|cryptocurrency|bitcoin|btc|ethereum|usdt)\b/i, label:'Crypto/investment mention'},
+  {cat:'money', w:25, re:/(gift ?card|itunes card|steam card|apple card)/i, label:'Gift-card request'},
+  {cat:'money', w:25, re:/(wire (transfer|money)|western union|moneygram|send (me )?money|transfer (me )?\$)/i, label:'Money-transfer language'},
+  {cat:'money', w:20, re:/(invest|trading platform|returns? (of|on)|profit|passive income|financial freedom|broker)/i, label:'Investment pitch'},
+  {cat:'money', w:18, re:/(emergency|hospital|surgery|stuck|customs (fee|officer)|frozen account|can'?t pay)/i, label:'Crisis / money excuse'},
+  // --- Off-platform rush ---
+  {cat:'rush', w:18, re:/(whatsapp|telegram|signal|wechat|line app)/i, label:'Push to another messenger'},
+  {cat:'rush', w:12, re:/(i'?m? ?(rarely|not) (on|use) (here|this app)|account (might|will) (get )?(banned|deleted)|this app (keeps|always) crash)/i, label:'Reason to leave the platform'},
+  // --- Evasion ---
+  {cat:'evade', w:20, re:/(can'?t (video|face ?time)|camera (is )?(broken|not working)|bad (connection|signal) for video|phone (broke|lost))/i, label:'Video-call avoidance'},
+  {cat:'evade', w:15, re:/(deployed|oil rig|offshore|overseas|military base|peace ?keeping|on a (ship|vessel|mission))/i, label:'Classic unreachable-job excuse'},
+  {cat:'evade', w:12, re:/(too busy to (talk|meet)|travel(ling)? (a lot|for work)|always in meetings)/i, label:'Meeting avoidance'},
+  // --- Love bombing ---
+  {cat:'bomb', w:15, re:/(soul ?mate|destiny|meant to be|love of my life|never felt (this|so)|god sent|answer(ed)? (my|to) prayers?)/i, label:'Soulmate speed-running'},
+  {cat:'bomb', w:12, re:/(our (future|wedding|family|house together)|when we (marry|get married|live together)|name our (kids|children))/i, label:'Future-faking'},
+  {cat:'bomb', w:10, re:/(my (queen|king|goddess|prince|princess)|beautiful (angel|soul)|only you understand me)/i, label:'Intensified pet names'},
+  // --- Script tells (phrasing from confirmed scam transcripts) ---
+  {cat:'script', w:20, re:/(i was (born|raised) in .* but (currently )?(live|living|working) in)/i, label:'Origin-story template'},
+  {cat:'script', w:18, re:/(lost my (husband|wife|parents?) (a few years|some years|years) ago)/i, label:'Widow/orphan template'},
+  {cat:'script', w:15, re:/(i (run|own|manage) (my own )?(small )?(business|company|firm) .*(invest|import|export|oil|gold|real estate))/i, label:'Vague-business template'},
+  {cat:'script', w:12, re:/(honest(y|and)? (is|are) (my|the) (priority|policy)|i value honesty|god-fearing|fear god)/i, label:'Trust-bait phrasing'},
+  {cat:'script', w:12, re:/(dear|my dear|honey|sweetie)[.,!]?\s*(i want to|let me|allow me|i need)/i, label:'Scripted endearment openers'},
+];
+const CATS = {
+  money:{name:'Money signal', color:'var(--money)'},
+  rush:{name:'Off-platform rush', color:'var(--rush)'},
+  evade:{name:'Evasion', color:'var(--evade)'},
+  bomb:{name:'Love bombing', color:'var(--bomb)'},
+  script:{name:'Script tell', color:'var(--script)'},
+};
+
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function analyze(text){
+  const lines = text.split(/\n+/).map(l=>l.trim()).filter(Boolean);
+  const hits = [];
+  for(const line of lines){
+    for(const rule of RULES){
+      const m = line.match(rule.re);
+      if(m){
+        hits.push({cat:rule.cat, w:rule.w, label:rule.label, line, match:m[0]});
+      }
+    }
+  }
+  // Score: capped sum with diminishing returns per category (one category alone shouldn't max out)
+  const byCat = {};
+  for(const h of hits){ (byCat[h.cat] ||= []).push(h); }
+  let score = 0;
+  for(const cat in byCat){
+    const sorted = byCat[cat].sort((a,b)=>b.w-a.w);
+    const catSum = sorted.reduce((acc,h,i)=> acc + h.w * Math.pow(0.55, i), 0); // diminishing
+    score += Math.min(catSum, 30); // category cap
+  }
+  score = Math.min(100, Math.round(score));
+  const catsHit = Object.keys(byCat).length;
+  if(catsHit >= 3) score = Math.min(100, score + 15); // multi-category corroboration bonus
+  return {score, hits, catsHit};
+}
+
+function verdictFor(score, catsHit){
+  if(score >= 70) return {t:'🚨 High risk — do not proceed', c:'var(--danger)',
+    p:`Multiple scam-script patterns matched across <b>${catsHit} categories</b>. This conversation closely resembles confirmed romance-scam transcripts. <b>Do not send money, gift cards, or crypto under any circumstances.</b> Block and report on the platform.`};
+  if(score >= 40) return {t:'⚠️ Elevated risk — proceed with extreme caution', c:'var(--warn)',
+    p:`Several manipulation patterns detected. Not conclusive, but enough to slow down: <b>no money talk, insist on a video call, and keep everything on-platform.</b> If any pattern escalates, re-run this vet.`};
+  if(score >= 15) return {t:'🟡 Mild flags — worth watching', c:'var(--warn)',
+    p:`A few weak signals matched. Could be innocent phrasing, could be early script. <b>Watch for escalation</b> — especially money, crisis stories, or pushes off-platform.`};
+  return {t:'✅ Low risk — no strong patterns', c:'var(--safe)',
+    p:`No known scam-script patterns matched. That's reassuring, not a guarantee: scammers adapt. <b>Re-run Chat Vet as the conversation progresses</b> — scripts usually surface in weeks 2–4.`};
+}
+
+function planFor(score){
+  const base = [
+    '<b>Meet in public</b> — café or restaurant, daytime, your own transport both ways.',
+    '<b>Share live location</b> with one trusted contact for the duration.',
+    '<b>Video-call first</b> — if they dodge a video call again, that\'s your answer; cancel.',
+  ];
+  if(score >= 40){
+    return [
+      '<b>Consider not meeting at all.</b> The pattern load here justifies blocking and reporting.',
+      '<b>If you meet anyway:</b> public place, daytime, no drinks left unattended, own transport.',
+      '<b>Activate Duncan mode:</b> check-in timer pings your trusted contact with your location + this dossier if you don\'t confirm by the deadline.',
+      '<b>Zero money rule:</b> no loans, no crypto, no gift cards, no "customs fees" — not now, not ever, regardless of the story.',
+      '<b>Exit code ready:</b> pre-agreed text ("Did you feed the cat?") means your friend calls you back with an emergency in 5 minutes.',
+    ];
+  }
+  if(score >= 15){
+    return [...base, '<b>Set a check-in timer</b> — a simple "I\'m safe" ping to a friend 30 minutes in.',
+      '<b>Keep a hard boundary on money</b> — any financial topic this early is an instant disqualifier.'];
+  }
+  return [...base, '<b>Normal precautions apply</b> — trust your gut, leave whenever you want, no explanation owed.'];
+}
+
+// ================= UI =================
+const $ = id => document.getElementById(id);
+const SAMPLE_SCAM = `Daniel: Good morning my dear queen, how was your night? I was thinking about you since we matched, I never felt this connection with anyone before
+You: Hey! Same haha. Tell me about yourself?
+Daniel: I was born in Manchester but currently living and working in Dubai. I run my own small company, we deal in oil and gas export. I lost my wife a few years ago, she was everything to me
+You: Oh I'm so sorry. That must be hard
+Daniel: It is, but honesty is my priority and with you I feel peace. God sent you to me, we are meant to be. When we live together I will spoil you
+You: That's fast 😅 we matched 4 days ago
+Daniel: Time means nothing when the soul recognizes. My dear, this app keeps crashing and my account might get banned, add me on WhatsApp +971 5x xxx xxxx, I'm rarely on here
+You: Okay, moved to WhatsApp. So what do you do all day?
+Daniel: Mostly meetings. In the evening I trade crypto, my broker gave me returns of 30% last month. I can teach you, we can build our future together, passive income for our family
+You: Hmm I don't really do crypto
+Daniel: Trust me honey, I will guide you step by step. Start with just $500 to see the profit. Also I have an emergency, my customs fee for a shipment is frozen, the bank wants $2,000 today, I would never ask but you are the only one I trust
+You: ...You're asking me for money?`;
+
+const SAMPLE_CLEAN = `Maya: hey! saw you're into bouldering too, how long have you been climbing?
+You: About 3 years, mostly V4-V5 now. You?
+Maya: 1 year, still falling off V3s lol. which gym do you go to?
+You: Movement Bellevue on weekends. We should climb sometime
+Maya: down! saturday morning? there's a cafe next door we can grab coffee after
+You: perfect. saturday 10am?
+Maya: sounds good, see you there 🧗‍♀️
+You: 👋`;
+
+$('sample').onclick = () => { $('chat').value = SAMPLE_SCAM; };
+$('clean').onclick  = () => { $('chat').value = SAMPLE_CLEAN; };
+$('clear').onclick  = () => { $('chat').value=''; $('results').classList.remove('show'); };
+
+$('vet').onclick = () => {
+  const text = $('chat').value.trim();
+  if(!text){ alert('Paste a conversation first — or load the sample.'); return; }
+  const btn = $('vet'); btn.disabled = true;
+  $('scanning').classList.add('on');
+  $('results').classList.remove('show');
+  setTimeout(() => { render(analyze(text)); btn.disabled=false; $('scanning').classList.remove('on'); }, 900);
+};
+
+function render({score, hits, catsHit}){
+  const v = verdictFor(score, catsHit);
+  $('results').classList.add('show');
+
+  // gauge
+  const circ = 396;
+  const bar = $('gaugeBar');
+  bar.style.strokeDashoffset = circ;
+  requestAnimationFrame(()=> requestAnimationFrame(()=>{
+    bar.style.strokeDashoffset = circ - (circ * score / 100);
+  }));
+  // count-up
+  const numEl = $('score'); let cur = 0;
+  const step = Math.max(1, Math.round(score/40));
+  const iv = setInterval(()=>{ cur = Math.min(score, cur+step); numEl.textContent = cur; numEl.style.color = v.c; if(cur>=score) clearInterval(iv); }, 30);
+
+  $('verdictTitle').textContent = v.t; $('verdictTitle').style.color = v.c;
+  $('verdictText').innerHTML = v.p;
+
+  // signals (dedupe by label, strongest first)
+  const seen = new Set();
+  const sigEl = $('signals'); sigEl.innerHTML = '';
+  const shown = hits.sort((a,b)=>b.w-a.w).filter(h=>{
+    if(seen.has(h.label)) return false; seen.add(h.label); return true;
+  });
+  if(shown.length === 0){
+    sigEl.innerHTML = '<div class="signal"><div class="dot" style="background:var(--safe);margin-top:6px"></div><div><div class="cat" style="color:var(--safe)">No patterns matched</div><div class="quote">Clean on all 5 signal categories. Re-vet as the conversation grows.</div></div></div>';
+  }
+  shown.slice(0,12).forEach((h,i)=>{
+    const c = CATS[h.cat];
+    const el = document.createElement('div');
+    el.className = 'signal'; el.style.animationDelay = (i*60)+'ms';
+    const ctx = escapeHtml(h.line);
+    const marked = ctx.replace(new RegExp(h.match.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'), m=>'<mark>'+m+'</mark>');
+    el.innerHTML = `<div class="dot" style="background:${c.color}"></div>
+      <div style="min-width:0"><div class="cat" style="color:${c.color}">${c.name} · ${h.label}</div>
+      <div class="quote">“${marked}”</div></div>
+      <div class="pts">+${h.w}</div>`;
+    sigEl.appendChild(el);
+  });
+
+  // plan
+  $('plan').innerHTML = planFor(score).map(s=>'<li>'+s+'</li>').join('');
+  $('results').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// seed with the scam sample for demo appeal
+$('chat').value = SAMPLE_SCAM;
+</script>
+</body>
+</html>
