@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CeaseFire 🛑📞 — Debt Collector Shield</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#171e2e; --panel2:#1d2740; --ink:#e8edf7; --muted:#93a0b8;
+    --line:#2a3652; --accent:#4f8cff; --green:#3ecf8e; --amber:#f5b942; --red:#f2687a;
+    --radius:14px; font-size:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; padding-bottom:80px;}
+  .wrap{max-width:860px; margin:0 auto; padding:20px 16px;}
+  header{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px;}
+  h1{font-size:1.5rem; letter-spacing:-.02em;}
+  h1 small{display:block; font-size:.8rem; font-weight:400; color:var(--muted); margin-top:2px;}
+  .disclaimer{background:#20293e; border:1px solid var(--line); color:var(--muted); font-size:.75rem; border-radius:10px; padding:8px 12px; margin:10px 0 16px;}
+  .btnrow{display:flex; gap:8px; flex-wrap:wrap;}
+  button{font:inherit; cursor:pointer; border-radius:10px; border:1px solid var(--line); background:var(--panel2); color:var(--ink); padding:8px 14px; transition:filter .15s;}
+  button:hover{filter:brightness(1.15);}
+  button.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600;}
+  button.ghost{background:transparent;}
+  button.danger{background:transparent; border-color:#5a3040; color:var(--red);}
+  button:disabled{opacity:.45; cursor:not-allowed;}
+  nav.tabs{display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;}
+  nav.tabs button{border-radius:999px; padding:8px 16px; font-weight:600; color:var(--muted);}
+  nav.tabs button.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:14px;}
+  .card h2{font-size:1.05rem; margin-bottom:10px;}
+  .card h3{font-size:.9rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;}
+  label{display:block; font-size:.8rem; color:var(--muted); margin:10px 0 4px;}
+  input,select,textarea{width:100%; font:inherit; background:#101728; color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:9px 11px;}
+  textarea{min-height:70px; resize:vertical;}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent); outline-offset:-1px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 14px;}
+  @media(max-width:640px){ .grid2,.grid3{grid-template-columns:1fr;} }
+  .checks{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px;}
+  .checks label{display:flex; align-items:center; gap:6px; margin:0; font-size:.85rem; color:var(--ink); cursor:pointer;}
+  .checks input{width:auto;}
+  .entry{border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; background:var(--panel2);}
+  .entry .top{display:flex; justify-content:space-between; gap:10px; align-items:baseline; flex-wrap:wrap;}
+  .entry .when{font-size:.78rem; color:var(--muted);}
+  .pill{display:inline-block; font-size:.7rem; font-weight:700; padding:2px 9px; border-radius:999px; margin-left:6px; vertical-align:middle;}
+  .pill.call{background:#1c2c4d; color:#7faaff;}
+  .pill.letter{background:#1d3a2e; color:#5fd6a0;}
+  .pill.voicemail{background:#3a3120; color:#f0c060;}
+  .pill.email{background:#2c2440; color:#b397f5;}
+  .pill.text{background:#2c2440; color:#b397f5;}
+  .pill.inperson{background:#402732; color:#f09aad;}
+  .flag{font-size:.7rem; font-weight:700; border-radius:6px; padding:2px 7px; margin:6px 6px 0 0; display:inline-block;}
+  .flag.bad{background:#3a1f2a; color:var(--red);}
+  .flag.warn{background:#3a3120; color:var(--amber);}
+  .muted{color:var(--muted); font-size:.85rem;}
+  .empty{text-align:center; color:var(--muted); padding:26px 10px; font-size:.9rem;}
+  .countdown{display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
+  .clock{font-size:2.2rem; font-weight:800; letter-spacing:-.03em; line-height:1;}
+  .clock.ok{color:var(--green);} .clock.soon{color:var(--amber);} .clock.expired{color:var(--red);}
+  .meter{height:14px; background:#101728; border:1px solid var(--line); border-radius:999px; overflow:hidden; margin:10px 0 6px;}
+  .meter .fill{height:100%; width:0%; border-radius:999px; transition:width .4s;}
+  .viol{border-left:3px solid var(--line); padding:8px 12px; margin-bottom:8px; background:var(--panel2); border-radius:0 10px 10px 0;}
+  .viol.hit{border-left-color:var(--red);}
+  .viol.watch{border-left-color:var(--amber);}
+  .viol.clear{border-left-color:var(--green);}
+  .viol .cite{font-size:.72rem; color:var(--muted); margin-top:2px;}
+  .letterbox{background:#fdfaf3; color:#222; border-radius:10px; padding:18px; font-family:Georgia,"Times New Roman",serif; white-space:pre-wrap; font-size:.88rem; line-height:1.55; margin:12px 0;}
+  .lane{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px;}
+  @media(max-width:640px){ .lane{grid-template-columns:1fr;} }
+  .lane button{text-align:left; padding:12px; border-radius:12px;}
+  .lane button.active{border-color:var(--accent); background:#1a2947;}
+  .lane b{display:block; margin-bottom:2px;}
+  .lane span{font-size:.75rem; color:var(--muted);}
+  .steps{counter-reset:s; list-style:none;}
+  .steps li{counter-increment:s; padding:8px 0 8px 38px; position:relative; border-bottom:1px dashed var(--line); font-size:.9rem;}
+  .steps li:last-child{border-bottom:none;}
+  .steps li::before{content:counter(s); position:absolute; left:0; top:8px; width:24px; height:24px; border-radius:50%; background:var(--panel2); border:1px solid var(--line); color:var(--accent); font-weight:700; font-size:.8rem; display:flex; align-items:center; justify-content:center;}
+  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--green); color:#08281a; font-weight:700; padding:10px 20px; border-radius:999px; transition:transform .25s; z-index:99; font-size:.9rem;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .hidden{display:none !important;}
+  details summary{cursor:pointer; color:var(--accent); font-size:.85rem; margin-bottom:6px;}
+  footer{text-align:center; color:var(--muted); font-size:.72rem; margin-top:26px;}
+  @media print{
+    body{background:#fff; color:#000;}
+    nav.tabs, header .btnrow, .disclaimer, .no-print, footer, .toast{display:none !important;}
+    .card{border:none; background:#fff;}
+    .letterbox{border:1px solid #ccc;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>CeaseFire 🛑📞<small>Every call is evidence. Every right, asserted.</small></h1>
+    <div class="btnrow no-print">
+      <button id="btnDemo" class="ghost" title="Load a sample case">✨ Demo case</button>
+      <button id="btnExport" class="ghost">⬇ Export JSON</button>
+      <button id="btnPrint" class="ghost">🖨 Case summary</button>
+      <button id="btnWipe" class="danger" title="Delete all local data">Reset</button>
+    </div>
+  </header>
+
+  <div class="disclaimer">
+    ⚖️ <b>This tool is not a lawyer.</b> It generates <i>legal information</i> from your own log to help you assert FDCPA rights.
+    All data stays on this device (localStorage) — nothing is uploaded, no account needed. For case-specific advice, contact a consumer attorney (see <b>Escalate</b> tab).
+  </div>
+
+  <nav class="tabs no-print">
+    <button data-tab="log" class="active">📓 Log</button>
+    <button data-tab="radar">📡 Rights Radar</button>
+    <button data-tab="letters">✉️ Letter Forge</button>
+    <button data-tab="escalate">⚖️ Escalate</button>
+  </nav>
+
+  <!-- ============ LOG TAB ============ -->
+  <section id="tab-log">
+    <div class="card no-print">
+      <h2>Log a collector contact</h2>
+      <div class="grid3">
+        <div><label>Type</label>
+          <select id="fType">
+            <option value="call">📞 Phone call</option>
+            <option value="voicemail">🎙 Voicemail</option>
+            <option value="letter">✉️ Letter / mail</option>
+            <option value="email">📧 Email</option>
+            <option value="text">💬 Text message</option>
+            <option value="inperson">🚪 In person</option>
+          </select>
+        </div>
+        <div><label>Agency / collector name</label><input id="fAgency" placeholder="e.g. Convergent ACM"></div>
+        <div><label>Phone number (if any)</label><input id="fPhone" placeholder="e.g. 813-555-0142"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Date &amp; time</label><input id="fWhen" type="datetime-local"></div>
+        <div><label>Account / reference # (optional)</label><input id="fAccount" placeholder="e.g. ACCT-88213"></div>
+      </div>
+      <label>What happened? What did they say or threaten?</label>
+      <textarea id="fSummary" placeholder="e.g. Caller said 'we'll have the sheriff at your door by Friday' unless I paid $1,412 today. Refused to give a company address."></textarea>
+      <div class="checks">
+        <label><input type="checkbox" id="fThreats"> Threats / profanity / sheriff-or-arrest language</label>
+        <label><input type="checkbox" id="fThird"> Contacted (or asked for) a third party — family, roommate, boss</label>
+        <label><input type="checkbox" id="fWork"> Called me at work</label>
+      </div>
+      <div style="margin-top:14px"><button class="primary" id="btnAdd">＋ Add to evidence log</button></div>
+    </div>
+
+    <div class="card">
+      <details class="no-print" id="profileBox">
+        <summary>Your details (used to fill letters — stored locally)</summary>
+        <div class="grid2">
+          <div><label>Your full legal name</label><input id="pName" placeholder="Jane Q. Consumer"></div>
+          <div><label>Account # in dispute</label><input id="pAccount" placeholder="ACCT-88213 or 'unknown'"></div>
+        </div>
+        <label>Your mailing address</label><input id="pAddress" placeholder="123 Main St, Tampa, FL 33601">
+        <label>Collector agency mailing address (from any letter — or leave blank)</label><input id="pAgencyAddr" placeholder="P.O. Box 456, Wilmington, DE 19801">
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>📓 Evidence timeline <span id="entryCount" class="muted"></span></h2>
+      <div id="entries"></div>
+    </div>
+  </section>
+
+  <!-- ============ RADAR TAB ============ -->
+  <section id="tab-radar" class="hidden">
+    <div class="card">
+      <h2>⏳ 30-day dispute window — FDCPA §809(b) / 15 U.S.C. §1692g(b)</h2>
+      <p class="muted" style="margin-bottom:10px">From the collector's <b>first contact</b>, you have 30 days to dispute the debt in writing. Dispute within the window and they must <b>stop all collection</b> until they mail you validation. Miss it, and the debt is presumed valid.</p>
+      <div class="countdown">
+        <div><div class="clock" id="cdDays">—</div><div class="muted" id="cdLabel">days left to dispute</div></div>
+        <div id="cdDetail" class="muted"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📡 FDCPA violation radar</h2>
+      <p class="muted" style="margin-bottom:12px">Conservative pattern flags from your log — documentation first, conclusions later. Each hit strengthens your case (statutory damages up to $1,000 per action + attorney fees, §1692k).</p>
+      <div id="violations"></div>
+    </div>
+
+    <div class="card">
+      <h2>💪 Case strength</h2>
+      <div class="meter"><div class="fill" id="meterFill"></div></div>
+      <div id="meterText" class="muted"></div>
+    </div>
+
+    <div class="card no-print">
+      <h2>✅ Validation-notice check — §809(a)</h2>
+      <div id="noticeCheck" class="muted"></div>
+    </div>
+  </section>
+
+  <!-- ============ LETTERS TAB ============ -->
+  <section id="tab-letters" class="hidden">
+    <div class="card">
+      <h2>✉️ Letter Forge — pick a lane</h2>
+      <p class="muted" style="margin-bottom:12px">Templates cite the statute and merge your logged facts. Send by <b>certified mail, return receipt requested</b>, and log the tracking number as a new "letter" entry (outbound). Keep a copy.</p>
+      <div class="lane">
+        <button data-lane="validate" class="active"><b>🟢 Validate</b><span>Dispute + demand validation (§809). Collection must pause until they prove it.</span></button>
+        <button data-lane="backoff"><b>🟡 Back off</b><span>Stop third-party &amp; workplace contact (§805). For blast-radius victims.</span></button>
+        <button data-lane="cease"><b>🔴 Cease</b><span>Full cease-communication (§805(c)). They may only confirm or notice remedies.</span></button>
+      </div>
+      <div class="letterbox" id="letterOut"></div>
+      <div class="btnrow no-print">
+        <button class="primary" id="btnCopy">📋 Copy letter</button>
+        <button id="btnLetterPrint">🖨 Print</button>
+        <button id="btnLogSent">📓 Log as sent (mail)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ESCALATE TAB ============ -->
+  <section id="tab-escalate" class="hidden">
+    <div class="card">
+      <h2>🏛 CFPB complaint — prefilled</h2>
+      <p class="muted">Submit at <b>consumerfinance.gov/complaint</b> (takes ~10 min; company must respond in 15 days). Text below is merged from your log — edit freely, then copy/paste into the form's narrative box.</p>
+      <textarea id="cfpbText" style="min-height:220px; font-family:ui-monospace,monospace; font-size:.8rem;"></textarea>
+      <div class="btnrow no-print" style="margin-top:10px"><button class="primary" id="btnCopyCfpb">📋 Copy complaint</button></div>
+    </div>
+    <div class="card">
+      <h2>👩‍⚖️ Consumer attorney checklist</h2>
+      <p class="muted" style="margin-bottom:8px">FDCPA cases are often taken on <b>contingency</b> (fees shift to the collector if you win). Bring your exported JSON + case summary.</p>
+      <ol class="steps">
+        <li>Find NACA-member attorneys: <b>consumeradvocates.org</b> → "Find an Attorney" (National Association of Consumer Advocates).</li>
+        <li>Also search your state bar's consumer-protection section and Legal Aid if income-eligible.</li>
+        <li>Before the call: CeaseFire → <b>Export JSON</b> + <b>🖨 Case summary</b>. That's your intake packet.</li>
+        <li>Bring: every collector letter, voicemails, call-log screenshots, certified-mail receipts.</li>
+        <li>Ask: statute of limitations on the debt, whether it was ever validated, §1692k statutory damages, fee arrangement.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>📮 State Attorney General</h2>
+      <p class="muted">Most states accept consumer complaints online (search "[your state] attorney general file a complaint"). Several states — CA (Rosenthal Act), NY, MA, IL — have collector laws <b>broader</b> than the FDCPA. A CFPB complaint + state AG complaint costs nothing and creates a paper trail regulators actually read.</p>
+    </div>
+  </section>
+
+  <footer>CeaseFire prototype · local-first · data never leaves your browser · not legal advice · 2026-10-24</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ================= state ================= */
+const LS_KEY = "***";
+let state = load() || { profile:{name:"",address:"",account:"",agencyAddr:""}, entries:[] };
+function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)); }catch(e){ return null; } }
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+/* ================= helpers ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+function esc(s){ return String(s??"").replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDT(iso){ const d=new Date(iso); return d.toLocaleString([], {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}); }
+function fmtDate(iso){ const d=new Date(iso); return d.toLocaleDateString([], {month:'long',day:'numeric',year:'numeric'}); }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+function sortedEntries(){ return [...state.entries].sort((a,b)=>new Date(a.when)-new Date(b.when)); }
+function firstContact(){ const e=sortedEntries(); return e.length? e[0] : null; }
+
+/* ================= tabs ================= */
+$$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>{
+  $$('nav.tabs button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  ['log','radar','letters','escalate'].forEach(t=>$('#tab-'+t).classList.toggle('hidden', t!==b.dataset.tab));
+  render();
+}));
+
+/* ================= logging ================= */
+$('#fWhen').value = new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+['pName','pAddress','pAccount','pAgencyAddr'].forEach(id=>{
+  const key={pName:'name',pAddress:'address',pAccount:'account',pAgencyAddr:'agencyAddr'}[id];
+  $('#'+id).value = state.profile[key]||"";
+  $('#'+id).addEventListener('change', e=>{ state.profile[key]=e.target.value.trim(); save(); });
+});
+
+$('#btnAdd').addEventListener('click',()=>{
+  const summary=$('#fSummary').value.trim();
+  const agency=$('#fAgency').value.trim();
+  if(!summary && !agency){ toast("Add at least an agency name or a summary"); return; }
+  state.entries.push({
+    id:uid(), type:$('#fType').value, agency, phone:$('#fPhone').value.trim(),
+    when:new Date($('#fWhen').value).toISOString(), account:$('#fAccount').value.trim(),
+    summary, threats:$('#fThreats').checked, thirdParty:$('#fThird').checked, atWork:$('#fWork').checked,
+    outbound:false
+  });
+  save();
+  $('#fSummary').value=""; $('#fPhone').value=""; $('#fAccount').value="";
+  $('#fThreats').checked=$('#fThird').checked=$('#fWork').checked=false;
+  toast("Logged — evidence secured 🔒");
+  render();
+});
+
+function deleteEntry(id){
+  if(!confirm("Delete this log entry? Your evidence log should be complete — only delete mistakes.")) return;
+  state.entries=state.entries.filter(e=>e.id!==id); save(); render();
+}
+
+/* ================= rules engine (conservative pattern flags) ================= */
+function analyze(){
+  const now=Date.now(), DAY=864e5;
+  const es=sortedEntries();
+  const inbound=es.filter(e=>!e.outbound && e.type!=='letter' || (e.type==='letter' && !e.outbound));
+  const calls=es.filter(e=>!e.outbound && (e.type==='call'||e.type==='voicemail'));
+  const results=[];
+
+  // 1. Call frequency — Reg F presumption: >7 calls about a debt in 7 days
+  const w=calls.filter(e=>now-new Date(e.when)<=7*DAY);
+  results.push({
+    key:'freq',
+    hit: w.length>7,
+    watch: w.length>=5 && w.length<=7,
+    title:`Call frequency — ${w.length} call${w.length===1?'':'s'} in the last 7 days`,
+    cite:'FDCPA §806(5) / 15 U.S.C. §1692d(5); Reg F 12 C.F.R. §1006.14(b): more than 7 calls per debt in 7 days is presumed harassment',
+    detail: w.length>7 ? 'Over the Reg F presumption threshold. Document every call — this is one of the cleanest violations to prove.' : (w.length>=5?'Approaching the 7-call/7-day presumption. Keep logging.':'Under the threshold so far.')
+  });
+
+  // 2. Quiet hours — before 8am / after 9pm local
+  const offHours=calls.filter(e=>{ const h=new Date(e.when).getHours(); return h<8 || h>=21; });
+  results.push({
+    key:'hours', hit: offHours.length>0, watch:false,
+    title:`Calls outside 8am–9pm — ${offHours.length} found`,
+    cite:'FDCPA §805(a)(1) / 15 U.S.C. §1692c(a)(1)',
+    detail: offHours.length? 'Calls before 8am or after 9pm are per se improper. Timestamps logged: '+offHours.map(e=>fmtDT(e.when)).join(' · ') : 'None logged.'
+  });
+
+  // 3. Third-party contact
+  const third=es.filter(e=>!e.outbound && e.thirdParty);
+  results.push({
+    key:'third', hit: third.length>0, watch:false,
+    title:`Third-party contact — ${third.length} logged`,
+    cite:'FDCPA §805(b) / 15 U.S.C. §1692c(b): may contact others only to locate you, generally once each, and must not reveal the debt',
+    detail: third.length? 'Contacting your family/roommates/boss about the debt (or repeatedly to locate you) is a classic violation. Especially strong if they revealed the debt or called the same person twice.' : 'None logged.'
+  });
+
+  // 4. Workplace contact
+  const work=es.filter(e=>!e.outbound && e.atWork);
+  results.push({
+    key:'work', hit: work.length>1, watch: work.length===1,
+    title:`Workplace contact — ${work.length} logged`,
+    cite:'FDCPA §805(a)(3) / 15 U.S.C. §1692c(a)(3): no workplace contact if they know your employer prohibits it',
+    detail: work.length? 'Log once more if it happens after you told them (orally or in writing) your employer prohibits such calls — after notice, it is flatly prohibited.' : 'None logged.'
+  });
+
+  // 5. Threats / profanity
+  const thr=es.filter(e=>!e.outbound && e.threats);
+  results.push({
+    key:'threats', hit: thr.length>0, watch:false,
+    title:`Threats, profanity, or arrest/sheriff language — ${thr.length} logged`,
+    cite:'FDCPA §806 / 15 U.S.C. §1692d; false arrest threats also violate §807(4)–(5)',
+    detail: thr.length? 'Threats of violence, arrest, or seizure are prohibited — and claiming legal action they cannot or do not intend to take is a separate false-representation violation. Your written contemporaneous notes are strong evidence.' : 'None logged.'
+  });
+
+  return {results, es, calls};
+}
+
+function strength(){
+  const {results}=analyze();
+  let score=0;
+  results.forEach(r=>{ score += r.hit? (r.key==='threats'||r.key==='third'? 30 : 25) : (r.watch? 10 : 0); });
+  score=Math.min(100,score);
+  const level = score>=70? {t:'STRONG — talk to a consumer attorney (contingency is common)', c:'var(--green)'}
+    : score>=35? {t:'BUILDING — document everything; send letters now', c:'var(--amber)'}
+    : {t:'EARLY — your log is your shield. Keep every entry precise.', c:'var(--accent)'};
+  return {score, ...level};
+}
+
+/* ================= countdown ================= */
+function countdown(){
+  const fc=firstContact();
+  const box={days:$('#cdDays'), label:$('#cdLabel'), detail:$('#cdDetail')};
+  if(!fc){ box.days.textContent='—'; box.days.className='clock'; box.label.textContent='days left to dispute'; box.detail.textContent='Log the collector\u2019s first contact to start your 30-day §809(b) dispute clock.'; return null; }
+  const start=new Date(fc.when);
+  const deadline=new Date(start.getTime()+30*864e5);
+  const left=Math.ceil((deadline-Date.now())/864e5);
+  if(left>0){
+    box.days.textContent=left; box.days.className='clock '+(left<=10?'soon':'ok');
+    box.label.textContent='days left to dispute';
+    box.detail.innerHTML=`First contact: <b>${fmtDT(fc.when)}</b> (${esc(fc.agency||'unknown agency')}). Deadline: <b>${fmtDate(deadline.toISOString())}</b>. Send the 🟢 Validate letter before then — after a timely written dispute they must stop collecting until they mail validation.`;
+  } else {
+    box.days.textContent='0'; box.days.className='clock expired';
+    box.label.textContent='dispute window closed (presumed valid)';
+    box.detail.innerHTML=`First contact was ${fmtDate(fc.when.toISOString? fc.when : fc.when)} — the 30-day presumption window has passed. You can STILL: dispute at any time (they must then validate before further collection per §809(b) practice), send 🔴 Cease, and sue for any logged violations. Statute of limitations for FDCPA claims: 1 year from the violation.`;
+  }
+  return {start, deadline, left};
+}
+
+/* ================= validation-notice check ================= */
+function noticeCheck(){
+  const es=sortedEntries();
+  const fc=firstContact();
+  if(!fc){ return 'Log the first contact to start this check.'; }
+  const gotLetter=es.some(e=>!e.outbound && e.type==='letter');
+  const days=(Date.now()-new Date(fc.when))/864e5;
+  if(gotLetter) return '✅ You logged a letter from them. Check it contains the §809(a) mini-Miranda: the amount, the creditor, and your 30-day dispute rights. Missing any of those? That\u2019s a violation — flag it in your entry summary.';
+  if(days>5) return '⚠️ It has been more than <b>5 days since first contact</b> and you have logged <b>no written validation notice</b>. Within 5 days of the initial communication they must send written notice of the debt (§809(a) / 15 U.S.C. §1692g(a)). If it never arrived, that\u2019s exposure — mention it in your dispute letter and CFPB complaint.';
+  return '⏳ No letter logged yet — they have 5 days from first contact ('+fmtDate(fc.when)+') to send the written validation notice (§809(a)).';
+}
+
+/* ================= letter templates ================= */
+function profileLines(){
+  const p=state.profile;
+  return {
+    name: p.name || '[YOUR FULL LEGAL NAME]',
+    addr: p.address || '[YOUR MAILING ADDRESS]',
+    acct: p.account || '[ACCOUNT # — or "the account you reference"]',
+    agencyAddr: p.agencyAddr ? '\n'+p.agencyAddr : ''
+  };
+}
+function factsBlock(){
+  const es=sortedEntries().filter(e=>!e.outbound);
+  if(!es.length) return '';
+  const lines=es.slice(-12).map(e=>`  • ${fmtDT(e.when)} — ${e.type}${e.agency?' ('+e.agency+')':''}${e.phone?' from '+e.phone:''}${e.threats?' [THREATS/ABUSE]':''}${e.thirdParty?' [THIRD-PARTY CONTACT]':''}${e.atWork?' [WORKPLACE CONTACT]':''}${e.summary?': '+e.summary:''}`);
+  return '\nFor your records, my contemporaneous log of your contacts:\n'+lines.join('\n')+'\n';
+}
+const today=()=>fmtDate(new Date().toISOString());
+const LETTERS={
+  validate(){
+    const p=profileLines();
+    return `${p.name}
+${p.addr}
+
+${today()}
+
+${'${AGENCY}'}
+
+VIA CERTIFIED MAIL — RETURN RECEIPT REQUESTED
+
+Re: Account ${p.acct} — Dispute and Request for Validation
+
+To Whom It May Concern:
+
+I am writing in response to your ${'${FIRSTTYPE}'} dated ${'${FIRSTDATE}'}. Pursuant to the Fair Debt Collection Practices Act, 15 U.S.C. § 1692g(b) (FDCPA § 809(b)), I dispute this debt in its entirety and demand that you provide validation.
+
+Until you mail me written verification of the debt, including the name and address of the original creditor, the amount owed with an accounting, and proof of your authority to collect, you must CEASE ALL COLLECTION ACTIVITY on this account. This is not a waiver of any of my rights; all rights are expressly reserved.
+
+I also note the following, logged contemporaneously:
+1. If your initial communication was oral and no written notice containing the § 1692g(a) information was mailed to me within five days, your continued collection activity violates § 1692g(a).
+2. Any contact with third parties beyond the limited locator inquiries permitted by § 1692c(b), any call outside 8:00 a.m.–9:00 p.m., any call to my workplace after notice, and any threatening or abusive language violate §§ 1692c and 1692d and are being documented.
+3. If you report this disputed debt to any consumer reporting agency before validation, you must report it as disputed (15 U.S.C. § 1692e(8)).
+
+Direct all future communications regarding this matter to me in writing at the address above.
+${'${FACTS}'}
+This letter is informational and generated with the assistance of a self-help tool; it is not legal advice and no attorney-client relationship is created.
+
+Sincerely,
+
+
+${p.name}
+
+Enclosure: none. Please acknowledge receipt.`.replace('${AGENCY}','[COLLECTOR AGENCY NAME]'+p.agencyAddr).replace('${FIRSTTYPE}', firstContact()? 'communication' : 'communication').replace('${FIRSTDATE}', firstContact()? fmtDate(firstContact().when) : '[DATE OF FIRST CONTACT]').replace('${FACTS}', factsBlock());
+  },
+  backoff(){
+    const p=profileLines();
+    return `${p.name}
+${p.addr}
+
+${today()}
+
+[COLLECTOR AGENCY NAME]${p.agencyAddr}
+
+VIA CERTIFIED MAIL — RETURN RECEIPT REQUESTED
+
+Re: Account ${p.acct} — Demand to Stop Third-Party and Workplace Contact
+
+To Whom It May Concern:
+
+You have been contacting third parties — including family members and/or my place of employment — in connection with the above-referenced account.
+
+Under 15 U.S.C. § 1692c(b) (FDCPA § 805(b)), a debt collector may not communicate with any person other than the consumer, except to acquire location information, and in doing so must not state that the consumer owes any debt, must identify itself only minimally, and may not contact any one third party more than once. Under § 1692c(a)(3), you may not contact me at my place of employment if you know or have reason to know my employer prohibits such communications. I hereby give you that notice: MY EMPLOYER PROHIBITS PERSONAL CALLS AT WORK.
+
+DEMAND: Effective immediately —
+1. Stop all communications with any third party regarding this or any alleged debt.
+2. Stop all communications to my place of employment.
+3. Direct all communications about this account to me in writing at the address above.
+
+Any further violation is actionable under 15 U.S.C. § 1692k, which provides for actual damages, statutory damages up to $1,000, and costs plus attorney's fees. I am maintaining a contemporaneous log of all your contacts.
+${factsBlock()}
+This letter is informational and generated with a self-help tool; it is not legal advice.
+
+Sincerely,
+
+
+${p.name}`;
+  },
+  cease(){
+    const p=profileLines();
+    return `${p.name}
+${p.addr}
+
+${today()}
+
+[COLLECTOR AGENCY NAME]${p.agencyAddr}
+
+VIA CERTIFIED MAIL — RETURN RECEIPT REQUESTED
+
+Re: Account ${p.acct} — CEASE ALL COMMUNICATIONS
+
+To Whom It May Concern:
+
+Pursuant to 15 U.S.C. § 1692c(c) (FDCPA § 805(c)), I demand that you CEASE ALL COMMUNICATIONS with me regarding the above-referenced alleged debt, by telephone, mail, text, email, or any other medium, except as § 1692c(c) narrowly allows (advising that collection efforts are terminated, or notifying me of a specific remedy you intend to invoke).
+
+Be advised:
+1. I dispute this debt and have requested/have the right to request validation under § 1692g. Nothing in this letter waives that or any other right.
+2. I am maintaining a contemporaneous log of every contact from you. Post-receipt communications, calls outside 8 a.m.–9 p.m., third-party contacts, workplace calls, or any threatening language will be documented and are evidence of willful violation.
+3. Violations of the FDCPA carry statutory damages up to $1,000 per action plus actual damages, costs, and attorney's fees (15 U.S.C. § 1692k), and may be reported to the Consumer Financial Protection Bureau and my state Attorney General.
+
+Govern yourselves accordingly.
+${factsBlock()}
+This letter is informational and generated with a self-help tool; it is not legal advice.
+
+Sincerely,
+
+
+${p.name}`;
+  }
+};
+let currentLane='validate';
+$$('.lane button').forEach(b=>b.addEventListener('click',()=>{
+  $$('.lane button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); currentLane=b.dataset.lane; renderLetter();
+}));
+function renderLetter(){ $('#letterOut').textContent = LETTERS[currentLane](); }
+$('#btnCopy').addEventListener('click', async ()=>{
+  try{ await navigator.clipboard.writeText($('#letterOut').textContent); toast('Letter copied — paste into a doc, sign, mail certified ✉️'); }
+  catch(e){ toast('Clipboard blocked — select the text manually'); }
+});
+$('#btnLetterPrint').addEventListener('click',()=>window.print());
+$('#btnLogSent').addEventListener('click',()=>{
+  const names={validate:'Validation & dispute letter (OUTBOUND — mailed)',backoff:'Third-party/workplace cease letter (OUTBOUND — mailed)',cease:'Cease-communication letter (OUTBOUND — mailed)'};
+  state.entries.push({ id:uid(), type:'letter', agency:(state.profile.name?'to collector re: '+(state.profile.account||'account'):''), phone:'', when:new Date().toISOString(), account:state.profile.account||'', summary:names[currentLane]+' via certified mail. Tracking #: [fill in from USPS receipt]', threats:false, thirdParty:false, atWork:false, outbound:true });
+  save(); render(); toast('Outbound letter logged — add the certified-mail tracking # to the entry');
+});
+
+/* ================= CFPB complaint ================= */
+function renderCfpb(){
+  const es=sortedEntries().filter(e=>!e.outbound);
+  const {results}=analyze();
+  const hits=results.filter(r=>r.hit||r.watch).map(r=>'– '+r.title+' ('+r.cite.split(';')[0]+')').join('\n');
+  $('#cfpbText').value =
+`PRODUCT: Debt collection (phone calls / letters)
+COMPANY: ${es[0]?.agency || state.profile.agencyAddr ? (es[0]?.agency||'[AGENCY NAME]') : '[AGENCY NAME]'}
+ACCOUNT: ${state.profile.account || '[ACCOUNT # or "unknown"]'}
+
+NARRATIVE:
+I am being contacted by the above debt collector regarding an alleged debt I dispute. On ${firstContact()? fmtDate(firstContact().when):'[FIRST CONTACT DATE]'} the collector first contacted me. Within 30 days I have disputed the debt and/or requested validation in writing under 15 U.S.C. § 1692g.
+
+The collector's conduct includes the following, which I logged contemporaneously:
+${hits || '– (no automated flags yet — describe conduct here)'}
+
+Key incidents:
+${es.slice(-8).map(e=>`– ${fmtDT(e.when)} (${e.type}${e.phone?', '+e.phone:''})${e.summary?': '+e.summary:''}`).join('\n') || '– (none logged)'}
+
+RELIEF REQUESTED: Cease collection activity until the debt is validated in writing; cease harassing conduct; correct or suppress any credit reporting of this disputed debt.
+
+DESIRED OUTCOME: Company confirms termination of improper collection activity and provides full validation or withdraws the account.
+
+(Generated with CeaseFire, a self-help logging tool. Not legal advice. I consent to sharing my log with the CFPB.)`;
+}
+$('#btnCopyCfpb').addEventListener('click', async ()=>{
+  try{ await navigator.clipboard.writeText($('#cfpbText').value); toast('Complaint copied → consumerfinance.gov/complaint'); }
+  catch(e){ toast('Clipboard blocked — select the text manually'); }
+});
+
+/* ================= render ================= */
+function render(){
+  // entries
+  const es=sortedEntries().slice().reverse();
+  $('#entryCount').textContent = es.length? `(${state.entries.length} entries)` : '';
+  $('#entries').innerHTML = es.length? es.map(e=>`
+    <div class="entry">
+      <div class="top">
+        <div><span class="pill ${e.type}">${e.type}${e.outbound?' ↗ sent':''}</span> <b>${esc(e.agency||'—')}</b>${e.phone?` <span class="muted">${esc(e.phone)}</span>`:''}</div>
+        <div class="when">${fmtDT(e.when)} <button class="ghost no-print" style="padding:2px 8px; font-size:.75rem;" onclick="deleteEntry('${e.id}')">✕</button></div>
+      </div>
+      ${e.summary?`<div style="margin-top:6px; font-size:.9rem;">${esc(e.summary)}</div>`:''}
+      <div>${e.threats?'<span class="flag bad">⚠ threats</span>':''}${e.thirdParty?'<span class="flag bad">⚠ third party</span>':''}${e.atWork?'<span class="flag warn">⚠ at work</span>':''}${e.account?`<span class="flag" style="background:#1c2c4d;color:#7faaff">acct ${esc(e.account)}</span>`:''}</div>
+    </div>`).join('')
+    : '<div class="empty">No contacts logged yet.<br>Every entry is timestamped evidence stored only on this device. Hit <b>✨ Demo case</b> to see it work.</div>';
+
+  // countdown + radar + strength + notice
+  countdown();
+  const {results}=analyze();
+  $('#violations').innerHTML = results.map(r=>{
+    const cls = r.hit? 'hit' : r.watch? 'watch' : 'clear';
+    const tag = r.hit? '🚩 POSSIBLE VIOLATION' : r.watch? '👀 WATCH' : '✓ clear';
+    return `<div class="viol ${cls}"><b>${tag}</b> — ${esc(r.title)}<div class="muted" style="font-size:.84rem; margin-top:2px;">${esc(r.detail)}</div><div class="cite">${esc(r.cite)}</div></div>`;
+  }).join('');
+  const s=strength();
+  $('#meterFill').style.width=s.score+'%';
+  $('#meterFill').style.background=s.c;
+  $('#meterText').innerHTML=`<b style="color:${s.c}">${s.t}</b> <span style="opacity:.7">(${s.score}/100)</span>`;
+  $('#noticeCheck').innerHTML=noticeCheck();
+
+  renderLetter(); renderCfpb();
+}
+window.deleteEntry=deleteEntry;
+
+/* ================= export / print / wipe / demo ================= */
+$('#btnExport').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify({app:'CeaseFire',version:1,exportedAt:new Date().toISOString(),profile:state.profile,entries:state.entries,analysis:analyze().results,strength:strength()},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ceasefire-case-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  toast('Case file exported — hand it to your attorney 📁');
+});
+$('#btnPrint').addEventListener('click',()=>window.print());
+$('#btnWipe').addEventListener('click',()=>{
+  if(confirm('Delete ALL CeaseFire data on this device? Export first if this is a real case.')){ localStorage.removeItem(LS_KEY); state={profile:{name:"",address:"",account:"",agencyAddr:""},entries:[]}; ['pName','pAddress','pAccount','pAgencyAddr'].forEach(id=>$('#'+id).value=''); render(); toast('Device data wiped'); }
+});
+$('#btnDemo').addEventListener('click',()=>{
+  if(state.entries.length && !confirm('Replace current data with the demo case?')) return;
+  const now=Date.now(), D=864e5;
+  state.profile={name:'Jane Q. Consumer', address:'123 Main St, Tampa, FL 33601', account:'ACCT-88213', agencyAddr:'\nP.O. Box 4567, Wilmington, DE 19801'};
+  state.entries=[
+    {id:uid(),type:'call',agency:'Convergent ACM',phone:'813-555-0142',when:new Date(now-21*D).toISOString(),account:'ACCT-88213',summary:'Robotic voice: "final notice before legal action." Refused company address.',threats:true,thirdParty:false,atWork:false,outbound:false},
+    {id:uid(),type:'call',agency:'Convergent ACM',phone:'813-555-0199',when:new Date(now-19*D+20*3600e3).toISOString(),account:'ACCT-88213',summary:'Called at 9:20 PM. Said "we can reach you any time we want."',threats:false,thirdParty:false,atWork:false,outbound:false},
+    {id:uid(),type:'call',agency:'Convergent ACM',phone:'813-555-0142',when:new Date(now-14*D).toISOString(),account:'ACCT-88213',summary:'Called my sister, told her I "owe $1,412 and better pay before the sheriff gets involved."',threats:true,thirdParty:true,atWork:false,outbound:false},
+    {id:uid(),type:'call',agency:'Convergent ACM',phone:'813-555-0177',when:new Date(now-9*D).toISOString(),account:'ACCT-88213',summary:'Called my office line. Receptionist took a message about "the debt."',threats:false,thirdParty:false,atWork:true,outbound:false},
+    {id:uid(),type:'call',agency:'Convergent ACM',phone:'813-555-0142',when:new Date(now-6*D).toISOString(),account:'ACCT-88213',summary:'Hang-up. 4 seconds.',threats:false,thirdParty:false,atWork:false,outbound:false},
+    {id:uid(),type:'voicemail',agency:'Convergent ACM',phone:'813-555-0142',when:new Date(now-4*D).toISOString(),account:'ACCT-88213',summary:'VM: "Pay today or we file by Friday." No validation notice ever received by mail.',threats:true,thirdParty:false,atWork:false,outbound:false},
+    {id:uid(),type:'call',agency:'Convergent ACM',phone:'813-555-0210',when:new Date(now-3*D).toISOString(),account:'ACCT-88213',summary:'Asked for "whoever owes the money" — my roommate answered.',threats:false,thirdParty:true,atWork:false,outbound:false},
+    {id:uid(),type:'call',agency:'Convergent ACM',phone:'813-555-0142',when:new Date(now-1*D).toISOString(),account:'ACCT-88213',summary:'Screaming, called me a liar, said my wages "will be garnished next week."',threats:true,thirdParty:false,atWork:false,outbound:false},
+  ];
+  ['pName','pAddress','pAccount','pAgencyAddr'].forEach(id=>{
+    const key={pName:'name',pAddress:'address',pAccount:'account',pAgencyAddr:'agencyAddr'}[id];
+    $('#'+id).value=state.profile[key];
+  });
+  save(); render(); toast('Demo case loaded — 8 hostile contacts. Check the Rights Radar 📡');
+});
+
+render();
+</script>
+</body>
+</html>
