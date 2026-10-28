@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LemonLog 🍋 — Defect-Wave Radar + Claim Kit</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2333; --border:#2d3748;
+    --text:#e6edf3; --muted:#8b949e; --lemon:#ffd60a; --lemon-dim:#b89b00;
+    --green:#3fb950; --yellow:#d29922; --red:#f85149; --blue:#58a6ff; --purple:#bc8cff;
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;min-height:100vh}
+  .wrap{max-width:960px;margin:0 auto;padding:20px 16px 80px}
+
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 18px;flex-wrap:wrap;gap:10px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#ffd60a,#ff9500);display:flex;align-items:center;justify-content:center;font-size:24px}
+  .brand h1{font-size:1.35rem;letter-spacing:-.02em}
+  .brand small{display:block;color:var(--muted);font-weight:400;font-size:.78rem}
+  .pill{font-size:.72rem;padding:4px 10px;border-radius:99px;border:1px solid var(--border);color:var(--muted)}
+  .pill.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:6px;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  nav{display:flex;gap:6px;background:var(--panel);border:1px solid var(--border);border-radius:99px;padding:5px;margin-bottom:22px;overflow-x:auto}
+  nav button{flex:1;white-space:nowrap;background:none;border:none;color:var(--muted);font-size:.88rem;font-weight:600;padding:9px 16px;border-radius:99px;cursor:pointer;transition:.18s}
+  nav button.active{background:var(--lemon);color:#111}
+  nav button:not(.active):hover{color:var(--text);background:var(--panel2)}
+
+  .tab{display:none;animation:fade .25s ease}
+  .tab.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  h2.sec{font-size:1.05rem;margin:26px 0 12px;display:flex;align-items:center;gap:8px}
+  h2.sec:first-child{margin-top:0}
+  .hint{color:var(--muted);font-size:.83rem;margin-bottom:14px}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .wave{cursor:pointer;transition:.18s}
+  .wave:hover{border-color:var(--lemon-dim);transform:translateY(-1px)}
+  .wave-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+  .wave h3{font-size:1rem;margin-bottom:4px}
+  .wave .sub{color:var(--muted);font-size:.8rem}
+  .badge{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .b-crit{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.4)}
+  .b-high{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid rgba(210,153,34,.4)}
+  .b-med{background:rgba(88,166,255,.13);color:var(--blue);border:1px solid rgba(88,166,255,.35)}
+  .b-ok{background:rgba(63,185,80,.13);color:var(--green);border:1px solid rgba(63,185,80,.35)}
+  .wave-stats{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+  .wave-stats b{color:var(--text);font-size:.95rem;display:block}
+  .spark{margin-top:10px}
+  .vendor{margin-top:10px;font-size:.8rem;padding:8px 12px;border-radius:9px;background:var(--panel2);border-left:3px solid var(--yellow)}
+  .wave-detail{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);font-size:.85rem;color:var(--muted)}
+  .wave.open .wave-detail{display:block}
+  .wave-detail li{margin:5px 0 5px 18px}
+  .match-btn{margin-top:12px;background:var(--lemon);color:#111;border:none;font-weight:700;font-size:.85rem;padding:9px 18px;border-radius:9px;cursor:pointer}
+  .match-btn:hover{filter:brightness(1.1)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+
+  .clocks .clock{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border)}
+  .clocks .clock:last-child{border:none}
+  .clock .name{font-size:.85rem;font-weight:600}
+  .clock .desc{font-size:.74rem;color:var(--muted)}
+  .countdown{font-variant-numeric:tabular-nums;font-weight:800;font-size:1rem;text-align:right}
+  .cd-ok{color:var(--green)}.cd-warn{color:var(--yellow)}.cd-dead{color:var(--red)}
+  .cd-sub{display:block;font-size:.66rem;font-weight:500;color:var(--muted)}
+
+  .timeline{position:relative;padding-left:26px}
+  .timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--border)}
+  .tl-item{position:relative;padding:0 0 18px}
+  .tl-item::before{content:"";position:absolute;left:-24px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--lemon);border:2px solid var(--bg)}
+  .tl-item .t-date{font-size:.72rem;color:var(--muted)}
+  .tl-item .t-title{font-weight:600;font-size:.9rem}
+  .tl-item .t-body{font-size:.82rem;color:var(--muted)}
+  .hash{font-family:ui-monospace,Menlo,monospace;font-size:.68rem;color:var(--purple);background:rgba(188,140,255,.1);padding:2px 7px;border-radius:6px;margin-left:6px}
+
+  .stage-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .stage-tabs button{background:var(--panel2);border:1px solid var(--border);color:var(--text);font-size:.82rem;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer}
+  .stage-tabs button.active{border-color:var(--lemon);color:var(--lemon)}
+  .letter{background:#0a0d12;border:1px solid var(--border);border-radius:10px;padding:18px;font-family:ui-monospace,Menlo,monospace;font-size:.78rem;white-space:pre-wrap;color:#c9d1d9;max-height:380px;overflow:auto}
+  .btn-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);font-weight:600;font-size:.83rem;padding:9px 16px;border-radius:9px;cursor:pointer}
+  .btn:hover{border-color:var(--lemon-dim)}
+  .btn.primary{background:var(--lemon);color:#111;border-color:var(--lemon)}
+
+  form.report label{display:block;font-size:.8rem;font-weight:600;margin:14px 0 6px;color:var(--muted)}
+  form.report input,form.report select,form.report textarea{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 12px;font-size:.88rem;font-family:inherit}
+  form.report textarea{min-height:80px;resize:vertical}
+  form.report input:focus,form.report select:focus,form.report textarea:focus{outline:none;border-color:var(--lemon)}
+  .photo-drop{border:2px dashed var(--border);border-radius:10px;padding:22px;text-align:center;color:var(--muted);font-size:.83rem;cursor:pointer;transition:.18s}
+  .photo-drop:hover{border-color:var(--lemon-dim);color:var(--text)}
+  .photo-drop.done{border-color:var(--green);color:var(--green);border-style:solid}
+
+  .stat-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+  .stat .n{font-size:1.6rem;font-weight:800;color:var(--lemon);font-variant-numeric:tabular-nums}
+  .stat .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+
+  .success-box{display:none;background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.4);border-radius:10px;padding:14px;margin-top:14px;font-size:.85rem;color:var(--green)}
+  footer{margin-top:40px;text-align:center;color:var(--muted);font-size:.75rem}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--lemon);color:#111;font-weight:700;font-size:.85rem;padding:11px 22px;border-radius:99px;transition:.3s;opacity:0;z-index:99}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <div class="logo">🍋</div>
+    <div>
+      <h1>LemonLog</h1>
+      <small>Defect-wave radar + warranty claim kit — local-first, vendor never sees your evidence</small>
+    </div>
+  </div>
+  <span class="pill live">Crackgate active · 437 reports</span>
+</header>
+
+<nav>
+  <button class="active" data-tab="radar">📡 Radar</button>
+  <button data-tab="claim">🗂 My Claim</button>
+  <button data-tab="letters">✉️ Letters</button>
+  <button data-tab="report">🙋 I Have This Too</button>
+</nav>
+
+<!-- ============ RADAR ============ -->
+<section class="tab active" id="tab-radar">
+  <p class="hint">Live defect waves detected across Reddit, repair forums, and community reports. Tap a card for root-cause intel and claimant playbooks.</p>
+
+  <div class="card wave open" data-wave="duo">
+    <div class="wave-top">
+      <div>
+        <h3>📱 iPhone Duo — "Crackgate" inner display failure</h3>
+        <div class="sub">Apple · launched Oct 23, 2026 · ~$2,000 · r/apple, r/iPhoneDuo, r/technology</div>
+      </div>
+      <span class="badge b-crit">CRITICAL WAVE</span>
+    </div>
+    <div class="wave-stats">
+      <div><b>437</b> verified reports</div>
+      <div><b>68%</b> hinge-crease crack</div>
+      <div><b>6 hrs</b> median time-to-failure*</div>
+      <div><b>Jan '27</b> replacement ETA</div>
+    </div>
+    <svg class="spark" width="100%" height="46" viewBox="0 0 300 46" preserveAspectRatio="none">
+      <polyline points="0,44 30,43 60,42 90,40 120,36 150,30 180,22 210,15 240,8 270,4 300,2" fill="none" stroke="#f85149" stroke-width="2.5"/>
+      <polyline points="0,44 30,43 60,42 90,40 120,36 150,30 180,22 210,15 240,8 270,4 300,2 300,46 0,46" fill="rgba(248,81,73,.12)" stroke="none"/>
+    </svg>
+    <div class="vendor">⚠️ <b>Vendor response:</b> "A small number of units… contact AppleCare." No cause stated. No recall. iFixit suspects the hinge center support bar fails to retract.</div>
+    <div class="wave-detail">
+      <b style="color:var(--text)">Claimant playbook (from 23 successful swaps):</b>
+      <ul>
+        <li>Photo the crease crack + dead-pixel band on a <b>black screen</b>, plus a video of the hinge feeling "tight" — verbal-only reports waited 6+ weeks.</li>
+        <li>Log your <b>fold count</b> at symptom time (median failure: &lt;20 folds — well inside any use profile).</li>
+        <li>Serial prefix <b>DNP-D26xx</b> is over-represented (early batch, Melbourne + Dallas failures both match).</li>
+        <li>Cite <b>Magnuson-Moss</b>: a written warranty can't disclaim the implied warranty of merchantability. "Day one manufacturing error" (their own tech's words) = defect, not accidental damage.</li>
+      </ul>
+      <p style="margin-top:8px">* median among reports that state time-to-failure; sample skews early-adopter.</p>
+      <button class="match-btn" onclick="switchTab('claim')">✓ I own this — start my claim kit</button>
+    </div>
+  </div>
+
+  <div class="card wave" data-wave="fold">
+    <div class="wave-top">
+      <div>
+        <h3>📲 Galaxy Z Fold 7 — hinge wear + protector delamination</h3>
+        <div class="sub">Samsung · r/GalaxyFold, r/Samsung · ongoing since Aug 2026</div>
+      </div>
+      <span class="badge b-high">ELEVATED</span>
+    </div>
+    <div class="wave-stats">
+      <div><b>1,208</b> reports</div>
+      <div><b>41%</b> got free repair</div>
+      <div><b>12–18 mo</b> typical onset</div>
+    </div>
+    <svg class="spark" width="100%" height="46" viewBox="0 0 300 46" preserveAspectRatio="none">
+      <polyline points="0,30 30,28 60,31 90,26 120,27 150,22 180,24 210,18 240,19 270,14 300,15" fill="none" stroke="#d29922" stroke-width="2.5"/>
+    </svg>
+    <div class="wave-detail">
+      <b style="color:var(--text)">Intel:</b>
+      <ul>
+        <li>Screen-protector peeling precedes inner-display damage in ~60% of reports — photograph protector edges early.</li>
+        <li>Samsung's play: out-of-warranty = $599 screen. In-warranty claims referencing the community wave succeed at 2.4× the rate.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card wave" data-wave="deck">
+    <div class="wave-top">
+      <div>
+        <h3>🎮 Steam Deck OLED — stick drift returning at scale</h3>
+        <div class="sub">Valve · r/SteamDeck · second wave since Sep 2026 firmware</div>
+      </div>
+      <span class="badge b-med">MONITORING</span>
+    </div>
+    <div class="wave-stats">
+      <div><b>311</b> reports</div>
+      <div><b>fw 2026.09+</b> correlated</div>
+      <div><b>82%</b> free-fix rate</div>
+    </div>
+    <svg class="spark" width="100%" height="46" viewBox="0 0 300 46" preserveAspectRatio="none">
+      <polyline points="0,40 30,38 60,39 90,34 120,30 150,31 180,25 210,26 240,20 270,21 300,17" fill="none" stroke="#58a6ff" stroke-width="2.5"/>
+    </svg>
+    <div class="wave-detail">
+      <b style="color:var(--text)">Intel:</b> Valve has historically shipped free replacement sticks for drift waves — cite firmware correlation and skip the paid repair queue entirely.
+    </div>
+  </div>
+
+  <div class="card wave" data-wave="exch">
+    <div class="wave-top">
+      <div>
+        <h3>🖥 Exchange SE — Oct 2026 updates jam transport queues</h3>
+        <div class="sub">Microsoft · r/sysadmin · IT-facing wave (proof the pattern isn't just phones)</div>
+      </div>
+      <span class="badge b-ok">VENDOR PATCHING</span>
+    </div>
+    <div class="wave-stats">
+      <div><b>2,900+</b> threads</div>
+      <div><b>queue stall</b> signature</div>
+      <div><b>KB rollback</b> known fix</div>
+    </div>
+    <svg class="spark" width="100%" height="46" viewBox="0 0 300 46" preserveAspectRatio="none">
+      <polyline points="0,44 30,44 60,43 90,20 120,6 150,4 180,8 210,12 240,18 270,26 300,33" fill="none" stroke="#3fb950" stroke-width="2.5"/>
+    </svg>
+    <div class="wave-detail">
+      <b style="color:var(--text)">Intel:</b> Documented rollback path; LemonLog waves aren't only consumer hardware — any "update broke it" pattern benefits from prevalence data before your vendor admits it.
+    </div>
+  </div>
+</section>
+
+<!-- ============ MY CLAIM ============ -->
+<section class="tab" id="tab-claim">
+  <h2 class="sec">📱 My device</h2>
+  <div class="card">
+    <div class="wave-top">
+      <div>
+        <h3>iPhone Duo 512GB — Titanium</h3>
+        <div class="sub">Serial DNP-D26X4••••• • Purchased Oct 23, 2026 • Apple Store Tampa</div>
+      </div>
+      <span class="badge b-crit">MATCHED WAVE: CRACKGATE</span>
+    </div>
+    <div class="vendor" style="border-left-color:var(--green)">✅ <b>Match confidence: 94%.</b> Symptom pattern (hinge-crease crack + right-side dead-pixel band) and serial batch match the early-batch over-representation. Community swap rate for this profile: <b>89%</b>.</div>
+  </div>
+
+  <h2 class="sec">⏰ Deadline clock</h2>
+  <div class="card clocks" id="clocks"></div>
+
+  <h2 class="sec">🗂 Evidence locker <span class="pill">hash-stamped · local-first</span></h2>
+  <div class="card">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="t-date">Oct 23, 2026 · 4:12 PM</div>
+        <div class="t-title">Purchase receipt captured <span class="hash">#sha256:9f2c…a17b</span></div>
+        <div class="t-body">$1,999.00 + tax · Apple Store #R231 · stored locally, export-ready</div>
+      </div>
+      <div class="tl-item">
+        <div class="t-date">Oct 26, 2026 · 8:03 AM</div>
+        <div class="t-title">First symptom logged — audible "pop" at hinge <span class="hash">#sha256:41de…c902</span></div>
+        <div class="t-body">Fold count at symptom: 17. Device age: 64 hours.</div>
+      </div>
+      <div class="tl-item">
+        <div class="t-date">Oct 26, 2026 · 8:09 AM</div>
+        <div class="t-title">Photo set: crease crack + dead-pixel band (black screen) <span class="hash">#sha256:77ab…3e51</span></div>
+        <div class="t-body">6 photos + 1 hinge-tightness video — the exact kit successful claimants used</div>
+      </div>
+      <div class="tl-item">
+        <div class="t-date">Oct 27, 2026 · 2:44 PM</div>
+        <div class="t-title">AppleCare call #1 logged <span class="hash">#sha256:b3f0…9d44</span></div>
+        <div class="t-body">Rep "Marcus" · case #CX-88213 · promised replacement "pending approval, 3–5 days" · quoted ETA: late Jan 2027 ⚠️</div>
+      </div>
+      <div class="tl-item">
+        <div class="t-date">Now</div>
+        <div class="t-title" style="color:var(--yellow)">⚠️ Flag: 3-month remedy delay detected</div>
+        <div class="t-body">Unreasonable-delay language added to your escalation letter draft (see Letters → Escalate). UCC §2-608 revocation-of-acceptance arguments strengthen with delay.</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="toast('Dossier PDF generated (prototype)')">⬇️ Export PDF dossier</button>
+      <button class="btn" onclick="toast('New evidence entry added (prototype)')">＋ Add evidence</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LETTERS ============ -->
+<section class="tab" id="tab-letters">
+  <p class="hint">Stage-appropriate drafts, generated from your evidence locker. Escalate only when the previous stage stalls.</p>
+  <div class="stage-tabs">
+    <button class="active" data-stage="claim">🟢 Warranty claim</button>
+    <button data-stage="escalate">🟡 Escalate</button>
+    <button data-stage="nuke">🔴 Chargeback + AG</button>
+  </div>
+
+  <div class="card">
+    <div class="letter" id="letter-body"></div>
+    <div class="btn-row">
+      <button class="btn primary" id="copy-btn" onclick="copyLetter()">📋 Copy letter</button>
+      <button class="btn" onclick="toast('Sent to email as draft (prototype)')">📧 Email draft</button>
+      <button class="btn" onclick="toast('Mailed via Lob API (prototype)')">📮 Print + mail</button>
+    </div>
+    <p style="margin-top:12px;font-size:.72rem;color:var(--muted)">Not legal advice. Templates reviewed per jurisdiction. Magnuson-Moss Warranty Act, 15 U.S.C. §2301 et seq.; UCC §2-314, §2-607/608 as adopted in your state.</p>
+  </div>
+</section>
+
+<!-- ============ REPORT ============ -->
+<section class="tab" id="tab-report">
+  <div class="stat-hero">
+    <div class="stat"><div class="n" id="s-reports">437</div><div class="l">Duo reports</div></div>
+    <div class="stat"><div class="n" id="s-batch">61%</div><div class="l">Serial DNP-D26xx</div></div>
+    <div class="stat"><div class="n" id="s-swaps">89%</div><div class="l">Swap rate w/ photo kit</div></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:4px">🙋 "I have this too" — anonymous, 60 seconds</h3>
+    <p class="hint" style="margin-bottom:0">Your report only adds counts + batch data to the wave. No account, no personal data, no photos uploaded (hash-check happens on-device).</p>
+    <form class="report" onsubmit="submitReport(event)">
+      <label>Which wave?</label>
+      <select id="f-wave">
+        <option>iPhone Duo — Crackgate (inner display / hinge)</option>
+        <option>Galaxy Z Fold 7 — hinge wear</option>
+        <option>Steam Deck OLED — stick drift</option>
+        <option>Other (describe below)</option>
+      </select>
+      <label>Serial prefix (first 8 chars, rest auto-redacted)</label>
+      <input id="f-serial" placeholder="DNP-D26X…" maxlength="8" autocomplete="off">
+      <label>Time from unboxing to first symptom</label>
+      <select id="f-time">
+        <option>&lt; 24 hours</option><option selected>1–3 days</option><option>1–2 weeks</option><option>1–3 months</option><option>3+ months</option>
+      </select>
+      <label>Fold count at symptom (estimate is fine)</label>
+      <input id="f-folds" type="number" min="0" placeholder="e.g. 17">
+      <label>Symptom photo (on-device check — verifies crack pattern, uploads nothing)</label>
+      <div class="photo-drop" id="photo-drop" onclick="fakePhoto()">📷 Tap to run on-device pattern match</div>
+      <div class="btn-row" style="margin-top:18px">
+        <button class="btn primary" type="submit">Submit anonymous report</button>
+      </div>
+      <div class="success-box" id="report-success">
+        ✅ <b>Report counted.</b> Wave prevalence now <span id="new-count">438</span> — your data point strengthens every other claimant's "this is systemic, not accidental" argument. Claim kit started for your device? <a href="#" style="color:var(--lemon)" onclick="switchTab('claim');return false">Open My Claim →</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  LemonLog prototype · single-file HTML/CSS/JS · local-first demo data · Duncan's Daily App Ideas · 2026-10-28<br>
+  Community reports only; not affiliated with or endorsed by any vendor named.
+</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------- Tabs ----------
+const tabs = document.querySelectorAll('nav button');
+tabs.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+function switchTab(id){
+  tabs.forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-' + id));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ---------- Wave card expand ----------
+document.querySelectorAll('.wave').forEach(w => w.addEventListener('click', e => {
+  if (e.target.closest('button')) return;
+  w.classList.toggle('open');
+}));
+
+// ---------- Deadline clocks ----------
+const purchase = new Date('2026-10-23T16:12:00-04:00');
+const firstSymptom = new Date('2026-10-26T08:03:00-04:00');
+const deadlines = [
+  {name:'14-day return window', desc:'Apple retail return · purchase + 14 days', at: addDays(purchase,14), what:'Full refund, no questions'},
+  {name:'Chargeback window (Visa/MC)', desc:'Card network dispute · first symptom + 120 days', at: addDays(firstSymptom,120), what:'Bank reverses $1,999'},
+  {name:'UCC §2-607 notice', desc:'"Within a reasonable time" of discovery — sooner is stronger', at: addDays(firstSymptom,30), what:'Preserves breach-of-warranty claim'},
+  {name:'1-year limited warranty', desc:'Manufacturing defects · purchase + 1 year', at: addDays(purchase,365), what:'Free repair/replacement'},
+  {name:'Magnuson-Moss / implied warranty', desc:'State statutes of limitation vary (FL: 4–5 yrs)', at: addDays(firstSymptom,1460), what:'Statutory + actual damages, fee-shifting'},
+];
+function addDays(d,n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+function renderClocks(){
+  const now = new Date();
+  document.getElementById('clocks').innerHTML = deadlines.map(dl => {
+    const ms = dl.at - now, days = Math.floor(ms/864e5);
+    const cls = ms < 0 ? 'cd-dead' : days < 7 ? 'cd-warn' : 'cd-ok';
+    const label = ms < 0 ? 'LAPSED' : days === 0 ? 'TODAY' : days + 'd ' + pad(Math.floor(ms%864e5/36e5)) + 'h';
+    const sub = ms < 0 ? '— remedy: escalate stage 🔴' : 'until ' + dl.at.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+    return `<div class="clock"><div><div class="name">${dl.name}</div><div class="desc">${dl.desc} · wins you: ${dl.what}</div></div><div class="countdown ${cls}">${label}<span class="cd-sub">${sub}</span></div></div>`;
+  }).join('');
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+renderClocks(); setInterval(renderClocks, 60000);
+
+// ---------- Letters ----------
+const letters = {
+claim: `SUBJECT: Warranty Claim — iPhone Duo, Serial DNP-D26X4••••• — Manufacturing Defect (Documented Wave)
+
+To Apple Warranty Support,
+
+On October 23, 2026 I purchased an iPhone Duo 512GB (receipt attached, hash-stamped in my evidence dossier). On October 26, 2026 — 64 hours and approximately 17 folds later — the inner display failed with an audible pop at the hinge, producing a vertical crack along the crease and a band of dead pixels.
+
+This failure pattern matches a widely documented manufacturing wave (437+ community reports; independent teardown analysis attributes it to the hinge support-bar mechanism; an Apple Store technician characterized a same-pattern failure as a "day one manufacturing error"). This is not accidental damage and not normal wear.
+
+I am exercising my rights under:
+  1. Apple's One-Year Limited Warranty (manufacturing defects);
+  2. The implied warranty of merchantability, UCC §2-314 (Florida);
+  3. The Magnuson-Moss Warranty Act, 15 U.S.C. §2301 et seq. — a warrantor offering a written warranty may not disclaim or shorten implied warranties.
+
+REQUESTED REMEDY: replacement with a non-defective unit within 14 days, or a full refund. A replacement ETA of January 2027 is not a commercially reasonable remedy for a device that failed in its first week.
+
+Evidence dossier (timestamps hash-verified): receipt, 6 photos, hinge video, fold-count log, AppleCare case #CX-88213 call notes.
+
+Sincerely,
+[Name] · [Contact] · Case #CX-88213`,
+escalate: `SUBJECT: ESCALATION — Unresolved Warranty Claim, Case #CX-88213 — Requesting Executive Consumer Relations
+
+To Apple Executive Relations / Consumer Affairs,
+
+My warranty claim (below) has been pending since October 27, 2026 with a quoted remedy date of late January 2027 — a delay of roughly three months for a $1,999 device that failed 64 hours after purchase.
+
+I am escalating for the following reasons:
+
+  1. UNREASONABLE DELAY. A three-month deprivation of a purchased good is not a reasonable cure period. Under UCC §2-608 I may be entitled to revoke acceptance where a non-conformity substantially impairs the value of the goods and cure is not seasonably made.
+
+  2. PREVALENCE, NOT ISOLATION. Community reporting exceeds 437 verified units with the identical hinge-crease failure signature, concentrated in serial batch DNP-D26xx (61% of reports). My unit is part of a manufacturing wave — your public characterization of "a small number" is inconsistent with the observable data.
+
+  3. DOCUMENTED PATTERN OF SUCCESS. Claimants who submitted the full evidence kit (crease photos on black screen, hinge-tightness video, fold count) received replacements in a median of 5 days. I have submitted the same kit.
+
+REQUESTED REMEDY, in order of preference:
+  a) Immediate in-store replacement from available inventory, OR
+  b) Full refund of $1,999 + tax to my original payment method, OR
+  c) Written explanation of the delay with a remedy date within 14 days.
+
+Absent resolution within 10 business days, I will proceed to card-network dispute and file with the Florida Attorney General's consumer protection division and the FTC. My complete hash-stamped dossier is available on request.
+
+Sincerely,
+[Name] · Case #CX-88213`,
+nuke: `PART A — CARD NETWORK DISPUTE (Visa/Mastercard), prepared packet
+================================================================
+Reason code: Goods/services defective — merchant declined remedy (Visa 13.3 / MC 4853).
+Transaction: $1,999.00 + tax · Oct 23, 2026 · Apple Store R231.
+Statement of facts (paste into dispute form):
+  "Purchased iPhone Duo Oct 23, 2026. Device suffered a manufacturing defect
+  (hinge-crease display failure) 64 hours after purchase — part of a documented
+  defect wave affecting 437+ units. Merchant acknowledges the defect category but
+  offers no remedy until January 2027, which I did not agree to and which is not
+  commercially reasonable. Merchant declined refund or timely replacement despite
+  written warranty claim (case #CX-88213) and executive escalation dated [DATE].
+  Attached: receipt, defect photos/video, correspondence log."
+Evidence to attach: receipt · photo kit · call log · claim letter · escalation letter.
+Deadline: 120 days from first symptom — [countdown on My Claim tab].
+
+PART B — STATE ATTORNEY GENERAL COMPLAINT (Florida), draft
+================================================================
+Complainant: [Name]. Respondent: Apple Inc.
+Nature of complaint: Sale of a defective consumer product; failure to honor
+written warranty; undue delay of remedy (3 months) on a device that failed
+within its first week; mischaracterization of a documented defect wave as
+isolated incidents.
+Relief requested: refund or immediate replacement.
+Attachments: same dossier as Part A.
+File at: myfloridalegal.com (consumer complaint portal).
+
+PART C — FEDERAL TRADE COMMISSION (report.ftc.gov)
+================================================================
+Purpose: pattern data. Your report joins other Duo owners and supports
+potential enforcement review of warranty practices.
+
+⚠️ Note: small-claims option (FL: up to $8,000) preserved — Magnuson-Moss
+allows fee recovery in many states; a documented wave + dossier is exactly
+what wins there. Consider the attorney-referral tier if the vendor still stalls.`
+};
+const stageBtns = document.querySelectorAll('.stage-tabs button');
+stageBtns.forEach(b => b.addEventListener('click', () => {
+  stageBtns.forEach(x => x.classList.toggle('active', x === b));
+  document.getElementById('letter-body').textContent = letters[b.dataset.stage];
+}));
+document.getElementById('letter-body').textContent = letters.claim;
+function copyLetter(){
+  navigator.clipboard.writeText(document.getElementById('letter-body').textContent)
+    .then(() => toast('Letter copied to clipboard'))
+    .catch(() => toast('Copy failed — select manually'));
+}
+
+// ---------- Report flow ----------
+let photoDone = false;
+function fakePhoto(){
+  const el = document.getElementById('photo-drop');
+  if (photoDone) return;
+  photoDone = true;
+  el.classList.add('done');
+  el.innerHTML = '✅ Pattern match confirmed on-device (hinge-crease crack signature · 96%) — nothing uploaded';
+}
+function submitReport(e){
+  e.preventDefault();
+  const key = 'lemonlog-reports';
+  const n = (parseInt(localStorage.getItem(key) || '0', 10)) + 1;
+  localStorage.setItem(key, n);
+  document.getElementById('s-reports').textContent = 437 + n;
+  document.getElementById('new-count').textContent = 438 + (n - 1);
+  document.getElementById('report-success').style.display = 'block';
+  toast('Anonymous report counted — thank you 🍋');
+}
+// restore persisted count
+(function(){
+  const n = parseInt(localStorage.getItem('lemonlog-reports') || '0', 10);
+  if (n > 0){
+    document.getElementById('s-reports').textContent = 437 + n;
+    document.getElementById('new-count').textContent = 438 + (n - 1);
+  }
+})();
+
+// ---------- Toast ----------
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>
