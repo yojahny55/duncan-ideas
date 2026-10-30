@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlexClock ⏰ — Your FSA Has a Clock. Stop Losing Money to It.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C1424; --ink2:#111C33; --card:#16213C; --line:#24314F;
+    --mint:#34D399; --coral:#FF6B5A; --amber:#FBBF24; --paper:#F6F4EF;
+    --dim:#8B96AD; --faint:#5A6880;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--ink);color:var(--paper);font-family:'Inter',sans-serif;line-height:1.55;overflow-x:hidden}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .display{font-family:'Fraunces',serif}
+  a{color:var(--mint)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;background:rgba(12,20,36,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .navin{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-family:'Fraunces',serif;font-weight:900;font-size:22px;letter-spacing:-.02em}
+  .logo span{color:var(--mint)}
+  .panicbtn{background:transparent;border:1px solid var(--coral);color:var(--coral);font-family:'JetBrains Mono',monospace;font-size:11px;padding:7px 12px;border-radius:8px;cursor:pointer;text-transform:uppercase;letter-spacing:.08em;transition:.2s}
+  .panicbtn:hover{background:var(--coral);color:var(--ink)}
+  body.panic .panicbtn{background:var(--coral);color:#fff}
+
+  /* ---------- hero ---------- */
+  header{padding:72px 0 40px;text-align:center;position:relative}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--mint);margin-bottom:18px}
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(34px,5.5vw,60px);line-height:1.06;letter-spacing:-.02em;max-width:820px;margin:0 auto 20px}
+  h1 em{font-style:italic;color:var(--coral)}
+  .sub{color:var(--dim);max-width:640px;margin:0 auto;font-size:17px}
+  .statrow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .stat{background:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:14px 22px;text-align:center}
+  .stat b{display:block;font-family:'Fraunces',serif;font-size:26px;font-weight:700}
+  .stat small{color:var(--dim);font-size:11.5px}
+  .stat.c b{color:var(--coral)} .stat.m b{color:var(--mint)} .stat.a b{color:var(--amber)}
+
+  /* ---------- clock panel ---------- */
+  .clockpanel{background:linear-gradient(180deg,var(--ink2),var(--card));border:1px solid var(--line);border-radius:24px;padding:40px 36px;margin:56px auto 0;max-width:900px;position:relative;overflow:hidden}
+  body.panic .clockpanel{border-color:var(--coral);box-shadow:0 0 60px rgba(255,107,90,.15)}
+  .clockgrid{display:grid;grid-template-columns:230px 1fr;gap:44px;align-items:center}
+  @media(max-width:720px){.clockgrid{grid-template-columns:1fr;justify-items:center;text-align:center}}
+  .ringbox{position:relative;width:220px;height:220px}
+  .ringbox svg{transform:rotate(-90deg)}
+  .ringcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .days{font-family:'Fraunces',serif;font-weight:900;font-size:56px;line-height:1}
+  .dayslabel{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+  .clockmeta .tag{display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 12px;border-radius:99px;border:1px solid;margin-bottom:16px;text-transform:uppercase;letter-spacing:.06em}
+  .tag.deadline{color:var(--coral);border-color:rgba(255,107,90,.4);background:rgba(255,107,90,.08)}
+  .clockmeta h2{font-family:'Fraunces',serif;font-size:30px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+  .clockmeta h2 .amt{color:var(--coral)}
+  .ruleline{color:var(--dim);font-size:14px;margin-bottom:24px}
+  .ruleline b{color:var(--paper)}
+  .pacebox{background:var(--ink);border:1px solid var(--line);border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .pacebox .num{font-family:'Fraunces',serif;font-weight:900;font-size:44px;line-height:1}
+  .pacebox .num.ok{color:var(--mint)} .pacebox .num.warn{color:var(--amber)} .pacebox .num.bad{color:var(--coral)}
+  .pacebox p{font-size:13px;color:var(--dim);max-width:300px}
+  .pacechip{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 12px;border-radius:8px;font-weight:600}
+  .chip-ok{background:rgba(52,211,153,.15);color:var(--mint)}
+  .chip-warn{background:rgba(251,191,36,.15);color:var(--amber)}
+  .chip-bad{background:rgba(255,107,90,.15);color:var(--coral)}
+  .panicstrip{display:none;margin-top:22px;border:1px dashed var(--coral);border-radius:12px;padding:14px 18px;background:rgba(255,107,90,.06)}
+  body.panic .panicstrip{display:block}
+  .panicstrip b{color:var(--coral);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  .panicstrip ul{margin:8px 0 0 18px;font-size:13.5px;color:var(--paper)}
+  .panicstrip li{margin-bottom:4px}
+
+  /* ---------- sections ---------- */
+  section{padding:72px 0 8px}
+  .sec-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mint);margin-bottom:12px}
+  h3.sec{font-family:'Fraunces',serif;font-size:clamp(26px,3.4vw,38px);font-weight:700;letter-spacing:-.01em;margin-bottom:10px}
+  .sec-sub{color:var(--dim);max-width:660px;margin-bottom:36px;font-size:15.5px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+  .card h4{font-family:'Fraunces',serif;font-size:19px;font-weight:700;margin-bottom:8px}
+  .card p{font-size:13.5px;color:var(--dim)}
+  .card .ico{font-size:26px;margin-bottom:12px;display:block}
+
+  /* ---------- rule variants ---------- */
+  .rulecards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:860px){.rulecards{grid-template-columns:1fr}}
+  .rulecard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;cursor:pointer;transition:.2s;position:relative}
+  .rulecard:hover{border-color:var(--mint);transform:translateY(-2px)}
+  .rulecard.active{border-color:var(--mint);background:rgba(52,211,153,.06)}
+  .rulecard .rc-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+  .rulecard h4{font-family:'Fraunces',serif;font-size:18px;margin-bottom:8px}
+  .rulecard p{font-size:13px;color:var(--dim)}
+  .rulecard .rc-deadline{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 12px;border-radius:8px;background:var(--ink);border:1px solid var(--line)}
+  .rulecard .rc-deadline b{color:var(--coral)}
+
+  /* ---------- planner ---------- */
+  .planlist{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .planitem{display:flex;align-items:center;gap:16px;padding:16px 22px;background:var(--card);border-bottom:1px solid var(--line);cursor:pointer;transition:.15s}
+  .planitem:last-child{border-bottom:none}
+  .planitem:hover{background:var(--ink2)}
+  .planitem.done{opacity:.45}
+  .planitem.done .pi-name{text-decoration:line-through}
+  .pcheck{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink);background:transparent;transition:.15s}
+  .planitem.done .pcheck{background:var(--mint);border-color:var(--mint)}
+  .pi-name{font-weight:600;font-size:14.5px}
+  .pi-why{font-size:12px;color:var(--dim)}
+  .pi-right{margin-left:auto;text-align:right;flex-shrink:0}
+  .pi-cost{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600}
+  .pi-badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:3px 8px;border-radius:99px;margin-top:4px;display:inline-block;text-transform:uppercase;letter-spacing:.05em}
+  .b-yes{background:rgba(52,211,153,.15);color:var(--mint)}
+  .b-lmn{background:rgba(251,191,36,.15);color:var(--amber)}
+  .planbar{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:var(--ink2);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
+  .planbar b{color:var(--mint)}
+
+  /* ---------- oracle ---------- */
+  .oracle{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+  .oracleq{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .oq{background:var(--ink);border:1px solid var(--line);color:var(--dim);font-size:12.5px;padding:8px 14px;border-radius:99px;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif}
+  .oq:hover,.oq.active{border-color:var(--mint);color:var(--mint)}
+  .oraclea{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:20px;min-height:120px}
+  .va{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
+  .va.yes{background:rgba(52,211,153,.15);color:var(--mint)}
+  .va.cond{background:rgba(251,191,36,.15);color:var(--amber)}
+  .va.no{background:rgba(255,107,90,.15);color:var(--coral)}
+  .oraclea p{font-size:14px;color:var(--paper);margin-bottom:8px}
+  .oraclea .cite{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);border-top:1px dashed var(--line);padding-top:10px;margin-top:10px}
+
+  /* ---------- election advisor ---------- */
+  .advisor{background:linear-gradient(135deg,var(--ink2),var(--card));border:1px solid var(--line);border-radius:20px;padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+  @media(max-width:860px){.advisor{grid-template-columns:1fr}}
+  .adv-left .openbadge{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08);padding:5px 12px;border-radius:99px;display:inline-block;margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em}
+  .adv-left h4{font-family:'Fraunces',serif;font-size:26px;font-weight:700;margin-bottom:10px}
+  .adv-left p{color:var(--dim);font-size:14px}
+  .adv-right{background:var(--ink);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .advrow{display:flex;justify-content:space-between;font-size:13.5px;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .advrow span:first-child{color:var(--dim)}
+  .advrow b{font-family:'JetBrains Mono',monospace}
+  .advrow .neg{color:var(--coral)}
+  .advrow:last-of-type{border-bottom:none}
+  .advverdict{margin-top:14px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);border-radius:12px;padding:16px;text-align:center}
+  .advverdict small{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);display:block;margin-bottom:6px}
+  .advverdict b{font-family:'Fraunces',serif;font-size:34px;font-weight:900;color:var(--mint)}
+
+  /* ---------- pricing ---------- */
+  .pricegrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:760px}
+  @media(max-width:860px){.pricegrid{grid-template-columns:1fr}}
+  .price{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:30px}
+  .price.pro{border-color:var(--mint)}
+  .price .tier{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin-bottom:8px}
+  .price.pro .tier{color:var(--mint)}
+  .price .amt{font-family:'Fraunces',serif;font-size:36px;font-weight:900;margin-bottom:4px}
+  .price .amt small{font-size:14px;color:var(--dim);font-family:'Inter';font-weight:400}
+  .price ul{list-style:none;margin-top:16px}
+  .price li{font-size:13.5px;color:var(--dim);padding:6px 0 6px 24px;position:relative}
+  .price li::before{content:"✓";position:absolute;left:0;color:var(--mint);font-weight:700}
+  .price .cta{display:block;text-align:center;margin-top:22px;padding:12px;border-radius:10px;font-weight:600;font-size:14px;text-decoration:none;transition:.2s}
+  .cta-ghost{border:1px solid var(--line);color:var(--paper)}
+  .cta-ghost:hover{border-color:var(--mint)}
+  .cta-solid{background:var(--mint);color:var(--ink)}
+  .cta-solid:hover{filter:brightness(1.1)}
+
+  footer{margin-top:80px;border-top:1px solid var(--line);padding:36px 0;text-align:center;color:var(--dim);font-size:12.5px}
+  footer .mono{font-size:11px;margin-top:8px;display:block}
+
+  .notreal{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 16px;border-radius:99px;display:inline-block;margin-top:26px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap navin">
+    <div class="logo">Flex<span>Clock</span> ⏰</div>
+    <button class="panicbtn" onclick="togglePanic()">🚨 Panic Mode</button>
+  </div>
+</nav>
+
+<header class="wrap">
+  <div class="kicker">FSA · DCFA · HSA spend-down cockpit</div>
+  <h1 class="display">Your FSA has a clock.<br><em>Stop losing money to it.</em></h1>
+  <p class="sub">4 in 10 FSA holders forfeit money every year — $3–4B nationally, straight to your employer. FlexClock turns "use it or lose it" into a 10-minute-a-month plan: your real deadline, your required weekly pace, and a spend-down list matched to care you actually need.</p>
+  <div class="statrow">
+    <div class="stat c"><b>~40%</b><small>of FSA holders forfeit yearly (EBRI)</small></div>
+    <div class="stat a"><b>$415</b><small>average loss per person</small></div>
+    <div class="stat m"><b>$0</b><small>what you'll forfeit with a plan</small></div>
+  </div>
+
+  <!-- HERO CLOCK -->
+  <div class="clockpanel" id="clockpanel">
+    <div class="clockgrid">
+      <div class="ringbox">
+        <svg width="220" height="220" viewBox="0 0 220 220">
+          <circle cx="110" cy="110" r="96" fill="none" stroke="#24314F" stroke-width="14"/>
+          <circle id="ring" cx="110" cy="110" r="96" fill="none" stroke="#FF6B5A" stroke-width="14" stroke-linecap="round" stroke-dasharray="603" stroke-dashoffset="180" style="transition:stroke-dashoffset .8s ease, stroke .3s"/>
+        </svg>
+        <div class="ringcenter">
+          <div class="days display" id="days">63</div>
+          <div class="dayslabel">days until it dies</div>
+        </div>
+      </div>
+      <div class="clockmeta">
+        <span class="tag deadline">⏱ Hard deadline · no grace · no carryover</span>
+        <h2 class="display"><span class="amt" id="balance">$1,214</span> remaining in your Health FSA</h2>
+        <p class="ruleline">Your plan: <b>use-by Dec 31, 2026</b> — forfeited funds go to your employer. FlexClock decoded this from your benefits portal screenshot. <span id="deadline-note"></span></p>
+        <div class="pacebox">
+          <div>
+            <div class="num warn" id="pace">$87<small style="font-size:16px;color:var(--dim)">/wk</small></div>
+          </div>
+          <p>Required weekly pace to finish at exactly $0. Trivial on purpose — that's the point.</p>
+          <span class="pacechip chip-warn" id="pacechip">ON PACE · KEEP GOING</span>
+        </div>
+        <div class="panicstrip">
+          <b>🚨 LAST CALL — fastest eligible purchases</b>
+          <ul>
+            <li>Book the eye exam you've skipped for 2 years (~$150, counts on visit date)</li>
+            <li>Contact lens solution + a year of dailies (~$400)</li>
+            <li>First-aid + daily sunscreen restock (~$120)</li>
+            <li>Schedule that dental cleaning before Dec 20 (~$180)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notreal">DEMO DATA — prototype only, not financial or tax advice</div>
+</header>
+
+<!-- RULE DECODER -->
+<section class="wrap">
+  <div class="sec-kicker">Step 1 · Plan Rule Decoder</div>
+  <h3 class="sec display">Which rule does YOUR plan have?</h3>
+  <p class="sec-sub">Every plan is different and almost nobody knows theirs. Answer 5 questions — or upload a screenshot of your benefits portal — and FlexClock tells you the truth. Tap a variant:</p>
+  <div class="rulecards">
+    <div class="rulecard active" onclick="pickRule(this,'hard')">
+      <div class="rc-tag">Variant A · your plan (demo)</div>
+      <h4>💀 Hard deadline</h4>
+      <p>Spend it by the plan-year end or it's gone. No grace period, no carryover. ~45% of plans.</p>
+      <div class="rc-deadline mono">Money dies: <b>Dec 31, 2026</b></div>
+    </div>
+    <div class="rulecard" onclick="pickRule(this,'grace')">
+      <div class="rc-tag">Variant B</div>
+      <h4>🌅 Grace period (+2.5 mo)</h4>
+      <p>You get until ~March 15 of the next year to incur expenses against last year's balance. Claims must still be filed by the deadline.</p>
+      <div class="rc-deadline mono">Money dies: <b>Mar 15, 2027</b> · file by Dec 31</div>
+    </div>
+    <div class="rulecard" onclick="pickRule(this,'carry')">
+      <div class="rc-tag">Variant C</div>
+      <h4>🎒 $680 carryover</h4>
+      <p>Up to $680 (2026 limit) rolls into next year — everything above that still forfeits. People with carryover forfeit the MOST because they relax.</p>
+      <div class="rc-deadline mono">Only <b>$680</b> survives · rest dies Dec 31</div>
+    </div>
+  </div>
+</section>
+
+<!-- SPEND-DOWN PLANNER -->
+<section class="wrap">
+  <div class="sec-kicker">Step 2 · Spend-Down Planner</div>
+  <h3 class="sec display">The anti-panic list</h3>
+  <p class="sec-sub">Not a December junk-catalog scramble. A checklist matched to care you actually said you need — tap to check items off; your pace updates live.</p>
+  <div class="planlist" id="planlist">
+    <div class="planitem done" onclick="toggleItem(this,150)">
+      <div class="pcheck">✓</div>
+      <div><div class="pi-name">Eye exam + new frames</div><div class="pi-why">You wear glasses — it's been 26 months since your last exam</div></div>
+      <div class="pi-right"><div class="pi-cost">$312</div><span class="pi-badge b-yes">✓ FSA eligible</span></div>
+    </div>
+    <div class="planitem" onclick="toggleItem(this,400)">
+      <div class="pcheck"></div>
+      <div><div class="pi-name">Year of daily contacts + solution</div><div class="pi-why">Recurring expense you pay for anyway — pre-buy it pre-tax</div></div>
+      <div class="pi-right"><div class="pi-cost">$410</div><span class="pi-badge b-yes">✓ FSA eligible</span></div>
+    </div>
+    <div class="planitem" onclick="toggleItem(this,180)">
+      <div class="pcheck"></div>
+      <div><div class="pi-name">Dental cleaning + X-rays</div><div class="pi-why">Overdue 4 months. Book before Dec 20 so it's incurred in 2026</div></div>
+      <div class="pi-right"><div class="pi-cost">$185</div><span class="pi-badge b-yes">✓ FSA eligible</span></div>
+    </div>
+    <div class="planitem" onclick="toggleItem(this,120)">
+      <div class="pcheck"></div>
+      <div><div class="pi-name">Therapy sessions ×4</div><div class="pi-why">Your plan covers the copay gap; prepay through your provider's portal</div></div>
+      <div class="pi-right"><div class="pi-cost">$240</div><span class="pi-badge b-yes">✓ FSA eligible</span></div>
+    </div>
+    <div class="planitem" onclick="toggleItem(this,75)">
+      <div class="pcheck"></div>
+      <div><div class="pi-name">First-aid + daily sunscreen restock</div><div class="pi-why">Boring, useful, 100% eligible. The "finish the gap" purchase</div></div>
+      <div class="pi-right"><div class="pi-cost">$85</div><span class="pi-badge b-yes">✓ FSA eligible</span></div>
+    </div>
+    <div class="planitem" onclick="toggleItem(this,95)">
+      <div class="pcheck"></div>
+      <div><div class="pi-name">Blue-light glasses for gym membership?</div><div class="pi-why">Gym = only with a Letter of Medical Necessity. FlexClock drafts the LMN request email</div></div>
+      <div class="pi-right"><div class="pi-cost">~$45/mo</div><span class="pi-badge b-lmn">⚠ Needs LMN</span></div>
+    </div>
+  </div>
+  <div class="planbar">
+    <span>Planned total: <b id="plantotal">$920</b> of <b id="planbal">$1,214</b> balance</span>
+    <span>Gap: <b id="plangap">$294</b> — Oracle suggests: OTC meds, dermatology copay</span>
+  </div>
+</section>
+
+<!-- ORACLE -->
+<section class="wrap">
+  <div class="sec-kicker">Step 3 · Eligibility Oracle</div>
+  <h3 class="sec display">"Can I FSA this?"</h3>
+  <p class="sec-sub">Verdicts come from curated IRS Pub 502 + SIGIS data with citations — the AI writes the prose, never the verdict. Try one:</p>
+  <div class="oracle">
+    <div class="oracleq">
+      <button class="oq active" onclick="askOracle(this,0)">Sunscreen SPF 30+</button>
+      <button class="oq" onclick="askOracle(this,1)">Gym membership</button>
+      <button class="oq" onclick="askOracle(this,2)">Lasik eye surgery</button>
+      <button class="oq" onclick="askOracle(this,3)">Service dog</button>
+      <button class="oq" onclick="askOracle(this,4)">Massage therapy</button>
+      <button class="oq" onclick="askOracle(this,5)">Summer camp</button>
+    </div>
+    <div class="oraclea" id="oraclea"></div>
+  </div>
+</section>
+
+<!-- ELECTION ADVISOR -->
+<section class="wrap">
+  <div class="sec-kicker">Step 4 · Election Advisor</div>
+  <h3 class="sec display">Open enrollment starts Nov 1. Get the number right.</h3>
+  <p class="sec-sub">Last year you elected blindly. This year FlexClock knows your actual spend pattern and your forfeiture history — and does the math for you.</p>
+  <div class="advisor">
+    <div class="adv-left">
+      <span class="openbadge">🗳 Open enrollment · Nov 1 – Dec 15, 2026</span>
+      <h4 class="display">Your 2027 election recommendation</h4>
+      <p>Based on 14 months of logged spend: you reliably use ~$1,950/yr but elected $2,400. The $412 you forfeited last December was avoidable — and it's now the anchor for your next election. This card gets smarter every year you use FlexClock.</p>
+    </div>
+    <div class="adv-right">
+      <div class="advrow"><span>2026 election</span><b>$2,400</b></div>
+      <div class="advrow"><span>Actually spent (reimbursed)</span><b>$1,988</b></div>
+      <div class="advrow"><span>Forfeited Dec 2025</span><b class="neg">−$412</b></div>
+      <div class="advrow"><span>Known 2027 expenses (ortho + glasses)</span><b>$1,750</b></div>
+      <div class="advrow"><span>Buffer for the unexpected (10%)</span><b>$240</b></div>
+      <div class="advverdict">
+        <small>Recommended 2027 election</small>
+        <b>$1,988</b>
+        <div style="font-size:12px;color:var(--dim);margin-top:6px">saves ~$312 in taxes at your bracket · forfeits $0</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="wrap">
+  <div class="sec-kicker">The system</div>
+  <h3 class="sec display">Everything the admin portal won't do for you</h3>
+  <div class="grid3">
+    <div class="card"><span class="ico">🧾</span><h4>Claims Watch</h4><p>Incurred-date vs paid-date confusion causes both double-spending and needless panic. Log pending claims; FlexClock tells you if a Dec 28 submission for a Dec 20 visit is safe (it is).</p></div>
+    <div class="card"><span class="ico">🔔</span><h4>Deadline escalation</h4><p>D-60 "here's your plan" → D-30 pace check → D-14 "you have $412 and 3 items left" → D-3 LAST CALL with the fastest eligible purchases.</p></div>
+    <div class="card"><span class="ico">📸</span><h4>Receipt capture</h4><p>Photo → auto-logged, claim-ready expense. Doubles as your audit trail if a claim ever gets questioned.</p></div>
+    <div class="card"><span class="ico">👨‍👩‍👧</span><h4>Household mode (Pro)</h4><p>Spouse's FSA, the DCFA (now $7,500 under the 2026 OBBB change), kids' orthodontia — one family countdown, one combined pace.</p></div>
+    <div class="card"><span class="ico">🏆</span><h4>Year in Flex</h4><p>December: "You saved $1,187 pre-tax and forfeited $0. Here's your 2027 number." Built for screenshots — your January flex.</p></div>
+    <div class="card"><span class="ico">🧭</span><h4>Plan Rule Decoder</h4><p>Upload a screenshot of your benefits portal; AI vision extracts your rule variant, deadline, and carryover terms in 60 seconds.</p></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="wrap">
+  <div class="sec-kicker">Pricing</div>
+  <h3 class="sec display">Cheaper than the money you lost last December</h3>
+  <div class="pricegrid">
+    <div class="price">
+      <div class="tier">Free</div>
+      <div class="amt">$0</div>
+      <ul>
+        <li>1 account · countdown + pace engine</li>
+        <li>Plan Rule Decoder (5 questions)</li>
+        <li>Basic spend-down planner</li>
+        <li>10 Oracle queries / month</li>
+        <li>Deadline escalation alerts</li>
+      </ul>
+      <a class="cta cta-ghost" href="#">Start free — takes 60 seconds</a>
+    </div>
+    <div class="price pro">
+      <div class="tier">Pro · Season Pass</div>
+      <div class="amt">$9.99 <small>/ plan-year (annual only)</small></div>
+      <ul>
+        <li>Household mode — spouse FSA + DCFA + kids</li>
+        <li>Unlimited Oracle + LMN letter generator</li>
+        <li>Claims Watch (incurred vs paid)</li>
+        <li>Election Advisor with forfeiture history</li>
+        <li>Year in Flex export + receipt vault</li>
+      </ul>
+      <a class="cta cta-solid" href="#">Get the Season Pass</a>
+    </div>
+  </div>
+  <p style="color:var(--dim);font-size:13px;margin-top:24px;max-width:640px">HR tier coming 2027: $1–2/employee/yr — kill the December "what happens to my FSA money??" ticket storm. Benefits teams ask us; employees get it free.</p>
+</section>
+
+<footer class="wrap">
+  <div>FlexClock — the deadline-first spend-down cockpit for FSA · DCFA · HSA.</div>
+  <span class="mono">Prototype by Duncan ⚔ · 2026-10-29 · Demo data only · Not tax, financial, or legal advice · Verify your plan rules with your administrator</span>
+</footer>
+
+<script>
+// ---------- countdown (demo pinned to a fixed 63 days, live date calc) ----------
+const DEADLINE = new Date('2026-12-31T23:59:59');
+function daysUntil(d){ return Math.max(0, Math.ceil((d - new Date()) / 86400000)); }
+let days = daysUntil(DEADLINE) || 63;
+
+// ---------- state ----------
+let balance = 1214;
+let planned = [312,410,185,240,85,0]; // last = LMN unknown
+let done = [true,false,false,false,false,false];
+
+function recalc(){
+  const spent = planned.reduce((s,v,i)=> s + (done[i]?v:0), 0);
+  const total  = planned.reduce((a,b)=>a+b,0);
+  const weeks = Math.max(1, days/7);
+  const pace = Math.round(balance/weeks);
+  document.getElementById('days').textContent = days;
+  document.getElementById('balance').textContent = '$'+balance.toLocaleString();
+  document.getElementById('pace').innerHTML = '$'+pace+'<small style="font-size:16px;color:var(--dim)">/wk</small>';
+  document.getElementById('plantotal').textContent = '$'+total.toLocaleString();
+  document.getElementById('planbal').textContent = '$'+balance.toLocaleString();
+  document.getElementById('plangap').textContent = '$'+Math.max(0,balance-total).toLocaleString();
+
+  // ring: fraction of year consumed
+  const CIRC = 603;
+  const frac = 1 - days/365;
+  document.getElementById('ring').style.strokeDashoffset = Math.round(CIRC*(1-frac));
+
+  // pace chip state
+  const num = document.getElementById('pace'), chip = document.getElementById('pacechip');
+  const gap = balance - total;
+  num.className = 'num ' + (gap<=50?'ok':gap<=400?'warn':'bad');
+  if(gap<=50){ chip.className='pacechip chip-ok'; chip.textContent='COVERED · ON TRACK FOR $0'; }
+  else if(gap<=400){ chip.className='pacechip chip-warn'; chip.textContent='ON PACE · KEEP GOING'; }
+  else { chip.className='pacechip chip-bad'; chip.textContent='BEHIND · ADD ITEMS NOW'; }
+  document.getElementById('ring').style.stroke = gap<=50 ? '#34D399' : gap<=400 ? '#FBBF24' : '#FF6B5A';
+}
+function toggleItem(el, val){
+  const i = [...document.querySelectorAll('.planitem')].indexOf(el);
+  done[i] = !done[i];
+  el.classList.toggle('done', done[i]);
+  el.querySelector('.pcheck').textContent = done[i] ? '✓' : '';
+  recalc();
+}
+
+// ---------- rule variants ----------
+const RULES = {
+  hard:  {tag:'⏱ Hard deadline · no grace · no carryover', note:'~45% of plans are this strict.'},
+  grace: {tag:'🌅 Grace period · +2.5 months · file claims by Dec 31', note:'Expenses incurred through ~Mar 15, 2027 count — but claims must still be submitted by your plan\'s filing deadline (often Mar 31).'},
+  carry: {tag:'🎒 $680 carryover · rest forfeits Dec 31', note:'Carryover people forfeit the most — the $680 safety net makes everyone relax. Don\'t be that person.'}
+};
+function pickRule(el, key){
+  document.querySelectorAll('.rulecard').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelector('.tag.deadline').textContent = RULES[key].tag;
+  document.getElementById('deadline-note').textContent = RULES[key].note;
+}
+
+// ---------- panic mode ----------
+function togglePanic(){
+  document.body.classList.toggle('panic');
+  if(document.body.classList.contains('panic')){
+    document.getElementById('clockpanel').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
+// ---------- oracle ----------
+const ORACLE = [
+  {v:'yes', label:'✓ Yes, eligible', t:'Sunscreen SPF 15+ (broad spectrum) is a qualifying medical expense — daily-use counts. Cosmetic tanning lotion does not.', cite:'IRS Pub 502 · SIGIS eligible product list · no LMN needed'},
+  {v:'cond', label:'⚠ Only with LMN', t:'A gym membership qualifies only with a Letter of Medical Necessity from your physician (e.g., prescribed for obesity, hypertension, rehab). FlexClock drafts the LMN request email for your doctor and formats the letter PDF.', cite:'IRS Pub 502 · "physical fitness" exception · LMN required'},
+  {v:'yes', label:'✓ Yes, eligible', t:'Lasik and other qualified vision correction surgery are fully eligible — one of the best year-end uses of a big remaining balance.', cite:'IRS Pub 502 · eye surgery · laser vision correction'},
+  {v:'yes', label:'✓ Yes, eligible', t:'A service dog for a documented disability qualifies — including acquisition, training, food, and vet care. (Comfort/pet dogs do not.)', cite:'IRS Pub 502 · guide dogs & service animals'},
+  {v:'cond', label:'⚠ Only with LMN', t:'Massage qualifies when medically necessary (physician-prescribed for an injury/condition) — not for general stress relief or spa use. The LMN must state the medical purpose.', cite:'IRS Pub 502 · massage therapy · LMN required'},
+  {v:'cond', label:'⚠ DCFA rule', t:'Day camp qualifies under a Dependent Care FSA (child under 13, while you work). Overnight camp does not. This is a DCFA purchase, not health FSA.', cite:'IRS Pub 503 · dependent care · day camp only'}
+];
+function askOracle(btn, i){
+  document.querySelectorAll('.oq').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const a = ORACLE[i], box = document.getElementById('oraclea');
+  box.innerHTML = `<span class="va ${a.v}">${a.label}</span><p>${a.t}</p><div class="cite mono">📚 ${a.cite}</div>`;
+}
+
+// init
+recalc();
+askOracle(document.querySelector('.oq'), 0);
+</script>
+</body>
+</html>
