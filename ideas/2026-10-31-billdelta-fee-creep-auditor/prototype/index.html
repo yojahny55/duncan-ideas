@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BillDelta 🧾 — Your Bill Went Up. Here's Exactly Where.</title>
+<style>
+  :root{
+    --paper:#FAF6EE;
+    --receipt:#FFFFFF;
+    --ink:#131A2A;
+    --ink-soft:#3D465C;
+    --slate:#6B7488;
+    --line:#E3DCCC;
+    --creep:#E5484D;
+    --ledger:#30A46C;
+    --fee:#F5A623;
+    --tax:#98A0B0;
+    --stamp:#C2403F;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --serif:'Fraunces',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;
+    background-image:
+      repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(19,26,42,.025) 28px),
+      radial-gradient(ellipse 90% 40% at 50% -10%,rgba(245,166,35,.08),transparent);}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+  a{color:var(--stamp);text-decoration:none}
+
+  /* ---- header ---- */
+  header{padding:52px 0 20px;text-align:center}
+  .logo{font-family:var(--mono);font-size:12px;letter-spacing:.4em;color:var(--stamp);text-transform:uppercase;margin-bottom:14px}
+  h1{font-family:var(--serif);font-size:clamp(30px,5.2vw,52px);font-weight:900;letter-spacing:-.015em;line-height:1.1}
+  h1 .red{color:var(--creep)}
+  .tagline{color:var(--ink-soft);max-width:660px;margin:18px auto 0;font-size:16.5px}
+  .tagline strong{color:var(--ink)}
+  .source-chip{display:inline-block;margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--slate);
+    border:1px dashed var(--line);border-radius:99px;padding:6px 14px;background:rgba(255,255,255,.6)}
+
+  /* ---- ticker ---- */
+  .ticker{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);overflow:hidden;margin:34px 0 40px;background:var(--ink)}
+  .ticker-track{display:flex;gap:48px;white-space:nowrap;padding:9px 0;font-family:var(--mono);font-size:12px;color:#C9C2B2;animation:tick 42s linear infinite;width:max-content}
+  .ticker-track b{color:var(--fee);font-weight:600}
+  .ticker-track .up{color:#FF7B7F}.ticker-track .down{color:#6BD49B}
+  @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---- sections ---- */
+  .section-head{margin:56px 0 20px}
+  .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--stamp);margin-bottom:6px}
+  h2{font-family:var(--serif);font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.01em}
+  .sub{color:var(--slate);font-size:14.5px;max-width:680px;margin-top:6px}
+
+  .panel{background:var(--receipt);border:1.5px solid var(--ink);border-radius:10px;
+    box-shadow:5px 5px 0 rgba(19,26,42,.9);padding:24px}
+
+  /* ---- receipt ---- */
+  .receipt-shell{max-width:560px;margin:0 auto;background:var(--receipt);border:1.5px solid var(--ink);position:relative;
+    font-family:var(--mono);filter:drop-shadow(6px 8px 0 rgba(19,26,42,.85))}
+  .receipt-shell::before,.receipt-shell::after{content:"";position:absolute;left:0;right:0;height:10px;
+    background:radial-gradient(circle at 5px -2px,transparent 6px,var(--receipt) 6.5px) repeat-x;background-size:12px 10px}
+  .receipt-shell::before{top:-9px;transform:rotate(180deg)}
+  .receipt-shell::after{bottom:-9px}
+  .r-head{padding:22px 22px 14px;text-align:center;border-bottom:2px dashed var(--line)}
+  .r-head .prov{font-size:15px;font-weight:700;letter-spacing:.12em}
+  .r-head .acct{font-size:11px;color:var(--slate);margin-top:4px}
+  .month-toggle{display:flex;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap}
+  .month-toggle button{font-family:var(--mono);font-size:11px;padding:5px 12px;border:1.5px solid var(--ink);
+    background:var(--receipt);cursor:pointer;border-radius:99px;transition:all .15s}
+  .month-toggle button.active{background:var(--ink);color:var(--paper)}
+  .r-lines{padding:14px 22px 6px}
+  .r-line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:12.5px;align-items:baseline;border-bottom:1px dotted #EEE7D8}
+  .r-line .name{color:var(--ink)}
+  .r-line .amt{white-space:nowrap;font-weight:600}
+  .r-line .delta{font-size:11px;margin-left:8px;white-space:nowrap}
+  .r-line.fee .name::after{content:"🔴 NEW FEE";font-size:9px;color:var(--creep);border:1px solid var(--creep);
+    border-radius:3px;padding:1px 5px;margin-left:8px;vertical-align:1px;letter-spacing:.05em}
+  .r-line.promo .name::after{content:"PROMO EXPIRED";font-size:9px;color:var(--fee);border:1px solid var(--fee);
+    border-radius:3px;padding:1px 5px;margin-left:8px;vertical-align:1px;letter-spacing:.05em}
+  .r-line.tax .name{color:var(--tax)}
+  .up{color:var(--creep)}.down{color:var(--ledger)}.flat{color:var(--slate)}
+  .r-total{display:flex;justify-content:space-between;padding:14px 22px;font-size:14px;font-weight:700;
+    border-top:2px dashed var(--line)}
+  .r-foot{padding:0 22px 20px;font-size:10.5px;color:var(--slate);text-align:center}
+  .creep-banner{margin:0 22px 16px;padding:10px 14px;background:#FDF0EF;border:1.5px solid var(--creep);
+    border-radius:6px;font-size:12px;color:#8C2F33;text-align:center}
+  .creep-banner b{color:var(--creep)}
+  .stamp{position:absolute;right:14px;top:96px;transform:rotate(12deg);border:3px double var(--stamp);
+    color:var(--stamp);font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.1em;
+    padding:6px 10px;border-radius:4px;opacity:.85;pointer-events:none;text-align:center;line-height:1.2}
+
+  /* ---- creep chart ---- */
+  .chart-grid{display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start}
+  @media(max-width:840px){.chart-grid{grid-template-columns:1fr}}
+  .chart{display:flex;align-items:flex-end;gap:6px;height:230px;padding:14px 6px 0;border-bottom:2px solid var(--ink);position:relative}
+  .bar-col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;cursor:pointer;position:relative}
+  .bar{width:100%;display:flex;flex-direction:column-reverse;border:1px solid rgba(19,26,42,.35);border-radius:2px 2px 0 0;overflow:hidden;transition:filter .15s}
+  .bar-col:hover .bar{filter:brightness(1.08)}
+  .seg-base{background:#D9E4EC}
+  .seg-usage{background:#9DB4C4}
+  .seg-fee{background:var(--fee)}
+  .seg-new{background:var(--creep)}
+  .bar-col .tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--ink);
+    color:var(--paper);font-family:var(--mono);font-size:10.5px;padding:6px 9px;border-radius:5px;white-space:nowrap;
+    opacity:0;pointer-events:none;transition:opacity .15s;z-index:5}
+  .bar-col:hover .tip{opacity:1}
+  .x-labels{display:flex;gap:6px;padding:6px 6px 0}
+  .x-labels span{flex:1;text-align:center;font-family:var(--mono);font-size:9.5px;color:var(--slate)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:11.5px;color:var(--ink-soft)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .creep-card{background:var(--ink);color:var(--paper);border-radius:10px;padding:22px}
+  .creep-card .n{font-family:var(--mono);font-size:38px;font-weight:800;color:#FF8A8E}
+  .creep-card .l{font-size:12.5px;color:#B9C0CF;margin-top:4px}
+  .creep-card hr{border:none;border-top:1px solid #2A3348;margin:16px 0}
+  .creep-card .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;padding:4px 0}
+  .creep-card .row b{color:var(--paper)}
+  .creep-card .verdict{margin-top:16px;font-size:13px;background:rgba(229,72,77,.15);border:1px solid rgba(229,72,77,.5);
+    border-radius:8px;padding:12px;color:#FFC7C9}
+
+  /* ---- fee anatomy ---- */
+  .fee-grid{display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start}
+  @media(max-width:840px){.fee-grid{grid-template-columns:1fr}}
+  .fee-list{display:flex;flex-direction:column;gap:10px}
+  .fee-item{background:var(--receipt);border:1.5px solid var(--line);border-radius:8px;padding:13px 15px;cursor:pointer;transition:all .15s}
+  .fee-item:hover{border-color:var(--ink)}
+  .fee-item.active{border-color:var(--ink);box-shadow:3px 3px 0 rgba(19,26,42,.9)}
+  .fee-item .fn{font-family:var(--mono);font-size:12.5px;font-weight:600}
+  .fee-item .fm{font-size:11px;color:var(--slate);margin-top:3px}
+  .pill{display:inline-block;font-family:var(--mono);font-size:9.5px;padding:2px 8px;border-radius:99px;letter-spacing:.06em}
+  .pill.junk{background:#FDE9EA;color:var(--creep);border:1px solid var(--creep)}
+  .pill.maybe{background:#FDF4E3;color:#9A6A0F;border:1px solid var(--fee)}
+  .pill.ok{background:#E8F5EE;color:var(--ledger);border:1px solid var(--ledger)}
+  .fee-detail h3{font-family:var(--serif);font-size:20px;margin-bottom:4px}
+  .fee-detail .meta{font-family:var(--mono);font-size:11.5px;color:var(--slate);margin-bottom:14px}
+  .meter-wrap{margin:16px 0}
+  .meter-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+  .meter-label b{font-family:var(--mono)}
+  .meter{height:14px;background:#EFE9DA;border:1.5px solid var(--ink);border-radius:99px;overflow:hidden}
+  .meter-fill{height:100%;background:repeating-linear-gradient(45deg,var(--ledger),var(--ledger) 8px,#3CB87A 8px,#3CB87A 16px);
+    width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+  @media(max-width:560px){.facts{grid-template-columns:1fr}}
+  .fact{background:#FAF7F0;border:1px solid var(--line);border-radius:8px;padding:12px}
+  .fact .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate)}
+  .fact .v{font-size:13px;margin-top:4px;font-weight:600}
+  .script-box{background:var(--ink);color:#E8E4D8;border-radius:8px;padding:16px;font-family:var(--mono);font-size:12px;
+    line-height:1.7;position:relative;white-space:pre-wrap}
+  .copy-btn{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:10px;background:var(--fee);color:var(--ink);
+    border:none;border-radius:5px;padding:5px 10px;cursor:pointer;font-weight:700;letter-spacing:.05em}
+  .copy-btn:hover{background:#FFB940}
+  .escalation{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .esc-step{font-family:var(--mono);font-size:10.5px;border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;color:var(--ink-soft);background:var(--receipt)}
+  .esc-step.hot{border-color:var(--creep);color:var(--creep)}
+
+  /* ---- share card ---- */
+  .share-card{max-width:420px;margin:0 auto;background:var(--ink);color:var(--paper);border-radius:14px;padding:28px 26px;
+    font-family:var(--mono);box-shadow:7px 9px 0 rgba(19,26,42,.9)}
+  .share-card .t{font-size:10.5px;letter-spacing:.3em;color:var(--fee);text-transform:uppercase}
+  .share-card h3{font-family:var(--serif);font-size:24px;margin:10px 0 18px;color:var(--paper)}
+  .share-card .big{font-size:44px;font-weight:800;color:#FF8A8E;letter-spacing:-.02em}
+  .share-card .big small{font-size:14px;color:#B9C0CF;font-weight:400}
+  .share-card .rows{margin:20px 0;border-top:1px dashed #38415A;padding-top:14px}
+  .share-card .r{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0;color:#C9C2B2}
+  .share-card .r b{color:var(--paper)}
+  .share-card .punch{font-size:13px;color:#FFC7C9;border:1px dashed rgba(255,138,142,.5);border-radius:8px;padding:12px;margin-top:8px;text-align:center}
+  .share-card .brand{margin-top:18px;font-size:10px;color:#7A8399;text-align:center;letter-spacing:.15em}
+
+  /* ---- pricing ---- */
+  .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:700px){.price-grid{grid-template-columns:1fr}}
+  .price-card{background:var(--receipt);border:1.5px solid var(--ink);border-radius:10px;padding:26px;position:relative}
+  .price-card.pro{box-shadow:5px 5px 0 rgba(19,26,42,.9)}
+  .price-card .tier{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate)}
+  .price-card .amount{font-family:var(--serif);font-size:40px;font-weight:900;margin:8px 0 2px}
+  .price-card .amount small{font-size:14px;font-weight:400;color:var(--slate);font-family:var(--mono)}
+  .price-card ul{list-style:none;margin-top:16px}
+  .price-card li{font-size:13.5px;padding:6px 0 6px 26px;position:relative;color:var(--ink-soft)}
+  .price-card li::before{content:"✓";position:absolute;left:2px;color:var(--ledger);font-weight:700}
+  .price-card li.no::before{content:"—";color:var(--slate)}
+  .ribbon{position:absolute;top:-12px;right:16px;background:var(--fee);color:var(--ink);font-family:var(--mono);
+    font-size:10px;font-weight:700;letter-spacing:.1em;padding:5px 12px;border-radius:99px;border:1.5px solid var(--ink)}
+  .pledge{margin-top:22px;text-align:center;font-size:14px;color:var(--ink-soft)}
+  .pledge b{color:var(--ink)}
+
+  /* ---- how ---- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:800px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--receipt);border:1.5px solid var(--line);border-radius:10px;padding:20px}
+  .step .num{font-family:var(--mono);font-size:11px;color:var(--stamp);letter-spacing:.2em}
+  .step h4{font-family:var(--serif);font-size:17px;margin:6px 0 6px}
+  .step p{font-size:13px;color:var(--ink-soft)}
+
+  footer{margin:64px 0 40px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--slate);
+    border-top:2px solid var(--ink);padding-top:28px}
+  footer .big-q{font-family:var(--serif);font-size:17px;color:var(--ink);margin-bottom:12px;font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="logo">🧾 BillDelta</div>
+  <h1>Your bill went up.<br><span class="red">Here's exactly where.</span></h1>
+  <p class="tagline">Snap the bill. BillDelta reads it <strong>line by line, month by month</strong> — classifies every dollar as usage, rate, new fee, or expired promo — and hands you the dispute script that actually works. <strong>No bank credentials. No cut of your savings. Ever.</strong></p>
+  <div class="source-chip">born from r/povertyfinance, Oct 2026 — "I'm getting really fkng sick of paying for things I already paid for"</div>
+</header>
+
+<div class="ticker"><div class="ticker-track">
+  <span><b>XFINITY</b> "Network Access Fee" <span class="up">▲ $8.50 → $14.99</span> · not required by law · 71% dispute win rate</span>
+  <span><b>VERIZON</b> "Administrative Recovery" <span class="up">▲ NEW +$3.99</span> · appeared Oct 2026 · 4,218 reports</span>
+  <span><b>AT&amp;T</b> promo expired <span class="up">▲ $49.99 → $79.99</span> · 14,002 users hit this month</span>
+  <span><b>SPECTRUM</b> "Broadcast TV Surcharge" <span class="up">▲ +$2.40</span> · negotiable: 58%</span>
+  <span><b>YOU WON</b> Comcast loyalty credit <span class="down">▼ −$12.00/mo</span> · $144/yr recovered</span>
+  <span><b>XFINITY</b> "Network Access Fee" <span class="up">▲ $8.50 → $14.99</span> · not required by law · 71% dispute win rate</span>
+  <span><b>VERIZON</b> "Administrative Recovery" <span class="up">▲ NEW +$3.99</span> · appeared Oct 2026 · 4,218 reports</span>
+  <span><b>AT&amp;T</b> promo expired <span class="up">▲ $49.99 → $79.99</span> · 14,002 users hit this month</span>
+  <span><b>SPECTRUM</b> "Broadcast TV Surcharge" <span class="up">▲ +$2.40</span> · negotiable: 58%</span>
+  <span><b>YOU WON</b> Comcast loyalty credit <span class="down">▼ −$12.00/mo</span> · $144/yr recovered</span>
+</div></div>
+
+<!-- ============ DELTA ENGINE ============ -->
+<div class="section-head">
+  <div class="kicker">01 · The Delta Engine</div>
+  <h2>The receipt, decoded</h2>
+  <p class="sub">Every line classified: <b style="color:var(--ink)">Usage</b> (you actually used more) · <b style="color:var(--fee)">Rate/New Fee</b> (they took more) · <b style="color:var(--tax)">Tax</b> (legit). Switch months — watch the creep.</p>
+</div>
+
+<div class="receipt-shell" id="receipt">
+  <div class="stamp">FEE CREEP<br>+18.8% / 12 MO</div>
+  <div class="r-head">
+    <div class="prov">NORTHLINE INTERNET CO.</div>
+    <div class="acct">ACCT ••••4821 · PLAN: FIBER 500 (SAME PLAN ALL YEAR)</div>
+    <div class="month-toggle" id="monthToggle">
+      <button data-m="oct25">Oct 2025</button>
+      <button data-m="sep26">Sep 2026</button>
+      <button data-m="oct26" class="active">Oct 2026</button>
+    </div>
+  </div>
+  <div class="r-lines" id="rLines"></div>
+  <div class="creep-banner" id="creepBanner"></div>
+  <div class="r-total"><span id="totalLabel">AMOUNT DUE</span><span id="totalAmt"></span></div>
+  <div class="r-foot">parsed by BillDelta · line-item delta vs. previous period · tap a 🔴 fee for its anatomy</div>
+</div>
+
+<!-- ============ CREEP GAUGE ============ -->
+<div class="section-head">
+  <div class="kicker">02 · The Creep Gauge</div>
+  <h2>Twelve months of quiet increases</h2>
+  <p class="sub">Usage flatlined. The bill didn't. Hover any month — the amber and red layers are the ones you can fight.</p>
+</div>
+
+<div class="chart-grid">
+  <div class="panel">
+    <div class="chart" id="chart"></div>
+    <div class="x-labels" id="xLabels"></div>
+    <div class="legend">
+      <span><i style="background:#D9E4EC"></i>Base rate</span>
+      <span><i style="background:#9DB4C4"></i>Usage</span>
+      <span><i style="background:var(--fee)"></i>Fees (disputable)</span>
+      <span><i style="background:var(--creep)"></i>New fees / promo expiry</span>
+    </div>
+  </div>
+  <div class="creep-card">
+    <div class="n" id="creepN">+$23.40</div>
+    <div class="l">total creep in 12 months — <b style="color:#FFC7C9">+18.8%</b> while your usage changed <b style="color:#6BD49B">0%</b></div>
+    <hr>
+    <div class="row"><span>Of that, fees</span><b style="color:#FF8A8E">$14.99</b></div>
+    <div class="row"><span>Promo expirations</span><b style="color:#FF8A8E">$8.41</b></div>
+    <div class="row"><span>Legit rate/usage</span><b style="color:#6BD49B">$0.00</b></div>
+    <div class="row"><span>Recoverable (crowd est.)</span><b style="color:var(--fee)">$187/yr</b></div>
+    <div class="verdict">You didn't use more. You were charged more. <b>3 of 5 increases are disputable.</b></div>
+  </div>
+</div>
+
+<!-- ============ FEE ANATOMY ============ -->
+<div class="section-head">
+  <div class="kicker">03 · Fee Anatomy</div>
+  <h2>What is this fee, really?</h2>
+  <p class="sub">Crowd-verified on 2.8M parsed bills. Pick a fee — see if it's junk, whether it's negotiable, and the script that wins.</p>
+</div>
+
+<div class="fee-grid">
+  <div class="fee-list" id="feeList"></div>
+  <div class="panel fee-detail" id="feeDetail"></div>
+</div>
+
+<!-- ============ SHARE CARD ============ -->
+<div class="section-head">
+  <div class="kicker">04 · Creep Receipts</div>
+  <h2>Spotify Wrapped, but for being played</h2>
+  <p class="sub">One tap → a shareable receipt of your year. The thread that inspired this app said it better than we could.</p>
+</div>
+
+<div class="share-card">
+  <div class="t">🧾 My Year of Fee Creep · 2026</div>
+  <h3>12 months. 4 providers.<br>Zero usage changes.</h3>
+  <div class="big">+$281.06 <small>crept</small></div>
+  <div class="rows">
+    <div class="r"><span>New fees appeared</span><b>7</b></div>
+    <div class="r"><span>Promos expired on me</span><b>2</b></div>
+    <div class="r"><span>Ads on a tier I PAY for</span><b>1</b></div>
+    <div class="r"><span>Fees I got removed</span><b style="color:#6BD49B">$187.32</b></div>
+    <div class="r"><span>Bank credentials I gave</span><b>0</b></div>
+  </div>
+  <div class="punch">"I'm getting really sick of paying for<br>things I already paid for." — me, and 41K upvotes</div>
+  <div class="brand">BILLDELTA.APP · SNAP THE BILL, GET THE DELTA</div>
+</div>
+
+<!-- ============ HOW ============ -->
+<div class="section-head">
+  <div class="kicker">05 · How it works</div>
+  <h2>Three moves, ninety seconds</h2>
+</div>
+<div class="steps">
+  <div class="step"><div class="num">STEP 1</div><h4>📸 Snap or forward</h4><p>Photograph the paper bill, upload the PDF, or forward the bill email. <b>No bank linkage — ever.</b> On-device OCR option for the credential-phobic.</p></div>
+  <div class="step"><div class="num">STEP 2</div><h4>🔬 See the delta</h4><p>Every line classified against your history. New fees stamped 🔴, expired promos flagged 🟡, taxes left alone. The Creep number is the only one that matters.</p></div>
+  <div class="step"><div class="num">STEP 3</div><h4>📞 Run the script</h4><p>Per fee: what it is, crowd win rate, your exact numbers baked into a phone/chat/letter script, and the escalation ladder if they say no.</p></div>
+</div>
+
+<!-- ============ PRICING ============ -->
+<div class="section-head">
+  <div class="kicker">06 · Pricing</div>
+  <h2>Cheaper than one recovered fee</h2>
+</div>
+<div class="price-grid">
+  <div class="price-card">
+    <div class="tier">Free — forever</div>
+    <div class="amount">$0</div>
+    <ul>
+      <li>3 bills tracked</li>
+      <li>Delta Engine + 6-month history</li>
+      <li>Fee Anatomy lookups (5/mo)</li>
+      <li>1 Creep Receipt per month</li>
+      <li class="no">Email-forward ingest</li>
+      <li class="no">Dispute Kit + win rates</li>
+    </ul>
+  </div>
+  <div class="price-card pro">
+    <div class="ribbon">RECOVERS ITS COST IN ONE CALL</div>
+    <div class="tier">Pro</div>
+    <div class="amount">$6<small>/mo</small> <small style="font-size:13px">or $49/yr</small></div>
+    <ul>
+      <li>Unlimited bills · 24-month history</li>
+      <li>Full Dispute Kit + crowd win rates</li>
+      <li>Promo-expiry early warnings</li>
+      <li>Household mode (5 accounts)</li>
+      <li>Recovery tracking ("+$187/yr for you")</li>
+      <li>Encrypted bill archive</li>
+    </ul>
+  </div>
+</div>
+<p class="pledge"><b>The pledge:</b> BillDelta never takes a percentage of your savings, never sells your bill data, and never needs your bank login. Concierge negotiators keep 40% of what they win you. We keep $6 and hand you the receipts.</p>
+
+<footer>
+  <div class="big-q">"Paying for utilities that increase because the delivery fee goes up — even though my usage hasn't changed."</div>
+  <div>BILLDELTA — PROTOTYPE · OCT 31 2026 · DUNCAN'S DAILY APP IDEAS · NOT A REAL SERVICE (YET)</div>
+</footer>
+
+</div>
+
+<script>
+// ---------- receipt data ----------
+const MONTHS = {
+  oct25:{ label:'Oct 2025', total:124.19, lines:[
+    {n:'Fiber 500 — Internet Service', a:49.99, c:'base'},
+    {n:'Equipment (modem/router)', a:14.00, c:'base'},
+    {n:'Network Access Fee', a:8.50, c:'fee'},
+    {n:'Broadcast TV Surcharge', a:0.00, c:'fee', hide:true},
+    {n:'Federal & State Taxes', a:9.70, c:'tax'},
+    {n:'Usage — 0 GB over plan', a:42.00, c:'usage', hide:true},
+  ]},
+  sep26:{ label:'Sep 2026', total:139.28, lines:[
+    {n:'Fiber 500 — Internet Service', a:59.99, c:'base', d:+10.00, note:'rate hike, Jun 2026'},
+    {n:'Equipment (modem/router)', a:16.00, c:'base', d:+2.00},
+    {n:'Network Access Fee', a:12.99, c:'fee', d:+4.49},
+    {n:'Administrative Recovery Fee', a:0.00, c:'fee', hide:true},
+    {n:'Federal & State Taxes', a:10.30, c:'tax'},
+  ]},
+  oct26:{ label:'Oct 2026', total:147.59, lines:[
+    {n:'Fiber 500 — Internet Service', a:59.99, c:'base'},
+    {n:'Equipment (modem/router)', a:16.00, c:'base'},
+    {n:'Network Access Fee', a:14.99, c:'fee', d:+2.00, note:'up 76% in 12 mo'},
+    {n:'Administrative Recovery Fee', a:3.99, c:'fee', isNew:true, note:'NEW — first appeared Oct 2026'},
+    {n:'Broadcast TV Surcharge', a:2.40, c:'fee', isNew:true, note:'NEW — you don\'t even have TV service'},
+    {n:'Federal & State Taxes', a:10.22, c:'tax'},
+    {n:'Promo credit expired', a:40.00, c:'promo', isNew:true, note:'the "$49.99 for 12 mo" ended — base rate silently jumped'},
+  ]},
+};
+
+const $lines=document.getElementById('rLines'), $total=document.getElementById('totalAmt'),
+      $label=document.getElementById('totalLabel'), $banner=document.getElementById('creepBanner');
+
+function renderReceipt(key){
+  const m=MONTHS[key];
+  $lines.innerHTML='';
+  m.lines.filter(l=>!l.hide).forEach(l=>{
+    const div=document.createElement('div');
+    div.className='r-line'+(l.c==='fee'&&(l.isNew||l.d)?' fee':'')+(l.c==='promo'?' promo':'')+(l.c==='tax'?' tax':'');
+    if(l.c==='fee'&&!l.isNew&&!l.d) div.className='r-line';
+    let delta='';
+    if(l.d) delta=`<span class="delta up">▲ +$${l.d.toFixed(2)}</span>`;
+    else if(l.c!=='tax'&&l.c!=='promo'&&!l.isNew) delta=`<span class="delta flat">— no change</span>`;
+    div.innerHTML=`<span class="name" ${l.note?`title="${l.note}"`:''}>${l.n}${l.c==='promo'?' <span class="delta up" style="font-size:11px">▲ +$40.00</span>':''}</span>
+      <span class="amt">$${l.a.toFixed(2)}${delta}</span>`;
+    $lines.appendChild(div);
+  });
+  $total.textContent='$'+m.total.toFixed(2);
+  $label.textContent='AMOUNT DUE · '+m.label.toUpperCase();
+  if(key==='oct26'){
+    $banner.style.display='block';
+    $banner.innerHTML=`<b>🧾 CREP ALERT:</b> +$23.40 (+18.8%) vs. Oct 2025 — usage unchanged. <b>$14.99 is fees.</b> 3 items disputable.`;
+  } else if(key==='sep26'){
+    $banner.style.display='block';
+    $banner.innerHTML=`<b>SEP 2026:</b> +$15.09 vs. Oct 2025. Network Access Fee already up 53% this year.`;
+  } else {
+    $banner.style.display='block';
+    $banner.style.background='#EFF5EF'; $banner.style.borderColor='var(--ledger)'; $banner.style.color='#22543D';
+    $banner.innerHTML=`<b>OCT 2025 — THE BASELINE:</b> what you thought you signed up for. Screenshot it. You'll want it later.`;
+  }
+  if(key!=='sep26'&&key!=='oct26'){ $banner.style.background=''; $banner.style.borderColor=''; $banner.style.color=''; }
+}
+document.getElementById('monthToggle').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  document.querySelectorAll('#monthToggle button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  renderReceipt(e.target.dataset.m);
+});
+renderReceipt('oct26');
+
+// ---------- creep chart ----------
+const CHART=[
+ {m:'Nov',base:49.99,usage:0,fee:8.50,nw:0},
+ {m:'Dec',base:49.99,usage:0,fee:8.50,nw:0},
+ {m:'Jan',base:49.99,usage:0,fee:9.50,nw:0},
+ {m:'Feb',base:49.99,usage:0,fee:9.50,nw:0},
+ {m:'Mar',base:49.99,usage:0,fee:10.50,nw:0},
+ {m:'Apr',base:49.99,usage:0,fee:10.50,nw:0},
+ {m:'May',base:49.99,usage:0,fee:11.50,nw:0},
+ {m:'Jun',base:59.99,usage:0,fee:12.99,nw:0},
+ {m:'Jul',base:59.99,usage:0,fee:12.99,nw:0},
+ {m:'Aug',base:59.99,usage:0,fee:12.99,nw:0},
+ {m:'Sep',base:59.99,usage:0,fee:12.99,nw:3.99},
+ {m:'Oct',base:59.99,usage:0,fee:17.39,nw:40.00},
+];
+const $chart=document.getElementById('chart'), $xl=document.getElementById('xLabels');
+const maxT=Math.max(...CHART.map(d=>d.base+d.usage+d.fee+d.nw));
+CHART.forEach(d=>{
+  const t=d.base+d.usage+d.fee+d.nw;
+  const col=document.createElement('div'); col.className='bar-col';
+  const pct=v=>(v/maxT*100).toFixed(1)+'%';
+  col.innerHTML=`<div class="tip">${d.m} '26 — $${t.toFixed(2)}${d.nw?' 🔴':''}</div>
+    <div class="bar" style="height:${(t/maxT*100).toFixed(1)}%">
+      <div class="seg-base" style="height:${d.base/t*100}%"></div>
+      ${d.usage?`<div class="seg-usage" style="height:${d.usage/t*100}%"></div>`:''}
+      <div class="seg-fee" style="height:${d.fee/t*100}%"></div>
+      ${d.nw?`<div class="seg-new" style="height:${d.nw/t*100}%"></div>`:''}
+    </div>`;
+  $chart.appendChild(col);
+  const s=document.createElement('span'); s.textContent=d.m; $xl.appendChild(s);
+});
+
+// ---------- fee anatomy ----------
+const FEES=[
+ {id:'naf', name:'Network Access Fee', prov:'Xfinity / Comcast', verdict:'junk', tag:'JUNK — NOT REQUIRED BY LAW',
+  amt:'$14.99/mo', firstSeen:'2019 · was $2.95', win:71, reports:'41,208 disputes · crowd data',
+  what:'A carrier-invented surcharge with no legal basis. It is NOT a government fee and NOT a pass-through — Comcast keeps it. Up 408% since 2019 while the base rate stayed "flat" for PR purposes.',
+  script:`Hi, I'm reviewing my bill and I see a "Network Access Fee" of $14.99. I understand this fee is not mandated by any government agency and is retained by the company. I'd like it removed, or a loyalty credit of equivalent value applied. If that's not possible at your level, please transfer me to the retention or loyalty department. I've been a customer since [YEAR] and I'd prefer to resolve this without changing providers.`},
+ {id:'arf', name:'Administrative Recovery Fee', prov:'Verizon / AT&T wireless', verdict:'junk', tag:'JUNK — DISCRETIONARY',
+  amt:'$3.99/mo', firstSeen:'Oct 2026 · NEW on your bill', win:54, reports:'4,218 disputes this month',
+  what:'A catch-all line invented to raise effective prices without touching the advertised rate. Regulators in 4 states have fined carriers over identical "recovery" fees. Brand new on your bill — flag it within the first cycle.',
+  script:`I noticed an "Administrative Recovery Fee" of $3.99 that wasn't on my bill last month. I didn't agree to a price increase, and my plan terms didn't change. Please remove this fee effective immediately, or credit it to my next statement. If you can't, I'd like the retention department — and please note in my account that I disputed this fee in writing.`},
+ {id:'bts', name:'Broadcast TV Surcharge', prov:'Comcast / Spectrum / DirecTV', verdict:'maybe', tag:'MAYBE LEGIT — PARTIALLY FIGHTABLE',
+  amt:'$2.40–$15.00/mo', firstSeen:'varies by market', win:58, reports:'18,940 disputes',
+  what:'Covers what the provider pays networks to carry local channels. It has SOME cost basis — but the amount is discretionary and rises faster than the actual retransmission costs. Fair fight if you have no TV package at all (you, Oct 2026).',
+  script:`I'm being charged a Broadcast TV Surcharge of $2.40, but I don't subscribe to any TV package from you — this is an internet-only account. Please remove it. If it's mandatory, I'd like you to explain in writing which service on my account it applies to.`},
+ {id:'promo', name:'Expired Promo Price', prov:'Everyone. Always.', verdict:'ok', tag:'LEGIT — BUT FIGHTABLE',
+  amt:'+$40.00/mo jump', firstSeen:'the day your 12 months ran out', win:63, reports:'22,770 "renewal" negotiations',
+  what:'Not a fee — the trap door under the teaser rate. The jump is technically in your contract. But providers overwhelmingly re-extend promos for good-tenure customers rather than eat a churn — you just have to ask in the right window (week of expiry).',
+  script:`My promotional rate expired this cycle and my bill jumped $40. I've been a customer for [X] years with autopay on and zero late payments. I see current offers for new customers at [LOWER PRICE]. I'd like to be moved to your best available loyalty promotion, or I'll need to look at the alternatives available at my address. Can you check what retention offers apply to my account today?`},
+ {id:'tax', name:'Federal & State Taxes', prov:'—', verdict:'ok', tag:'LEGIT — LEAVE IT ALONE',
+  amt:'$10.22/mo', firstSeen:'—', win:0, reports:'no disputes filed — ever',
+  what:'Actual government taxes (911 fees, USF, state telecom tax). Not negotiable, not junk. BillDelta greys these out on purpose: credibility comes from knowing what NOT to fight. Disputing real taxes gets your whole call taken less seriously.',
+  script:`— No script. This one's real. Focus your energy on the red lines.`},
+];
+const $fl=document.getElementById('feeList'), $fd=document.getElementById('feeDetail');
+function pillClass(v){return v==='junk'?'junk':v==='maybe'?'maybe':'ok'}
+function renderFeeList(){
+  $fl.innerHTML='';
+  FEES.forEach((f,i)=>{
+    const d=document.createElement('div');
+    d.className='fee-item'+(i===0?' active':'');
+    d.innerHTML=`<div class="fn">${f.name}</div><div class="fm">${f.prov} · ${f.amt} · <span class="pill ${pillClass(f.verdict)}">${f.verdict==='junk'?'JUNK':f.verdict==='maybe'?'MAYBE':'LEGIT'}</span></div>`;
+    d.onclick=()=>{document.querySelectorAll('.fee-item').forEach(x=>x.classList.remove('active'));d.classList.add('active');renderFee(f)};
+    $fl.appendChild(d);
+  });
+}
+function renderFee(f){
+  $fd.innerHTML=`
+    <h3>${f.name}</h3>
+    <div class="meta">${f.prov} · ${f.amt} · ${f.firstSeen} · ${f.reports}</div>
+    <span class="pill ${pillClass(f.verdict)}">${f.tag}</span>
+    <p style="margin-top:12px;font-size:14px;color:var(--ink-soft)">${f.what}</p>
+    ${f.win?`<div class="meter-wrap">
+      <div class="meter-label"><span>Crowd dispute success rate</span><b>${f.win}%</b></div>
+      <div class="meter"><div class="meter-fill" id="mf"></div></div>
+    </div>`:''}
+    <div class="facts">
+      <div class="fact"><div class="k">Required by law?</div><div class="v" style="color:${f.verdict==='junk'?'var(--creep)':f.verdict==='maybe'?'#9A6A0F':'var(--ledger)'}">${f.verdict==='junk'?'No':f.verdict==='maybe'?'Partially':'Yes'}</div></div>
+      <div class="fact"><div class="k">Provider keeps it?</div><div class="v">${f.verdict==='ok'&&f.id==='tax'?'No — government':'Yes — 100%'}</div></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:18px 0 8px">Your dispute script (your numbers pre-filled)</div>
+    <div class="script-box"><button class="copy-btn" onclick="copyScript()">COPY</button><span id="scriptText">${f.script}</span></div>
+    <div class="escalation">
+      <span class="esc-step hot">1 · Call/chat with script</span>
+      <span class="esc-step">2 · Retention dept</span>
+      <span class="esc-step">3 · Written dispute (letter generated)</span>
+      <span class="esc-step">4 · State AG / FCC complaint →</span>
+    </div>`;
+  if(f.win){ requestAnimationFrame(()=>requestAnimationFrame(()=>{document.getElementById('mf').style.width=f.win+'%'})); }
+}
+function copyScript(){
+  const t=document.getElementById('scriptText').innerText;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b=document.querySelector('.copy-btn'); b.textContent='COPIED ✓'; setTimeout(()=>b.textContent='COPY',1600);
+  });
+}
+renderFeeList(); renderFee(FEES[0]);
+</script>
+</body>
+</html>
