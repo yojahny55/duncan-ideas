@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoreScribe — Your Campaign's Spoiler-Free Storyteller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14100C; --ink-2:#1E1811; --ink-3:#2A221A;
+  --parchment:#F3E9D2; --parchment-dim:#D9CBA8; --parchment-faint:rgba(243,233,210,.55);
+  --gold:#C89B3C; --gold-soft:rgba(200,155,60,.16);
+  --violet:#7C5CBF; --violet-soft:rgba(124,92,191,.18);
+  --wax:#A33B2A; --wax-soft:rgba(163,59,42,.16);
+  --reveal:#5C8A4E; --reveal-soft:rgba(92,138,78,.16);
+  --radius:14px; --mono:'JetBrains Mono',monospace; --display:'Cinzel',serif; --body:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--parchment);font-family:var(--body);min-height:100vh;
+  background-image:radial-gradient(1200px 500px at 70% -10%,rgba(124,92,191,.10),transparent 60%),
+  radial-gradient(900px 420px at 10% 110%,rgba(200,155,60,.07),transparent 60%);}
+::selection{background:var(--gold);color:var(--ink)}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 20px 80px}
+
+/* ── Header ─────────────────────────── */
+header{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-bottom:8px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .sigil{width:46px;height:46px;border-radius:12px;background:linear-gradient(145deg,var(--gold),#8a6a24);
+  display:grid;place-items:center;font-size:24px;box-shadow:0 4px 18px rgba(200,155,60,.35), inset 0 1px 0 rgba(255,255,255,.35)}
+.logo h1{font-family:var(--display);font-size:26px;letter-spacing:.06em;font-weight:700}
+.logo h1 span{color:var(--gold)}
+.tagline{color:var(--parchment-faint);font-size:14px;margin:2px 0 0 58px}
+header .lensbox{margin-left:auto}
+
+/* Lens toggle */
+.lens{display:inline-flex;background:var(--ink-2);border:1px solid var(--ink-3);border-radius:999px;padding:4px;gap:4px}
+.lens button{font-family:var(--body);font-weight:600;font-size:13px;padding:9px 18px;border-radius:999px;border:0;
+  background:transparent;color:var(--parchment-faint);cursor:pointer;transition:.25s;display:flex;align-items:center;gap:7px}
+.lens button .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.6}
+.lens button[data-lens="dm"].on{background:var(--violet-soft);color:#C9B6F2;box-shadow:inset 0 0 0 1px rgba(124,92,191,.5)}
+.lens button[data-lens="player"].on{background:var(--gold-soft);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(200,155,60,.5)}
+.lens-note{font-size:12px;color:var(--parchment-faint);text-align:right;margin-top:6px;min-height:16px}
+.lens-note b.dm{color:#C9B6F2}.lens-note b.pl{color:var(--gold)}
+
+/* Campaign strip */
+.campaign{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 26px}
+.chip{font-family:var(--mono);font-size:12px;padding:7px 13px;border-radius:999px;background:var(--ink-2);
+  border:1px solid var(--ink-3);color:var(--parchment-dim)}
+.chip b{color:var(--gold);font-weight:600}
+.chip.warn{border-color:rgba(163,59,42,.5);color:#E8A394}
+
+/* ── Nav tabs ───────────────────────── */
+nav{display:flex;gap:6px;border-bottom:1px solid var(--ink-3);margin-bottom:26px;overflow-x:auto}
+nav button{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:.05em;padding:12px 20px 14px;
+  background:none;border:0;border-bottom:2px solid transparent;color:var(--parchment-faint);cursor:pointer;white-space:nowrap;transition:.2s}
+nav button:hover{color:var(--parchment)}
+nav button.on{color:var(--gold);border-bottom-color:var(--gold)}
+main section{display:none;animation:fade .3s ease}
+main section.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+h2.sec{font-family:var(--display);font-size:20px;letter-spacing:.04em;margin-bottom:4px}
+p.sub{color:var(--parchment-faint);font-size:13.5px;margin-bottom:20px;max-width:640px}
+
+/* ── Codex cards ────────────────────── */
+.entity{background:var(--ink-2);border:1px solid var(--ink-3);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px}
+.entity .ehead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.entity h3{font-family:var(--display);font-size:18px;letter-spacing:.03em}
+.kind{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;padding:3px 9px;border-radius:999px}
+.kind.npc{background:var(--violet-soft);color:#B79CEC}
+.kind.faction{background:var(--wax-soft);color:#E2917F}
+.kind.place{background:var(--reveal-soft);color:#9CC98B}
+.fact{display:flex;gap:12px;padding:11px 0;border-top:1px dashed rgba(243,233,210,.12);font-size:14px;line-height:1.55}
+.fact .st{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;
+  padding:3px 8px;border-radius:6px;height:fit-content;margin-top:2px;flex-shrink:0}
+.st.secret{background:var(--wax-soft);color:#E2917F;box-shadow:inset 0 0 0 1px rgba(163,59,42,.45)}
+.st.revealed{background:var(--reveal-soft);color:#9CC98B}
+.st.public{background:var(--gold-soft);color:var(--gold)}
+.fact .cite{font-family:var(--mono);font-size:11px;color:var(--parchment-faint);margin-top:4px;display:block}
+
+/* Spoiler fog */
+.fog{position:relative;border-radius:10px;background:var(--wax-soft);box-shadow:inset 0 0 0 1px rgba(163,59,42,.4);
+  padding:12px 14px;cursor:pointer;overflow:hidden;transition:.3s}
+.fog .fogtext{filter:blur(6px);opacity:.75;user-select:none;transition:.35s}
+.fog .seal{position:absolute;inset:0;display:grid;place-items:center;gap:8px;transition:.3s}
+.fog .seal .waxseal{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#C25440,var(--wax) 60%,#6E2317);
+  display:grid;place-items:center;font-size:20px;box-shadow:0 3px 12px rgba(163,59,42,.5),inset 0 1px 0 rgba(255,255,255,.25)}
+.fog .seal small{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#E2917F}
+.fog.open .fogtext{filter:none;opacity:1}
+.fog.open .seal{opacity:0;pointer-events:none;transform:scale(1.15)}
+.fog.open{background:rgba(163,59,42,.06);box-shadow:inset 0 0 0 1px rgba(163,59,42,.2)}
+.revealbtn{margin-top:10px;display:none;font-family:var(--body);font-weight:600;font-size:12.5px;padding:8px 16px;border-radius:8px;
+  border:1px solid rgba(92,138,78,.6);background:var(--reveal-soft);color:#9CC98B;cursor:pointer;transition:.2s}
+.revealbtn:hover{background:rgba(92,138,78,.3)}
+.fog.open+.revealbtn,.fog.open~.revealbtn{display:inline-block}
+
+/* Player-lens hiding */
+body.player-lens [data-vis="secret"]{display:none!important}
+body.player-lens .fact .st.revealed,body.player-lens .fact .st.public{}
+.hidden-note{display:none;font-family:var(--mono);font-size:11.5px;color:var(--parchment-faint);padding:12px 0;border-top:1px dashed rgba(243,233,210,.12)}
+body.player-lens .hidden-note{display:block}
+
+/* ── Grimoire Q&A ───────────────────── */
+.askbar{display:flex;gap:10px;margin-bottom:22px}
+.askbar input{flex:1;background:var(--ink-2);border:1px solid var(--ink-3);border-radius:12px;color:var(--parchment);
+  font-family:var(--body);font-size:14.5px;padding:15px 18px;outline:none;transition:.2s}
+.askbar input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+.askbar input::placeholder{color:rgba(243,233,210,.35)}
+.askbar button{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.06em;padding:0 26px;border-radius:12px;border:0;
+  background:linear-gradient(145deg,var(--gold),#8a6a24);color:var(--ink);cursor:pointer;transition:.2s;box-shadow:0 4px 16px rgba(200,155,60,.3)}
+.askbar button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(200,155,60,.45)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.presets button{font-size:12.5px;padding:8px 14px;border-radius:999px;background:var(--ink-2);border:1px solid var(--ink-3);
+  color:var(--parchment-dim);cursor:pointer;transition:.2s;font-family:var(--body)}
+.presets button:hover{border-color:var(--gold);color:var(--gold)}
+.answer{background:var(--ink-2);border:1px solid var(--ink-3);border-radius:var(--radius);padding:22px 24px;margin-bottom:16px;display:none}
+.answer.show{display:block;animation:fade .35s ease}
+.answer .qhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.answer .q{font-family:var(--display);font-size:16px;letter-spacing:.02em}
+.answer .lenspill{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;padding:4px 10px;border-radius:999px}
+.lenspill.dm{background:var(--violet-soft);color:#B79CEC}
+.lenspill.pl{background:var(--gold-soft);color:var(--gold)}
+.answer p.body{font-size:14.5px;line-height:1.7;color:var(--parchment-dim);margin-bottom:12px}
+.answer p.body strong{color:var(--parchment)}
+.ribbon{border-radius:10px;padding:12px 16px;font-size:13.5px;line-height:1.6;margin-bottom:12px;display:flex;gap:10px}
+.ribbon.spoiler{background:var(--wax-soft);box-shadow:inset 0 0 0 1px rgba(163,59,42,.4);color:#E8A394}
+.ribbon.safe{background:var(--gold-soft);box-shadow:inset 0 0 0 1px rgba(200,155,60,.35);color:#D9B96A}
+.cites{font-family:var(--mono);font-size:11.5px;color:var(--parchment-faint);display:flex;flex-wrap:wrap;gap:8px}
+.cites span{background:var(--ink-3);padding:4px 10px;border-radius:6px}
+.typing{font-family:var(--mono);font-size:13px;color:var(--gold);display:none;padding:18px 24px;background:var(--ink-2);
+  border:1px solid var(--ink-3);border-radius:var(--radius);margin-bottom:16px}
+.typing.show{display:block}
+.typing::after{content:'▌';animation:blink 1s infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ── Recap broadsheet ───────────────── */
+.recap{background:linear-gradient(180deg,#F6EED9,#EFE3C6);color:#241B10;border-radius:var(--radius);padding:34px 38px;margin-bottom:18px;
+  box-shadow:0 10px 40px rgba(0,0,0,.45);max-width:720px}
+.recap .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#7a6236;text-align:center;margin-bottom:6px}
+.recap h3{font-family:var(--display);font-weight:900;font-size:27px;text-align:center;letter-spacing:.02em;line-height:1.2;margin-bottom:4px}
+.recap .dateline{font-family:var(--mono);font-size:11.5px;text-align:center;color:#8a7040;border-bottom:2px solid #241B10;
+  padding-bottom:12px;margin-bottom:16px}
+.recap p{font-size:14.5px;line-height:1.75;margin-bottom:12px;text-align:justify}
+.recap p::first-letter{font-family:var(--display);font-size:26px;font-weight:700;float:left;line-height:1;padding-right:6px;color:#7a4a1a}
+.recap ul{list-style:none;margin:0 0 12px}
+.recap li{font-size:13.5px;padding:7px 0 7px 26px;position:relative;border-top:1px dashed rgba(36,27,16,.25);line-height:1.5}
+.recap li::before{content:'✦';position:absolute;left:4px;color:#a8842e;font-size:12px}
+.recap .foot{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a7040;text-align:center;
+  border-top:2px solid #241B10;padding-top:10px;margin-top:16px}
+.recapbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;max-width:720px}
+.recapbar button{font-family:var(--body);font-weight:600;font-size:13px;padding:11px 20px;border-radius:10px;cursor:pointer;transition:.2s;
+  border:1px solid var(--ink-3);background:var(--ink-2);color:var(--parchment-dim)}
+.recapbar button.primary{background:linear-gradient(145deg,var(--gold),#8a6a24);border:0;color:var(--ink)}
+.recapbar button:hover{transform:translateY(-1px)}
+.recap-gen{display:none;max-width:720px;background:var(--ink-2);border:1px solid var(--ink-3);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px}
+.recap-gen.show{display:block;animation:fade .3s}
+.recap-gen .step{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:12.5px;color:var(--parchment-faint);padding:5px 0}
+.recap-gen .step .ck{color:var(--reveal);font-weight:700}
+.recap-gen .step.pending .ck{opacity:.25}
+body.player-lens .recap .dmhook{display:none}
+
+/* ── Reveal Timeline ────────────────── */
+.timeline{position:relative;max-width:660px;padding-left:34px}
+.timeline::before{content:'';position:absolute;left:10px;top:6px;bottom:6px;width:2px;
+  background:linear-gradient(180deg,var(--gold),rgba(200,155,60,.15))}
+.tl-item{position:relative;padding:0 0 26px}
+.tl-item .node{position:absolute;left:-34px;top:2px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:10px;
+  background:var(--ink);border:2px solid var(--gold);color:var(--gold)}
+.tl-item.pending .node{border-color:var(--wax);color:#E2917F;box-shadow:0 0 12px rgba(163,59,42,.5)}
+.tl-item .card{background:var(--ink-2);border:1px solid var(--ink-3);border-radius:12px;padding:14px 18px}
+.tl-item .sess{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.tl-item.pending .sess{color:#E2917F}
+.tl-item .card p{font-size:13.5px;line-height:1.55;color:var(--parchment-dim)}
+.tl-item .card p em{color:var(--parchment);font-style:normal;font-weight:600}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+.stat{background:var(--ink-2);border:1px solid var(--ink-3);border-radius:12px;padding:16px 22px;text-align:center;min-width:130px}
+.stat .n{font-family:var(--display);font-size:28px;font-weight:700;color:var(--gold)}
+.stat.pending .n{color:#E2917F}
+.stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--parchment-faint);margin-top:3px}
+.sharecard{max-width:400px;background:linear-gradient(150deg,#1C1610,#14100C 60%);border:1px solid rgba(200,155,60,.4);border-radius:16px;
+  padding:26px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.5);margin-top:10px}
+.sharecard .t{font-family:var(--display);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.sharecard .big{font-family:var(--display);font-size:21px;font-weight:700;line-height:1.45;margin-bottom:14px}
+.sharecard .big b{color:#E2917F}
+.sharecard .seals{font-size:22px;letter-spacing:6px;margin-bottom:14px}
+.sharecard .f{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--parchment-faint);text-transform:uppercase}
+
+/* toast */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--reveal);color:#fff;
+  font-weight:600;font-size:13.5px;padding:13px 24px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.5);transition:.35s;opacity:0;z-index:99}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+footer{margin-top:60px;text-align:center;font-family:var(--mono);font-size:11px;color:rgba(243,233,210,.35);letter-spacing:.06em}
+footer b{color:var(--gold)}
+@media(max-width:640px){
+  header .lensbox{margin-left:0;width:100%}
+  .lens{width:100%}.lens button{flex:1;justify-content:center}
+  .recap{padding:24px 22px}
+  .wrap{padding:20px 14px 70px}
+}
+</style>
+</head>
+<body class="dm-lens">
+<div class="wrap">
+
+<header>
+  <div class="logo">
+    <div class="sigil">📜</div>
+    <div>
+      <h1>LORE<span>SCRIBE</span></h1>
+    </div>
+  </div>
+  <div class="lensbox">
+    <div class="lens">
+      <button data-lens="dm" class="on" onclick="setLens('dm')"><span class="dot"></span>👁 DM Lens</button>
+      <button data-lens="player" onclick="setLens('player')"><span class="dot"></span>🔦 Player Lens</button>
+    </div>
+    <div class="lens-note" id="lensNote">Viewing as <b class="dm">Dungeon Master</b> — secrets visible, fog sealed</div>
+  </div>
+</header>
+<p class="tagline">Campaign: <b style="color:var(--gold);font-family:var(--display);letter-spacing:.04em">Embers of Vharn</b> — your lore graph, filtered by who knows what.</p>
+
+<div class="campaign">
+  <span class="chip">Session <b>31</b> of 31</span>
+  <span class="chip">Facts <b>148</b></span>
+  <span class="chip">Entities <b>37</b></span>
+  <span class="chip warn">🕯 9 secrets still sealed</span>
+  <span class="chip">Players <b>4</b></span>
+</div>
+
+<nav>
+  <button class="on" onclick="tab(event,'codex')">📖 Codex</button>
+  <button onclick="tab(event,'grimoire')">🔮 Ask the Grimoire</button>
+  <button onclick="tab(event,'recap')">✒️ Auto Recap</button>
+  <button onclick="tab(event,'timeline')">🕯 Reveal Timeline</button>
+</nav>
+
+<main>
+<!-- ═══════════ CODEX ═══════════ -->
+<section id="codex" class="on">
+  <h2 class="sec">The Codex</h2>
+  <p class="sub">Every fact carries a visibility state. In DM lens, secrets sit under Spoiler Fog — tap a wax seal to read it. Flip to Player Lens and secrets vanish entirely: the player portal is <i>generated</i> from this state, so it can never leak.</p>
+
+  <div class="entity">
+    <div class="ehead"><h3>Seraphine Ashvale</h3><span class="kind npc">NPC · Ally?</span></div>
+    <div class="fact"><span class="st public">Public</span>
+      <div>Keeper of the Emberwright Archives in Vharn; has aided the party with lore on three occasions.
+      <span class="cite">↳ src: session-04.md, session-11.md · confidence 0.98</span></div></div>
+    <div class="fact"><span class="st revealed">Revealed · S12</span>
+      <div>She is the twin sister of the BBEG, Malachar — the party learned this when the locket opened.
+      <span class="cite">↳ src: session-12-notes.md:47 · revealed to: all 4 players</span></div></div>
+    <div class="fact" data-vis="secret"><span class="st secret">Secret</span>
+      <div style="flex:1">
+        <div class="fog" onclick="openFog(this)">
+          <div class="fogtext">Seraphine has been feeding the party's movements to Malachar since Session 3 — her "aid" is a long con to recover the Ember Key. The S28 letter (forged by Thorne) is her alibi.</div>
+          <div class="seal"><div class="waxseal">🕯</div><small>Sealed spoiler · tap</small></div>
+        </div>
+        <button class="revealbtn" onclick="revealFact(this,'Seraphine is a double agent','S31')">✦ Reveal to players — stamps Session 31</button>
+        <span class="cite">↳ src: dm-private/s28-letter.png, session-30-transcript.txt:212</span>
+      </div></div>
+    <div class="hidden-note">🔦 1 fact hidden in Player Lens — Seraphine's record ends at what the table knows.</div>
+  </div>
+
+  <div class="entity">
+    <div class="ehead"><h3>The Ashen Cult</h3><span class="kind faction">Faction</span></div>
+    <div class="fact"><span class="st public">Public</span>
+      <div>Banned fire-worship sect operating in the Vharn undercity; responsible for the Bell Tower arson.
+      <span class="cite">↳ src: session-02.md · confidence 0.99</span></div></div>
+    <div class="fact"><span class="st revealed">Revealed · S19</span>
+      <div>Their sigil — a crown of cinders — was found branded on the orphanage ledger, confirming they run the "Ashward Orphans" pipeline.
+      <span class="cite">↳ src: session-19-recap.md · revealed to: all 4 players</span></div></div>
+    <div class="fact" data-vis="secret"><span class="st secret">Secret</span>
+      <div style="flex:1">
+        <div class="fog" onclick="openFog(this)">
+          <div class="fogtext">The Cult's true purpose is not worship — they are Malachar's insurance policy. Every "acolyte" carries a sealed ember that can be detonated remotely via the Lighthouse bell.</div>
+          <div class="seal"><div class="waxseal">🕯</div><small>Sealed spoiler · tap</small></div>
+        </div>
+        <button class="revealbtn" onclick="revealFact(this,'Cult acolytes are living bombs','S31')">✦ Reveal to players — stamps Session 31</button>
+        <span class="cite">↳ src: dm-private/cult-plans.docx</span>
+      </div></div>
+    <div class="hidden-note">🔦 1 fact hidden in Player Lens.</div>
+  </div>
+
+  <div class="entity">
+    <div class="ehead"><h3>The Lighthouse at Grieve Point</h3><span class="kind place">Place</span></div>
+    <div class="fact"><span class="st revealed">Revealed · S22</span>
+      <div>Abandoned since the drowning of 1893; the party found Thorne's camp in its cellar.
+      <span class="cite">↳ src: session-22.md · revealed to: all 4 players</span></div></div>
+    <div class="fact" data-vis="secret"><span class="st secret">Secret</span>
+      <div style="flex:1">
+        <div class="fog" onclick="openFog(this)">
+          <div class="fogtext">The lighthouse lamp is the Ember Key's housing. Malachar's final ritual happens at its apex during the S33 eclipse — the party's next destination, unrevealed.</div>
+          <div class="seal"><div class="waxseal">🕯</div><small>Sealed spoiler · tap</small></div>
+        </div>
+        <button class="revealbtn" onclick="revealFact(this,'The Lighthouse holds the Ember Key','S31')">✦ Reveal to players — stamps Session 31</button>
+        <span class="cite">↳ src: dm-private/arc-3-outline.md</span>
+      </div></div>
+    <div class="hidden-note">🔦 1 fact hidden in Player Lens.</div>
+  </div>
+</section>
+
+<!-- ═══════════ GRIMOIRE ═══════════ -->
+<section id="grimoire">
+  <h2 class="sec">Ask the Grimoire</h2>
+  <p class="sub">Chat with your campaign through the active lens. Player-lens answers are assembled <b>only</b> from REVEALED and PUBLIC facts — structurally incapable of spoiling. Ask the same question in both lenses and watch.</p>
+
+  <div class="askbar">
+    <input id="askInput" placeholder="What do the players know about Seraphine?" onkeydown="if(event.key==='Enter')ask(this.value)">
+    <button onclick="ask(document.getElementById('askInput').value)">ASK</button>
+  </div>
+  <div class="presets">
+    <button onclick="ask('What do we know about Seraphine?')">Seraphine</button>
+    <button onclick="ask('What is the Ashen Cult after?')">The Ashen Cult</button>
+    <button onclick="ask('Who is Thorne really?')">Thorne ⚠</button>
+    <button onclick="ask('What happened at the Lighthouse?')">The Lighthouse</button>
+  </div>
+
+  <div class="typing" id="typing">consulting the codex · filtering by lens</div>
+  <div id="answers"></div>
+</section>
+
+<!-- ═══════════ RECAP ═══════════ -->
+<section id="recap">
+  <h2 class="sec">Auto Recap — Session 31</h2>
+  <p class="sub">Paste notes or drop the transcript; LoreScribe writes the player-facing recap in your campaign voice — spoiler-free by construction. Player Lens hides DM-only hooks.</p>
+
+  <div class="recapbar">
+    <button class="primary" onclick="genRecap()">✒️ Generate Session 31 recap</button>
+    <button onclick="toast('Copied to clipboard — ready for Discord #recaps')">📋 Copy for Discord</button>
+    <button onclick="toast('Shared to Player Portal — 4 players notified')">🔗 Update Player Portal</button>
+  </div>
+
+  <div class="recap-gen" id="recapGen">
+    <div class="step"><span class="ck">✓</span> transcript ingested — 2h41m, Whisper, 98.2% confidence</div>
+    <div class="step"><span class="ck">✓</span> lore graph updated — 6 new facts, 2 entities touched</div>
+    <div class="step"><span class="ck">✓</span> spoiler pass — 3 secret facts excluded from player copy</div>
+    <div class="step" id="recapStep4"><span class="ck">✓</span> consistency check — ⚠ 1 contradiction caught (see below)</div>
+    <div class="step"><span class="ck">✓</span> voice matched to your last 12 recaps</div>
+  </div>
+
+  <div class="recap" id="recapCard" style="display:none">
+    <div class="kicker">The Chronicle of Embers · Vol. II</div>
+    <h3>Session 31 — "The Ledger Burns"</h3>
+    <div class="dateline">Played October 31, 2026 · 4 present · written by LoreScribe in the DM's voice</div>
+    <p>You followed the forged letter's seal into the archive's drowned floor and found what Seraphine never meant you to find: the orphanage ledger, branded with the crown of cinders. Thorne was already there — wounded, raving, and calling the Ashward children "the kindling."</p>
+    <ul>
+      <li><b>Mira</b> disarmed the cellar glyphs with 4 seconds on the sand — the table still hasn't let her live it down.</li>
+      <li>The ledger names <b>19 orphans</b> taken since spring. Twelve match the missing-persons broadsheets from Session 19.</li>
+      <li>Thorne escaped through the tide door, but not before <b>Seraphine's locket</b> fell into Bram's hands — sealed, humming, and warm.</li>
+      <li class="dmhook">🕯 <i>DM hook:</i> the locket's seal matches the S28 letter exactly. Confrontation bait for S32.</li>
+    </ul>
+    <div class="foot">Consistency Keeper · ⚠ S8 notes say Thorne lost his <b>left</b> eye — tonight's transcript says right. Canonical ruling: left. (fixed in recap)</div>
+  </div>
+</section>
+
+<!-- ═══════════ TIMELINE ═══════════ -->
+<section id="timeline">
+  <h2 class="sec">Reveal Timeline</h2>
+  <p class="sub">The campaign's real story: what the players learned, and when — plus what they still don't know. This is your Spotify-Wrapped at season's end.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="n">31</div><div class="l">Sessions</div></div>
+    <div class="stat"><div class="n">139</div><div class="l">Facts revealed</div></div>
+    <div class="stat pending"><div class="n" id="pendingN">9</div><div class="l">Secrets sealed</div></div>
+    <div class="stat"><div class="n">92%</div><div class="l">Arc-1 clarity</div></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item"><div class="node">✦</div><div class="card"><div class="sess">Session 31 · Tonight</div>
+      <p><em>The orphanage ledger</em> confirms the Ashen Cult runs the Ashward pipeline. Thorne's "the kindling" line now haunts the table.</p></div></div>
+    <div class="tl-item"><div class="node">✦</div><div class="card"><div class="sess">Session 28</div>
+      <p>Players found the <em>forged letter</em> — they believe Thorne framed Seraphine. (You know who really wrote it.)</p></div></div>
+    <div class="tl-item"><div class="node">✦</div><div class="card"><div class="sess">Session 22</div>
+      <p><em>Thorne's camp</em> discovered in the lighthouse cellar. The lighthouse itself still reads as scenery to them.</p></div></div>
+    <div class="tl-item"><div class="node">✦</div><div class="card"><div class="sess">Session 12 · The big one</div>
+      <p>The locket opened: <em>Seraphine is Malachar's twin.</em> Longest player-theory collapse in campaign history (see: "Bram's 6-session monologue").</p></div></div>
+    <div class="tl-item pending"><div class="node">🕯</div><div class="card"><div class="sess">Still sealed · 9 secrets</div>
+      <p>Seraphine's double-agent turn (since S3) · Cult acolytes as living bombs · The Lighthouse = Ember Key housing · eclipse ritual …</p></div></div>
+  </div>
+
+  <div class="sharecard">
+    <div class="t">Embers of Vharn · Season Recap</div>
+    <div class="big">31 sessions. <b>139 reveals.</b><br>9 secrets still burning.</div>
+    <div class="seals">🕯🕯🕯</div>
+    <div class="f">Longest-held secret: 28 sessions — and they still trust her.</div>
+  </div>
+</section>
+</main>
+
+<footer>Prototype · <b>LoreScribe</b> — lore graph + spoiler fog + lens-filtered Q&A. Duncan's Daily Ideas · 2026-11-01</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Lens ── */
+function setLens(l){
+  document.body.classList.toggle('player-lens', l==='player');
+  document.body.classList.toggle('dm-lens', l==='dm');
+  document.querySelectorAll('.lens button').forEach(b=>b.classList.toggle('on', b.dataset.lens===l));
+  const n=document.getElementById('lensNote');
+  n.innerHTML = l==='dm'
+    ? 'Viewing as <b class="dm">Dungeon Master</b> — secrets visible, fog sealed'
+    : 'Viewing as <b class="pl">Player</b> — secrets removed from the page entirely';
+  document.getElementById('answers').innerHTML='';
+}
+/* ── Tabs ── */
+function tab(e,id){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
+  e.currentTarget.classList.add('on');
+  document.querySelectorAll('main section').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+/* ── Fog ── */
+function openFog(el){ if(document.body.classList.contains('player-lens'))return; el.classList.add('open'); }
+let pending=9;
+function revealFact(btn,label,sess){
+  const fact=btn.closest('.fact');
+  fact.querySelector('.st').className='st revealed';
+  fact.querySelector('.st').textContent='Revealed · '+sess;
+  btn.remove();
+  fact.querySelector('.fog').classList.add('open');
+  pending--;
+  document.getElementById('pendingN').textContent=pending;
+  toast('✦ Revealed to Player Portal — 4 players notified · stamped '+sess);
+}
+/* ── Grimoire Q&A ── */
+const KB={
+  'seraphine':{
+    dm:{q:'What do we know about Seraphine?',ribbon:['spoiler','⚠ This answer contains 1 SEALED secret. Told to: no players yet. Reveal it from the Codex when the table is ready.'],
+      body:'<strong>Publicly:</strong> Keeper of the Emberwright Archives, three-time aid to the party. <strong>Revealed (S12):</strong> Malachar\'s twin — the locket. <strong>Sealed:</strong> she has been a double agent since Session 3; the S28 forged letter is her alibi. If Bram opens that locket\'s second compartment (S31 loot), the con collapses on-screen.',
+      cites:['session-04.md','session-12-notes.md:47','dm-private/s28-letter.png']},
+    pl:{q:'What do we know about Seraphine?',ribbon:['safe','🔦 Player lens — built only from revealed facts. Safe to read aloud at the table.'],
+      body:'Seraphine Ashvale keeps the Emberwright Archives and has helped you three times. Since Session 12 you know she is <strong>Malachar\'s twin sister</strong>. Tonight (S31) her locket — sealed and humming — is in Bram\'s hands, and its seal matches the forged letter you found in Session 28. What she knew about that letter is an open question.',
+      cites:['session-04.md','session-12-notes.md:47','session-31-transcript.txt']}
+  },
+  'cult':{
+    dm:{q:'What is the Ashen Cult after?',ribbon:['spoiler','⚠ Contains sealed truth. Players know the pipeline, not the purpose.'],
+      body:'<strong>Players know:</strong> banned fire sect, Bell Tower arson (S2), orphanage pipeline branded with the crown of cinders (S19, re-confirmed S31). <strong>Sealed:</strong> they are Malachar\'s insurance — every acolyte carries a remotely detonated ember, triggered via the Lighthouse bell.',
+      cites:['session-02.md','session-19-recap.md','dm-private/cult-plans.docx']},
+    pl:{q:'What is the Ashen Cult after?',ribbon:['safe','🔦 Player lens — safe to read aloud.'],
+      body:'A banned fire-worship sect under Vharn. They burned the Bell Tower (S2), and the branded ledger you found in S19 — re-confirmed tonight — proves they run the <strong>Ashward Orphans pipeline</strong>: 19 children taken since spring, twelve matching the Session 19 broadsheets. Thorne called them <strong>"the kindling."</strong> Whatever the cult is building, it needs children, and it needs fire.',
+      cites:['session-02.md','session-19-recap.md','session-31-transcript.txt']}
+  },
+  'thorne':{
+    dm:{q:'Who is Thorne really?',ribbon:['spoiler','⚠ FULL SPOILER — never show this screen to players.'],
+      body:'Thorne Vask is Malachar\'s <strong>first vessel</strong> — the S3 "rescue" was extraction, not rescue. The lost left eye (S8; tonight\'s transcript said right — canonical ruling: left) is the vessel brand. He isn\'t raving: the lighthouse cellars are where vessels are prepared, and he escaped the tide door <em>toward</em> Grieve Point, not away.',
+      cites:['dm-private/arc-3-outline.md','session-08.md','session-31-transcript.txt']},
+    pl:{q:'Who is Thorne really?',ribbon:['safe','🔦 Player lens — this is all the table has earned so far.'],
+      body:'You found Thorne\'s camp in the lighthouse cellar (S22); he\'s missing his left eye (S8). Tonight he was wounded and raving in the archive\'s drowned floor, called the orphans <strong>"the kindling,"</strong> and escaped through the tide door. What you don\'t know: how he knew about the ledger, why the cult\'s brand is on <em>his</em> wrist too, and where the tide door leads.',
+      cites:['session-08.md','session-22.md','session-31-transcript.txt']}
+  },
+  'lighthouse':{
+    dm:{q:'What happened at the Lighthouse?',ribbon:['spoiler','⚠ Players think it\'s scenery. It\'s the finale.'],
+      body:'<strong>Players know:</strong> abandoned since the 1893 drowning, Thorne\'s camp in the cellar (S22). <strong>Sealed:</strong> the lamp houses the <strong>Ember Key</strong>; Malachar\'s ritual fires at the apex during the S33 eclipse. The bell that triggers the acolytes is in the same tower.',
+      cites:['session-22.md','dm-private/arc-3-outline.md']},
+    pl:{q:'What happened at the Lighthouse?',ribbon:['safe','🔦 Player lens — safe to read aloud.'],
+      body:'Grieve Point lighthouse: drowned in 1893, abandoned ever since. You found <strong>Thorne\'s camp in its cellar</strong> in Session 22 — tide-charts on the wall, all circled dates from this month. Tonight he fled through the tide door; if the charts are right, the next high tide puts water in that cellar within the hour.',
+      cites:['session-22.md','session-31-transcript.txt']}
+  }
+};
+function key(q){
+  q=q.toLowerCase();
+  if(q.includes('seraphine')||q.includes('locket'))return 'seraphine';
+  if(q.includes('cult')||q.includes('ashen'))return 'cult';
+  if(q.includes('thorne'))return 'thorne';
+  if(q.includes('lighthouse')||q.includes('grieve'))return 'lighthouse';
+  return null;
+}
+function ask(q){
+  if(!q||!q.trim())return;
+  const k=key(q); const lens=document.body.classList.contains('player-lens')?'pl':'dm';
+  const box=document.getElementById('answers'); const typing=document.getElementById('typing');
+  typing.classList.add('show'); box.innerHTML='';
+  setTimeout(()=>{
+    typing.classList.remove('show');
+    if(!k){
+      box.innerHTML=`<div class="answer show"><div class="qhead"><span class="q">"${esc(q)}"</span><span class="lenspill ${lens}">${lens==='dm'?'👁 DM lens':'🔦 Player lens'}</span></div>
+      <p class="body">The grimoire found nothing matching in 148 facts. Try one of the preset threads — Seraphine, the Ashen Cult, Thorne, or the Lighthouse.</p></div>`;
+      return;
+    }
+    const a=KB[k][lens];
+    box.innerHTML=`<div class="answer show">
+      <div class="qhead"><span class="q">"${a.q}"</span><span class="lenspill ${lens}">${lens==='dm'?'👁 DM lens':'🔦 Player lens'}</span></div>
+      <div class="ribbon ${a.ribbon[0]}">${a.ribbon[1]}</div>
+      <p class="body">${a.body}</p>
+      <div class="cites">${a.cites.map(c=>`<span>↳ ${c}</span>`).join('')}</div>
+    </div>`;
+  },750);
+}
+function esc(s){return s.replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+/* ── Recap ── */
+function genRecap(){
+  const g=document.getElementById('recapGen'); const c=document.getElementById('recapCard');
+  g.classList.add('show'); c.style.display='none';
+  setTimeout(()=>{ c.style.display='block'; c.scrollIntoView({behavior:'smooth',block:'nearest'}); toast('✒️ Recap ready — spoiler pass excluded 3 sealed facts'); },1100);
+}
+/* ── Toast ── */
+let tt;
+function toast(m){
+  const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show');
+  clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
