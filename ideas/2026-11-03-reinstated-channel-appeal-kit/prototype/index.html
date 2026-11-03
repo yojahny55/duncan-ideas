@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reinstated — Your Channel Got Terminated. Now What?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B0E14; --ink2:#11151F; --card:#161B27; --card2:#1C2231;
+  --cream:#F0E9D8; --cream-dim:#B8B2A2; --red:#E5484D; --green:#3FB950;
+  --amber:#FFB454; --line:#2A3142; --mono:'JetBrains Mono',monospace;
+  --disp:'Fraunces',serif; --body:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:var(--body);line-height:1.6;min-height:100vh}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+/* ---------- header ---------- */
+header{border-bottom:1px solid var(--line);padding:18px 0;background:linear-gradient(180deg,#0d1119,var(--ink))}
+.brand{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.logo{font-family:var(--disp);font-weight:900;font-size:22px;letter-spacing:-.5px}
+.logo span{color:var(--green)}
+.brand .tag{font-family:var(--mono);font-size:11px;color:var(--cream-dim);letter-spacing:.08em}
+/* ---------- deadline strip ---------- */
+.strip{position:sticky;top:0;z-index:50;background:rgba(11,14,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:none}
+.strip.on{display:block}
+.strip-in{display:flex;gap:0;align-items:stretch;overflow-x:auto;padding:10px 0}
+.clock{flex:1;min-width:150px;padding:0 16px;border-right:1px solid var(--line);font-family:var(--mono)}
+.clock:last-child{border-right:none}
+.clock .k{font-size:9.5px;letter-spacing:.12em;color:var(--cream-dim);text-transform:uppercase}
+.clock .v{font-size:15px;font-weight:700;margin-top:2px}
+.clock .v.red{color:var(--red)} .clock .v.amber{color:var(--amber)} .clock .v.green{color:var(--green)}
+.seals{display:flex;gap:6px;margin-top:4px}
+.seal{width:14px;height:14px;border-radius:50%;border:2px solid var(--line)}
+.seal.used{background:var(--red);border-color:var(--red)}
+.seal.free{border-color:var(--amber)}
+/* ---------- hero ---------- */
+.hero{padding:64px 0 40px;text-align:center}
+.folder-tab{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;background:#C9A66B;color:#241a08;padding:5px 18px;border-radius:8px 8px 0 0;font-weight:700;text-transform:uppercase}
+.folder{background:var(--card);border:1px solid var(--line);border-radius:0 14px 14px 14px;padding:44px 32px;position:relative;overflow:hidden}
+.folder::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 34px,rgba(240,233,216,.015) 34px 68px)}
+h1{font-family:var(--disp);font-size:clamp(28px,5vw,42px);font-weight:900;letter-spacing:-1px;line-height:1.12}
+h1 em{font-style:normal;color:var(--red)}
+.sub{color:var(--cream-dim);max-width:560px;margin:14px auto 0;font-size:15.5px}
+.stats{display:flex;gap:14px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.stat{background:var(--ink2);border:1px solid var(--line);border-radius:10px;padding:12px 18px;text-align:center;min-width:130px}
+.stat .n{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--amber)}
+.stat .l{font-size:10.5px;color:var(--cream-dim);letter-spacing:.04em;margin-top:2px}
+/* ---------- sections ---------- */
+section{padding:40px 0;border-top:1px solid var(--line)}
+.kick{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--amber);text-transform:uppercase;margin-bottom:8px}
+h2{font-family:var(--disp);font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.lede{color:var(--cream-dim);font-size:14.5px;max-width:620px;margin-bottom:24px}
+/* ---------- decoder ---------- */
+.decoder{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;transition:.2s}
+.drop:hover{border-color:var(--amber);background:rgba(255,180,84,.04)}
+.drop .big{font-size:34px}
+.drop p{color:var(--cream-dim);font-size:13.5px;margin-top:6px}
+.drop p strong{color:var(--cream)}
+.paste-row{display:flex;gap:10px;margin-top:14px}
+.paste-row textarea{flex:1;background:var(--ink2);border:1px solid var(--line);border-radius:10px;color:var(--cream);font-family:var(--mono);font-size:12.5px;padding:12px;resize:vertical;min-height:96px}
+.paste-row textarea:focus{outline:none;border-color:var(--amber)}
+.btn{font-family:var(--body);font-weight:700;font-size:14px;border:none;border-radius:10px;padding:12px 22px;cursor:pointer;transition:.15s}
+.btn:active{transform:translateY(1px)}
+.btn-amber{background:var(--amber);color:#241a08}
+.btn-amber:hover{filter:brightness(1.1)}
+.btn-green{background:var(--green);color:#07130a}
+.btn-ghost{background:transparent;color:var(--cream-dim);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--cream-dim);color:var(--cream)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.samples{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:11px;background:var(--ink2);border:1px solid var(--line);color:var(--cream-dim);border-radius:20px;padding:6px 12px;cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--amber);color:var(--amber)}
+.chip.on{border-color:var(--amber);color:var(--amber);background:rgba(255,180,84,.08)}
+/* scanning */
+.scan{display:none;margin-top:18px;background:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:18px;font-family:var(--mono);font-size:12.5px;color:var(--cream-dim)}
+.scan.on{display:block}
+.scan .row{padding:3px 0;opacity:0;animation:fade .4s forwards}
+@keyframes fade{to{opacity:1}}
+.scan .ok::before{content:"✓ ";color:var(--green)}
+.scan .bar{height:4px;background:var(--line);border-radius:2px;margin-top:12px;overflow:hidden}
+.scan .bar i{display:block;height:100%;width:0;background:var(--amber);animation:load 2.2s forwards}
+@keyframes load{to{width:100%}}
+/* ---------- case card ---------- */
+.casecard{display:none;margin-top:20px;background:var(--cream);color:#1a1d26;border-radius:12px;padding:0;overflow:hidden;animation:rise .5s ease}
+.casecard.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.cc-head{display:flex;justify-content:space-between;align-items:flex-start;padding:20px 22px 14px;border-bottom:2px solid #1a1d26}
+.cc-head .t{font-family:var(--disp);font-weight:900;font-size:19px;letter-spacing:-.3px}
+.cc-head .f{font-family:var(--mono);font-size:10.5px;color:#5c5f68;margin-top:3px}
+.stamp{font-family:var(--disp);font-weight:900;font-size:15px;letter-spacing:.06em;border:3px solid var(--red);color:var(--red);padding:4px 12px;border-radius:6px;transform:rotate(6deg);text-transform:uppercase;animation:stampIn .35s cubic-bezier(.2,2.5,.4,1)}
+.stamp.green{border-color:var(--green);color:#22703a}
+@keyframes stampIn{from{transform:rotate(6deg) scale(2.4);opacity:0}to{transform:rotate(6deg) scale(1);opacity:1}}
+.cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.cc-cell{padding:14px 22px;border-bottom:1px solid #d8d2c2}
+.cc-cell:nth-child(odd){border-right:1px solid #d8d2c2}
+.cc-cell .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#5c5f68}
+.cc-cell .v{font-weight:600;font-size:14px;margin-top:3px}
+.cc-cell .v.red{color:#c22} .cc-cell .v.green{color:#22703a} .cc-cell .v.amber{color:#9a6b00}
+.cc-foot{padding:14px 22px;font-family:var(--mono);font-size:11px;color:#5c5f68;background:#e7e0cd;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media(max-width:560px){.cc-grid{grid-template-columns:1fr}.cc-cell:nth-child(odd){border-right:none}}
+/* ---------- appeal drafter ---------- */
+.drafter{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.draft-tabs{display:flex;border-bottom:1px solid var(--line)}
+.dtab{flex:1;padding:13px;text-align:center;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--cream-dim);cursor:pointer;border-bottom:2px solid transparent;text-transform:uppercase}
+.dtab.on{color:var(--amber);border-bottom-color:var(--amber);background:rgba(255,180,84,.05)}
+.dpane{display:none;padding:26px}
+.dpane.on{display:block}
+.gate{background:rgba(229,72,77,.08);border:1px solid rgba(229,72,77,.4);border-radius:10px;padding:14px 16px;font-size:13.5px;margin-bottom:18px}
+.gate strong{color:var(--red)}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;cursor:pointer;color:var(--cream-dim)}
+.checks label:hover{color:var(--cream)}
+.checks input{margin-top:4px;accent-color:var(--amber)}
+.checks label.done{color:var(--cream)}
+.letter{background:#fdfaf2;color:#22252c;border-radius:10px;padding:26px 28px;font-family:var(--disp);font-size:14px;line-height:1.75;margin-top:18px;position:relative}
+.letter .mark{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:#8a8d96;text-transform:uppercase;margin-bottom:14px}
+.letter mark{background:rgba(255,180,84,.45);color:inherit;padding:0 3px;border-radius:3px}
+.letter p{margin-bottom:12px}
+.letter .sig{margin-top:18px;font-style:italic;color:#5c5f68}
+.letter-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.odds{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+.odd{background:var(--ink2);border:1px solid var(--line);border-radius:12px;padding:16px}
+.odd .p{font-family:var(--mono);font-size:26px;font-weight:700}
+.odd .p.g{color:var(--green)} .odd .p.a{color:var(--amber)} .odd .p.r{color:var(--red)}
+.odd .d{font-size:12px;color:var(--cream-dim);margin-top:4px}
+.odd .n{font-family:var(--mono);font-size:10px;color:var(--cream-dim);margin-top:8px;letter-spacing:.06em}
+.evi{display:inline-block;font-family:var(--mono);font-size:10px;border:1px solid var(--amber);color:var(--amber);border-radius:4px;padding:2px 7px;margin:2px 3px 0 0}
+/* ---------- never-do ---------- */
+.never{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.never{grid-template-columns:1fr}}
+.nd{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:10px;padding:16px 18px}
+.nd .x{font-family:var(--mono);color:var(--red);font-weight:700;font-size:12px;letter-spacing:.1em}
+.nd h3{font-size:15px;margin:6px 0 4px}
+.nd p{font-size:13px;color:var(--cream-dim)}
+/* ---------- vault ---------- */
+.vault{background:linear-gradient(135deg,var(--card),#141b2b);border:1px solid var(--line);border-radius:14px;padding:30px;display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.vault .txt{flex:1;min-width:260px}
+.vault h3{font-family:var(--disp);font-size:21px;font-weight:700}
+.vault p{color:var(--cream-dim);font-size:13.5px;margin:8px 0 16px}
+.vault .snap{flex:1;min-width:240px;background:var(--ink2);border:1px solid var(--line);border-radius:10px;padding:16px;font-family:var(--mono);font-size:11.5px;color:var(--cream-dim)}
+.vault .snap .r{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line)}
+.vault .snap .r:last-child{border:none}
+.vault .snap .g{color:var(--green)}
+/* ---------- wave tracker ---------- */
+.wave{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+.bars{display:flex;align-items:flex-end;gap:6px;height:120px;margin:18px 0 8px}
+.bars .b{flex:1;background:linear-gradient(180deg,var(--red),#5c2224);border-radius:4px 4px 0 0;position:relative;min-height:8px}
+.bars .b.spam{background:linear-gradient(180deg,var(--amber),#6b4a1e)}
+.bars .b:hover::after{content:attr(data-t);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--ink);border:1px solid var(--line);color:var(--cream);font-family:var(--mono);font-size:10px;padding:5px 9px;border-radius:6px;white-space:nowrap;z-index:5}
+.legend{display:flex;gap:16px;font-family:var(--mono);font-size:10.5px;color:var(--cream-dim);flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+/* ---------- pricing ---------- */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;position:relative}
+.tier.hot{border-color:var(--amber)}
+.tier.hot::before{content:"MOST USED";position:absolute;top:-9px;left:18px;background:var(--amber);color:#241a08;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;padding:2px 10px;border-radius:10px}
+.tier .nm{font-family:var(--disp);font-size:18px;font-weight:700}
+.tier .pr{font-family:var(--mono);font-size:24px;font-weight:700;margin:8px 0 2px;color:var(--amber)}
+.tier .pr small{font-size:12px;color:var(--cream-dim);font-weight:400}
+.tier ul{list-style:none;margin:14px 0;font-size:13px;color:var(--cream-dim)}
+.tier li{padding:4px 0}
+.tier li::before{content:"→ ";color:var(--green)}
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:30px 0 44px;text-align:center;color:var(--cream-dim);font-size:12.5px}
+footer .m{font-family:var(--mono);font-size:11px;margin-top:8px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#07130a;font-weight:700;font-size:13.5px;padding:12px 24px;border-radius:10px;transition:.35s;z-index:99;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header><div class="wrap brand">
+  <div class="logo">📁 Reinstated<span>.</span></div>
+  <div class="tag">CASE FILE FOR THE TERMINATED · YOUTUBE EDITION</div>
+</div></header>
+
+<!-- DEADLINE STRIP (appears after decode) -->
+<div class="strip" id="strip"><div class="wrap"><div class="strip-in">
+  <div class="clock"><div class="k">Appeals remaining</div><div class="seals"><div class="seal used" id="s1"></div><div class="seal free" id="s2"></div></div><div class="v amber" id="appealsLeft">1 of 2</div></div>
+  <div class="clock"><div class="k">1-year window</div><div class="v amber" id="window">214 days left</div></div>
+  <div class="clock"><div class="k">Next hard deadline</div><div class="v red" id="nextDl">DSA complaint · Mar 2</div></div>
+  <div class="clock"><div class="k">Second Chances</div><div class="v green" id="second">Oct 29, 2027</div></div>
+</div></div></div>
+
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="folder-tab">Case file — do not panic</div>
+  <div class="folder">
+    <h1>Your channel got <em>TERMINATED</em>.<br>Now what?</h1>
+    <p class="sub">YouTube removes ~5 million channels a year and publishes <strong style="color:var(--cream)">no appeal success rate</strong>. You get two appeals in one year — repeating your first text gets you an auto-reply. Reinstated turns panic into a case file.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">4.9M</div><div class="l">channels removed H1 2026</div></div>
+      <div class="stat"><div class="n">6.9%</div><div class="l">of appealed videos reinstated</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">appeals per termination (Oct 2026)</div></div>
+      <div class="stat"><div class="n">84.5%</div><div class="l">"spam" — copyright bans uncounted</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 · BAN DECODER -->
+<section id="decode">
+  <div class="kick">Step 1 · 90 seconds · free forever</div>
+  <h2>Ban Decoder</h2>
+  <p class="lede">Paste your termination email (or try a real case pattern). We classify the reason, find the <em>exact</em> policy cited, tell you which ladder you're on, and open your Case File with every deadline computed.</p>
+  <div class="decoder">
+    <div class="samples">
+      <div class="chip on" data-sample="melody" onclick="pick(this)">DMCA abuse · VTuber</div>
+      <div class="chip" data-sample="spam" onclick="pick(this)">Spam policy · 30-day grace</div>
+      <div class="chip" data-sample="hack" onclick="pick(this)">Hacked → terminated</div>
+      <div class="chip" data-sample="strikes" onclick="pick(this)">3 copyright strikes</div>
+    </div>
+    <div class="paste-row">
+      <textarea id="emailIn" spellcheck="false"></textarea>
+      <button class="btn btn-amber" id="decodeBtn" style="align-self:flex-end" onclick="decode()">Decode →</button>
+    </div>
+    <div class="scan" id="scan"></div>
+    <!-- CASE CARD -->
+    <div class="casecard" id="casecard">
+      <div class="cc-head">
+        <div><div class="t" id="ccName">—</div><div class="f" id="ccFile">CASE FILE #—</div></div>
+        <div class="stamp" id="ccStamp">TERMINATED</div>
+      </div>
+      <div class="cc-grid" id="ccGrid"></div>
+      <div class="cc-foot"><span id="ccNext">NEXT STEP —</span><a href="#draft" style="color:#9a6b00;text-decoration:none;font-weight:700">Go to Appeal Drafter →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · APPEAL DRAFTER -->
+<section id="draft">
+  <div class="kick">Step 2 · the moment that decides everything</div>
+  <h2>Appeal Drafter</h2>
+  <p class="lede">Answers the <em>exact</em> policy named in your email, with facts a reviewer can verify. Appeal #2 runs through the New-Facts gate first — the tool refuses to generate a reworded duplicate.</p>
+  <div class="drafter">
+    <div class="draft-tabs">
+      <div class="dtab on" onclick="dtab(this,'p1')">Appeal #1</div>
+      <div class="dtab" onclick="dtab(this,'p2')">Appeal #2 · New-Facts Gate</div>
+      <div class="dtab" onclick="dtab(this,'p3')">Crowd Odds</div>
+    </div>
+    <div class="dpane on" id="p1">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+        <span class="evi">policy: §IV.B DMCA repeat claims</span>
+        <span class="evi">evidence: model license ✓</span>
+        <span class="evi">standing: 0 prior strikes</span>
+      </div>
+      <p style="color:var(--cream-dim);font-size:13.5px">Generated from the decoded case — editable, cites your documents, ends with the specific ask.</p>
+      <div class="letter">
+        <div class="mark">DRAFT · appeal #1 of 2 · youtube termination review team</div>
+        <p>To the YouTube Trust & Safety team,</p>
+        <p>I am appealing the termination of <mark>channel “ProjektMelody” (UC…)</mark> on <mark>Oct 29, 2026</mark>, cited for <mark>repeated violations of YouTube's Terms of Service (copyright)</mark>.</p>
+        <p>The claims originated from a single third party asserting copyright over a 3D avatar model that I <mark>licensed in writing on Mar 3, 2021</mark> (license attached, Exhibit A) and have used continuously for six years. The claimant's assertion conflicts with the signed license grant, which covers derivative VOD content. My channel has <mark>zero prior strikes and zero prior warnings</mark> across 2,140 videos.</p>
+        <p>I respectfully request reinstatement of the channel and rejection of the abusive counterparty claims under YouTube's DMCA misrepresentation policy.</p>
+        <div class="sig">— Filed via Reinstated case file #RI-10422</div>
+      </div>
+      <div class="letter-actions">
+        <button class="btn btn-amber" onclick="toast('Copied — paste into YouTube Studio appeal form')">Copy appeal</button>
+        <button class="btn btn-ghost" onclick="toast('PDF exported with exhibits')">Export PDF + exhibits</button>
+      </div>
+    </div>
+    <div class="dpane" id="p2">
+      <div class="gate"><strong>⛔ New-Facts Gate.</strong> Appeal #1 was rejected. Repeating the same text triggers YouTube's automated reply and burns your last attempt. Prove something is genuinely new first:</div>
+      <div class="checks" id="checks">
+        <label><input type="checkbox" onchange="chk()"> New evidence not attached before (project files, license, contract)</label>
+        <label><input type="checkbox" onchange="chk()"> A completed Google account recovery after a hack (was open during appeal #1)</label>
+        <label><input type="checkbox" onchange="chk()"> Appeal #1 answered the wrong policy (misread the email)</label>
+        <label><input type="checkbox" onchange="chk()"> Claimant retracted, or a court/dispute body ruled in your favor</label>
+      </div>
+      <div style="margin-top:16px"><button class="btn btn-amber" id="gateBtn" disabled onclick="toast('Gate passed — drafting appeal #2 with new facts only')">Unlock appeal #2 draft</button> <span id="gateMsg" style="font-family:var(--mono);font-size:11.5px;color:var(--cream-dim);margin-left:10px">select at least one</span></div>
+    </div>
+    <div class="dpane" id="p3">
+      <p style="color:var(--cream-dim);font-size:13.5px">Anonymized outcomes from Reinstated case files — the dataset YouTube will never publish. <span style="font-family:var(--mono);font-size:11px">(demo numbers)</span></p>
+      <div class="odds">
+        <div class="odd"><div class="p g">61%</div><div class="d">DMCA-abuse terminations <strong>with signed license attached</strong>, appeal #1</div><div class="n">n=412 · last 90 days</div></div>
+        <div class="odd"><div class="p r">9%</div><div class="d">DMCA-abuse, <strong>no license evidence</strong>, appeal #1</div><div class="n">n=1,207</div></div>
+        <div class="odd"><div class="p a">78%</div><div class="d">Spam-flagged in 30-day grace test <strong>after full library cleanup</strong></div><div class="n">n=89</div></div>
+        <div class="odd"><div class="p g">54%</div><div class="d">Hacked-then-terminated <strong>with completed account recovery first</strong></div><div class="n">n=334</div></div>
+      </div>
+      <div style="margin-top:14px"><button class="btn btn-ghost" onclick="toast('Full odds table opens at reinstated.app — free')">See your reason's full odds table →</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · NEVER-DO -->
+<section id="never">
+  <div class="kick">Step 0 · before anything else · free forever</div>
+  <h2>The Never-Do List</h2>
+  <p class="lede">Most terminated creators lose their channel for good by doing the first thing on this list. Read it, then act.</p>
+  <div class="never">
+    <div class="nd"><div class="x">✕ NEVER</div><h3>Create a new channel</h3><p>That's circumvention. It makes the ban worse and <strong>kills your Second Chances eligibility</strong> at month 12.</p></div>
+    <div class="nd"><div class="x">✕ NEVER</div><h3>Delete the Google account</h3><p>Closes every remaining route: appeals, DSA complaint, GAC, Second Chances.</p></div>
+    <div class="nd"><div class="x">✕ NEVER</div><h3>Re-file the same appeal text</h3><p>Since Sept 2026 YouTube sends <strong>automated replies</strong> to duplicates — and it consumes an attempt you only have two of.</p></div>
+    <div class="nd"><div class="x">✕ NEVER</div><h3>Rely on public pressure alone</h3><p>Projekt Melody got lucky. File the appeal first — the window runs while the thread goes viral.</p></div>
+  </div>
+</section>
+
+<!-- 4 · VAULT -->
+<section id="vault">
+  <div class="kick">Insurance · sold before the ban</div>
+  <h2>Evidence Vault</h2>
+  <div class="vault">
+    <div class="txt">
+      <h3>Prove your rights before you need to</h3>
+      <p>Melody couldn't prove ownership of her own VODs fast enough. Vault continuously backs up video metadata, licenses, brand deals, asset provenance (3D models, music) and revenue history — with weekly timestamped good-standing snapshots. When the email arrives, your exhibits are already assembled.</p>
+      <button class="btn btn-green" onclick="toast('Vault is $5/mo — demo only')">Start protecting my channel</button>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--cream-dim);margin-left:10px">$5/mo · YouTube Data API, read-only</span>
+    </div>
+    <div class="snap">
+      <div class="r"><span>snapshot</span><span class="g">✓ Nov 2, 2026</span></div>
+      <div class="r"><span>videos indexed</span><span>2,140</span></div>
+      <div class="r"><span>licenses on file</span><span class="g">7</span></div>
+      <div class="r"><span>strikes</span><span class="g">0</span></div>
+      <div class="r"><span>good-standing proof</span><span class="g">✓ hashed</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · BAN WAVE TRACKER -->
+<section id="wave">
+  <div class="kick">Public data · SEO magnet · weekly</div>
+  <h2>Ban Wave Tracker</h2>
+  <p class="lede">Self-reported terminations + search-interest correlation, by reason. The chart every creator news cycle is missing — because Google's own report excludes copyright terminations entirely.</p>
+  <div class="wave">
+    <div class="bars" id="bars"></div>
+    <div class="legend"><span><i style="background:var(--red)"></i> copyright / policy terminations</span><span><i style="background:var(--amber)"></i> spam-wave spikes</span><span style="margin-left:auto">hover a bar · demo data</span></div>
+  </div>
+</section>
+
+<!-- 6 · PRICING -->
+<section id="pricing">
+  <div class="kick">Episodic pricing for an episodic crisis</div>
+  <h2>No subscription at the worst moment of your life</h2>
+  <div class="tiers">
+    <div class="tier"><div class="nm">Free</div><div class="pr">$0<small> forever</small></div><ul><li>Ban Decoder + Case Card</li><li>Deadline Engine (every clock)</li><li>Never-Do List</li><li>Public Ban Wave Tracker</li></ul></div>
+    <div class="tier hot"><div class="nm">Case Pass</div><div class="pr">$29<small> one-time</small></div><ul><li>Appeal Drafter + New-Facts Gate</li><li>DMCA Abuse Kit + counter-notices</li><li>Jurisdiction ladder (EU DSA / India GAC)</li><li>Crowd odds for your exact reason</li><li>PDF exhibits pack</li></ul></div>
+    <div class="tier"><div class="nm">Vault</div><div class="pr">$5<small>/mo · $40/yr</small></div><ul><li>Continuous evidence backup</li><li>Good-standing snapshots</li><li>Hack-triage priority lane</li><li>License & asset provenance</li></ul></div>
+    <div class="tier"><div class="nm">MCN / Agency</div><div class="pr">$49<small>/mo</small></div><ul><li>Roster strike-proximity alerts</li><li>Shared vaults per client</li><li>Client Case Cards (white-label)</li></ul></div>
+  </div>
+</section>
+
+</div>
+
+<footer><div class="wrap">
+  <strong style="font-family:var(--disp);font-size:15px">Reinstated</strong> — decode the ban, draft the appeal, hit every deadline, never do the one thing that makes it permanent.
+  <div class="m">prototype · 2026-11-03 · duncan daily ideas · youtube-first, twitch/tiktok/x year-2</div>
+</div></footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SAMPLES={
+ melody:{email:`From: YouTube <noreply@youtube.com>\nSubject: Your channel has been terminated\n\nYour channel ProjektMelody was terminated for repeated violations of our Terms of Service related to copyright. Three DMCA takedown notices were filed against your VODs by an external claimant regarding your 3D avatar model. Your appeal was reviewed and denied on Oct 30, 2026. You may submit one more appeal within one year.`,
+  name:'channel "ProjektMelody"',cls:'DMCA abuse · third-party claim on licensed avatar',ladder:'Termination appeal (appeal #2 remaining)',policy:'§IV.B Terms of Service — copyright, repeat claims',
+  cells:[['Classification','DMCA ABUSE (Melody-class)','red'],['Appeal #1','REJECTED Oct 30','red'],['Remaining appeals','1 of 2','amber'],['Key evidence','Signed model license, Mar 2021','green'],['Standing before ban','0 strikes / 0 warnings, 6 yrs','green'],['Withheld revenue','Frozen until reinstatement','amber']],
+  next:'NEXT STEP — New-Facts Gate: attach the 2021 license as new evidence',strip:['1 of 2','214 days left','Appeal #2 · file before Oct 29 2027','Oct 29, 2027 (eligible)']},
+ spam:{email:`From: YouTube <noreply@youtube.com>\nSubject: Action required: your channel is at risk of termination\n\nWe detected spam, deceptive practices or scams on your channel. Under a new program, you have 30 days to address these issues — edit uploads, remove your library, or appeal. Failing to act within 30 days will lead to channel termination.`,
+  name:'channel "CryptoSignalsDaily"',cls:'Spam policy · 30-day grace period (Oct 2026 test)',ladder:'Grace-period cleanup OR appeal',policy:'Spam, deceptive practices & scams policy',
+  cells:[['Classification','SPAM-POLICY (grace test)','amber'],['Grace period ends','Dec 2, 2026','red'],['Options','Cleanup / delete library / appeal','amber'],['Crowd survival rate','78% after full cleanup','green'],['Second appeal window','Opens only after termination',''],['Never do','Start a new channel now','red']],
+  next:'NEXT STEP — 29 days left: run the cleanup checklist before appealing',strip:['n/a (grace)','30-day grace · 29 left','Cleanup or appeal · Dec 2','—']},
+ hack:{email:`From: YouTube <noreply@youtube.com>\nSubject: Your channel has been terminated\n\nYour channel was terminated for repeated or severe violations of our spam, deceptive practices and scams policy. Note: we detected unusual sign-in activity from a new device 6 days before the violations were uploaded.`,
+  name:'channel "TechWithTom"',cls:'Hacked → terminated (unusual sign-in detected)',ladder:'Google account recovery FIRST, then termination appeal',policy:'Spam policy — violations uploaded by hijacker',
+  cells:[['Classification','HACKED-THEN-TERMINATED','red'],['Order of operations','1) Recovery 2) Appeal','amber'],['New facts for appeal','Completed recovery ticket','green'],['Crowd odds (recovery first)','54% reinstated','green'],['Evidence to gather','Sign-in logs, device history',''],['Never do','Appeal before recovery closes','red']],
+  next:'NEXT STEP — open Google account recovery; cite the ticket in the appeal',strip:['2 of 2','358 days left','Account recovery · now','Oct 2027']},
+ strikes:{email:`From: YouTube <noreply@youtube.com>\nSubject: Your channel has been terminated\n\nYour channel was terminated after receiving three copyright strikes within 90 days. Strike 1: music in video #A4412. Strike 2: clip in video #B119. Strike 3: full episode reupload in #C2033.`,
+  name:'channel "ReactionCentral"',cls:'3 copyright strikes in 90 days',ladder:'Strike counter-notices first; termination appeal limited',policy:'Copyright — three-strike termination',
+  cells:[['Classification','3-STRIKE COPYRIGHT','red'],['Per-strike options','Counter-notice / retraction request','amber'],['Termination appeal odds','Low unless a strike falls','red'],['Second Chances','NOT eligible (copyright)','red'],['Best path','Retract strike #3 via claimant','green'],['Court note','Courts have refused restoration (India, Aug 2026)','']],
+  next:'NEXT STEP — send claimant retraction request for strike #3; appeal after it falls',strip:['2 of 2','356 days left','Counter-notice · 10-14 days','ineligible (copyright)']}
+};
+let cur='melody';
+function pick(el){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');cur=el.dataset.sample;document.getElementById('emailIn').value=SAMPLES[cur].email;document.getElementById('casecard').classList.remove('on');document.getElementById('strip').classList.remove('on');document.getElementById('scan').classList.remove('on');}
+function decode(){
+ const s=SAMPLES[cur],scan=document.getElementById('scan');
+ document.getElementById('casecard').classList.remove('on');document.getElementById('strip').classList.remove('on');
+ scan.classList.add('on');
+ const steps=['parsing termination email…','classifying reason against policy taxonomy…','matching exact policy cited: '+s.policy,'checking appeal ladder + jurisdiction clocks…','computing deadlines (2 appeals · 1-year window · DSA · GAC · Second Chances)…','opening case file…'];
+ scan.innerHTML=steps.map((t,i)=>`<div class="row ok" style="animation-delay:${i*.32}s">${t}</div>`).join('')+`<div class="bar"><i></i></div>`;
+ setTimeout(()=>{
+  scan.classList.remove('on');
+  const cc=document.getElementById('casecard');
+  document.getElementById('ccName').textContent=s.name;
+  document.getElementById('ccFile').textContent='CASE FILE #RI-104'+Math.floor(Math.random()*90+10)+' · decoded '+new Date().toLocaleDateString();
+  document.getElementById('ccGrid').innerHTML=s.cells.map(c=>`<div class="cc-cell"><div class="k">${c[0]}</div><div class="v ${c[2]||''}">${c[1]}</div></div>`).join('');
+  document.getElementById('ccNext').textContent=s.next;
+  const st=s.strip;
+  document.getElementById('appealsLeft').textContent=st[0];
+  document.getElementById('window').textContent=st[1];
+  document.getElementById('nextDl').textContent=st[2];
+  document.getElementById('second').textContent=st[3];
+  document.getElementById('s1').className='seal '+(cur==='melody'?'used':'free');
+  document.getElementById('s2').className='seal free';
+  cc.classList.add('on');document.getElementById('strip').classList.add('on');
+  cc.scrollIntoView({behavior:'smooth',block:'center'});
+ },2400);
+}
+function dtab(el,id){document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));el.classList.add('on');document.querySelectorAll('.dpane').forEach(p=>p.classList.remove('on'));document.getElementById(id).classList.add('on');}
+function chk(){const n=document.querySelectorAll('#checks input:checked').length;const b=document.getElementById('gateBtn');b.disabled=n===0;document.getElementById('gateMsg').textContent=n===0?'select at least one':n+' new fact'+(n>1?'s':'')+' — draft will cite only these';document.querySelectorAll('#checks label').forEach(l=>l.classList.toggle('done',l.querySelector('input').checked));}
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600);}
+// wave tracker demo bars
+const weeks=[12,9,14,38,11,10,13,46,12,15,11,58,14,13,17,44,12,11,62,16];
+document.getElementById('bars').innerHTML=weeks.map((v,i)=>{const spam=v>30;return `<div class="b ${spam?'spam':''}" style="height:${v*1.9}px" data-t="week ${i+1}: ${spam?'spam-wave spike ('+v+' reports)':'copyright/policy ('+v+' reports)'}"></div>`}).join('');
+document.getElementById('emailIn').value=SAMPLES.melody.email;
+</script>
+</body>
+</html>
