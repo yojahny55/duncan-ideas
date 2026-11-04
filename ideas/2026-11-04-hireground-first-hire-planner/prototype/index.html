@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HireGround — Plan Your First Hire Like It's a $24,000 Decision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Karla:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4ecd8;
+  --paper-deep:#ece0c4;
+  --ink:#1d1a14;
+  --ink-soft:#4a4436;
+  --red:#b3352c;
+  --red-deep:#8c231c;
+  --blue:#2c4a6e;
+  --green:#3d5c3a;
+  --amber:#9a6b1f;
+  --rule:#2a251c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Karla',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  position:relative;
+}
+/* paper grain */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* vignette */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:998;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(60,45,20,.18) 100%);
+}
+.wrap{max-width:880px;margin:0 auto;padding:28px 20px 80px}
+
+/* ---------- LETTERHEAD ---------- */
+header{border-bottom:4px double var(--rule);padding-bottom:18px;margin-bottom:8px;position:relative}
+.letterhead-top{display:flex;justify-content:space-between;align-items:flex-start;font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase}
+.logo{font-family:'Alfa Slab One',serif;font-size:clamp(38px,8vw,64px);line-height:1;letter-spacing:.01em;margin:14px 0 6px;position:relative;display:inline-block}
+.logo .g{color:var(--red)}
+.tagline{font-family:'Courier Prime',monospace;font-size:13px;color:var(--ink-soft);letter-spacing:.02em}
+.form-no{position:absolute;right:0;top:52px;text-align:right;font-family:'Courier Prime',monospace;font-size:10px;line-height:1.6;color:var(--ink-soft)}
+.help-wanted{
+  position:absolute;right:8px;top:-14px;
+  border:3px solid var(--red);color:var(--red);
+  font-family:'Alfa Slab One',serif;font-size:15px;letter-spacing:.12em;
+  padding:6px 14px;transform:rotate(6deg);
+  opacity:.85;text-transform:uppercase;
+  box-shadow:inset 0 0 0 1px var(--paper),inset 0 0 0 2px var(--red);
+}
+.intro{
+  font-family:'Courier Prime',monospace;font-size:14px;line-height:1.7;
+  border:2px solid var(--rule);padding:14px 18px;margin:22px 0 10px;
+  background:var(--paper-deep);position:relative;
+}
+.intro::before{content:'⚠ NOTICE TO EMPLOYER';position:absolute;top:-11px;left:14px;background:var(--paper);padding:0 8px;font-family:'Karla',sans-serif;font-weight:800;font-size:11px;letter-spacing:.15em;color:var(--red)}
+.intro b{color:var(--red-deep)}
+
+/* ---------- STEP RAIL ---------- */
+nav#rail{display:flex;gap:0;margin:26px 0 0;border:2px solid var(--rule);background:var(--paper-deep);flex-wrap:wrap}
+nav#rail button{
+  flex:1 1 100px;background:none;border:none;border-right:1px solid var(--rule);
+  font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:12px 6px;cursor:pointer;color:var(--ink-soft);position:relative;transition:background .15s;
+}
+nav#rail button:last-child{border-right:none}
+nav#rail button .no{display:block;font-size:16px;font-family:'Alfa Slab One',serif;color:var(--red);margin-bottom:2px}
+nav#rail button:hover{background:#e3d5b2}
+nav#rail button.active{background:var(--ink);color:var(--paper)}
+nav#rail button.active .no{color:var(--paper)}
+nav#rail button.done::after{content:'✓';position:absolute;top:4px;right:6px;color:var(--green);font-size:12px;font-weight:700}
+nav#rail button.active.done::after{color:#9fc49a}
+
+/* ---------- PANELS ---------- */
+main{border:2px solid var(--rule);border-top:none;background:var(--paper);padding:30px 28px 36px;min-height:520px}
+section.step{display:none;animation:fadeUp .35s ease both}
+section.step.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.step h2{font-family:'Alfa Slab One',serif;font-size:clamp(22px,4.5vw,32px);line-height:1.15;margin-bottom:4px}
+.step .kicker{font-family:'Courier Prime',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--red);margin-bottom:14px}
+.step .lede{font-size:15px;line-height:1.65;color:var(--ink-soft);max-width:640px;margin-bottom:22px}
+.step .lede b{color:var(--ink)}
+
+/* ---------- TASK TABLE ---------- */
+.task-form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.task-form input[type=text]{flex:1 1 260px;font-family:'Courier Prime',monospace;font-size:14px;padding:10px 12px;border:2px solid var(--rule);background:#fffdf5;color:var(--ink)}
+.task-form input[type=number]{width:110px;font-family:'Courier Prime',monospace;font-size:14px;padding:10px 12px;border:2px solid var(--rule);background:#fffdf5;color:var(--ink)}
+.task-form input:focus{outline:2px solid var(--red);outline-offset:-2px}
+.btn{font-family:'Karla',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:11px 20px;border:2px solid var(--rule);background:var(--ink);color:var(--paper);cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:3px 3px 0 var(--rule)}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--rule)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--rule)}
+.btn.ghost{background:var(--paper-deep);color:var(--ink)}
+.btn.red{background:var(--red);border-color:var(--red-deep);box-shadow:3px 3px 0 var(--red-deep);color:#fff}
+.btn[disabled]{opacity:.35;pointer-events:none}
+table.tasks{width:100%;border-collapse:collapse;margin-bottom:14px}
+table.tasks th{font-family:'Courier Prime',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;text-align:left;border-bottom:2px solid var(--rule);padding:8px 6px;color:var(--ink-soft)}
+table.tasks td{border-bottom:1px solid #c9bb98;padding:9px 6px;font-size:14px;vertical-align:middle}
+table.tasks td.hrs{font-family:'Courier Prime',monospace;white-space:nowrap}
+table.tasks .del{background:none;border:none;color:var(--red);cursor:pointer;font-size:15px;font-family:'Courier Prime',monospace;padding:2px 6px}
+table.tasks .del:hover{background:#ecd9c4}
+.totalbar{display:flex;justify-content:space-between;font-family:'Courier Prime',monospace;font-weight:700;font-size:14px;border-top:3px double var(--rule);padding-top:10px}
+.totalbar .hot{color:var(--red)}
+
+/* triage badges */
+.badge-btn{
+  font-family:'Courier Prime',monospace;font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+  padding:5px 9px;border:2px solid var(--rule);cursor:pointer;background:var(--paper-deep);color:var(--ink-soft);white-space:nowrap;
+}
+.badge-btn[data-t=auto].sel{background:var(--blue);border-color:#1c3248;color:#fff}
+.badge-btn[data-t=out].sel{background:var(--amber);border-color:#6e4c14;color:#fff}
+.badge-btn[data-t=hire].sel{background:var(--red);border-color:var(--red-deep);color:#fff}
+.badge-btn:hover{transform:translateY(-1px)}
+.bucket-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.bucket{flex:1 1 160px;border:2px solid var(--rule);padding:12px 14px;background:var(--paper-deep)}
+.bucket .n{font-family:'Alfa Slab One',serif;font-size:26px}
+.bucket .l{font-family:'Courier Prime',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft)}
+.bucket.auto .n{color:var(--blue)} .bucket.out .n{color:var(--amber)} .bucket.hire .n{color:var(--red)}
+.note{font-family:'Courier Prime',monospace;font-size:12px;color:var(--ink-soft);border-left:3px solid var(--red);padding:6px 12px;background:#efe5cc;margin-top:14px;line-height:1.6}
+
+/* ---------- BUDGET ---------- */
+.budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+@media(max-width:700px){.budget-grid{grid-template-columns:1fr}}
+.field{margin-bottom:18px}
+.field label{display:block;font-family:'Courier Prime',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:6px}
+.field .val{font-family:'Alfa Slab One',serif;font-size:24px;color:var(--red)}
+input[type=range]{width:100%;accent-color:var(--red);cursor:pointer}
+input[type=number].small,input[type=text].small{font-family:'Courier Prime',monospace;font-size:14px;padding:8px 10px;border:2px solid var(--rule);background:#fffdf5;width:100%}
+select.small{font-family:'Courier Prime',monospace;font-size:13px;padding:8px;border:2px solid var(--rule);background:#fffdf5;width:100%}
+.ledger{border:2px solid var(--rule);background:#fffdf5;font-family:'Courier Prime',monospace;font-size:13px}
+.ledger .hd{background:var(--ink);color:var(--paper);padding:8px 14px;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.ledger .row{display:flex;justify-content:space-between;padding:7px 14px;border-bottom:1px dotted #b9ab88}
+.ledger .row.dim{color:var(--ink-soft)}
+.ledger .row.grand{border-top:2px solid var(--rule);border-bottom:none;padding-top:10px;font-weight:700;font-size:15px}
+.ledger .row.grand .amt{color:var(--red)}
+.vs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
+@media(max-width:560px){.vs{grid-template-columns:1fr}}
+.vs .cell{border:2px solid var(--rule);padding:12px;background:var(--paper-deep)}
+.vs .cell h4{font-family:'Courier Prime',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;color:var(--ink-soft)}
+.vs .cell .big{font-family:'Alfa Slab One',serif;font-size:19px;line-height:1.2}
+.vs .cell p{font-size:11.5px;line-height:1.5;color:var(--ink-soft);margin-top:6px}
+.stampzone{margin-top:26px;display:flex;justify-content:center;min-height:130px;align-items:center}
+.stamp{
+  font-family:'Alfa Slab One',serif;font-size:clamp(17px,3.4vw,24px);letter-spacing:.08em;text-transform:uppercase;
+  border:5px double currentColor;padding:14px 26px;transform:rotate(-8deg);text-align:center;line-height:1.25;
+  animation:thunk .28s cubic-bezier(.2,2,.4,1) both;position:relative;
+}
+.stamp small{display:block;font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:.05em;margin-top:6px;font-weight:400;text-transform:none}
+.stamp.ready{color:var(--green)} .stamp.part{color:var(--amber)} .stamp.no{color:var(--red)}
+@keyframes thunk{from{transform:rotate(-8deg) scale(2.6);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+
+/* ---------- POSTING ---------- */
+.posting{border:2px solid var(--rule);background:#fffdf5;padding:26px 28px;font-family:'Courier Prime',monospace;font-size:13.5px;line-height:1.7;white-space:pre-wrap;max-height:420px;overflow:auto;position:relative}
+.posting::-webkit-scrollbar{width:10px}.posting::-webkit-scrollbar-thumb{background:#c9bb98}
+.compliance{display:flex;gap:10px;align-items:center;margin:14px 0;font-size:13px}
+.compliance .dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--rule);flex-shrink:0}
+.compliance.ok .dot{background:var(--green)} .compliance.warn .dot{background:var(--red)}
+.compliance.ok{color:var(--green);font-weight:600} .compliance.warn{color:var(--red);font-weight:600}
+.post-ctrl{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.post-ctrl select,.post-ctrl input{font-family:'Courier Prime',monospace;font-size:13px;padding:8px 10px;border:2px solid var(--rule);background:#fffdf5}
+
+/* ---------- INTERVIEW ---------- */
+.qcard{border:2px solid var(--rule);background:var(--paper-deep);padding:14px 16px;margin-bottom:10px}
+.qcard .qtype{font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px}
+.qcard p{font-size:14.5px;line-height:1.55}
+.qcard .why{font-size:12px;color:var(--ink-soft);margin-top:6px;font-style:italic}
+.rubric{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+.rubric th,.rubric td{border:1px solid var(--rule);padding:8px 10px;text-align:left}
+.rubric th{background:var(--ink);color:var(--paper);font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.rubric td.n{font-family:'Courier Prime',monospace;text-align:center;width:44px}
+.rubric input{width:22px;height:22px;accent-color:var(--red)}
+.costbox{border:3px solid var(--red);background:#f2dfd2;padding:16px 18px;margin-top:20px;position:relative}
+.costbox .ttl{font-family:'Alfa Slab One',serif;font-size:15px;color:var(--red-deep);margin-bottom:6px}
+.costbox p{font-size:13.5px;line-height:1.6}
+.costbox .fig{font-family:'Alfa Slab One',serif;font-size:28px;color:var(--red-deep)}
+
+/* ---------- FOOTER NAV ---------- */
+.pager{display:flex;justify-content:space-between;margin-top:26px;gap:10px}
+footer{margin-top:34px;text-align:center;font-family:'Courier Prime',monospace;font-size:11px;color:var(--ink-soft);letter-spacing:.06em}
+footer .rule{border-top:2px solid var(--rule);margin-bottom:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);font-family:'Courier Prime',monospace;font-size:13px;padding:10px 22px;border:2px solid var(--red);transition:transform .25s;z-index:1000}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.checklist{list-style:none;margin:10px 0}
+.checklist li{padding:6px 0 6px 30px;position:relative;font-size:14px;border-bottom:1px dotted #c9bb98}
+.checklist li::before{content:'☐';position:absolute;left:6px;font-family:'Courier Prime',monospace;color:var(--red)}
+.checklist li b{font-family:'Courier Prime',monospace;font-size:12px;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="letterhead-top">
+    <span>Office of the Owner&nbsp;&nbsp;·&nbsp;&nbsp;Form HG-1 “Person #1”</span>
+    <span>Est. Nov 2026</span>
+  </div>
+  <div class="help-wanted">Help Wanted</div>
+  <div class="logo">HIRE<span class="g">GROUND</span></div>
+  <div class="tagline">— plan your first hire like it's a $24,000 decision. because it is. —</div>
+  <div class="form-no">Dept. of Labor estimate:<br>bad hire = 30% of<br>first-year earnings<br>SHRM cost-per-hire: $1,300</div>
+</header>
+
+<div class="intro">
+  You are one of <b>29.8 million</b> U.S. small businesses with no employees. You are drowning.
+  This form will tell you — in five steps and one sitting — <b>what</b> to hire for, whether to
+  <b>automate or outsource instead</b>, what the person <b>actually costs</b> fully loaded, and how to
+  <b>not pick the wrong one</b>. Guidance only; not legal advice.
+</div>
+
+<nav id="rail">
+  <button data-s="0" class="active"><span class="no">I</span>The Overload</button>
+  <button data-s="1"><span class="no">II</span>The Triage</button>
+  <button data-s="2"><span class="no">III</span>The Budget</button>
+  <button data-s="3"><span class="no">IV</span>The Posting</button>
+  <button data-s="4"><span class="no">V</span>The Interview</button>
+</nav>
+
+<main>
+
+<!-- ============ STEP I ============ -->
+<section class="step on" id="s0">
+  <div class="kicker">Step I — The Overload</div>
+  <h2>Dump everything you do onto the form.</h2>
+  <p class="lede">Owners feel "overwhelmed" but can't decompose their week. List every recurring task and how many hours it eats. <b>Pre-filled with a realistic sample week — edit ruthlessly.</b></p>
+  <form class="task-form" id="addForm">
+    <input type="text" id="newTask" placeholder="e.g. Chase unpaid invoices" maxlength="80">
+    <input type="number" id="newHrs" placeholder="hrs/wk" min="0.5" max="80" step="0.5" value="4">
+    <button class="btn" type="submit">+ Add to pile</button>
+  </form>
+  <table class="tasks">
+    <thead><tr><th style="width:52%">Task</th><th>Hours / wk</th><th style="width:40px"></th></tr></thead>
+    <tbody id="taskBody"></tbody>
+  </table>
+  <div class="totalbar">
+    <span>Total on the pile:</span>
+    <span id="totalHrs" class="hot">0 hrs/wk</span>
+  </div>
+  <div class="pager">
+    <span></span>
+    <button class="btn" onclick="go(1)">II — Triage the pile →</button>
+  </div>
+</section>
+
+<!-- ============ STEP II ============ -->
+<section class="step" id="s1">
+  <div class="kicker">Step II — The Triage</div>
+  <h2>Automate it. Outsource it. Or hire for it.</h2>
+  <p class="lede">In 2026 the first-hire question is really a <b>triage question</b>. Click a badge to classify each task. The pile that survives as <b style="color:var(--red)">HIRE</b> is the actual job description.</p>
+  <div class="bucket-row">
+    <div class="bucket auto"><div class="n" id="bAuto">0</div><div class="l">hrs → automate (software)</div></div>
+    <div class="bucket out"><div class="n" id="bOut">0</div><div class="l">hrs → outsource (contractor)</div></div>
+    <div class="bucket hire"><div class="n" id="bHire">0</div><div class="l">hrs → hire (employee #1)</div></div>
+  </div>
+  <table class="tasks">
+    <thead><tr><th style="width:38%">Task</th><th>Hrs</th><th style="width:340px">Classification</th></tr></thead>
+    <tbody id="triageBody"></tbody>
+  </table>
+  <div class="note" id="triageNote"></div>
+  <div class="pager">
+    <button class="btn ghost" onclick="go(0)">← I</button>
+    <button class="btn" onclick="go(2)">III — Cost it out →</button>
+  </div>
+</section>
+
+<!-- ============ STEP III ============ -->
+<section class="step" id="s2">
+  <div class="kicker">Step III — The Budget</div>
+  <h2>Sticker wage ≠ what they cost.</h2>
+  <p class="lede">Fully loaded: wage + FICA 7.65% + unemployment + workers' comp + benefits stipend + one-time setup. Slide, then face the stamp.</p>
+  <div class="budget-grid">
+    <div>
+      <div class="field">
+        <label>Hourly wage offer — <span class="val" id="wageLbl">$22.00/hr</span></label>
+        <input type="range" id="wage" min="12" max="45" step="0.5" value="22">
+      </div>
+      <div class="field">
+        <label>Hours / wk (from your HIRE bucket: <span id="hireHrsEcho" style="color:var(--red)">0</span>)</label>
+        <input type="range" id="hrs" min="5" max="40" step="1" value="20">
+      </div>
+      <div class="field">
+        <label>Monthly revenue (for the affordability verdict)</label>
+        <input type="number" class="small" id="rev" value="18000" min="0" step="500">
+      </div>
+      <div class="field">
+        <label>Benefits stipend / mo (optional but wins good people)</label>
+        <input type="number" class="small" id="benefit" value="150" min="0" step="25">
+      </div>
+      <div class="field">
+        <label>One-time setup: equipment, onboarding, licenses</label>
+        <input type="number" class="small" id="setup" value="1200" min="0" step="100">
+      </div>
+    </div>
+    <div>
+      <div class="ledger">
+        <div class="hd">Fully-Loaded Cost Ledger</div>
+        <div class="row dim"><span>Gross wages (annual)</span><span id="lGross">—</span></div>
+        <div class="row dim"><span>FICA — 7.65%</span><span id="lFica">—</span></div>
+        <div class="row dim"><span>Unemployment (FUTA/SUTA ≈2.2%)</span><span id="lUi">—</span></div>
+        <div class="row dim"><span>Workers' comp (≈4% est.)</span><span id="lWc">—</span></div>
+        <div class="row dim"><span>Benefits stipend</span><span id="lBen">—</span></div>
+        <div class="row dim"><span>One-time setup (year 1)</span><span id="lSetup">—</span></div>
+        <div class="row grand"><span>TRUE ANNUAL COST</span><span class="amt" id="lTotal">—</span></div>
+        <div class="row"><span>True monthly</span><span id="lMonth">—</span></div>
+        <div class="row"><span>Cost per hour freed</span><span id="lCph">—</span></div>
+      </div>
+      <div class="vs">
+        <div class="cell"><h4>W-2 employee</h4><div class="big" id="vsW2">—</div><p>Full control, payroll taxes &amp; workers' comp on you. Right for recurring core work.</p></div>
+        <div class="cell"><h4>1099 contractor</h4><div class="big" id="vs1099">—</div><p>~0 employer taxes, but <b>misclassification risk</b> if you direct their schedule/methods.</p></div>
+        <div class="cell"><h4>Fractional / agency</h4><div class="big" id="vsFrac">—</div><p>Priciest per hour, zero admin, instant seniority. Great for bookkeeping/marketing.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="stampzone" id="stampzone"></div>
+  <div class="pager">
+    <button class="btn ghost" onclick="go(1)">← II</button>
+    <button class="btn" onclick="go(3)">IV — Write the posting →</button>
+  </div>
+</section>
+
+<!-- ============ STEP IV ============ -->
+<section class="step" id="s3">
+  <div class="kicker">Step IV — The Posting</div>
+  <h2>HELP WANTED — done right, done legal.</h2>
+  <p class="lede">Generated from <b>your actual triaged tasks</b>, not an Indeed template. Pay-transparency laws now force a salary range in postings in a growing list of states — pick yours.</p>
+  <div class="post-ctrl">
+    <select id="state">
+      <option value="">— Your state —</option>
+      <option>CA</option><option>NY</option><option>CO</option><option>WA</option>
+      <option>IL</option><option>NJ</option><option>CT</option><option>MD</option>
+      <option>MA</option><option>MN</option><option>NV</option><option>RI</option>
+      <option value="OTHER">Other / not listed</option>
+    </select>
+    <input type="text" id="roleTitle" placeholder="Role title (suggested below)" size="28">
+    <button class="btn ghost" type="button" onclick="renderPost()">↻ Regenerate</button>
+    <button class="btn red" type="button" onclick="copyPost()">⧉ Copy posting</button>
+  </div>
+  <div class="compliance" id="compliance"></div>
+  <div class="posting" id="posting">Pick a state and hit Regenerate…</div>
+  <div class="note" id="titleSuggestion" style="margin-top:12px"></div>
+  <div class="pager">
+    <button class="btn ghost" onclick="go(2)">← III</button>
+    <button class="btn" onclick="go(4)">V — Interview kit →</button>
+  </div>
+</section>
+
+<!-- ============ STEP V ============ -->
+<section class="step" id="s4">
+  <div class="kicker">Step V — The Interview</div>
+  <h2>Structured beats charisma. Every time.</h2>
+  <p class="lede">The single best-documented bad-hire mitigant: same questions, same order, scored 1–5. Generated from your task list.</p>
+  <div id="qList"></div>
+  <h3 style="font-family:'Alfa Slab One',serif;font-size:17px;margin:20px 0 4px">The Work Sample <span style="color:var(--red)">·</span> pay for it</h3>
+  <div class="note" id="workSample" style="margin-top:6px"></div>
+  <h3 style="font-family:'Alfa Slab One',serif;font-size:17px;margin:24px 0 8px">Scoring Rubric</h3>
+  <table class="rubric">
+    <thead><tr><th>Criterion</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4</th><th class="n">5</th></tr></thead>
+    <tbody id="rubricBody"></tbody>
+  </table>
+  <div class="costbox">
+    <div class="ttl">☠ WHY THIS STEP MATTERS</div>
+    <p>If you skip the structure and hire wrong, the U.S. Dept. of Labor says it costs <span class="fig" id="badHireFig">$11,220</span> — 30% of first-year earnings on this role — plus the months of owner time re-doing their work. The interview kit above costs you two hours. Do the math; the math is lopsided.</p>
+  </div>
+  <h3 style="font-family:'Alfa Slab One',serif;font-size:17px;margin:26px 0 6px">First 30 Days — Land the Plane</h3>
+  <ul class="checklist">
+    <li><b>Day 1–3:</b> Complete Form I-9 (within 3 business days of start) &amp; collect W-4.</li>
+    <li><b>Week 1:</b> Register with state new-hire reporting program (deadline varies, usually 20 days).</li>
+    <li><b>Week 1:</b> Workers' comp policy active <i>before</i> first shift. Payroll running — Gusto/ADP referral handoff.</li>
+    <li><b>Week 2:</b> Owner-shadowing: they watch you do each triaged HIRE task once.</li>
+    <li><b>Week 3–4:</b> Reverse-shadow: you watch them. Score against the same rubric.</li>
+    <li><b>Day 30:</b> Checkpoint against the scorecard. Celebrate or course-correct — in writing.</li>
+  </ul>
+  <div class="pager">
+    <button class="btn ghost" onclick="go(3)">← IV</button>
+    <button class="btn red" onclick="finish()">🖃 STAMP IT — PLAN COMPLETE</button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="rule"></div>
+  HIREGROUND · TurboTax for your first hire · prototype 2026-11-04 ·
+  sources: r/smallbusiness (Oct 29 '26), PainPoint Daily, SBA, DOL, SHRM ·
+  guidance only, not legal advice
+</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- state ---------------- */
+const SAMPLE=[
+  ["Answer phone / book jobs",6,"hire"],
+  ["Social media posting",5,"auto"],
+  ["Invoicing & payment chasing",4,"auto"],
+  ["Bookkeeping / reconciliation",5,"out"],
+  ["Scheduling & dispatch",4,"hire"],
+  ["Supply runs & ordering",3,"hire"],
+  ["Customer follow-up emails",3,"auto"],
+  ["Quotes & estimates",4,"hire"],
+  ["Review responses / reputation",2,"out"],
+];
+let tasks=SAMPLE.map((t,i)=>({id:i+1,name:t[0],hrs:t[1],cls:t[2]}));
+let nextId=100;
+const $=id=>document.getElementById(id);
+const fmt=n=>'$'+n.toLocaleString('en-US',{maximumFractionDigits:0});
+const fmt2=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* ---------------- step I ---------------- */
+function renderTasks(){
+  const tb=$('taskBody');tb.innerHTML='';
+  tasks.forEach(t=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${esc(t.name)}</td><td class="hrs">${t.hrs} h</td><td><button class="del" title="remove">✕</button></td>`;
+    tr.querySelector('.del').onclick=()=>{tasks=tasks.filter(x=>x.id!==t.id);renderTasks();renderTriage();};
+    tb.appendChild(tr);
+  });
+  $('totalHrs').textContent=tasks.reduce((s,t)=>s+t.hrs,0)+' hrs/wk';
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+$('addForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const n=$('newTask').value.trim(),h=parseFloat($('newHrs').value);
+  if(!n||!h){toast('Task name and hours, chief.');return;}
+  tasks.push({id:nextId++,name:n,hrs:h,cls:null});
+  $('newTask').value='';renderTasks();toast('Added to the pile.');
+});
+
+/* ---------------- step II ---------------- */
+const CLS=[["auto","⚙ automate"],["out","✈ outsource"],["hire","✋ hire"]];
+function renderTriage(){
+  const tb=$('triageBody');tb.innerHTML='';
+  tasks.forEach(t=>{
+    const tr=document.createElement('tr');
+    const btns=CLS.map(([k,l])=>`<button class="badge-btn ${t.cls===k?'sel':''}" data-t="${k}">${l}</button>`).join(' ');
+    tr.innerHTML=`<td>${esc(t.name)}</td><td class="hrs">${t.hrs}</td><td>${btns}</td>`;
+    tr.querySelectorAll('.badge-btn').forEach(b=>b.onclick=()=>{
+      t.cls=b.dataset.t;renderTriage();
+    });
+    tb.appendChild(tr);
+  });
+  const sum=k=>tasks.filter(t=>t.cls===k).reduce((s,t)=>s+t.hrs,0);
+  $('bAuto').textContent=sum('auto');$('bOut').textContent=sum('out');$('bHire').textContent=sum('hire');
+  const un=tasks.filter(t=>!t.cls).length;
+  const h=sum('hire');
+  let note=un?`⚠ ${un} task${un>1?'s':''} still unclassified — sort the whole pile for an honest number.`
+    :h>=35?`That's a full-time role (≥35 hrs). You're not buying help — you're buying your life back.`
+    :h>=15?`A ${h}-hr/wk part-timer hits the sweet spot: maximum hours freed per payroll dollar.`
+    :h>0?`Only ${h} hrs survived triage — automating/outsource may be cheaper than employee #1. Re-check the pile.`
+    :`Nothing marked HIRE — good news: software and contractors just replaced a payroll.`;
+  $('triageNote').textContent=note;
+  $('hireHrsEcho').textContent=h;
+}
+
+/* ---------------- step III ---------------- */
+let lastVerdict=null;
+function renderBudget(){
+  const w=parseFloat($('wage').value),h=parseFloat($('hrs').value);
+  const ben=parseFloat($('benefit').value)||0,setup=parseFloat($('setup').value)||0;
+  const rev=parseFloat($('rev').value)||0;
+  $('wageLbl').textContent=fmt2(w)+'/hr';
+  const gross=w*h*52;
+  const fica=gross*.0765, ui=gross*.022, wc=gross*.04, bens=ben*12;
+  const total=gross+fica+ui+wc+bens+setup;
+  $('lGross').textContent=fmt(gross);
+  $('lFica').textContent=fmt(fica);
+  $('lUi').textContent=fmt(ui);
+  $('lWc').textContent=fmt(wc);
+  $('lBen').textContent=fmt(bens);
+  $('lSetup').textContent=fmt(setup);
+  $('lTotal').textContent=fmt(total);
+  $('lMonth').textContent=fmt(total/12)+' /mo';
+  const annualHrs=h*52;
+  $('lCph').textContent=fmt2(total/annualHrs)+' /hr freed';
+  // comparisons (annualized, per hour)
+  $('vsW2').textContent=fmt2(total/annualHrs)+'/hr';
+  $('vs1099').textContent=fmt2(w*1.35)+'/hr';   // market 1099 premium ~35%
+  $('vsFrac').textContent=fmt2(w*1.9)+'/hr';    // fractional/agency ~90% premium
+  // verdict
+  const monthCost=total/12;
+  const pct=rev>0?monthCost/rev:1;
+  let cls,txt,sub;
+  if(rev<=0){cls='no';txt='ENTER REVENUE';sub='the stamp needs a number';}
+  else if(pct<=0.18&&h>=30){cls='ready';txt='FULL-TIME READY';sub=`${(pct*100).toFixed(0)}% of revenue · under the 20% red line · go`;
+    lastVerdict='ready';}
+  else if(pct<=0.25||h>=15){cls='part';txt='PART-TIME SWEET SPOT';sub=`${(pct*100).toFixed(0)}% of revenue · start at ${Math.min(h,30)} hrs, scale to full-time at 6 months`;
+    lastVerdict='part';}
+  else {cls='no';txt='NOT YET';sub=`${(pct*100).toFixed(0)}% of revenue · automate + outsource first, re-run this form next quarter`;
+    lastVerdict='no';}
+  $('stampzone').innerHTML=`<div class="stamp ${cls}">${txt}<small>${sub}</small></div>`;
+  // bad hire figure for step V
+  $('badHireFig').textContent=fmt(gross*.30);
+  $('hrs').value=Math.max(5,Math.min(40,Math.round(sum_hire())||h));
+}
+function sum_hire(){return tasks.filter(t=>t.cls==='hire').reduce((s,t)=>s+t.hrs,0);}
+['wage','hrs','rev','benefit','setup'].forEach(id=>$(id).addEventListener('input',renderBudget));
+
+/* ---------------- step IV ---------------- */
+const TRANSPARENCY=new Set(['CA','NY','CO','WA','IL','NJ','CT','MD','MA','MN','NV','RI']);
+function hireTasks(){return tasks.filter(t=>t.cls==='hire');}
+function suggestTitle(){
+  const names=hireTasks().map(t=>t.name.toLowerCase()).join(' ');
+  if(/book|invoice|quote|estimate/.test(names)&&/phone|schedul|dispatch|customer/.test(names))return'Operations Coordinator';
+  if(/phone|schedul|dispatch|customer|follow/.test(names))return'Customer & Scheduling Coordinator';
+  if(/social|marketing|content/.test(names))return'Marketing Coordinator';
+  if(/invoice|bookkeep|payment/.test(names))return'Administrative Assistant';
+  return'Right-Hand Generalist (Employee #1)';
+}
+function renderPost(){
+  const w=parseFloat($('wage').value),h=parseFloat($('hrs').value);
+  const st=$('state').value;
+  const title=$('roleTitle').value.trim()||suggestTitle();
+  $('roleTitle').placeholder='Suggested: '+suggestTitle();
+  const ht=hireTasks();
+  const duties=ht.length?ht.map(t=>`  • ${t.name}`).join('\n'):'  • (nothing triaged as HIRE yet — go back to Step II)';
+  const lo=(w-1.5).toFixed(2),hi=(w+2.5).toFixed(2);
+  const required=TRANSPARENCY.has(st);
+  const rangeLine=st?`\nPay: $${lo}–$${hi}/hr (${h} hrs/wk)${required?' — range required by '+st+' pay-transparency law':''}`
+    :`\nPay: $${lo}–$${hi}/hr (${h} hrs/wk) — posting a real range doubles quality applicants`;
+  const comp=$('compliance');
+  if(required){comp.className='compliance ok';comp.innerHTML='<span class="dot"></span> '+st+' requires a salary range in postings — included. ✔';}
+  else if(st==='OTHER'){comp.className='compliance warn';comp.innerHTML='<span class="dot"></span> Check your state/city — new pay-transparency laws keep landing (21+ jurisdictions as of 2026).';}
+  else if(st){comp.className='compliance warn';comp.innerHTML='<span class="dot"></span> '+st+' has no statewide posting-range mandate (yet) — post one anyway. It\'s free trust.';}
+  else{comp.className='compliance warn';comp.innerHTML='<span class="dot"></span> Select a state for the pay-transparency check.';}
+  $('titleSuggestion').textContent='Suggested title from your triaged tasks: “'+suggestTitle()+'”';
+  $('posting').textContent=
+`HELP WANTED — ${title.toUpperCase()}
+${'='.repeat(Math.min(48,14+title.length))}
+
+We're a small, busy company and you'd be employee #1 —
+not a cog. This role exists because these things keep
+falling off the owner's plate:
+
+${duties}
+
+Hours: ${h}/week to start, with a defined path to full-time.
+${rangeLine.trim()}
+
+What we need:
+  • Reliable, organized, calm under a ringing phone
+  • Learns our tools fast (we'll train the rest)
+  • Takes ownership — you'll run these areas, not assist them
+
+What you get:
+  • Real responsibility from week one
+  • Structured onboarding (30-day plan, no "figure it out")
+  • A boss whose #1 job this quarter is making you successful
+
+Apply with a short note about the last messy problem
+you untangled. No cover-letter templates, please —
+we can tell.
+— The Owner`;
+}
+function copyPost(){
+  navigator.clipboard.writeText($('posting').textContent).then(()=>toast('Posting copied. Go get \'em.'),()=>toast('Copy failed — select manually.'));
+}
+$('state').addEventListener('change',renderPost);
+
+/* ---------------- step V ---------------- */
+const BEHAV=[
+  ["Behavioral","Tell me about a time something fell through the cracks and a customer felt it. What did you do in the first hour?","Tests ownership + damage control — the two traits employee #1 lives or dies on."],
+  ["Behavioral","Describe the most repetitive job you've held. How did you keep it accurate in month three?","Recurring tasks are 60% of this role. Boredom tolerance is a real skill."],
+  ["Situational","The owner is on a job, a customer is angry on line one, and a delivery needs signing for. Walk me through 10 minutes.","Simulates the actual chaos of a small shop. Listen for sequencing, not heroics."],
+];
+function renderInterview(){
+  const ht=hireTasks();
+  const ql=$('qList');ql.innerHTML='';
+  // task-derived questions
+  ht.slice(0,4).forEach(t=>{
+    ql.insertAdjacentHTML('beforeend',
+      `<div class="qcard"><div class="qtype">Task-Derived</div>
+       <p>“${esc(t.name)}” will be ~${t.hrs} hrs of your week. Talk me through exactly how you'd run it — tools, order, what you'd track.</p>
+       <div class="why">Directly from your triaged pile. Vague answers here = vague employee.</div></div>`);
+  });
+  BEHAV.forEach(([ty,q,w])=>{
+    ql.insertAdjacentHTML('beforeend',
+      `<div class="qcard"><div class="qtype">${ty}</div><p>“${q}”</p><div class="why">${w}</div></div>`);
+  });
+  $('workSample').textContent=ht.length
+    ?`Pay them $75–150 for a 90-minute paid exercise built on “${ht[0].name}”: real (anonymized) inputs, real tools. Watch HOW they work — questions asked, shortcuts taken, mess left behind. It predicts the job better than any interview answer, and paying for it tells good candidates you're not a nightmare.`
+    :'Triage some tasks as HIRE first — the work sample designs itself from your real workload.';
+  const rb=$('rubricBody');
+  const crit=['Task fluency (their “how I\'d run it” answers)','Ownership under pressure (behavioral #1)','Repetition stamina (behavioral #2)','Communication — written & phone','Coachability in the work sample'];
+  rb.innerHTML=crit.map(c=>`<tr><td>${c}</td>${[1,2,3,4,5].map(n=>`<td class="n"><input type="radio" name="r-${c}" aria-label="score ${n}"></td>`).join('')}</tr>`).join('');
+}
+
+/* ---------------- nav ---------------- */
+function go(i){
+  document.querySelectorAll('section.step').forEach((s,j)=>s.classList.toggle('on',j===i));
+  document.querySelectorAll('nav#rail button').forEach((b,j)=>{
+    b.classList.toggle('active',j===i);
+    if(j<i)b.classList.add('done');
+  });
+  if(i===1)renderTriage();
+  if(i===2)renderBudget();
+  if(i===3){renderPost();}
+  if(i===4)renderInterview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('nav#rail button').forEach(b=>b.onclick=()=>go(+b.dataset.s));
+function finish(){
+  const z=$('stampzone');
+  toast('Plan stamped. Export coming in MVP — screenshot for now. 🖃');
+  document.querySelectorAll('nav#rail button').forEach(b=>b.classList.add('done'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* ---------------- boot ---------------- */
+renderTasks();renderTriage();renderBudget();renderPost();renderInterview();
+</script>
+</body>
+</html>
