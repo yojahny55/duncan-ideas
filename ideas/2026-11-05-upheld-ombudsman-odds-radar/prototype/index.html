@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upheld ⚖️ — The Odds Board for Your Complaint Escalation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C1120; --ink-2:#131A2E; --ink-3:#1B2440;
+  --cream:#F5EFE1; --cream-dim:#D8D2C2;
+  --green:#3FB950; --red:#E5484D; --amber:#FFB454;
+  --line:rgba(245,239,225,.14);
+  --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif; --disp:'Fraunces',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:var(--sans);line-height:1.55;min-height:100vh}
+::selection{background:var(--amber);color:var(--ink)}
+
+/* ── sticky deadline strip ─────────────────────── */
+.clockstrip{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#0A0E1B 0%,#0C1120 100%);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.clockstrip .dot{width:9px;height:9px;border-radius:50%;background:var(--amber);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,180,84,.5)}50%{box-shadow:0 0 0 7px rgba(255,180,84,0)}}
+.clockstrip .lbl{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim)}
+.clockstrip .val{font-family:var(--mono);font-weight:700;font-size:.95rem;color:var(--amber)}
+.clockstrip .val b{color:var(--cream)}
+
+/* ── header ────────────────────────────────────── */
+header{max-width:1080px;margin:0 auto;padding:52px 24px 28px;text-align:center}
+.scales{font-size:2.4rem;display:block;margin-bottom:10px;filter:drop-shadow(0 0 18px rgba(255,180,84,.35))}
+h1{font-family:var(--disp);font-weight:900;font-size:clamp(2.1rem,5.5vw,3.6rem);letter-spacing:-.015em;line-height:1.06}
+h1 em{font-style:italic;color:var(--amber)}
+.tagline{max-width:640px;margin:18px auto 0;color:var(--cream-dim);font-size:1.02rem}
+.statrow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px}
+.chip{font-family:var(--mono);font-size:.72rem;padding:7px 13px;border:1px solid var(--line);border-radius:99px;color:var(--cream-dim);background:var(--ink-2)}
+.chip b{color:var(--cream)}
+.chip .g{color:var(--green)} .chip .r{color:var(--red)} .chip .a{color:var(--amber)}
+
+/* ── stepper ───────────────────────────────────── */
+nav.steps{max-width:1080px;margin:30px auto 0;padding:0 24px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+nav.steps button{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--ink-2);color:var(--cream-dim);cursor:pointer;transition:all .18s}
+nav.steps button:hover{border-color:var(--amber);color:var(--cream)}
+nav.steps button.on{background:var(--amber);color:var(--ink);border-color:var(--amber);font-weight:700}
+main{max-width:1080px;margin:0 auto;padding:28px 24px 70px}
+.screen{display:none;animation:fade .35s ease}
+.screen.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h2{font-family:var(--disp);font-weight:700;font-size:1.7rem;margin-bottom:6px}
+.sub{color:var(--cream-dim);font-size:.95rem;margin-bottom:24px;max-width:640px}
+.card{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:24px}
+.card + .card{margin-top:16px}
+
+/* ── decode ────────────────────────────────────── */
+textarea{width:100%;min-height:170px;background:var(--ink);color:var(--cream);border:1px solid var(--line);border-radius:12px;padding:16px;font-family:var(--mono);font-size:.82rem;resize:vertical;line-height:1.6}
+textarea:focus{outline:none;border-color:var(--amber)}
+.btn{font-family:var(--mono);font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;padding:14px 26px;border-radius:12px;border:none;cursor:pointer;transition:all .18s}
+.btn-amber{background:var(--amber);color:var(--ink)}
+.btn-amber:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(255,180,84,.35)}
+.btn-ghost{background:transparent;color:var(--cream-dim);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--cream-dim);color:var(--cream)}
+.scanline{display:none;margin-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--amber)}
+.scanline.run{display:block}
+.verdict{display:none;margin-top:22px}
+.verdict.show{display:block;animation:fade .4s ease}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.vcell{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px}
+.vcell .k{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:6px}
+.vcell .v{font-weight:600;font-size:.98rem}
+.vcell .v.mono{font-family:var(--mono)}
+.stamp{display:inline-block;font-family:var(--mono);font-weight:700;border:3px double;padding:6px 14px;border-radius:6px;transform:rotate(-3deg);font-size:.85rem;letter-spacing:.1em}
+.stamp.red{color:var(--red);border-color:var(--red)}
+.stamp.amber{color:var(--amber);border-color:var(--amber)}
+.stamp.green{color:var(--green);border-color:var(--green)}
+
+/* ── odds dial ─────────────────────────────────── */
+.odds-wrap{display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
+@media(max-width:760px){.odds-wrap{grid-template-columns:1fr}}
+.dial-box{text-align:center}
+.dial{position:relative;width:250px;height:250px;margin:0 auto}
+.dial svg{transform:rotate(-90deg)}
+.dial .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dial .pct{font-family:var(--mono);font-weight:700;font-size:3.1rem;line-height:1}
+.dial .cap{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim);margin-top:8px}
+.dial .n{font-family:var(--mono);font-size:.72rem;color:var(--cream-dim);margin-top:4px}
+.toggle-row{display:flex;gap:8px;margin-top:18px;justify-content:center}
+.toggle-row button{font-family:var(--mono);font-size:.72rem;padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--ink);color:var(--cream-dim);cursor:pointer}
+.toggle-row button.on{background:var(--green);border-color:var(--green);color:#08120A;font-weight:700}
+.bars .brow{margin-bottom:14px}
+.bars .bl{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:5px}
+.bars .bl .nm{color:var(--cream)} .bars .bl .pc{font-family:var(--mono);font-weight:700}
+.bars .track{height:9px;background:var(--ink);border-radius:99px;overflow:hidden}
+.bars .fill{height:100%;border-radius:99px;width:0;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.note{font-size:.8rem;color:var(--cream-dim);margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.note b{color:var(--amber)}
+
+/* ── ladder ────────────────────────────────────── */
+.ladder{position:relative;padding-left:34px}
+.ladder::before{content:'';position:absolute;left:11px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.rung{position:relative;padding:14px 0 14px 18px}
+.rung::before{content:'';position:absolute;left:-28px;top:22px;width:12px;height:12px;border-radius:50%;background:var(--ink-3);border:2px solid var(--cream-dim)}
+.rung.done::before{background:var(--green);border-color:var(--green)}
+.rung.here::before{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 6px rgba(255,180,84,.18)}
+.rung .t{font-weight:700}
+.rung .d{font-size:.85rem;color:var(--cream-dim);margin-top:2px}
+.rung .dl{font-family:var(--mono);font-size:.72rem;margin-top:6px;display:inline-block;padding:4px 10px;border-radius:7px;background:var(--ink);border:1px solid var(--line);color:var(--cream-dim)}
+.rung.here .dl{color:var(--amber);border-color:rgba(255,180,84,.4)}
+.youare{position:absolute;right:0;top:16px;font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:.12em;background:var(--amber);color:var(--ink);padding:4px 10px;border-radius:6px;transform:rotate(2deg)}
+
+/* ── draft ─────────────────────────────────────── */
+.letter{background:var(--cream);color:#1A1A18;border-radius:12px;padding:30px;font-size:.88rem;line-height:1.75;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.letter h3{font-family:var(--disp);font-size:1.15rem;margin-bottom:14px}
+.letter .meta{font-family:var(--mono);font-size:.72rem;color:#6b675c;margin-bottom:18px;border-bottom:1px solid #d8d2c2;padding-bottom:12px}
+.letter cite{background:rgba(255,180,84,.35);font-style:normal;padding:1px 5px;border-radius:4px;box-shadow:inset 0 -2px 0 var(--amber);cursor:help}
+.letter .sig{margin-top:20px;font-family:var(--mono);font-size:.75rem;color:#6b675c}
+.copybar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.evid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.evid .e{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.82rem;display:flex;gap:10px;align-items:flex-start}
+.evid .e .box{width:18px;height:18px;min-width:18px;border:2px solid var(--green);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:.7rem;margin-top:2px}
+
+/* ── case card ─────────────────────────────────── */
+.casecard{max-width:560px;margin:0 auto;background:linear-gradient(160deg,#141B31 0%,#0C1120 100%);border:1px solid var(--line);border-radius:18px;padding:30px;position:relative;overflow:hidden}
+.casecard::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,180,84,.12),transparent 70%)}
+.cc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.cc-head .id{font-family:var(--mono);font-size:.68rem;color:var(--cream-dim);letter-spacing:.1em}
+.cc-head .logo{font-family:var(--disp);font-weight:900;font-size:1.1rem}
+.cc-rows .r{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:.86rem}
+.cc-rows .r .k{color:var(--cream-dim)}
+.cc-rows .r .v{font-family:var(--mono);font-weight:700}
+.cc-stamp{position:absolute;bottom:22px;right:22px;opacity:0;transform:rotate(-14deg) scale(2.4);transition:all .35s cubic-bezier(.2,1.4,.4,1)}
+.cc-stamp.hit{opacity:1;transform:rotate(-14deg) scale(1)}
+.cc-stamp .stamp{font-size:1.15rem;border-width:4px;padding:9px 18px;background:rgba(12,17,32,.85)}
+.confetti{position:absolute;width:8px;height:8px;border-radius:2px;pointer-events:none;opacity:0}
+@keyframes conf{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(540deg)}}
+.sharebar{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+
+/* ── pricing / never-do ───────────────────────── */
+.pricegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:6px}
+.tier{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative}
+.tier.hot{border-color:var(--amber);box-shadow:0 0 34px rgba(255,180,84,.12)}
+.tier .nm{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim)}
+.tier .pr{font-family:var(--disp);font-weight:900;font-size:1.9rem;margin:8px 0 2px}
+.tier .pr small{font-family:var(--mono);font-size:.72rem;font-weight:400;color:var(--cream-dim)}
+.tier ul{list-style:none;margin-top:14px;font-size:.85rem;color:var(--cream-dim)}
+.tier li{padding:5px 0 5px 22px;position:relative}
+.tier li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700}
+.badge{position:absolute;top:-11px;right:16px;font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.1em;background:var(--amber);color:var(--ink);padding:4px 10px;border-radius:6px}
+.never{margin-top:34px}
+.never li{list-style:none;padding:10px 0 10px 30px;position:relative;font-size:.9rem;border-bottom:1px dashed var(--line)}
+.never li::before{content:'✕';position:absolute;left:4px;color:var(--red);font-weight:700;font-family:var(--mono)}
+.never li b{color:var(--cream)}
+footer{border-top:1px solid var(--line);padding:30px 24px;text-align:center;color:var(--cream-dim);font-size:.78rem}
+footer .m{font-family:var(--mono);font-size:.68rem;margin-top:8px;opacity:.6}
+</style>
+</head>
+<body>
+
+<!-- sticky deadline strip -->
+<div class="clockstrip">
+  <span class="dot"></span>
+  <span class="lbl">Your escalation window</span>
+  <span class="val">closes <b id="closeDate">—</b> · <b id="daysLeft">—</b> days left</span>
+  <span class="lbl" style="color:var(--amber)">DISP 2.8.2R · 6 months from final response</span>
+</div>
+
+<header>
+  <span class="scales">⚖️</span>
+  <h1>You complained. They said no.<br><em>Now what are your odds?</em></h1>
+  <p class="tagline">Upheld turns a rejection letter into a case file: your real uphold odds, your exact escalation route, and the deadline that's already running — drafted, cited, and stamped.</p>
+  <div class="statrow">
+    <span class="chip">FOS FY25/26 · <b class="g">30% upheld</b> · 220K cases</span>
+    <span class="chip">CFPB credit complaints · <b class="r">947 / 5.87M paid</b></span>
+    <span class="chip">Precision is <b class="a">the entire game</b></span>
+  </div>
+</header>
+
+<nav class="steps" id="steps">
+  <button data-s="decode" class="on">1 · Decode</button>
+  <button data-s="odds">2 · Odds</button>
+  <button data-s="route">3 · Route</button>
+  <button data-s="draft">4 · Draft</button>
+  <button data-s="card">5 · Case Card</button>
+</nav>
+
+<main>
+
+<!-- ══ 1. DECODE ══ -->
+<section class="screen on" id="decode">
+  <h2>Case Decoder</h2>
+  <p class="sub">Paste your final-response or deadlock letter. 90 seconds later you know whether it's even ombudsman-eligible, which scheme owns it, and which clock is running. Free forever — this is the wedge.</p>
+  <div class="card">
+    <textarea id="letterInput" spellcheck="false">Dear Customer,
+
+Thank you for contacting us regarding your complaint about the £1,240 early-settlement figure on your motor finance agreement (ref: 44-2291-88).
+
+Having completed our final review, we are unable to uphold your complaint. We have considered the commission disclosure arrangements in place at the point of sale and do not agree that you were mis-sold the agreement.
+
+This concludes our complaints process. If you remain dissatisfied you may be able to refer your complaint to the Financial Ombudsman Service.
+
+Yours faithfully,
+Complaints Team · Meridian Motors Finance · 14 Oct 2026</textarea>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-amber" id="decodeBtn">⚖️ Decode Case</button>
+      <button class="btn btn-ghost" id="resetBtn">Reset</button>
+    </div>
+    <div class="scanline" id="scanline"></div>
+    <div class="verdict" id="verdict">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <span class="stamp red">FINAL RESPONSE</span>
+        <span style="font-size:.9rem;color:var(--cream-dim)">Stage 2 complete — you are <b style="color:var(--cream)">ombudsman-eligible</b>. The 6-month clock started 14 Oct 2026.</span>
+      </div>
+      <div class="vgrid">
+        <div class="vcell"><div class="k">Classification</div><div class="v">Motor-finance commission dispute</div></div>
+        <div class="vcell"><div class="k">Route</div><div class="v">Financial Ombudsman Service <span style="font-family:var(--mono);font-size:.72rem;color:var(--cream-dim)">(not CISAS — finance, not telecoms)</span></div></div>
+        <div class="vcell"><div class="k">Clock</div><div class="v mono" style="color:var(--amber)">6 months · DISP 2.8.2R<br><span style="font-size:.75rem;color:var(--cream-dim)">closes <span id="closeDate2">—</span></span></div></div>
+        <div class="vcell"><div class="k">Redress if upheld</div><div class="v mono">£1,240 + 8% simple interest</div></div>
+      </div>
+      <div class="vcell" style="margin-top:12px;background:rgba(255,180,84,.06);border-color:rgba(255,180,84,.3)">
+        <div class="k" style="color:var(--amber)">⚠ Cohort signal</div>
+        <div class="v" style="font-weight:500;font-size:.9rem">Firms in this cohort are under the motor-finance-commission review. Cases filed <b>with disclosure evidence</b> are being upheld at <b style="font-family:var(--mono);color:var(--green)">41%</b> vs 23% without. Attach everything.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 2. ODDS ══ -->
+<section class="screen" id="odds">
+  <h2>Uphold Odds</h2>
+  <p class="sub">The house moat: odds sliced by product × issue × firm × route × evidence attached. Seeded from public regulator datasets (FOS publishes per-firm uphold rates quarterly), compounded by every crowd outcome.</p>
+  <div class="card">
+    <div class="odds-wrap">
+      <div class="dial-box">
+        <div class="dial">
+          <svg width="250" height="250" viewBox="0 0 250 250">
+            <circle cx="125" cy="125" r="105" fill="none" stroke="#1B2440" stroke-width="18"/>
+            <circle id="arc" cx="125" cy="125" r="105" fill="none" stroke="#3FB950" stroke-width="18" stroke-linecap="round" stroke-dasharray="659.7" stroke-dashoffset="659.7"/>
+          </svg>
+          <div class="center">
+            <div class="pct" id="pctNum" style="color:var(--green)">0%</div>
+            <div class="cap">uphold odds · your case</div>
+            <div class="n" id="nCounter">n = 0 resolved</div>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <button id="evOn" class="on">📎 Evidence attached</button>
+          <button id="evOff">No evidence</button>
+        </div>
+      </div>
+      <div class="bars">
+        <div style="font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:14px">Your slice vs the field · motor-finance commission, FOS route</div>
+        <div class="brow"><div class="bl"><span class="nm">Your case <span style="color:var(--green)" id="tagYou">(with disclosure emails + agreement)</span></span><span class="pc" style="color:var(--green)" id="pcYou">41%</span></div><div class="track"><div class="fill" id="fillYou" style="background:var(--green)"></div></div></div>
+        <div class="brow"><div class="bl"><span class="nm">Same issue, no evidence attached</span><span class="pc" style="color:var(--red)">23%</span></div><div class="track"><div class="fill" style="background:var(--red)" data-w="23"></div></div></div>
+        <div class="brow"><div class="bl"><span class="nm">Meridian Motors Finance (this firm, all issues)</span><span class="pc" style="color:var(--amber)">34%</span></div><div class="track"><div class="fill" style="background:var(--amber)" data-w="34"></div></div></div>
+        <div class="brow"><div class="bl"><span class="nm">FOS aggregate (FY25/26, all products)</span><span class="pc" style="color:var(--cream-dim)">30%</span></div><div class="track"><div class="fill" style="background:#8A93A8" data-w="30"></div></div></div>
+        <div class="note"><b>Why this number moves:</b> every Upheld user who tracks a referral to verdict feeds the table. The 947-out-of-5.87M CFPB stat proves filing ≠ winning — the delta between a sloppy complaint and a precise one is the entire game. Odds dial shows <b>n=</b> so you can see the evidence behind the number.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 3. ROUTE ══ -->
+<section class="screen" id="route">
+  <h2>Escalation Ladder</h2>
+  <p class="sub">Which scheme actually covers your company and issue — with your deadline attached, not a static directory. One screen, one route, one next rung.</p>
+  <div class="card">
+    <div class="ladder">
+      <div class="rung done"><div class="t">Stage 1 · Complaint to firm</div><div class="d">Filed 2 Sep 2026 · acknowledged in 3 days</div><div class="dl">✓ complete</div></div>
+      <div class="rung done"><div class="t">Stage 2 · Final response letter</div><div class="d">Received 14 Oct 2026 — "concludes our complaints process" = your deadlock</div><div class="dl">✓ complete · unlocks referral</div></div>
+      <div class="rung here"><span class="youare">YOU ARE HERE</span><div class="t">Stage 3 · FOS referral</div><div class="d">Online form + your Upheld case pack. Free. FOS contacts the firm — 63% of firms settle before an investigator is assigned.</div><div class="dl">⏱ window closes in <b id="daysLeft2">—</b> days · file before <span id="closeDate3">—</span></div></div>
+      <div class="rung"><div class="t">Stage 4 · Investigator assessment</div><div class="d">Median 11 weeks (crowd-tracked). Investigator issues a preliminary view — accept, or push on.</div><div class="dl">~11 weeks median · p90: 24 weeks</div></div>
+      <div class="rung"><div class="t">Stage 5 · Ombudsman final decision</div><div class="d">Binding on the firm if you accept. This is where "UPHELD + 8% interest" comes from.</div><div class="dl">~9 weeks after assessment</div></div>
+    </div>
+    <div class="note" style="margin-top:20px">Wrong-scheme warnings are free harm reduction: telecoms go to CISAS (6-week rule, changed 8 Apr 2026), energy deadlock letters run 12 months, and escalating to the wrong body <b>burns weeks while your real clock runs</b>.</div>
+  </div>
+</section>
+
+<!-- ══ 4. DRAFT ══ -->
+<section class="screen" id="draft">
+  <h2>Case Drafter</h2>
+  <p class="sub">LLM-drafted referral citing the exact scheme rules, with an evidence checklist tailored to the issue type — because precision is what separates paid from ignored.</p>
+  <div class="letter">
+    <h3>Referral Statement — Complaint 44-2291-88</h3>
+    <div class="meta">To: Financial Ombudsman Service · Re: Meridian Motors Finance · Motor finance agreement · Final response: 14 Oct 2026 · Filed within DISP 2.8.2R time limit</div>
+    <p><b>1. Summary.</b> I dispute the early-settlement figure of £1,240 and the undisclosed commission arrangement on my motor finance agreement. The firm's final response of 14 Oct 2026 declined to uphold my complaint.</p>
+    <p style="margin-top:12px"><b>2. Why the firm's position fails.</b> The firm asserts commission "disclosure arrangements in place at the point of sale." My signed agreement (Exhibit A) contains <cite title="DISP 2.8.2R + CONC 4.2 — fair presentation of finance terms">no commission disclosure of any kind</cite>, and the pre-sale email thread (Exhibit B) shows the broker presented only the monthly figure. Under <cite title="FCA Principle 6 — a firm must pay due regard to the interests of its customers and treat them fairly">FCA Principle 6 (Treating Customers Fairly)</cite>, the firm cannot demonstrate I gave informed consent to the arrangement.</p>
+    <p style="margin-top:12px"><b>3. Redress sought.</b> Recalculation of the settlement figure excluding undisclosed commission: <cite title="Redress quantification: principal + statutory interest">£1,240 principal + 8% simple interest</cite> from the date of overpayment, per the Ombudsman's standard approach to motor-finance redress.</p>
+    <p style="margin-top:12px"><b>4. Timeline.</b> Complaint filed 2 Sep 2026 → acknowledged 5 Sep 2026 → final response 14 Oct 2026 → referral filed <cite title="Within the 6-month window — do not let this lapse">within the 6-month window</cite>.</p>
+    <div class="sig">— Generated by Upheld · edit before filing · citations verified against DISP source text</div>
+  </div>
+  <div class="evid">
+    <div class="e"><span class="box">✓</span><span><b>Signed finance agreement</b> — Exhibit A (PDF, dated)</span></div>
+    <div class="e"><span class="box">✓</span><span><b>Pre-sale email thread</b> — Exhibit B (broker quotes)</span></div>
+    <div class="e"><span class="box">✓</span><span><b>Final response letter</b> — unlocks the DISP clock proof</span></div>
+    <div class="e"><span class="box">✓</span><span><b>Payment history</b> — quantifies the overpayment window</span></div>
+  </div>
+  <div class="copybar">
+    <button class="btn btn-amber" id="copyBtn">📋 Copy referral pack</button>
+    <button class="btn btn-ghost">⬇ Download PDF + exhibits</button>
+    <span style="align-self:center;font-family:var(--mono);font-size:.7rem;color:var(--cream-dim)" id="copyMsg"></span>
+  </div>
+</section>
+
+<!-- ══ 5. CASE CARD ══ -->
+<section class="screen" id="card">
+  <h2>Outcome Receipts</h2>
+  <p class="sub">Track the referral to verdict. The shareable Case Card is the viral artifact — and every tracked outcome makes the odds tables more trustworthy for the next borrower, renter, and policyholder.</p>
+  <div class="casecard" id="caseCard">
+    <div class="cc-head">
+      <div><div class="logo">⚖️ Upheld</div><div class="id">CASE #UPL-44-2291 · ANONYMIZED</div></div>
+      <span class="stamp amber" style="font-size:.68rem;padding:4px 10px">FOS · MOTOR FINANCE</span>
+    </div>
+    <div class="cc-rows">
+      <div class="r"><span class="k">Complaint filed</span><span class="v">02 SEP 2026</span></div>
+      <div class="r"><span class="k">Final response</span><span class="v" style="color:var(--red)">14 OCT 2026 · NOT UPHELD</span></div>
+      <div class="r"><span class="k">Referral filed</span><span class="v" style="color:var(--amber)">21 OCT 2026 · DAY 7 OF 182</span></div>
+      <div class="r"><span class="k">Evidence attached</span><span class="v" style="color:var(--green)">4 EXHIBITS ✓</span></div>
+      <div class="r"><span class="k">Verdict</span><span class="v" id="verdictRow" style="color:var(--cream-dim)">AWAITING…</span></div>
+      <div class="r" style="border:none"><span class="k">Recovered</span><span class="v" id="recoveredRow" style="color:var(--cream-dim)">—</span></div>
+    </div>
+    <div class="cc-stamp" id="ccStamp"><span class="stamp green">UPHELD · £1,240 + 8%</span></div>
+  </div>
+  <div class="sharebar">
+    <button class="btn btn-amber" id="winBtn">🎉 Simulate verdict: UPHELD</button>
+    <button class="btn btn-ghost" id="shareBtn">↗ Share Case Card</button>
+  </div>
+  <p style="text-align:center;color:var(--cream-dim);font-size:.78rem;margin-top:14px">The only confetti this app ever fires is a win receipt.</p>
+</section>
+
+<!-- ══ PRICING + NEVER-DO ══ -->
+<section class="screen" id="pricing" style="display:none"></section>
+<div class="card" style="margin-top:34px">
+  <h2 style="font-size:1.35rem">Pricing — episodic crisis, episodic price</h2>
+  <p class="sub" style="margin-bottom:18px">Nobody starts a subscription at the worst moment of their dispute.</p>
+  <div class="pricegrid">
+    <div class="tier"><div class="nm">Free forever</div><div class="pr">£0</div><ul><li>Case Decoder + Case Card</li><li>Deadline Engine + alerts</li><li>3 odds lookups / month</li><li>Firm Leaderboards</li><li>Never-Do List</li></ul></div>
+    <div class="tier hot"><span class="badge">ONE DISPUTE</span><div class="nm">Case Pass</div><div class="pr">£19 <small>one-time</small></div><ul><li>Full Case Drafter + citations</li><li>Evidence kit + PDF referral pack</li><li>Complete odds slice for your issue</li><li>Redress quantification</li></ul></div>
+    <div class="tier"><div class="nm">Pro</div><div class="pr">£6<small>/mo</small> · £49<small>/yr</small></div><ul><li>Unlimited cases</li><li>Outcome tracking + receipts</li><li>Household mode</li><li>Drafter credits</li></ul></div>
+  </div>
+  <div class="never">
+    <h2 style="font-size:1.35rem">The Never-Do List <span style="font-family:var(--mono);font-size:.68rem;color:var(--green);letter-spacing:.1em">FREE FOREVER</span></h2>
+    <ul style="margin-top:10px">
+      <li><b>Never miss the 6-month window.</b> It runs from the letter date, not the day you read it. Upheld's Deadline Engine exists for exactly this.</li>
+      <li><b>Never re-file the same text.</b> Duplicate wording gets templated responses and burns weeks.</li>
+      <li><b>Never escalate to the wrong scheme.</b> CISAS ≠ FOS ≠ Energy Ombudsman. Wrong door = lost time while the real clock runs.</li>
+      <li><b>Never accept a "summary resolution" without checking odds.</b> Some firms settle low precisely because they know the uphold rate.</li>
+      <li><b>Never file without evidence attached.</b> 41% vs 23%. That gap is the product.</li>
+    </ul>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div>⚖️ <b>Upheld</b> — the odds are public. The deadlines are real. Somebody has to hand them to the consumer.</div>
+  <div class="m">PROTOTYPE · demo data · not legal advice · sources: FOS FY2025/26 data (May 2026) · CFPB complaint database (FinObservatory) · DISP 2.8.2R</div>
+</footer>
+
+<script>
+/* ── stepper ── */
+const steps=document.getElementById('steps');
+steps.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  steps.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(b.dataset.s).classList.add('on');
+  if(b.dataset.s==='odds')animateDial(currentPct);
+});
+
+/* ── deadline engine ── */
+const letterDate=new Date(2026,9,14);            // 14 Oct 2026
+const close=new Date(letterDate); close.setMonth(close.getMonth()+6); // 14 Apr 2027
+const fmt=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+const days=Math.max(0,Math.ceil((close-new Date())/864e5));
+['closeDate','closeDate2','closeDate3'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt(close).toUpperCase();});
+['daysLeft','daysLeft2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=days;});
+
+/* ── decoder ── */
+const scan=document.getElementById('scanline'),verdict=document.getElementById('verdict');
+document.getElementById('decodeBtn').addEventListener('click',()=>{
+  verdict.classList.remove('show');
+  const lines=['› extracting letter metadata…','› detecting deadlock language… "concludes our complaints process" ✓','› matching issue taxonomy → motor finance / undisclosed commission','› resolving scheme → FOS (finance) · ruling out CISAS/Ombudsman Services','› computing clock → 6 months from 14 Oct 2026 (DISP 2.8.2R)','› querying odds tables → cohort slice ready'];
+  scan.classList.add('run'); scan.innerHTML='';
+  lines.forEach((l,i)=>setTimeout(()=>{scan.innerHTML+=l+'<br>';},i*420));
+  setTimeout(()=>{scan.classList.remove('run');verdict.classList.add('show');},lines.length*420+350);
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{scan.classList.remove('run');verdict.classList.remove('show');});
+
+/* ── odds dial ── */
+const C=2*Math.PI*105;
+let currentPct=41;
+function animateDial(pct){
+  currentPct=pct;
+  const arc=document.getElementById('arc'),num=document.getElementById('pctNum'),n=document.getElementById('nCounter');
+  arc.style.transition='none'; arc.style.strokeDashoffset=C; num.textContent='0%';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    arc.style.transition='stroke-dashoffset 1.1s cubic-bezier(.2,.7,.2,1)';
+    arc.style.strokeDashoffset=C*(1-pct/100);
+    arc.style.stroke=pct>=35?'#3FB950':'#E5484D';
+    num.style.color=pct>=35?'var(--green)':'var(--red)';
+    let t0=null;
+    const tick=ts=>{if(!t0)t0=ts;const k=Math.min(1,(ts-t0)/1100);num.textContent=Math.round(pct*k)+'%';if(k<1)requestAnimationFrame(tick);};
+    requestAnimationFrame(tick);
+  }));
+  n.textContent=pct===41?'n = 1,204 resolved (crowd + FOS quarterly)':'n = 3,877 resolved (crowd + FOS quarterly)';
+  document.getElementById('pcYou').textContent=pct+'%';
+  document.getElementById('fillYou').style.width=pct+'%';
+  document.getElementById('tagYou').textContent=pct===41?'(with disclosure emails + agreement)':'(your case, evidence NOT attached)';
+}
+document.getElementById('evOn').addEventListener('click',()=>{
+  document.getElementById('evOn').classList.add('on');document.getElementById('evOff').classList.remove('on');animateDial(41);});
+document.getElementById('evOff').addEventListener('click',()=>{
+  document.getElementById('evOff').classList.add('on');document.getElementById('evOn').classList.remove('on');animateDial(23);});
+setTimeout(()=>{document.querySelectorAll('.fill[data-w]').forEach(f=>f.style.width=f.dataset.w+'%');animateDial(41);},400);
+
+/* ── draft copy ── */
+document.getElementById('copyBtn').addEventListener('click',()=>{
+  const msg=document.getElementById('copyMsg');
+  msg.textContent='✓ referral pack copied (letter + exhibits manifest)';
+  setTimeout(()=>msg.textContent='',3000);
+});
+
+/* ── case card stamp + confetti ── */
+document.getElementById('winBtn').addEventListener('click',()=>{
+  const card=document.getElementById('caseCard'),stamp=document.getElementById('ccStamp');
+  document.getElementById('verdictRow').innerHTML='<span style="color:var(--green)">UPHELD · 11 WEEKS</span>';
+  document.getElementById('recoveredRow').innerHTML='<span style="color:var(--green)">£1,240 + 8% INTEREST</span>';
+  stamp.classList.add('hit');
+  for(let i=0;i<28;i++){
+    const c=document.createElement('div');c.className='confetti';
+    c.style.left=(40+Math.random()*50)+'%';c.style.top='65%';
+    c.style.background=['#3FB950','#FFB454','#F5EFE1'][i%3];
+    c.style.setProperty('--dx',(Math.random()*320-160)+'px');
+    c.style.setProperty('--dy',(-120-Math.random()*220)+'px');
+    c.style.animation=`conf ${.9+Math.random()*.7}s ease-out forwards`;
+    card.appendChild(c);setTimeout(()=>c.remove(),1700);
+  }
+});
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  const b=document.getElementById('shareBtn');b.textContent='✓ link copied · upheld.app/c/UPL-44-2291';
+  setTimeout(()=>b.textContent='↗ Share Case Card',2600);
+});
+</script>
+</body>
+</html>
