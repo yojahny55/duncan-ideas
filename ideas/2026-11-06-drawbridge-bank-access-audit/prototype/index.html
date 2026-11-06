@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawbridge — Who Has Access to Your Money?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A0E14; --panel:#141B26; --panel2:#1A2331; --line:#26313F;
+  --amber:#FFB454; --red:#E5484D; --green:#3FB950; --cream:#F2EDE2;
+  --muted:#8A97A8; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:'Inter',sans-serif;min-height:100vh}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:600}
+.mono{font-family:var(--mono)}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none}
+.wrap{max-width:860px;margin:0 auto;padding:20px 18px 80px}
+
+/* top bar */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 0 26px}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:9px}
+.logo .b{width:26px;height:26px;border:2px solid var(--amber);border-radius:6px;display:grid;place-items:center;font-size:13px}
+.topbar .tag{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* hero drawbridge */
+.hero{text-align:center;padding:10px 0 34px}
+.hero h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;margin-bottom:14px}
+.hero h1 em{color:var(--amber);font-style:normal}
+.hero p{color:var(--muted);max-width:520px;margin:0 auto 30px;font-size:15px;line-height:1.6}
+.bridge-stage{position:relative;width:min(340px,80vw);height:180px;margin:0 auto 6px}
+svg .beam{transition:transform 1.4s cubic-bezier(.5,1.4,.4,1)}
+.score-line{font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:24px}
+.score-line b{color:var(--red);font-size:20px;font-weight:800}
+.cta{background:var(--amber);color:#1a1206;font-weight:700;font-size:16px;padding:15px 34px;border-radius:12px;letter-spacing:.2px;box-shadow:0 8px 28px rgba(255,180,84,.25);transition:transform .15s}
+.cta:hover{transform:translateY(-2px)}
+.cta-sub{display:block;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.spark{margin-top:26px;font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;display:inline-block;line-height:1.6}
+.spark b{color:var(--red)}
+
+/* scan overlay */
+.scan-panel,.verdict-panel{display:none}
+body.scanning .scan-panel{display:block}
+body.done .verdict-panel{display:block}
+body.scanning .hero-cta{display:none}
+body.done .hero-cta{display:none}
+.scan-panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;margin-top:8px}
+.scan-panel h2{font-size:20px;margin-bottom:4px}
+.scan-panel .sub{color:var(--muted);font-size:13px;margin-bottom:22px}
+.rail{list-style:none}
+.rail li{display:flex;align-items:center;gap:14px;padding:13px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.rail li:last-child{border-bottom:none}
+.rail .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:11px;color:transparent;transition:.3s}
+.rail li.active .dot{border-color:var(--amber);animation:pulse 1s infinite}
+.rail li.done .dot{border-color:var(--green);background:var(--green);color:var(--ink)}
+.rail li .n{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.rail li.done .n{color:var(--green)}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(255,180,84,.15)}}
+
+/* verdict list */
+.verdict-panel h2{font-size:22px;margin-bottom:2px}
+.verdict-panel .sub{color:var(--muted);font-size:13px;margin-bottom:18px;font-family:var(--mono)}
+.conn{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;position:relative;overflow:hidden}
+.conn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--line)}
+.conn.r-red::before{background:var(--red)} .conn.r-amber::before{background:var(--amber)}
+.conn.r-green::before{background:var(--green)} .conn.r-dead::before{background:#6E4B5A}
+.conn .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.conn .name{font-weight:600;font-size:15px}
+.conn .meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;line-height:1.7}
+.stamp{font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.6px;padding:4px 9px;border-radius:6px;border:1.5px solid;white-space:nowrap;transform:rotate(1.5deg)}
+.stamp.red{color:var(--red);border-color:var(--red);background:rgba(229,72,77,.08)}
+.stamp.amber{color:var(--amber);border-color:var(--amber);background:rgba(255,180,84,.07)}
+.stamp.green{color:var(--green);border-color:var(--green);background:rgba(63,185,80,.07)}
+.stamp.dead{color:#D08A9E;border-color:#6E4B5A;background:rgba(110,75,90,.15)}
+.conn .act{margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-revoke{background:transparent;border:1.5px solid var(--red);color:var(--red);font-weight:600;font-size:13px;padding:8px 16px;border-radius:9px;transition:.2s}
+.btn-revoke:hover{background:var(--red);color:#fff}
+.btn-revoked{border:1.5px solid var(--green);color:var(--green);background:rgba(63,185,80,.08);font-weight:600;font-size:13px;padding:8px 16px;border-radius:9px;cursor:default}
+.why{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.conn.revoked{opacity:.55}
+.conn.revoked .why{color:var(--green)}
+
+/* wizard */
+.modal-bg{position:fixed;inset:0;background:rgba(4,7,11,.8);display:none;place-items:center;z-index:50;padding:18px}
+.modal-bg.open{display:grid}
+.modal{background:var(--panel2);border:1px solid var(--line);border-radius:18px;max-width:440px;width:100%;padding:26px;max-height:88vh;overflow-y:auto}
+.modal h3{font-size:18px;margin-bottom:2px}
+.modal .bank{font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:18px}
+.wstep{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:13.5px;line-height:1.55;color:var(--cream)}
+.wstep:last-of-type{border-bottom:none}
+.wstep .n{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--amber);width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;margin-top:1px}
+.modal label{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--muted);margin:16px 0;line-height:1.5;cursor:pointer}
+.modal label input{margin-top:2px;accent-color:var(--green)}
+.btn-done{width:100%;background:var(--green);color:#04150a;font-weight:700;font-size:14px;padding:12px;border-radius:10px;opacity:.35;pointer-events:none}
+.btn-done.on{opacity:1;pointer-events:auto}
+.btn-cancel{width:100%;background:transparent;color:var(--muted);font-size:13px;padding:10px;margin-top:6px}
+.crowd{font-family:var(--mono);font-size:10.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 11px;margin-top:14px;line-height:1.6}
+
+/* receipt */
+.receipt{background:#FAF6EE;color:#131A2A;border-radius:6px;padding:26px 22px;max-width:380px;margin:30px auto 10px;font-family:var(--mono);font-size:12.5px;position:relative;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.receipt::before,.receipt::after{content:'';position:absolute;left:0;right:0;height:10px;background:radial-gradient(circle at 6px 10px,transparent 6px,#FAF6EE 6.5px);background-size:12px 12px}
+.receipt::before{top:-9px;transform:rotate(180deg)}
+.receipt::after{bottom:-9px}
+.receipt h4{font-family:'Fraunces',serif;font-size:17px;text-align:center;margin-bottom:2px;color:#0A0E14}
+.receipt .rsub{text-align:center;font-size:10px;color:#5a6472;margin-bottom:16px}
+.receipt .rline{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #c9c2b4}
+.receipt .rline b{color:#B3261E}
+.receipt .rline .g{color:#1a7a33}
+.receipt .total{margin-top:14px;padding-top:12px;border-top:2px solid #131A2A;border-bottom:none;display:flex;justify-content:space-between;font-size:14px;font-weight:800}
+.receipt .foot{text-align:center;font-size:9.5px;color:#8a929e;margin-top:16px;line-height:1.6}
+.stamp-up{position:absolute;right:14px;top:52px;border:2.5px solid #1a7a33;color:#1a7a33;font-weight:800;font-size:13px;padding:5px 10px;border-radius:8px;transform:rotate(-8deg);opacity:.85}
+
+/* watch cta + pricing */
+.watch{background:linear-gradient(160deg,var(--panel),#101822);border:1px solid var(--line);border-radius:18px;padding:28px;margin-top:34px;text-align:center}
+.watch h3{font-size:21px;margin-bottom:8px}
+.watch p{color:var(--muted);font-size:13.5px;max-width:480px;margin:0 auto 18px;line-height:1.65}
+.watch .prices{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.price{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px 20px;min-width:150px;text-align:left}
+.price .pt{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:1px;margin-bottom:6px}
+.price .pp{font-family:'Fraunces',serif;font-size:22px;font-weight:700}
+.price .pd{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.55}
+.never{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:18px;line-height:1.7}
+.never b{color:var(--red)}
+
+.hidden{display:none!important}
+@media(max-width:560px){.wrap{padding:14px 12px 70px}.scan-panel{padding:20px 16px}.receipt{padding:22px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="logo"><span class="b">🌉</span>Drawbridge</div>
+    <div class="tag">you control the bridge</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero hero-cta">
+    <div class="bridge-stage">
+      <svg viewBox="0 0 340 180" width="100%" height="100%" aria-label="Drawbridge lowered">
+        <rect x="0" y="150" width="340" height="30" fill="#0d131c"/>
+        <path d="M0 165 Q85 155 170 165 T340 165 V180 H0 Z" fill="#111a26"/>
+        <rect x="38" y="70" width="52" height="80" rx="4" fill="#1A2331" stroke="#26313F"/>
+        <rect x="250" y="70" width="52" height="80" rx="4" fill="#1A2331" stroke="#26313F"/>
+        <g class="beam" id="beamL" style="transform-origin:90px 78px">
+          <rect x="90" y="72" width="80" height="12" rx="3" fill="#FFB454"/>
+          <line x1="120" y1="72" x2="120" y2="84" stroke="#0A0E14" stroke-width="2"/>
+          <line x1="150" y1="72" x2="150" y2="84" stroke="#0A0E14" stroke-width="2"/>
+        </g>
+        <g class="beam" id="beamR" style="transform-origin:250px 78px">
+          <rect x="170" y="72" width="80" height="12" rx="3" fill="#FFB454"/>
+          <line x1="195" y1="72" x2="195" y2="84" stroke="#0A0E14" stroke-width="2"/>
+          <line x1="222" y1="72" x2="222" y2="84" stroke="#0A0E14" stroke-width="2"/>
+        </g>
+        <text x="170" y="40" text-anchor="middle" fill="#8A97A8" font-size="11" font-family="JetBrains Mono">EXPOSURE</text>
+        <text x="170" y="60" text-anchor="middle" fill="#E5484D" font-size="20" font-weight="800" font-family="JetBrains Mono" id="scoreTxt">71</text>
+      </svg>
+    </div>
+    <h1>You linked your bank to an AI this week.<br><em>What else is still connected?</em></h1>
+    <p>23 apps can read your transactions. Some can move your money. Two belong to companies that no longer exist. Nobody ever showed you the full list — until now.</p>
+    <button class="cta" onclick="startScan()">Run the 5-minute Scan →</button>
+    <span class="cta-sub">no credentials · no bank linking · free forever</span>
+    <div class="spark">⚡ <b>75% skeptical</b> — how X reacted when Claude asked for bank access (163 comments, Nov 2026). The fear is justified. The answer is an audit.</div>
+  </div>
+
+  <!-- SCAN -->
+  <div class="scan-panel">
+    <h2>Scanning your surfaces…</h2>
+    <div class="sub">Drawbridge sees what no single dashboard can</div>
+    <ul class="rail" id="rail">
+      <li data-n="12"><span class="dot">✓</span>Plaid Portal <span class="n">—</span></li>
+      <li data-n="6"><span class="dot">✓</span>Chase · Connected Apps <span class="n">—</span></li>
+      <li data-n="3"><span class="dot">✓</span>Citi · app-by-app sweep <span class="n">—</span></li>
+      <li data-n="2"><span class="dot">✓</span>Confirmation emails (forwarded) <span class="n">—</span></li>
+    </ul>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict-panel">
+    <h2>The Census</h2>
+    <div class="sub" id="censusSub">23 connections · 4 move money · 2 dead companies · exposure 71</div>
+
+    <div class="conn r-red" id="c1">
+      <div class="row1">
+        <div><div class="name">CashNow (advance app)</div>
+        <div class="meta">ACH PULL AUTHORIZATION · last active 8 months ago · Chase ••4821</div></div>
+        <span class="stamp red">🔴 MOVES MONEY</span>
+      </div>
+      <div class="act"><button class="btn-revoke" onclick="openWizard(this)">Cut it — guided revoke</button>
+      <span class="why">can pull funds without asking again</span></div>
+    </div>
+
+    <div class="conn r-dead" id="c2">
+      <div class="row1">
+        <div><div class="name">BudgetBuddy LLC</div>
+        <div class="meta">FULL TRANSACTIONS · acquired &amp; shut down Mar 2026 · token orphaned</div></div>
+        <span class="stamp dead">💀 DEAD APP</span>
+      </div>
+      <div class="act"><button class="btn-revoke" onclick="openWizard(this)">Cut it — guided revoke</button>
+      <span class="why">company gone; access lives on</span></div>
+    </div>
+
+    <div class="conn r-amber" id="c3">
+      <div class="row1">
+        <div><div class="name">Claude · Personal Finance</div>
+        <div class="meta">FULL TRANSACTIONS, 24 MONTHS · read-only via Plaid · connected TODAY</div></div>
+        <span class="stamp amber">🟡 READS EVERYTHING</span>
+      </div>
+      <div class="act"><button class="btn-revoke" onclick="openWizard(this)">Cut it — guided revoke</button>
+      <span class="why">salary, rent, medical — all visible</span></div>
+    </div>
+
+    <div class="conn r-green" id="c4">
+      <div class="row1">
+        <div><div class="name">Venmo</div>
+        <div class="meta">BALANCES + PAYMENT RAIL · active weekly · you use it</div></div>
+        <span class="stamp green">🟢 KEEP · IN USE</span>
+      </div>
+      <div class="act"><span class="why">known, active, needed — this one's fine</span></div>
+    </div>
+
+    <!-- RECEIPT -->
+    <div class="receipt" id="receipt" aria-live="polite">
+      <div class="stamp-up" id="rStamp">AUDITED</div>
+      <h4>DRAWBRIDGE SCAN CARD</h4>
+      <div class="rsub">Nov 6, 2026 · 11:04 PM · household: you</div>
+      <div class="rline"><span>connections found</span><b id="rTotal">23</b></div>
+      <div class="rline"><span>🔴 can move money</span><b id="rMove">4</b></div>
+      <div class="rline"><span>💀 dead companies</span><b id="rDead">2</b></div>
+      <div class="rline"><span>🟡 read everything</span><span id="rRead">11</span></div>
+      <div class="rline"><span>cut tonight</span><span class="g" id="rCut">0</span></div>
+      <div class="total rline"><span>EXPOSURE</span><span id="rScore">71 → 71</span></div>
+      <div class="foot">Drawbridge never asks for credentials.<br>The audit is not a connection. — drawbridge.app</div>
+    </div>
+
+    <!-- WATCH -->
+    <div class="watch">
+      <h3>Connections come back. Stay on the bridge.</h3>
+      <p>New-connection alerts the moment a confirmation email lands · quarterly re-audit with diffs · dead-app radar (we watch for shutdowns so you don't) · household mode for spouse &amp; teens.</p>
+      <div class="prices">
+        <div class="price"><div class="pt">FREE FOREVER</div><div class="pp">$0</div><div class="pd">Full scan · per-bank revoke paths · public app-risk database</div></div>
+        <div class="price"><div class="pt">PANIC PASS</div><div class="pp">$9</div><div class="pd">One-time · full guided revocation · PDF evidence pack</div></div>
+        <div class="price"><div class="pt">WATCH</div><div class="pp">$5<span style="font-size:13px">/mo</span></div><div class="pd">$39/yr · alerts · re-audits · household (5)</div></div>
+      </div>
+      <div class="never">we will <b>NEVER</b> take affiliate money from fintechs, recommend apps, or sell your exposure data.<br>The audit's integrity is the whole product.</div>
+    </div>
+  </div>
+</div>
+
+<!-- WIZARD MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="wName">Cut the connection</h3>
+    <div class="bank" id="wBank">CHASE · CONNECTED APPS PATH</div>
+    <div class="wstep"><span class="n">1</span><span>Chase.com → <b>Profile &amp; settings</b> → <b>Security</b> → <b>Account access</b> → <b>Connected apps</b></span></div>
+    <div class="wstep"><span class="n">2</span><span>Find the app in the list → tap it → <b>Remove access</b> (Chase confirms instantly; no phone call needed)</span></div>
+    <div class="wstep"><span class="n">3</span><span>Belt &amp; braces: open <b>my.plaid.com</b> → same app → <b>Disconnect</b> → optionally <b>Delete my data</b></span></div>
+    <div class="wstep"><span class="n">4</span><span>If it holds ACH pull rights, also revoke authorization in the app itself — our pre-filled letter is in your kit</span></div>
+    <div class="crowd" id="wCrowd">CROWD INTEL · Chase revoke: 91% succeed self-serve (n=2,412) · avg time 4 min · no hold queues reported this month</div>
+    <label><input type="checkbox" id="wCheck" onchange="document.getElementById('wDone').classList.toggle('on',this.checked)"> I confirm the connection is removed</label>
+    <button class="btn-done" id="wDone" onclick="confirmRevoke()">Confirm revocation ✓</button>
+    <button class="btn-cancel" onclick="closeWizard()">Not yet — remind me in the Watch digest</button>
+  </div>
+</div>
+
+<script>
+const R=[["Plaid Portal",12],["Chase · Connected Apps",6],["Citi · app-by-app sweep",3],["Confirmation emails (forwarded)",2]];
+let cut=0,pending=null;
+function startScan(){
+  document.body.classList.add('scanning');
+  const items=document.querySelectorAll('#rail li');
+  document.getElementById('beamL').style.transform='rotate(-14deg)';
+  document.getElementById('beamR').style.transform='rotate(14deg)';
+  items.forEach((li,i)=>{
+    setTimeout(()=>li.classList.add('active'),i*900);
+    setTimeout(()=>{li.classList.remove('active');li.classList.add('done');li.querySelector('.n').textContent='+'+R[i][1]+' found';},i*900+850);
+  });
+  setTimeout(()=>{document.body.classList.remove('scanning');document.body.classList.add('done');
+    document.getElementById('receipt').scrollIntoView({behavior:'smooth',block:'center'});},R.length*900+400);
+}
+function openWizard(btn){pending=btn.closest('.conn');document.getElementById('wName').textContent='Cut: '+pending.querySelector('.name').textContent;document.getElementById('modalBg').classList.add('open');document.getElementById('wCheck').checked=false;document.getElementById('wDone').classList.remove('on');}
+function closeWizard(){document.getElementById('modalBg').classList.remove('open');pending=null;}
+function confirmRevoke(){
+  if(!pending)return;
+  pending.classList.add('revoked');
+  pending.querySelector('.act').innerHTML='<span class="btn-revoked">✓ REVOKED · receipt saved</span><span class="why">connection cut Nov 6, 2026</span>';
+  cut++;
+  const total=23-cut,score=Math.max(12,71-cut*9);
+  document.getElementById('censusSub').textContent=total+' connections · '+Math.max(0,4-(cut>=1?1:0))+' move money · exposure '+score;
+  document.getElementById('rTotal').textContent=total;document.getElementById('rCut').textContent=cut;
+  document.getElementById('rScore').textContent='71 → '+score;
+  document.getElementById('scoreTxt').textContent=score;
+  const a=Math.min(58,score*0.8);
+  document.getElementById('beamL').style.transform='rotate(-'+a+'deg)';
+  document.getElementById('beamR').style.transform='rotate('+a+'deg)';
+  if(cut===3){const s=document.getElementById('rStamp');s.textContent='CLEAN';s.style.borderColor='#1a7a33';}
+  closeWizard();
+  document.getElementById('receipt').scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.getElementById('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeWizard();});
+</script>
+</body>
+</html>
