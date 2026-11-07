@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetNet 📒 — Per-project profit ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF6EC; --paper-2:#F3EDDD; --card:#FFFDF7;
+  --ink:#16202E; --ink-soft:#4A5768; --ink-faint:#8A94A3;
+  --green:#2F7D4F; --green-bg:#E4F1E9;
+  --red:#C03A2B; --red-bg:#F8E7E4;
+  --amber:#B77A16; --amber-bg:#FBF0DA;
+  --zombie:#7A7469; --zombie-bg:#EDEAE2;
+  --line:#E4DDCB;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(22,32,46,.06),0 8px 24px -12px rgba(22,32,46,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  background-image:radial-gradient(rgba(22,32,46,.05) 1px,transparent 1px);
+  background-size:22px 22px;
+}
+.num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.display{font-family:'Fraunces',serif}
+.wrap{max-width:430px;margin:0 auto;padding:0 16px 120px;position:relative}
+
+/* header */
+header{padding:28px 4px 14px;display:flex;align-items:baseline;justify-content:space-between}
+header .logo{font-family:'Fraunces',serif;font-weight:900;font-size:26px;letter-spacing:-.5px}
+header .logo em{font-style:normal;color:var(--green)}
+header .sub{font-size:11px;color:var(--ink-faint);font-weight:600;text-transform:uppercase;letter-spacing:.12em}
+
+/* portfolio strip */
+.portfolio{background:var(--ink);color:var(--paper);border-radius:var(--radius);padding:18px 18px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.portfolio::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(250,246,236,.07) 1px,transparent 1px);background-size:18px 18px;pointer-events:none}
+.portfolio h2{font-family:'Fraunces',serif;font-size:13px;font-weight:500;color:rgba(250,246,236,.65);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.portfolio .big-net{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;letter-spacing:-1px}
+.portfolio .big-net.pos{color:#7ED9A0}.portfolio .big-net.neg{color:#F0938A}
+.portfolio .meta{display:flex;gap:14px;margin-top:10px;font-size:12px;color:rgba(250,246,236,.75)}
+.portfolio .meta b{font-family:'JetBrains Mono',monospace;color:var(--paper);font-weight:700}
+.portfolio .hourly{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(250,246,236,.25);font-size:12px;color:rgba(250,246,236,.75)}
+.portfolio .hourly b{color:#FFD48A;font-family:'JetBrains Mono',monospace}
+
+/* section titles */
+.sec-title{display:flex;align-items:center;justify-content:space-between;margin:26px 4px 10px}
+.sec-title h3{font-family:'Fraunces',serif;font-size:17px;font-weight:700}
+.sec-title .hint{font-size:11px;color:var(--ink-faint);font-weight:600}
+
+/* project cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;position:relative}
+.card:active{transform:scale(.985)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
+.card-name{font-family:'Fraunces',serif;font-weight:700;font-size:16px}
+.card-age{font-size:11px;color:var(--ink-faint);font-weight:500}
+.stamp{font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 9px;border-radius:6px;border:1.5px solid;white-space:nowrap;transform:rotate(-2deg);text-transform:uppercase}
+.stamp.green{color:var(--green);border-color:var(--green);background:var(--green-bg)}
+.stamp.amber{color:var(--amber);border-color:var(--amber);background:var(--amber-bg)}
+.stamp.red{color:var(--red);border-color:var(--red);background:var(--red-bg)}
+.stamp.zombie{color:var(--zombie);border-color:var(--zombie);background:var(--zombie-bg)}
+.card-flows{display:flex;gap:16px;margin:8px 0 10px;font-size:13px}
+.card-flows .f{display:flex;align-items:center;gap:5px;color:var(--ink-soft)}
+.card-flows .f b{font-family:'JetBrains Mono',monospace;font-weight:700}
+.card-flows .in b{color:var(--green)}.card-flows .out b{color:var(--red)}
+.card-net{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--ink-soft);margin-bottom:6px}
+.card-net .n{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700}
+.card-net .n.pos{color:var(--green)}.card-net .n.neg{color:var(--red)}
+
+/* net meter */
+.meter{height:10px;border-radius:5px;background:var(--paper-2);position:relative;overflow:visible;border:1px solid var(--line)}
+.meter .fill{position:absolute;left:0;top:-1px;bottom:-1px;border-radius:5px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.meter .fill.spend{background:repeating-linear-gradient(45deg,#E8C9C3,#E8C9C3 6px,#F0DAD5 6px,#F0DAD5 12px)}
+.meter .fill.profit{background:linear-gradient(90deg,#7CB994,var(--green))}
+.meter .be{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--ink);opacity:.75}
+.meter .be::after{content:"BE";position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:700;color:var(--ink);letter-spacing:.05em}
+.card-sub{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--ink-faint);font-weight:500}
+.card-sub .hr b{font-family:'JetBrains Mono',monospace;color:var(--ink-soft)}
+
+/* zombie alert banner */
+.zombie-banner{background:var(--zombie-bg);border:1px dashed var(--zombie);border-radius:var(--radius);padding:13px 15px;margin-bottom:12px;font-size:12.5px;color:#4A463E;display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.zombie-banner .z{font-size:18px}
+.zombie-banner b{font-family:'Fraunces',serif}
+
+/* leaderboard */
+.board{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px 0;box-shadow:var(--shadow)}
+.board-row{display:flex;align-items:center;gap:10px;padding:10px 15px;border-bottom:1px solid var(--paper-2);font-size:13px}
+.board-row:last-child{border-bottom:none}
+.board-rank{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink-faint);width:20px}
+.board-row .bn{flex:1;font-weight:600}
+.board-row .bh{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px}
+.board-row .bh.top{color:var(--green)}
+.board-row .bh.bot{color:var(--red)}
+.board-caption{padding:10px 15px 12px;font-size:11px;color:var(--ink-faint);font-style:italic;border-top:1px dashed var(--line);margin-top:4px}
+
+/* FAB + entry sheet */
+.fab{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--paper);border:none;border-radius:999px;padding:16px 30px;font-family:'Fraunces',serif;font-weight:700;font-size:16px;box-shadow:0 8px 24px -6px rgba(22,32,46,.5);cursor:pointer;display:flex;align-items:center;gap:10px}
+.fab:active{transform:translateX(-50%) scale(.96)}
+.fab .plus{font-family:'JetBrains Mono',monospace;font-size:20px;color:#7ED9A0}
+.sheet-back{position:fixed;inset:0;background:rgba(22,32,46,.45);backdrop-filter:blur(2px);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet-back.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;bottom:0;left:50%;transform:translate(-50%,110%);width:100%;max-width:430px;background:var(--card);border-radius:20px 20px 0 0;z-index:80;padding:18px 20px 30px;box-shadow:0 -10px 40px rgba(22,32,46,.25);transition:transform .3s cubic-bezier(.2,.9,.25,1)}
+.sheet.open{transform:translate(-50%,0)}
+.sheet h3{font-family:'Fraunces',serif;font-size:18px;margin-bottom:14px;text-align:center}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.seg button{padding:16px 0;border-radius:12px;border:2px solid var(--line);background:var(--paper);font-family:'Fraunces',serif;font-weight:900;font-size:17px;cursor:pointer;color:var(--ink-faint);transition:all .15s}
+.seg button.in.on{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.seg button.out.on{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.amount-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.amount-row span{font-family:'JetBrains Mono',monospace;font-size:26px;color:var(--ink-faint)}
+.amount-row input{flex:1;font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;border:none;border-bottom:2px dashed var(--line);background:transparent;padding:6px 2px;color:var(--ink);outline:none;width:100%}
+.amount-row input:focus{border-bottom-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-soft)}
+.chip.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.sheet .row2{display:flex;gap:10px;margin-bottom:16px}
+.sheet .row2 input{flex:1;padding:11px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);font-size:13px;font-family:'Inter',sans-serif;color:var(--ink);outline:none}
+.sheet .row2 input:focus{border-color:var(--ink-faint)}
+.save-btn{width:100%;padding:16px;border-radius:12px;border:none;background:var(--ink);color:var(--paper);font-family:'Fraunces',serif;font-weight:700;font-size:16px;cursor:pointer}
+.save-btn.in-mode{background:var(--green)}.save-btn.out-mode{background:var(--red)}
+.save-btn:disabled{opacity:.4;cursor:not-allowed}
+.timer{position:absolute;top:20px;right:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint)}
+
+/* toast */
+.toast{position:fixed;top:18px;left:50%;transform:translate(-50%,-80px);z-index:100;background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:var(--shadow);transition:transform .35s cubic-bezier(.2,.9,.25,1);max-width:380px;text-align:center;line-height:1.45}
+.toast.show{transform:translate(-50%,0)}
+.toast .num{color:#7ED9A0}
+
+/* detail view */
+.detail{display:none}
+.detail.open{display:block}
+.dash.hidden{display:none}
+.back-btn{background:none;border:none;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;padding:10px 4px;display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif}
+.d-head{margin:6px 4px 16px}
+.d-head h2{font-family:'Fraunces',serif;font-size:24px;font-weight:900}
+.d-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.d-stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.d-stat .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);margin-bottom:5px}
+.d-stat .val{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700}
+.d-stat .val.pos{color:var(--green)}.d-stat .val.neg{color:var(--red)}
+.d-stat .sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
+.be-card{background:var(--amber-bg);border:1px solid #E8D5AE;border-radius:var(--radius);padding:15px;margin-bottom:14px;font-size:13px;line-height:1.55;color:#5C4A1E}
+.be-card b{font-family:'JetBrains Mono',monospace}
+.be-card .be-title{font-family:'Fraunces',serif;font-weight:700;font-size:14px;margin-bottom:6px;display:flex;gap:7px;align-items:center}
+.entries{margin-top:6px}
+.entry{display:flex;align-items:center;gap:11px;padding:11px 4px;border-bottom:1px solid var(--paper-2);font-size:13px}
+.entry .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.entry .dot.in{background:var(--green)}.entry .dot.out{background:var(--red)}
+.entry .e-main{flex:1;min-width:0}
+.entry .e-note{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.entry .e-date{font-size:11px;color:var(--ink-faint)}
+.entry .e-amt{font-family:'JetBrains Mono',monospace;font-weight:700}
+.entry .e-amt.in{color:var(--green)}.entry .e-amt.out{color:var(--red)}
+.kill-row{display:flex;gap:8px;margin:18px 0 8px}
+.kill-row button{flex:1;padding:12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink-soft);font-family:'Inter',sans-serif}
+.kill-row button:hover{border-color:var(--ink-faint)}
+.kill-row button.danger{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+
+footer{margin-top:36px;text-align:center;font-size:11px;color:var(--ink-faint);line-height:1.7}
+footer .flogo{font-family:'Fraunces',serif;font-weight:900;font-size:14px;color:var(--ink-soft)}
+
+@keyframes stampIn{0%{transform:rotate(-14deg) scale(2.4);opacity:0}60%{transform:rotate(-2deg) scale(.92);opacity:1}100%{transform:rotate(-2deg) scale(1)}}
+.stamp.pop{animation:stampIn .45s cubic-bezier(.2,.9,.3,1.2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="logo">Net<em>Net</em> 📒</div>
+      <div class="sub">per-project profit ledger</div>
+    </div>
+    <div class="sub num" id="today"></div>
+  </header>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div class="dash" id="dash">
+    <div class="portfolio">
+      <h2>All projects · net position</h2>
+      <div class="big-net num" id="p-net">—</div>
+      <div class="meta">
+        <span>in <b id="p-in">—</b></span>
+        <span>out <b id="p-out">—</b></span>
+        <span>projects <b id="p-count">—</b></span>
+      </div>
+      <div class="hourly">Your true hourly across everything: <b id="p-hourly">—</b> — that's what a Saturday of hustle actually pays.</div>
+    </div>
+
+    <div class="sec-title"><h3>Projects</h3><span class="hint">tap a card →</span></div>
+    <div id="zombie-zone"></div>
+    <div id="cards"></div>
+
+    <div class="sec-title"><h3>Saturday Leaderboard</h3><span class="hint">by true hourly</span></div>
+    <div class="board" id="board"></div>
+
+    <footer>
+      <div class="flogo">NetNet</div>
+      QuickBooks knows your business. NetNet knows your projects.<br>
+      Prototype · local-first demo · data lives in your browser (localStorage)
+    </footer>
+  </div>
+
+  <!-- ============ DETAIL ============ -->
+  <div class="detail" id="detail"></div>
+</div>
+
+<button class="fab" id="fab"><span class="plus">＋</span> Log money <span class="num" style="font-size:11px;opacity:.6">8s</span></button>
+
+<div class="sheet-back" id="sheetBack"></div>
+<div class="sheet" id="sheet">
+  <div class="timer" id="entryTimer"></div>
+  <h3>Log money — 8 seconds, no jargon</h3>
+  <div class="seg">
+    <button class="in on" id="segIn">IN ↓</button>
+    <button class="out" id="segOut">OUT ↑</button>
+  </div>
+  <div class="amount-row"><span>$</span><input id="amount" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"></div>
+  <div class="chips" id="projChips"></div>
+  <div class="row2">
+    <input id="note" placeholder="note (optional)" maxlength="60">
+    <input id="hours" type="number" inputmode="decimal" placeholder="hrs" step="0.25" min="0" style="max-width:80px">
+  </div>
+  <button class="save-btn in-mode" id="saveBtn" disabled>Save entry</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ============ NetNet prototype ============ */
+const LS='netnet_v1';
+const fmt=n=>(n<0?'-':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt0=n=>(n<0?'-':'')+'$'+Math.round(Math.abs(n)).toLocaleString('en-US');
+const days=d=>Math.floor((Date.now()-d)/864e5);
+const dateStr=t=>new Date(t).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+/* ---- seed data: the classic multi-hustle solopreneur ---- */
+function seed(){
+  const now=Date.now(), D=864e5;
+  const p=(name,emoji,entries,price)=>({id:'p'+Math.random().toString(36).slice(2,8),name,emoji,price:price||null,createdAt:now-entries.length*D,entries});
+  return {projects:[
+    p('Acme Website Redesign','🖥️',[
+      {t:'out',amt:49,note:'Figma seat',d:now-96*D,h:0},
+      {t:'out',amt:120,note:'Stock assets',d:now-90*D,h:0},
+      {t:'in',amt:2400,note:'Deposit 50%',d:now-88*D,h:0},
+      {t:'out',amt:0,note:'Design phase',d:now-70*D,h:22},
+      {t:'out',amt:0,note:'Build phase',d:now-40*D,h:31},
+      {t:'in',amt:2400,note:'Final invoice paid',d:now-12*D,h:0},
+      {t:'out',amt:0,note:'Handoff + training',d:now-10*D,h:7},
+    ]),
+    p('Etsy: Linocut Prints','🎨',[
+      {t:'out',amt:214,note:'Press + carving tools',d:now-120*D,h:0},
+      {t:'out',amt:86,note:'Paper + ink restock',d:now-110*D,h:0},
+      {t:'in',amt:38,note:'2 prints sold',d:now-95*D,h:0},
+      {t:'out',amt:0,note:'Listing photos + setup',d:now-90*D,h:9},
+      {t:'in',amt:57,note:'3 prints sold',d:now-60*D,h:0},
+      {t:'out',amt:22,note:'Etsy fees',d:now-60*D,h:0},
+      {t:'in',amt:19,note:'1 print (craft fair)',d:now-30*D,h:0},
+      {t:'out',amt:15,note:'Booth share',d:now-30*D,h:0},
+      {t:'out',amt:0,note:'Packing + shipping runs',d:now-25*D,h:6},
+    ]),
+    p('My Course Launch','🎓',[
+      {t:'out',amt:29,note:'Hosting (monthly)',d:now-75*D,h:0},
+      {t:'out',amt:0,note:'Filming + editing',d:now-70*D,h:26},
+      {t:'out',amt:149,note:'Launch ads',d:now-50*D,h:0},
+      {t:'out',amt:0,note:'More ads tweaking',d:now-40*D,h:8},
+      {t:'in',amt:236,note:'4 course sales',d:now-35*D,h:0},
+      {t:'out',amt:29,note:'Hosting (monthly)',d:now-15*D,h:0},
+    ]),
+    p('App Idea: SwipeSort','📱',[
+      {t:'out',amt:99,note:'Apple dev account',d:now-210*D,h:0},
+      {t:'out',amt:0,note:'Weekend builds',d:now-200*D,h:34},
+      {t:'out',amt:180,note:'Contract icon pack + ASO',d:now-170*D,h:0},
+      {t:'out',amt:0,note:'Maintenance fixes',d:now-140*D,h:6},
+    ]),
+    p('Newsletter: The Grind','✉️',[
+      {t:'out',amt:19,note:'Beehiiv (monthly)',d:now-30*D,h:0},
+      {t:'out',amt:0,note:'Writing 12 issues',d:now-28*D,h:14},
+      {t:'in',amt:450,note:'2 sponsor slots',d:now-20*D,h:0},
+      {t:'in',amt:87,note:'Paid subs',d:now-9*D,h:0},
+      {t:'out',amt:19,note:'Beehiiv (monthly)',d:now-2*D,h:0},
+    ]),
+  ]};
+}
+
+let state=JSON.parse(localStorage.getItem(LS)||'null')||seed();
+const save=()=>localStorage.setItem(LS,JSON.stringify(state));
+
+/* ---- per-project math ---- */
+function stats(pr){
+  let inn=0,out=0,hrs=0,lastIn=0,lastAny=0;
+  for(const e of pr.entries){
+    if(e.t==='in'){inn+=e.amt;if(e.d>lastIn)lastIn=e.d;}
+    else out+=e.amt;
+    hrs+=e.h||0;
+    if(e.d>lastAny)lastAny=e.d;
+  }
+  const net=inn-out;
+  const margin=inn>0?net/inn:null;
+  const hourly=hrs>0?net/hrs:null;
+  const zombie=out>0&&inn===0&&days(lastAny)>90;
+  const stale=out>0&&inn>0&&days(lastIn)>90;
+  let verdict='green',vlabel='In the green';
+  if(zombie){verdict='zombie';vlabel='💀 Zombie';}
+  else if(net<0){verdict='red';vlabel='In the red';}
+  else if(inn===0||Math.abs(net)<Math.max(25,inn*0.02)){verdict='amber';vlabel='Breaking even';}
+  // break-even units (only if a price is set or we can infer avg revenue)
+  let beUnits=null,beLeft=null,avgRev=null;
+  const sales=pr.entries.filter(e=>e.t==='in'&&e.amt>0);
+  if(sales.length){avgRev=sales.reduce((s,e)=>s+e.amt,0)/sales.length;}
+  if(net<0&&avgRev){beUnits=Math.ceil(-net/avgRev);beLeft=beUnits;}
+  else if(net>=0&&avgRev){beUnits=0;}
+  return {inn,out,net,hrs,margin,hourly,zombie:zombie||stale,verdict,vlabel,beUnits,avgRev};
+}
+
+/* ---- render dashboard ---- */
+function render(){
+  document.getElementById('today').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  let T={i:0,o:0,h:0,n:0};
+  const withStats=state.projects.map(pr=>{const s=stats(pr);T.i+=s.inn;T.o+=s.out;T.h+=s.hrs;T.n+=s.net;return{pr,s};});
+
+  const pn=document.getElementById('p-net');
+  pn.textContent=fmt(T.n);pn.className='big-net num '+(T.n>=0?'pos':'neg');
+  document.getElementById('p-in').textContent=fmt0(T.i);
+  document.getElementById('p-out').textContent=fmt0(T.o);
+  document.getElementById('p-count').textContent=state.projects.length+' active';
+  document.getElementById('p-hourly').textContent=T.h>0?fmt(T.n/T.h)+'/hr':'—';
+
+  // zombie zone
+  const zz=document.getElementById('zombie-zone');
+  const zombies=withStats.filter(x=>x.s.zombie&&x.s.out>0);
+  zz.innerHTML=zombies.length?zombies.map(x=>`
+    <div class="zombie-banner"><span class="z">🧟</span>
+      <div><b>${x.pr.name}</b> — <span class="num">${fmt0(x.s.out)}</span> spent, ${x.s.inn===0?'zero revenue ever':'no income in 90+ days'}. Kill it, park it, or push it. The numbers won't decide for you, but they'll stare at you until you do.</div>
+    </div>`).join(''):'';
+
+  // cards
+  document.getElementById('cards').innerHTML=withStats.map(({pr,s})=>{
+    const spendW=Math.min(100,s.out/Math.max(s.inn,s.out,1)*100);
+    const profitW=s.net>0?Math.min(100-spendW,s.net/Math.max(s.inn,s.out,1)*100):0;
+    const bePct=Math.min(100,Math.max(4,s.out/Math.max(s.inn,s.out,1)*100));
+    return `
+    <div class="card" data-id="${pr.id}">
+      <div class="card-top">
+        <div><div class="card-name">${pr.emoji} ${pr.name}</div>
+        <div class="card-age num">started ${dateStr(pr.createdAt)} · ${days(pr.createdAt)}d ago</div></div>
+        <span class="stamp ${s.verdict}">${s.vlabel}</span>
+      </div>
+      <div class="card-flows">
+        <span class="f in">↓ in <b>${fmt0(s.inn)}</b></span>
+        <span class="f out">↑ out <b>${fmt0(s.out)}</b></span>
+        <span class="f">⏱ <b>${s.hrs}h</b></span>
+      </div>
+      <div class="card-net">
+        <span>net position</span>
+        <span class="n ${s.net>=0?'pos':'neg'}">${fmt(s.net)}</span>
+      </div>
+      <div class="meter">
+        ${s.net<0?`<div class="fill spend" style="width:${spendW}%"></div>`
+                :`<div class="fill spend" style="width:${bePct*.6}%"></div><div class="fill profit" style="left:${bePct*.6}%;width:${Math.max(profitW*.6,4)}%"></div>`}
+        <div class="be" style="left:${bePct*.6}%"></div>
+      </div>
+      <div class="card-sub">
+        <span>${s.margin!==null?(s.margin*100).toFixed(0)+'% margin':'no revenue yet'} ${s.beUnits?` · <b style="font-family:'JetBrains Mono',monospace">${s.beUnits} more sales</b> to break even`:''}</span>
+        <span class="hr">${s.hourly!==null?`true hourly <b>${fmt0(s.hourly)}</b>/h`:'log hours →'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // leaderboard
+  const ranked=withStats.filter(x=>x.hourly!==null).sort((a,b)=>b.s.hourly-a.s.hourly);
+  document.getElementById('board').innerHTML=ranked.length?
+    ranked.map((x,i)=>`<div class="board-row"><span class="board-rank">${i+1}.</span><span class="bn">${x.pr.emoji} ${x.pr.name}</span><span class="bh ${i===0?'top':''} ${i===ranked.length-1&&ranked.length>2?'bot':''}">${fmt0(x.s.hourly)}/hr</span></div>`).join('')+
+    `<div class="board-caption">Where you spend your next Saturday, ranked by what an hour of it actually pays. The bottom row isn't a failure — it's a decision you haven't made yet.</div>`
+    :`<div class="board-row"><span class="bn" style="color:var(--ink-faint)">Log entries with hours to unlock your true hourly.</span></div>`;
+
+  document.querySelectorAll('.card').forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
+}
+
+/* ---- detail view ---- */
+function openDetail(id){
+  const pr=state.projects.find(p=>p.id===id);if(!pr)return;
+  const s=stats(pr);
+  const sorted=[...pr.entries].sort((a,b)=>b.d-a.d);
+  const beHtml=s.beUnits?`
+    <div class="be-card">
+      <div class="be-title">🎯 Break-even radar</div>
+      You've sunk <b>${fmt0(s.out)}</b> into this project. Average sale is <b>${fmt0(s.avgRev)}</b>.
+      You need <b>${s.beUnits} more sale${s.beUnits>1?'s':''}</b> to break even — or a decision.
+    </div>`:'';
+  const killHtml=s.zombie?`
+    <div class="kill-row">
+      <button onclick="verdictAct('${id}','parked')">🅿️ Park it</button>
+      <button onclick="verdictAct('${id}','pushed')">🔥 Push it</button>
+      <button class="danger" onclick="verdictAct('${id}','killed')">🪦 Kill it</button>
+    </div>`:'';
+
+  document.getElementById('detail').innerHTML=`
+    <button class="back-btn" onclick="closeDetail()">← All projects</button>
+    <div class="d-head">
+      <h2>${pr.emoji} ${pr.name} <span class="stamp ${s.verdict}" style="vertical-align:middle;font-size:10px">${s.vlabel}</span></h2>
+    </div>
+    <div class="d-stats">
+      <div class="d-stat"><div class="lbl">Money in</div><div class="val pos">${fmt(s.inn)}</div></div>
+      <div class="d-stat"><div class="lbl">Money out</div><div class="val neg">${fmt(s.out)}</div></div>
+      <div class="d-stat"><div class="lbl">Net position</div><div class="val ${s.net>=0?'pos':'neg'}">${fmt(s.net)}</div><div class="sub">${s.margin!==null?(s.margin*100).toFixed(0)+'% margin':'—'}</div></div>
+      <div class="d-stat"><div class="lbl">True hourly</div><div class="val">${s.hourly!==null?fmt(s.hourly)+'/h':'—'}</div><div class="sub num">${s.hrs}h logged</div></div>
+    </div>
+    ${beHtml}${killHtml}
+    <div class="sec-title"><h3>Ledger</h3><span class="hint num">${pr.entries.length} entries</span></div>
+    <div class="entries">
+      ${sorted.map(e=>`
+        <div class="entry"><span class="dot ${e.t}"></span>
+          <div class="e-main"><div class="e-note">${e.note||'—'}</div><div class="e-date num">${dateStr(e.d)}${e.h?` · ${e.h}h`:''}</div></div>
+          <span class="e-amt ${e.t}">${e.t==='in'?'+':'−'}${fmt0(e.amt)||'$0'}${e.h&&e.amt===0?'':''}</span>
+        </div>`).join('')}
+    </div>
+    <div class="kill-row" style="margin-top:20px">
+      <button onclick="renameAct('${id}')">✏️ Rename</button>
+      <button class="danger" onclick="delAct('${id}')">🗑 Archive project</button>
+    </div>
+    <footer style="margin-top:24px">Every entry is local. Export anytime — the ledger you can walk away from is the ledger you trust.</footer>
+  `;
+  document.getElementById('dash').classList.add('hidden');
+  document.getElementById('detail').classList.add('open');
+  window.scrollTo(0,0);
+}
+function closeDetail(){
+  document.getElementById('detail').classList.remove('open');
+  document.getElementById('dash').classList.remove('hidden');
+  render();
+}
+window.closeDetail=closeDetail;
+window.verdictAct=(id,act)=>{
+  const pr=state.projects.find(p=>p.id===id);
+  if(act==='killed'){
+    if(!confirm(`Archive "${pr.name}"? The lesson stays in your Hustle Wrap.`))return;
+    state.projects=state.projects.filter(p=>p.id!==id);save();toast(`🪦 ${pr.name} archived. Money saved > money made.`);closeDetail();return;
+  }
+  toast(act==='parked'?`🅿️ ${pr.name} parked. We'll remind you in 30 days.`:`🔥 ${pr.name} — push mode. Break-even target set.`);
+};
+window.delAct=id=>verdictAct(id,'killed');
+window.renameAct=id=>{
+  const pr=state.projects.find(p=>p.id===id);
+  const n=prompt('Project name:',pr.name);
+  if(n&&n.trim()){pr.name=n.trim();save();openDetail(id);}
+};
+
+/* ---- entry sheet ---- */
+const sheet=document.getElementById('sheet'),back=document.getElementById('sheetBack');
+let mode='in',selProj=null,t0=null,timerInt=null;
+function buildChips(){
+  document.getElementById('projChips').innerHTML=state.projects.map(p=>
+    `<button class="chip" data-id="${p.id}">${p.emoji} ${p.name}</button>`).join('')+
+    `<button class="chip" data-id="__new">＋ new project</button>`;
+  document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    if(c.dataset.id==='__new'){
+      const n=prompt('New project name:');
+      if(!n||!n.trim())return;
+      const emoji=prompt('An emoji for it (optional):')||'📁';
+      const pr={id:'p'+Math.random().toString(36).slice(2,8),name:n.trim(),emoji,createdAt:Date.now(),entries:[]};
+      state.projects.unshift(pr);save();buildChips();
+      selProj=pr.id;markChips();validate();return;
+    }
+    selProj=c.dataset.id;markChips();validate();
+  });
+}
+function markChips(){document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.id===selProj));}
+function openSheet(){
+  sheet.classList.add('open');back.classList.add('open');
+  buildChips();if(state.projects.length===1){selProj=state.projects[0].id;markChips();}
+  document.getElementById('amount').focus();
+  t0=Date.now();
+  timerInt=setInterval(()=>{document.getElementById('entryTimer').textContent=((Date.now()-t0)/1000).toFixed(1)+'s';},100);
+}
+function closeSheet(){
+  sheet.classList.remove('open');back.classList.remove('open');
+  clearInterval(timerInt);document.getElementById('entryTimer').textContent='';
+  document.getElementById('amount').value='';document.getElementById('note').value='';document.getElementById('hours').value='';
+}
+document.getElementById('fab').onclick=openSheet;
+back.onclick=closeSheet;
+document.getElementById('segIn').onclick=()=>{mode='in';seg();};
+document.getElementById('segOut').onclick=()=>{mode='out';seg();};
+function seg(){
+  document.getElementById('segIn').classList.toggle('on',mode==='in');
+  document.getElementById('segOut').classList.toggle('on',mode==='out');
+  const b=document.getElementById('saveBtn');
+  b.className='save-btn '+(mode==='in'?'in-mode':'out-mode');
+}
+function validate(){
+  const amt=parseFloat(document.getElementById('amount').value);
+  document.getElementById('saveBtn').disabled=!(amt>0&&selProj);
+}
+document.getElementById('amount').oninput=validate;
+document.getElementById('saveBtn').onclick=()=>{
+  const amt=parseFloat(document.getElementById('amount').value);
+  const pr=state.projects.find(p=>p.id===selProj);
+  if(!(amt>0&&pr))return;
+  const h=parseFloat(document.getElementById('hours').value)||0;
+  pr.entries.push({t:mode,amt,note:document.getElementById('note').value.trim()||(mode==='in'?'Income':'Expense'),d:Date.now(),h});
+  save();
+  const secs=((Date.now()-t0)/1000).toFixed(1);
+  const s=stats(pr);
+  let msg=`${mode==='in'?'↓':'↑'} ${fmt(amt)} logged to <b>${pr.name}</b> in <span class="num">${secs}s</span> · net now <span class="num">${fmt(s.net)}</span>`;
+  if(mode==='in'&&s.net>=0&&s.inn-amt<s.out){msg=`🟢 <b>${pr.name}</b> just broke even. Stamped IN THE GREEN.`;}
+  if(s.beUnits&&mode==='out'){msg+=` · <span class="num">${s.beUnits}</span> sales to break even`;}
+  toast(msg);
+  closeSheet();
+  if(document.getElementById('detail').classList.contains('open'))openDetail(selProj);else render();
+  // pop the stamp if visible
+  setTimeout(()=>{document.querySelectorAll('.stamp').forEach(st=>st.classList.add('pop'));},50);
+};
+
+/* ---- toast ---- */
+let toastT=null;
+function toast(html){
+  const el=document.getElementById('toast');
+  el.innerHTML=html;el.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3800);
+}
+
+/* ---- reset (for demo) ---- */
+document.addEventListener('keydown',e=>{
+  if(e.key==='r'&&e.shiftKey){localStorage.removeItem(LS);location.reload();}
+});
+
+render();
+</script>
+</body>
+</html>
