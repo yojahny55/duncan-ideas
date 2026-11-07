@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waylock — Hospital Wayfinding Without the Beacons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF8F4; --card:#FFFFFF; --teal:#0E4F4A; --teal2:#146B63;
+  --amber:#F5A623; --green:#3FB950; --coral:#E5484D; --ink:#1C2B2A;
+  --muted:#6B7F7D; --line:#E4DFD6; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:600}
+.mono{font-family:var(--mono)}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none}
+.wrap{max-width:440px;margin:0 auto;padding:18px 16px 90px}
+
+/* top bar */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 0 20px}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:700;display:flex;align-items:center;gap:9px;color:var(--teal)}
+.logo .m{width:28px;height:28px;border-radius:8px;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:15px}
+.topbar .tag{font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+/* screens */
+.screen{display:none}
+.screen.on{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* hero */
+.hero{text-align:center;padding:14px 0 22px}
+.hero h1{font-size:clamp(26px,7vw,36px);line-height:1.12;margin-bottom:12px}
+.hero h1 em{color:var(--teal2);font-style:normal}
+.hero p{color:var(--muted);font-size:14px;line-height:1.6;max-width:380px;margin:0 auto 18px}
+.stats{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--muted);line-height:1.4}
+.stat b{display:block;font-family:var(--mono);font-size:15px;color:var(--coral)}
+.stat.g b{color:var(--green)}
+
+/* email paste box */
+.mailbox{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:16px;text-align:left;margin-bottom:14px}
+.mailbox .bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.mailbox .dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.mailbox .from{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto}
+.mailbox .subj{font-weight:600;font-size:13px;margin-bottom:6px}
+.mailbox .body{font-size:12px;color:var(--muted);line-height:1.65;font-family:var(--mono)}
+.mailbox .body b{color:var(--ink)}
+.cta{width:100%;background:var(--teal);color:#fff;font-weight:700;font-size:15px;padding:15px;border-radius:12px;letter-spacing:.2px;transition:transform .15s;box-shadow:0 6px 20px rgba(14,79,74,.22)}
+.cta:hover{transform:translateY(-2px)}
+.cta.amber{background:var(--amber);color:#2B1D02;box-shadow:0 6px 20px rgba(245,166,35,.3)}
+.cta-sub{display:block;text-align:center;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.spark{margin-top:18px;font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;line-height:1.6;text-align:left}
+.spark b{color:var(--teal2)}
+
+/* parsing */
+.parse{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:6px}
+.parse h3{font-size:16px;margin-bottom:14px}
+.rail{list-style:none}
+.rail li{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.rail li:last-child{border-bottom:none}
+.rail .d{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:10px;color:transparent;transition:.3s}
+.rail li.active .d{border-color:var(--amber);animation:pulse 1s infinite}
+.rail li.done .d{border-color:var(--green);background:var(--green);color:#fff}
+.rail li.done{color:var(--ink)}
+.rail .v{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--green);opacity:0;transition:.3s}
+.rail li.done .v{opacity:1}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(245,166,35,.15)}}
+
+/* route card */
+.routecard{background:var(--card);border:1.5px solid var(--teal);border-radius:18px;overflow:hidden;box-shadow:0 10px 34px rgba(14,79,74,.14)}
+.rc-top{background:var(--teal);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.rc-top .k{font-family:var(--mono);font-size:10px;letter-spacing:1px;opacity:.75}
+.rc-top .t{font-family:'Fraunces',serif;font-size:17px;font-weight:600}
+.rc-top .time{font-family:var(--mono);font-size:20px;font-weight:800}
+.rc-body{padding:16px 18px}
+.rc-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.rc-row:last-child{border-bottom:none}
+.rc-row .l{color:var(--muted)}
+.rc-row .r{font-family:var(--mono);font-weight:600;text-align:right}
+.leave{background:#FFF7E8;border:1px solid #F5DFAE;border-radius:10px;padding:10px 14px;margin-top:12px;font-size:12px;line-height:1.5}
+.leave b{font-family:var(--mono);color:#8A6410}
+.qr{display:flex;gap:12px;align-items:center;margin-top:14px;background:var(--paper);border-radius:10px;padding:10px 12px}
+.qr svg{flex:none}
+.qr p{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* nav screen */
+.navhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.navhead .stop{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.progress{display:flex;gap:6px;margin-bottom:16px}
+.progress .p{height:5px;flex:1;border-radius:3px;background:var(--line);transition:.3s}
+.progress .p.done{background:var(--green)}
+.progress .p.cur{background:var(--amber)}
+.stepcard{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 8px 26px rgba(28,43,42,.08)}
+.photo{position:relative;height:220px;background:linear-gradient(160deg,#DCE9E7 0%,#C4D8D5 55%,#AFC9C5 100%)}
+.photo svg{position:absolute;inset:0;width:100%;height:100%}
+.photo .floor{position:absolute;top:12px;left:12px;background:var(--teal);color:#fff;font-family:var(--mono);font-size:11px;font-weight:800;padding:5px 11px;border-radius:8px;letter-spacing:.5px}
+.photo .arrow{position:absolute;bottom:14px;right:14px;width:52px;height:52px;border-radius:50%;background:var(--amber);display:grid;place-items:center;font-size:24px;box-shadow:0 6px 18px rgba(0,0,0,.25);animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.stepbody{padding:18px}
+.stepbody h2{font-size:20px;line-height:1.25;margin-bottom:8px}
+.stepbody .dist{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:12px}
+.stepbody .dist b{color:var(--teal2)}
+.stepbody .tip{font-size:12px;color:var(--muted);background:var(--paper);border-radius:10px;padding:10px 12px;line-height:1.55;border-left:3px solid var(--amber)}
+.navbtns{display:flex;gap:10px;margin-top:16px}
+.navbtns button{flex:1;padding:14px;border-radius:12px;font-weight:700;font-size:14px}
+.btn-back{background:var(--card);border:1.5px solid var(--line);color:var(--muted)}
+.btn-next{background:var(--teal);color:#fff;box-shadow:0 5px 16px rgba(14,79,74,.25)}
+.btn-arrive{background:var(--green);color:#fff;box-shadow:0 5px 16px rgba(63,185,80,.3)}
+
+/* panic button */
+.panic{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--card);border:1.5px solid var(--coral);color:var(--coral);font-weight:700;font-size:13px;padding:11px 22px;border-radius:999px;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(229,72,77,.18);z-index:40}
+.panic.on{display:flex}
+.panic .s{width:8px;height:8px;border-radius:50%;background:var(--coral)}
+
+/* timeline */
+.tl h2{font-size:22px;margin:6px 0 2px}
+.tl .sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:18px}
+.tline{list-style:none;position:relative;padding-left:26px}
+.tline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.tline li{position:relative;padding:10px 0 14px}
+.tline .node{position:absolute;left:-26px;top:13px;width:18px;height:18px;border-radius:50%;background:var(--card);border:2px solid var(--line);display:grid;place-items:center;font-size:9px}
+.tline li.done .node{background:var(--green);border-color:var(--green);color:#fff}
+.tline li.cur .node{border-color:var(--amber);background:var(--amber);animation:pulse 1.2s infinite}
+.tline .tt{font-weight:600;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.tline .tt .mono{font-size:11px;color:var(--muted);font-weight:600}
+.tline .dd{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.tline li.cur .tt{color:var(--teal)}
+.here{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:1px;background:var(--amber);color:#2B1D02;border-radius:5px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+
+/* lost modal */
+.modal{position:fixed;inset:0;background:rgba(28,43,42,.55);display:none;place-items:center;z-index:50;padding:20px}
+.modal.on{display:grid}
+.lostbox{background:var(--card);border-radius:18px;max-width:400px;width:100%;padding:22px;animation:fade .25s}
+.lostbox h3{font-size:19px;margin-bottom:4px;color:var(--coral)}
+.lostbox .cal{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.55}
+.desk{display:flex;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.desk .ic{width:40px;height:40px;border-radius:10px;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:19px;flex:none}
+.desk .n{font-weight:600;font-size:13px}
+.desk .m{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px;line-height:1.5}
+.lostbtns{display:flex;gap:10px;margin-top:14px}
+.lostbtns button{flex:1;padding:13px;border-radius:12px;font-weight:700;font-size:13px}
+.lb-call{background:var(--teal);color:#fff}
+.lb-close{background:var(--card);border:1.5px solid var(--line);color:var(--muted)}
+
+/* arrival */
+.arrive{text-align:center;padding:24px 0}
+.arrive .ring{width:96px;height:96px;border-radius:50%;background:rgba(63,185,80,.12);border:2.5px solid var(--green);display:grid;place-items:center;font-size:40px;margin:0 auto 18px;animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.arrive h2{font-size:24px;margin-bottom:8px}
+.arrive p{color:var(--muted);font-size:13px;line-height:1.6;max-width:320px;margin:0 auto 20px}
+.receipt{background:var(--card);border:1px dashed var(--muted);border-radius:12px;padding:14px 16px;text-align:left;font-family:var(--mono);font-size:11px;line-height:2;margin-bottom:20px;position:relative}
+.receipt::after{content:'';position:absolute;bottom:-7px;left:10px;right:10px;height:7px;background:repeating-linear-gradient(90deg,transparent 0 8px,var(--paper) 8px 16px);border-bottom:1px dashed var(--muted)}
+.receipt b{color:var(--green)}
+.escort{background:#EAF4EB;border:1px solid #CBE5CE;border-radius:10px;padding:10px 14px;font-size:12px;color:#2B5132;margin-bottom:20px;text-align:left}
+.link{background:none;color:var(--teal2);font-size:13px;font-weight:600;text-decoration:underline;padding:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo"><span class="m">🧭</span>Waylock</div>
+    <span class="tag">prototype · no beacons needed</span>
+  </div>
+
+  <!-- SCREEN 1: HERO -->
+  <section class="screen on" id="s-hero">
+    <div class="hero">
+      <h1>The hospital is a maze.<br>Your appointment <em>isn't.</em></h1>
+      <p>Forward your appointment email. Waylock builds a photo-guided route from the lobby door to the suite door — no app-per-hospital, no BLE beacons, works offline.</p>
+      <div class="stats">
+        <div class="stat"><b>30%</b>of patients get lost<br>in large hospitals</div>
+        <div class="stat"><b>6.9M</b>UK appointments<br>missed per year</div>
+        <div class="stat g"><b>−25%</b>no-shows with digital<br>wayfinding</div>
+      </div>
+    </div>
+
+    <div class="mailbox">
+      <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="from">route@waylock.app</span></div>
+      <div class="subj">Your appointment — Tampa General Medical Group</div>
+      <div class="body">
+        Patient: <b>Maria Chavez</b><br>
+        When: <b>Tue Nov 10, 9:40 AM</b> (arrive 30 min early)<br>
+        Where: <b>Ambulatory Care Center, Level 4, Suite 4200 — Cardiology</b><br>
+        Parking: <b>Garage B, Level 2 (skybridge to ACC lobby)</b><br>
+        Bring: photo ID, insurance card, referral slip
+      </div>
+    </div>
+
+    <button class="cta" onclick="startParse()">Build My Route Card →</button>
+    <span class="cta-sub">zero typing · zero account needed for your first visit</span>
+
+    <div class="spark">
+      <b>The spark:</b> r/AppIdeas weekly top — "turn-by-turn indoor navigation for massive hospital complexes." The comments named the incumbents (Pointr, Zappar) and the blocker (BLE beacons + hospital contracts). Waylock's bet: <b>a $0.10 QR sticker beats a $40 beacon</b>, and the patient — not the hospital — is the customer.
+    </div>
+  </section>
+
+  <!-- SCREEN 2: PARSING -->
+  <section class="screen" id="s-parse">
+    <div class="parse">
+      <h3>Reading your appointment…</h3>
+      <ul class="rail" id="rail">
+        <li><span class="d">✓</span>Facility & building<span class="v">ACC</span></li>
+        <li><span class="d">✓</span>Floor & suite<span class="v">L4 · 4200</span></li>
+        <li><span class="d">✓</span>Time & arrival buffer<span class="v">9:40 −30m</span></li>
+        <li><span class="d">✓</span>Parking instructions<span class="v">Garage B</span></li>
+        <li><span class="d">✓</span>Matching venue route map<span class="v">found ✓</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: ROUTE CARD -->
+  <section class="screen" id="s-route">
+    <div class="routecard">
+      <div class="rc-top">
+        <div><div class="k">ROUTE CARD · TUE NOV 10</div><div class="t">Cardiology — Suite 4200</div></div>
+        <div class="time">9:40</div>
+      </div>
+      <div class="rc-body">
+        <div class="rc-row"><span class="l">Venue</span><span class="r">Tampa General · Ambulatory Care Center</span></div>
+        <div class="rc-row"><span class="l">Arrive by</span><span class="r">9:10 AM (30-min buffer)</span></div>
+        <div class="rc-row"><span class="l">Route</span><span class="r">Garage B → skybridge → elevators → L4</span></div>
+        <div class="rc-row"><span class="l">Walk time</span><span class="r">~9 min from Garage B</span></div>
+        <div class="rc-row"><span class="l">Bring</span><span class="r">ID · insurance · referral</span></div>
+        <div class="leave">⏰ <b>Leave by 8:31 AM</b> — computed backwards from your 9:10 arrival. Garage B fills by ~8:15 on Tuesday mornings <span style="font-family:var(--mono);font-size:10px">(crowd truth · n=214 visits)</span></div>
+        <div class="qr">
+          <svg width="46" height="46" viewBox="0 0 46 46"><rect width="46" height="46" rx="6" fill="#0E4F4A"/><g fill="#fff"><rect x="6" y="6" width="12" height="12"/><rect x="9" y="9" width="6" height="6" fill="#0E4F4A"/><rect x="28" y="6" width="12" height="12"/><rect x="31" y="9" width="6" height="6" fill="#0E4F4A"/><rect x="6" y="28" width="12" height="12"/><rect x="9" y="31" width="6" height="6" fill="#0E4F4A"/><rect x="22" y="22" width="4" height="4"/><rect x="28" y="28" width="4" height="4"/><rect x="34" y="34" width="6" height="6"/><rect x="28" y="36" width="4" height="4"/><rect x="36" y="26" width="4" height="4"/></g></svg>
+          <p><b style="color:var(--ink)">At the ACC lobby?</b> Scan the Waylock sticker on the information desk to lock your position — no beacons, no Bluetooth, one tap.</p>
+        </div>
+        <div style="margin-top:16px">
+          <button class="cta amber" onclick="startNav()">Start Walking →</button>
+          <button class="link" style="width:100%;margin-top:8px" onclick="show('s-timeline')">See full visit timeline</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 4: NAV (steps injected by JS) -->
+  <section class="screen" id="s-nav">
+    <div class="navhead">
+      <span class="stop mono" id="navstop">STOP 1 OF 5</span>
+      <span class="stop mono">📴 works offline</span>
+    </div>
+    <div class="progress" id="prog"></div>
+    <div class="stepcard">
+      <div class="photo" id="photo"></div>
+      <div class="stepbody">
+        <h2 id="steptitle"></h2>
+        <div class="dist" id="stepdist"></div>
+        <div class="tip" id="steptip"></div>
+      </div>
+    </div>
+    <div class="navbtns">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <button class="btn-next" id="btnNext" onclick="nextStep()">I'm here →</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 5: TIMELINE -->
+  <section class="screen" id="s-timeline">
+    <div class="tl">
+      <h2>Your visit, end to end.</h2>
+      <div class="sub">TUE NOV 10 · AMBULATORY CARE CENTER</div>
+      <ul class="tline">
+        <li class="done"><span class="node">✓</span><div class="tt">Park — Garage B, Level 2 <span class="mono">8:45</span></div><div class="dd">Elevator core near stairwell B2. Crowd truth: garage fills ~8:15 Tuesdays.</div></li>
+        <li class="done"><span class="node">✓</span><div class="tt">Skybridge to ACC lobby <span class="mono">8:52</span></div><div class="dd">Covered walkway, step-free, ~3 min.</div></li>
+        <li class="cur"><span class="node">●</span><div class="tt">Registration — ACC lobby desk <span class="here">YOU ARE HERE</span> <span class="mono">9:10</span></div><div class="dd">Check in with ID + insurance. Avg wait 11 min at 9 AM (n=214).</div></li>
+        <li><span class="node">4</span><div class="tt">Cardiology check-in — Suite 4200 <span class="mono">9:25</span></div><div class="dd">Level 4, elevator bank C. Nurse will bring you back by 9:40.</div></li>
+        <li><span class="node">5</span><div class="tt">Checkout & pharmacy <span class="mono">~10:45</span></div><div class="dd">Same floor. Pharmacy is Level 1 off the main lobby — route auto-saves.</div></li>
+      </ul>
+      <div style="margin-top:22px;display:flex;gap:10px">
+        <button class="cta" style="flex:1" onclick="startNav()">Resume route</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 6: ARRIVED -->
+  <section class="screen" id="s-done">
+    <div class="arrive">
+      <div class="ring">🫀</div>
+      <h2>You're at Suite 4200.</h2>
+      <p>9 minutes walked, zero nurses stopped for directions. Check in at the cardiology desk — they're expecting Maria by 9:40.</p>
+      <div class="receipt">
+        VISIT RECEIPT · #WY-88214<br>
+        Garage B → Suite 4200 · Cardiology<br>
+        walk time <b>9 min</b> · steps <b>1,204</b> · lost moments <b>0</b><br>
+        arrived <b>9:26 AM</b> · 14 min early ✓
+      </div>
+      <div class="escort">👨‍👧 <b>Escort Mode:</b> "Mom arrived at Cardiology 9:26 AM" sent to David & Ana. They can follow your live route progress next visit.</div>
+      <button class="link" onclick="location.reload()">↺ Run the demo again</button>
+    </div>
+  </section>
+</div>
+
+<!-- panic button -->
+<button class="panic" id="panicBtn" onclick="document.getElementById('lostModal').classList.add('on')">
+  <span class="s"></span> I'm lost
+</button>
+
+<!-- lost modal -->
+<div class="modal" id="lostModal">
+  <div class="lostbox">
+    <h3>Okay. Let's find you.</h3>
+    <p class="cal">Nearest staffed desks from your last confirmed position (<span class="mono">Level 4, near elevator bank C</span>):</p>
+    <div class="desk">
+      <div class="ic">🛎️</div>
+      <div><div class="n">Cardiology front desk — Suite 4200</div><div class="m">35 m ahead, past the glass doors · staffed until 5 PM</div></div>
+    </div>
+    <div class="desk">
+      <div class="ic">ℹ️</div>
+      <div><div class="n">ACC information desk</div><div class="m">Level 1 main lobby · elevator bank C, button L</div></div>
+    </div>
+    <div class="lostbtns">
+      <button class="lb-call" onclick="alert('Demo: calling Cardiology at (813) 555-0142…')">📞 Call the department</button>
+      <button class="lb-close" onclick="document.getElementById('lostModal').classList.remove('on')">I see it now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---- landmark "photos" as inline SVG scenes ---- */
+const SVG = {
+  garage: `<svg viewBox="0 0 440 220"><rect width="440" height="220" fill="#2C3E50"/><rect y="150" width="440" height="70" fill="#4A5B6A"/><g fill="#F5A623" font-family="JetBrains Mono" font-size="20" font-weight="800"><text x="30" y="60">GARAGE B</text><text x="30" y="88" font-size="13" fill="#AAB7C4">LEVEL 2 · PATIENT PARKING</text></g><rect x="300" y="40" width="110" height="90" rx="6" fill="#3D5166"/><g stroke="#8FA3B5" stroke-width="3"><line x1="315" y1="60" x2="395" y2="60"/><line x1="315" y1="85" x2="395" y2="85"/><line x1="315" y1="110" x2="395" y2="110"/></g><path d="M60 190 L160 190" stroke="#F5A623" stroke-width="4" stroke-dasharray="14 10"/><circle cx="345" cy="165" r="4" fill="#E5484D"/></svg>`,
+  skybridge: `<svg viewBox="0 0 440 220"><rect width="440" height="220" fill="#BBD4DA"/><rect y="120" width="440" height="100" fill="#93B8C0"/><rect x="40" y="60" width="360" height="70" rx="8" fill="#E8F1F2" stroke="#7FA5AD" stroke-width="3"/><g stroke="#A9C6CC" stroke-width="3"><line x1="100" y1="60" x2="100" y2="130"/><line x1="160" y1="60" x2="160" y2="130"/><line x1="220" y1="60" x2="220" y2="130"/><line x1="280" y1="60" x2="280" y2="130"/><line x1="340" y1="60" x2="340" y2="130"/></g><text x="220" y="175" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#2C4A50">SKYBRIDGE → ACC LOBBY</text><circle cx="80" cy="185" r="5" fill="#0E4F4A"/><path d="M95 185 h40" stroke="#0E4F4A" stroke-width="3" marker-end="url(#a)"/></svg>`,
+  lobby: `<svg viewBox="0 0 440 220"><rect width="440" height="220" fill="#EDE7DB"/><rect y="160" width="440" height="60" fill="#D8CFBE"/><rect x="150" y="70" width="140" height="90" rx="6" fill="#0E4F4A"/><text x="220" y="108" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#fff">REGISTRATION</text><text x="220" y="130" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#9CC5C0">CHECK IN HERE</text><rect x="40" y="120" width="60" height="40" rx="4" fill="#C4B8A2"/><rect x="340" y="120" width="60" height="40" rx="4" fill="#C4B8A2"/><circle cx="220" cy="30" r="14" fill="#F5A623" opacity=".85"/><text x="352" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#6B5D42">☕ CAFE</text></svg>`,
+  elevator: `<svg viewBox="0 0 440 220"><rect width="440" height="220" fill="#E2E8E6"/><rect y="165" width="440" height="55" fill="#CBD5D2"/><g><rect x="120" y="40" width="90" height="125" rx="4" fill="#8FA8A3" stroke="#5F7C77" stroke-width="3"/><rect x="230" y="40" width="90" height="125" rx="4" fill="#8FA8A3" stroke="#5F7C77" stroke-width="3"/><line x1="165" y1="45" x2="165" y2="160" stroke="#5F7C77" stroke-width="2"/><line x1="275" y1="45" x2="275" y2="160" stroke="#5F7C77" stroke-width="2"/></g><text x="220" y="26" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="800" fill="#0E4F4A">ELEVATOR BANK C</text><rect x="196" y="180" width="48" height="26" rx="4" fill="#0E4F4A"/><text x="220" y="198" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="800" fill="#F5A623">L4</text></svg>`,
+  suite: `<svg viewBox="0 0 440 220"><rect width="440" height="220" fill="#F0EBE0"/><rect y="165" width="440" height="55" fill="#DDD5C5"/><rect x="60" y="50" width="120" height="115" rx="4" fill="#B9CDC9" stroke="#7FA09A" stroke-width="3"/><rect x="240" y="50" width="140" height="115" rx="4" fill="#0E4F4A"/><text x="310" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="22" font-weight="800" fill="#fff">4200</text><text x="310" y="120" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#9CC5C0">CARDIOLOGY</text><text x="310" y="140" text-anchor="middle" font-family="Inter" font-size="10" fill="#7FA8A2">check in at desk →</text><path d="M195 107 h35" stroke="#F5A623" stroke-width="4" stroke-dasharray="8 6"/></svg>`
+};
+
+const STEPS = [
+  { title:"Park in Garage B, Level 2", dist:"you parked <b>8:45</b> · elevator core near stairwell <b>B2</b>", tip:"Patient parking is validated at registration — keep your ticket. Crowd truth: this garage fills by ~8:15 on Tuesdays.", art:SVG.garage, arrow:"↑" },
+  { title:"Take the skybridge to the ACC lobby", dist:"<b>3 min</b> · covered, step-free, gentle incline", tip:"The skybridge entrance is directly across from elevator core B2. Follow the blue floor stripe — it ends at the ACC lobby doors.", art:SVG.skybridge, arrow:"→" },
+  { title:"Check in at Registration", dist:"lobby, <b>20 m</b> past the doors · avg wait <b>11 min</b> at 9 AM", tip:"Have photo ID, insurance card, and the referral slip out before you reach the desk. The café is on your left if you need water — you were asked to fast? Skip it.", art:SVG.lobby, arrow:"→" },
+  { title:"Elevator bank C → press L4", dist:"<b>30 m</b> behind registration · right past the chapel", tip:"Bank C is the far bank — banks A/B only reach Level 3. The chapel with the stained glass is your landmark: elevators are just beyond it.", art:SVG.elevator, arrow:"↑" },
+  { title:"Suite 4200 — Cardiology", dist:"turn <b>left</b> out of the elevators, <b>35 m</b> · glass double doors", tip:"You've arrived 14 minutes early. Check in at the desk and take a seat — they'll call Maria by 9:40.", art:SVG.suite, arrow:"→", last:true }
+];
+
+let cur = 0;
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+function startParse(){
+  show('s-parse');
+  const items = document.querySelectorAll('#rail li');
+  items.forEach((li,i)=>{
+    setTimeout(()=>{ li.classList.add('active'); }, i*550);
+    setTimeout(()=>{ li.classList.remove('active'); li.classList.add('done'); }, i*550+500);
+  });
+  setTimeout(()=>show('s-route'), items.length*550+650);
+}
+function startNav(){ cur=0; renderStep(); show('s-nav'); document.getElementById('panicBtn').classList.add('on'); }
+function renderStep(){
+  const s = STEPS[cur];
+  document.getElementById('photo').innerHTML = s.art + `<span class="floor">L${cur<2?'—':cur===2?'1':'4'} · ACC</span><span class="arrow">${s.arrow}</span>`;
+  document.getElementById('steptitle').textContent = s.title;
+  document.getElementById('stepdist').innerHTML = s.dist;
+  document.getElementById('steptip').textContent = s.tip;
+  document.getElementById('navstop').textContent = `STOP ${cur+1} OF ${STEPS.length}`;
+  const prog = document.getElementById('prog');
+  prog.innerHTML = STEPS.map((_,i)=>`<span class="p ${i<cur?'done':i===cur?'cur':''}"></span>`).join('');
+  const btn = document.getElementById('btnNext');
+  btn.textContent = s.last ? "I've arrived ✓" : "I'm here →";
+  btn.className = s.last ? 'btn-arrive' : 'btn-next';
+}
+function nextStep(){
+  if(STEPS[cur].last){ arrive(); return; }
+  cur++; renderStep();
+}
+function prevStep(){ if(cur>0){cur--;renderStep();} else show('s-route'); }
+function arrive(){
+  document.getElementById('panicBtn').classList.remove('on');
+  show('s-done');
+}
+</script>
+</body>
+</html>
