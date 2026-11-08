@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RaiseCase — The one-page raise brief for people who like their job</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F7F3EA; --paper:#FDFBF5; --ink:#14202E; --ink-soft:#3D4A5C;
+  --green:#2F7D4F; --green-soft:#E4F0E8; --amber:#C98A16; --amber-soft:#F7EDD8;
+  --red:#B23A2E; --line:#E3DCCB; --shadow:0 2px 12px rgba(20,32,46,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+.display{font-family:'Fraunces',serif}
+.wrap{max-width:520px;margin:0 auto;padding:0 20px 100px}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:50;background:var(--cream);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.topbar .logo{font-family:'Fraunces',serif;font-weight:900;font-size:19px;letter-spacing:-.02em}
+.topbar .logo span{color:var(--green)}
+.folder-tab{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);background:var(--amber-soft);border:1px solid var(--line);padding:3px 8px;border-radius:4px 4px 0 0;border-bottom:none}
+
+/* ---------- hero ---------- */
+.hero{padding:38px 0 26px;text-align:left}
+.hero .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:14px}
+.hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:34px;line-height:1.12;letter-spacing:-.02em;margin-bottom:14px}
+.hero h1 em{font-style:italic;color:var(--green)}
+.hero p.sub{color:var(--ink-soft);font-size:15px;max-width:44ch}
+
+/* ---------- stat strip ---------- */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0 8px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+.stat .n{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:24px;color:var(--green)}
+.stat .n.amber{color:var(--amber)}
+.stat .l{font-size:12px;color:var(--ink-soft);margin-top:2px}
+.stat-note{font-size:11px;color:var(--ink-soft);opacity:.8;padding:6px 2px 0}
+
+/* ---------- steps nav ---------- */
+.steps-nav{display:flex;gap:6px;margin:30px 0 18px;overflow-x:auto;padding-bottom:4px}
+.steps-nav button{flex:1;min-width:88px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);cursor:pointer;transition:all .18s}
+.steps-nav button.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.steps-nav button .num{display:block;font-size:16px;margin-bottom:2px}
+.steps-nav button.active .num{color:var(--amber)}
+
+.panel{display:none;animation:fadeUp .3s ease}
+.panel.show{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card h2{font-family:'Fraunces',serif;font-weight:700;font-size:20px;margin-bottom:4px;letter-spacing:-.01em}
+.card .hint{font-size:13px;color:var(--ink-soft);margin-bottom:16px}
+
+/* ---------- wins log ---------- */
+.win{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px;background:#fff}
+.win .w-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.win .w-tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em}
+.w-tag.vague{background:var(--amber-soft);color:var(--amber)}
+.w-tag.proof{background:var(--green-soft);color:var(--green)}
+.win .w-vague{font-size:13px;color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--amber)}
+.win .w-proof{font-size:14px;font-weight:600;margin-top:4px}
+.win .w-proof b{font-family:'JetBrains Mono',monospace;color:var(--green)}
+.win .w-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);opacity:.7;margin-top:6px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--cream);border:none;border-radius:8px;padding:12px 20px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:transform .12s,box-shadow .12s;width:100%;justify-content:center}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(20,32,46,.25)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px dashed var(--ink-soft)}
+.btn.green{background:var(--green)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.rewrite-flash{animation:flash .6s ease}
+@keyframes flash{0%{background:var(--amber-soft)}100%{background:#fff}}
+
+/* ---------- gap bar ---------- */
+.gapwrap{margin:20px 0 8px}
+.gapbar{position:relative;height:56px;border-radius:10px;background:linear-gradient(90deg,#EDE7D8 0%,#EDE7D8 34%,var(--green-soft) 55%,var(--green-soft) 100%);border:1px solid var(--line);overflow:visible}
+.gapbar .band{position:absolute;top:0;bottom:0;left:52%;width:40%;background:repeating-linear-gradient(45deg,rgba(47,125,79,.14),rgba(47,125,79,.14) 8px,transparent 8px,transparent 16px);border-left:2px solid var(--green);border-right:2px solid var(--green);border-radius:6px}
+.gapbar .band .band-label{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--green);white-space:nowrap}
+.you-pin{position:absolute;top:-34px;left:34%;transform:translateX(-50%);text-align:center;transition:left 1s cubic-bezier(.2,.9,.3,1.2)}
+.you-pin .pin{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;background:var(--red);color:#fff;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.you-pin .pin::after{content:'';position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--red);border-bottom:none}
+.ask-pin{position:absolute;top:-34px;left:64%;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity .4s .8s,left 1s cubic-bezier(.2,.9,.3,1.2)}
+.ask-pin.in{opacity:1}
+.ask-pin .pin{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;background:var(--green);color:#fff;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.ask-pin .pin::after{content:'';position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--green);border-bottom:none}
+.gap-scale{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);margin-top:8px}
+.verdict{margin-top:18px;background:var(--ink);color:var(--cream);border-radius:10px;padding:16px 18px;font-size:14px}
+.verdict .v-n{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:26px;color:var(--amber);display:block;margin-bottom:2px}
+.bench-source{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);margin-top:12px}
+.bench-source a{color:var(--ink-soft)}
+
+/* ---------- brief ---------- */
+.brief{background:#fff;border:1px solid var(--line);border-radius:4px;box-shadow:0 4px 24px rgba(20,32,46,.12);padding:26px 24px;position:relative}
+.brief::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--green)}
+.brief .b-kicker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+.brief h3{font-family:'Fraunces',serif;font-size:21px;font-weight:900;margin:4px 0 2px}
+.brief .b-sub{font-size:12px;color:var(--ink-soft);margin-bottom:16px}
+.brief table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:14px}
+.brief th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);text-align:left;border-bottom:1.5px solid var(--ink);padding:6px 4px}
+.brief td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+.brief td .num{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green)}
+.ask-box{border:2px solid var(--ink);border-radius:8px;padding:12px 14px;margin:14px 0;display:flex;justify-content:space-between;align-items:center;background:var(--green-soft)}
+.ask-box .a-l{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.ask-box .a-n{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:22px;color:var(--green)}
+.nonsalary{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.nonsalary span{font-size:11px;background:var(--amber-soft);color:var(--amber);font-weight:600;padding:4px 10px;border-radius:20px}
+.locked{position:relative;filter:blur(0)}
+.paywall{background:var(--amber-soft);border:1.5px dashed var(--amber);border-radius:10px;padding:16px;text-align:center;margin-top:14px}
+.paywall .p-n{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:20px;color:var(--amber)}
+.paywall p{font-size:13px;color:var(--ink-soft);margin:4px 0 12px}
+.paywall .btn{background:var(--amber);width:auto;padding:10px 24px}
+
+/* ---------- script ---------- */
+.script-block{background:var(--ink);color:var(--cream);border-radius:12px;padding:20px;margin-bottom:14px}
+.script-block .s-k{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.script-block p{font-size:14px;line-height:1.65;font-style:italic}
+.script-block p b{color:var(--amber);font-style:normal}
+.obj{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#fff;overflow:hidden}
+.obj summary{cursor:pointer;padding:13px 16px;font-size:13.5px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.obj summary::-webkit-details-marker{display:none}
+.obj summary .o-tag{font-family:'JetBrains Mono',monospace;font-size:9px;background:var(--amber-soft);color:var(--amber);font-weight:700;padding:2px 7px;border-radius:10px;margin-right:auto;margin-left:10px}
+.obj .o-body{padding:0 16px 14px;font-size:13px;color:var(--ink-soft)}
+.obj .o-body .resp{background:var(--green-soft);border-radius:8px;padding:10px 12px;margin-top:8px;color:var(--ink);font-style:italic}
+.obj .o-stat{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);margin-top:8px}
+.countdown{display:flex;gap:8px;margin-bottom:14px}
+.cd-cell{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:10px;text-align:center;padding:12px 4px}
+.cd-cell .cd-n{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:22px;color:var(--ink)}
+.cd-cell .cd-l{font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em}
+
+/* ---------- receipt ---------- */
+.receipt-zone{text-align:center;padding:10px 0}
+.receipt{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:6px;padding:26px 30px;text-align:left;box-shadow:0 8px 32px rgba(20,32,46,.14);position:relative;max-width:340px;width:100%}
+.receipt::after{content:'';position:absolute;bottom:-9px;left:6px;right:6px;height:10px;background:radial-gradient(circle at 5px -1px,transparent 5px,#fff 5.5px);background-size:12px 10px;filter:drop-shadow(0 1px 0 var(--line))}
+.receipt .r-head{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);text-align:center;border-bottom:1px dashed var(--line);padding-bottom:10px;margin-bottom:12px}
+.receipt .r-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.receipt .r-row span:last-child{font-family:'JetBrains Mono',monospace;font-weight:700}
+.stamp{margin:16px auto 6px;width:132px;height:132px;border:4px solid var(--red);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--red);transform:rotate(-12deg) scale(2.4);opacity:0;transition:all .35s cubic-bezier(.2,.9,.3,1.3)}
+.stamp.in{transform:rotate(-12deg) scale(1);opacity:.92}
+.stamp .s1{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:19px;letter-spacing:.08em}
+.stamp .s2{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:24px;margin-top:2px}
+.stamp .s3{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;margin-top:4px}
+.receipt .r-foot{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-soft);text-align:center;border-top:1px dashed var(--line);margin-top:14px;padding-top:10px;line-height:1.7}
+.share-hint{font-size:12px;color:var(--ink-soft);margin-top:22px}
+
+/* ---------- odds ---------- */
+.odds{margin-top:6px}
+.odds-row{margin-bottom:12px}
+.odds-row .o-l{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.odds-row .o-l b{font-family:'JetBrains Mono',monospace}
+.o-track{height:10px;background:#EDE7D8;border-radius:6px;overflow:hidden}
+.o-fill{height:100%;border-radius:6px;width:0;transition:width 1s cubic-bezier(.2,.8,.3,1)}
+.o-fill.green{background:var(--green)}
+.o-fill.dim{background:#C6BCA5}
+
+.footer{margin-top:40px;text-align:center;font-size:11px;color:var(--ink-soft);opacity:.75;line-height:1.8}
+.footer .display{font-size:14px;font-weight:700;opacity:1;color:var(--ink)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Raise<span>Case</span> 🧾</div>
+  <div class="folder-tab">CASE FILE #0041 · CONFIDENTIAL</div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="kicker">For people who like their job</div>
+    <h1>You don't want to leave.<br>You want to be <em>paid right</em> where you are.</h1>
+    <p class="sub">RaiseCase turns your scattered wins and public pay data into a one-page evidence brief, a script, and a deadline — so the conversation stops being vibes and starts being a case.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">~67%</div><div class="l">of people who ask for a raise <b>get one</b> (Robert Half 2026)</div></div>
+      <div class="stat"><div class="n amber">&lt;40%</div><div class="l">of employees have <b>ever asked</b>. Silence is the tax.</div></div>
+    </div>
+    <div class="stat-note">LendingTree 2026: 82% of askers received a raise — but only 35% of women and 49% of men ever asked at all.</div>
+  </section>
+
+  <!-- STEPS -->
+  <nav class="steps-nav" id="stepsNav">
+    <button class="active" data-p="p1"><span class="num">01</span>Case File</button>
+    <button data-p="p2"><span class="num">02</span>Benchmark</button>
+    <button data-p="p3"><span class="num">03</span>The Brief</button>
+    <button data-p="p4"><span class="num">04</span>Script</button>
+    <button data-p="p5"><span class="num">05</span>Receipt</button>
+  </nav>
+
+  <!-- PANEL 1 : WINS -->
+  <section class="panel show" id="p1">
+    <div class="card">
+      <h2>Your wins. Now with numbers.</h2>
+      <p class="hint">Vague wins get vague raises. Each win is rewritten into <b>Situation → Action → Number</b>. Tap a win to sharpen it.</p>
+
+      <div class="win" id="win1">
+        <div class="w-head"><span class="w-tag vague" id="tag1">Vague</span><span class="w-meta">Mar 2026</span></div>
+        <div class="w-vague" id="v1">"I redesigned the onboarding emails"</div>
+        <div class="w-proof" id="p1x" style="display:none">Rewrote the 6-email onboarding sequence → activation rose <b>+18%</b>, support tickets <b>−31%</b> <span style="color:var(--ink-soft);font-weight:400">(≈ $40k/yr saved)</span></div>
+      </div>
+
+      <div class="win" id="win2">
+        <div class="w-head"><span class="w-tag vague" id="tag2">Vague</span><span class="w-meta">Jul 2026</span></div>
+        <div class="w-vague" id="v2">"I helped during the migration"</div>
+        <div class="w-proof" id="p2x" style="display:none">Led the CRM migration for a <b>42-person</b> team, <b>0 days</b> of downtime, finished <b>2 weeks</b> early → vendor saved <b>$12k</b></div>
+      </div>
+
+      <div class="win" id="win3">
+        <div class="w-head"><span class="w-tag vague" id="tag3">Vague</span><span class="w-meta">Oct 2026</span></div>
+        <div class="w-vague" id="v3">"I trained the new hires"</div>
+        <div class="w-proof" id="p3x" style="display:none">Built the onboarding playbook, personally trained <b>5 hires</b> → ramp time cut from <b>9 to 5 weeks</b>; now runs without me</div>
+      </div>
+
+      <button class="btn green" id="sharpenBtn" onclick="sharpenAll()">⚡ Sharpen all 3 wins with Claude</button>
+      <p style="font-size:11px;color:var(--ink-soft);margin-top:10px;text-align:center" id="sharpenNote"></p>
+    </div>
+  </section>
+
+  <!-- PANEL 2 : BENCHMARK -->
+  <section class="panel" id="p2">
+    <div class="card">
+      <h2>The Gap Number</h2>
+      <p class="hint">Paste public pay data — Levels.fyi, Glassdoor, BLS, or your company's own posted range (pay-transparency laws did you a favor). We normalize it to a defensible band, sources cited.</p>
+
+      <div class="gapwrap">
+        <div class="gapbar" id="gapbar">
+          <div class="band"><div class="band-label">MARKET BAND $90–130k</div></div>
+          <div class="you-pin" id="youPin"><div class="pin">YOU · $72k</div></div>
+          <div class="ask-pin" id="askPin"><div class="pin">ASK · $88k</div></div>
+        </div>
+        <div class="gap-scale"><span>$60k</span><span>$80k</span><span>$100k</span><span>$120k</span><span>$140k</span></div>
+      </div>
+
+      <div class="verdict" id="verdict">
+        <span class="v-n mono">$16,000</span>
+        is the conservative, evidence-backed ask — the <b>bottom of the market band minus 2%</b>, so the number can't be argued with, only agreed to. Your gap to mid-band: <span class="mono" style="color:var(--amber)">$38,000</span>.
+      </div>
+      <div class="bench-source">Sources: levels.fyi/roles/marketing-manager (n=412) · glassdoor local band · company posted range for adjacent role · BLS 13-1161 · checked <span class="mono">2026-11-08</span></div>
+      <br>
+      <button class="btn" onclick="go('p3')">Build the one-page brief →</button>
+    </div>
+  </section>
+
+  <!-- PANEL 3 : BRIEF -->
+  <section class="panel" id="p3">
+    <div class="card" style="background:transparent;border:none;box-shadow:none;padding:0">
+      <div class="brief">
+        <div class="b-kicker">RaiseCase · One-Page Evidence Brief</div>
+        <h3>Alex Rivera — Marketing Manager</h3>
+        <div class="b-sub">Tenure 3y 4m · Review cycle: Jan 2027 · Prepared Nov 8, 2026</div>
+
+        <table>
+          <tr><th>Evidence</th><th style="text-align:right">Impact</th></tr>
+          <tr><td>Onboarding sequence rewrite</td><td style="text-align:right"><span class="num">+18%</span> activation</td></tr>
+          <tr><td>CRM migration lead (42 people)</td><td style="text-align:right"><span class="num">$12k</span> saved</td></tr>
+          <tr><td>Onboarding playbook + 5 hires trained</td><td style="text-align:right">ramp <span class="num">9→5 wks</span></td></tr>
+          <tr><td>Support deflection from email work</td><td style="text-align:right"><span class="num">−31%</span> tickets</td></tr>
+        </table>
+
+        <div class="ask-box">
+          <div class="a-l">The ask<br><span style="font-size:10px;color:var(--ink-soft);font-weight:400">market band $90–130k, sources cited</span></div>
+          <div class="a-n">$88,000</div>
+        </div>
+
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px">If budget says no — pre-loaded counter-asks</div>
+        <div class="nonsalary">
+          <span>Title bump</span><span>+$65k base now, review in 6 mo (written)</span><span>Equity refresh</span><span>+1 wk PTO</span>
+        </div>
+
+        <div class="paywall" id="paywall">
+          <div class="p-n mono">THE BRIEF · $29 one-time</div>
+          <p>Print-perfect PDF + full objection library + benchmark deep-dive + review-cycle Deadline Engine. One ask per review season — one price, no subscription.</p>
+          <button class="btn" onclick="unlock()">Unlock the Brief</button>
+          <p style="font-size:10px;margin:10px 0 0;opacity:.7">Levels.fyi coaching starts at $1,250. This is the same negotiation science, in a document, for $29.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 4 : SCRIPT -->
+  <section class="panel" id="p4">
+    <div class="card">
+      <h2>The first 90 seconds</h2>
+      <p class="hint">Send the brief 48 hours ahead. Ask 6–8 weeks before the cycle. Then open with evidence, not apology.</p>
+      <div class="script-block">
+        <div class="s-k">Opening — verbatim</div>
+        <p>"I sent you a one-pager — thanks for reading it ahead. <b>I'm not looking elsewhere and I'm not issuing an ultimatum.</b> I've led the migration, rebuilt onboarding, and trained five hires since my last review. The market band for this scope is <b>$90 to $130k</b>; I'm asking for <b>$88k</b> — deliberately below the band. If base is frozen this cycle, page two has three alternatives I'd also say yes to."</p>
+      </div>
+
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin:18px 0 10px">Objection plays <span style="color:var(--green)">· crowd-tested</span></div>
+
+      <details class="obj" open>
+        <summary>"The budget is tight this year." <span class="o-tag">HEARD 61%</span><span>▾</span></summary>
+        <div class="o-body">Never accept a soft no. Convert it into a dated commitment.
+          <div class="resp">"Understood. When does the next cycle open — and can we write down today what I need to have delivered by then to make $88k a yes?"</div>
+          <div class="o-stat">→ 71% of users who got written criteria received a raise at the next cycle (n=318)</div>
+        </div>
+      </details>
+
+      <details class="obj">
+        <summary>"You're too valuable where you are." <span class="o-tag">HEARD 22%</span><span>▾</span></summary>
+        <div class="o-body">The compliment trap. Thank them, then price the value.
+          <div class="resp">"I appreciate that — and I've made myself replaceable on the day-to-day: the playbook runs without me now. That's exactly why the scope I'm carrying is the senior band, and why I'm asking to be paid for it."</div>
+          <div class="o-stat">→ pairs with the handover template in the Brief (page 2)</div>
+        </div>
+      </details>
+
+      <details class="obj">
+        <summary>"If we raise yours, everyone will want one." <span class="o-tag">HEARD 14%</span><span>▾</span></summary>
+        <div class="o-body">They're inviting you to argue fairness. Don't. Argue scope.
+          <div class="resp">"I can only speak to my scope, and the benchmark is attached: this band is for the role as it exists today — migration, onboarding, training. I'm not asking to be treated specially; I'm asking to be priced accurately."</div>
+          <div class="o-stat">→ benchmark-cited asks succeed at 2× the rate of fairness-cited asks (n=842)</div>
+        </div>
+      </details>
+
+      <div class="countdown" style="margin-top:18px">
+        <div class="cd-cell"><div class="cd-n" id="cdD">--</div><div class="cd-l">days to review</div></div>
+        <div class="cd-cell"><div class="cd-n">Jan 12</div><div class="cd-l">cycle opens</div></div>
+        <div class="cd-cell"><div class="cd-n">Nov 17</div><div class="cd-l">latest safe ask</div></div>
+      </div>
+      <button class="btn" onclick="go('p5')">I asked. Log the outcome →</button>
+    </div>
+  </section>
+
+  <!-- PANEL 5 : RECEIPT -->
+  <section class="panel" id="p5">
+    <div class="card">
+      <h2>The receipt</h2>
+      <p class="hint">Every logged outcome becomes a shareable receipt — and a row in the public odds tables. Your courage is the dataset.</p>
+
+      <div class="receipt-zone">
+        <div class="receipt">
+          <div class="r-head">RaiseCase · Outcome Receipt · Nov 8 2026</div>
+          <div class="r-row"><span>Role</span><span>Marketing Mgr</span></div>
+          <div class="r-row"><span>Tenure</span><span class="mono">3y 4m</span></div>
+          <div class="r-row"><span>Before</span><span class="mono">$72,000</span></div>
+          <div class="r-row"><span>Ask</span><span class="mono" style="color:var(--green)">$88,000</span></div>
+          <div class="r-row"><span>Result</span><span class="mono" style="color:var(--green)">$86,900 (+20.7%)</span></div>
+          <div class="r-row"><span>Conversation length</span><span class="mono">9 min</span></div>
+          <div class="r-row"><span>Prep time</span><span class="mono">22 min</span></div>
+          <div class="stamp" id="stamp"><span class="s1">ASKED.</span><span class="s2">+$14,900</span><span class="s3">GRANTED · CYCLE JAN 2027</span></div>
+          <div class="r-foot">9 MINUTES OF COURAGE.<br>22 MINUTES OF PREP.<br>$14,900 / YEAR, FOREVER.<br><br>raisecase.app · case #0041</div>
+        </div>
+      </div>
+      <button class="btn green" id="stampBtn" onclick="fireStamp()">🔏 Stamp my receipt</button>
+      <div class="share-hint">LinkedIn-native by design. The humble-brag platform finally has its receipt format.</div>
+
+      <div style="margin-top:26px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px">Public odds · seeded from surveys, sharpened by receipts</div>
+        <div class="odds">
+          <div class="odds-row">
+            <div class="o-l"><span>With benchmark cited in brief</span><b style="color:var(--green)">71%</b></div>
+            <div class="o-track"><div class="o-fill green" data-w="71"></div></div>
+          </div>
+          <div class="odds-row">
+            <div class="o-l"><span>Without benchmark (prose-only email)</span><b>44%</b></div>
+            <div class="o-track"><div class="o-fill dim" data-w="44"></div></div>
+          </div>
+          <div class="odds-row">
+            <div class="o-l"><span>Ask ≤ band floor −2% (our formula)</span><b style="color:var(--green)">68%</b></div>
+            <div class="o-track"><div class="o-fill green" data-w="68"></div></div>
+          </div>
+          <div class="odds-row">
+            <div class="o-l"><span>Never asked anyone, ever</span><b style="color:var(--red)">0%</b></div>
+            <div class="o-track"><div class="o-fill dim" data-w="2"></div></div>
+          </div>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);margin-top:10px">n = 842 receipts · day-one seed: Robert Half, LendingTree, Salary.com (clearly labeled) · full tables at raisecase.app/odds</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <div class="display">RaiseCase — you're not asking for a favor. You're presenting a case.</div>
+    Prototype for idea documentation · Nov 8, 2026 · Duncan ⚔️<br>
+    Data: Robert Half 2026 · LendingTree 2026 · Salary.com · WTW · Atlanta Fed · PainPoint Daily Nov 7 2026
+  </div>
+</div>
+
+<script>
+// step nav
+document.querySelectorAll('#stepsNav button').forEach(b=>{
+  b.addEventListener('click',()=>go(b.dataset.p));
+});
+function go(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  document.querySelectorAll('#stepsNav button').forEach(b=>b.classList.toggle('active',b.dataset.p===id));
+  window.scrollTo({top:200,behavior:'smooth'});
+  if(id==='p5') setTimeout(fillOdds,400);
+}
+
+// win sharpening
+let sharpened=false;
+function sharpenAll(){
+  if(sharpened) return; sharpened=true;
+  const pairs=[[1,'v1','p1x','tag1'],[2,'v2','p2x','tag2'],[3,'v3','p3x','tag3']];
+  pairs.forEach(([i,v,p,t],idx)=>{
+    setTimeout(()=>{
+      document.getElementById(v).style.display='none';
+      const pe=document.getElementById(p); pe.style.display='block';
+      pe.closest('.win').classList.add('rewrite-flash');
+      const tag=document.getElementById(t); tag.textContent='Proof'; tag.className='w-tag proof';
+      if(i===3) document.getElementById('sharpenNote').textContent='3 vague wins → 3 pieces of evidence. This table is page one of your Brief.';
+    },350*idx);
+  });
+  document.getElementById('sharpenBtn').disabled=true;
+  document.getElementById('sharpenBtn').textContent='✓ 3 wins sharpened — ready for the Brief';
+}
+
+// benchmark animation on first view
+let gapDone=false;
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!gapDone){gapDone=true;animateGap();}})},{threshold:.4});
+obs.observe(document.getElementById('gapbar'));
+function animateGap(){
+  const you=document.getElementById('youPin'), ask=document.getElementById('askPin');
+  you.style.left='12%';
+  setTimeout(()=>{you.style.left='34%';},80);
+  setTimeout(()=>{ask.classList.add('in');},1200);
+}
+
+// paywall
+function unlock(){
+  const pw=document.getElementById('paywall');
+  pw.innerHTML='<div class="p-n mono" style="color:var(--green)">✓ UNLOCKED</div><p>brief_alex_rivera_jan2027.pdf is ready. Print it. Send it 48h before the meeting. Walk in holding paper.</p>';
+  pw.style.borderColor='var(--green)'; pw.style.background='var(--green-soft)';
+}
+
+// countdown to Jan 12 2027 review
+(function(){
+  const target=new Date('2027-01-12T09:00:00');
+  const d=Math.max(0,Math.ceil((target-new Date())/86400000));
+  document.getElementById('cdD').textContent=d;
+})();
+
+// receipt stamp
+let stamped=false;
+function fireStamp(){
+  if(stamped) return; stamped=true;
+  document.getElementById('stamp').classList.add('in');
+  const b=document.getElementById('stampBtn');
+  b.textContent='✓ Stamped — share your receipt';
+  b.classList.remove('green');
+}
+
+// odds bars
+let oddsDone=false;
+function fillOdds(){
+  if(oddsDone) return; oddsDone=true;
+  document.querySelectorAll('.o-fill').forEach(f=>{f.style.width=f.dataset.w+'%';});
+}
+</script>
+</body>
+</html>
