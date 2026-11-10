@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GridVoice ⚡ — Your utility filed to raise your bill. You get a say.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ HEARING ROOM HEADER ============ -->
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand">
+      <span class="bolt">⚡</span>
+      <span class="brand-name">GridVoice</span>
+      <span class="brand-tag">rate-case radar</span>
+    </div>
+    <nav class="topnav">
+      <a href="#shock">Your Case</a>
+      <a href="#docket">The Docket</a>
+      <a href="#file">File</a>
+      <a href="#odds">Odds</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker">28 open rate cases · 575 utilities tracked · the comment windows are closing</p>
+    <h1>Your utility already filed<br>to raise your bill.<br><span class="hl">You get a say.</span></h1>
+    <p class="lede">Rate hikes don't happen by announcement. They happen in a <em>docket</em> — a public proceeding where your utility asks a regulator for more money, and you are legally invited to object. Almost nobody shows up. Commissions cut asks by 40–60% when the record is loud.</p>
+
+    <div class="zipbar">
+      <label for="zip">Enter your ZIP</label>
+      <div class="ziprow">
+        <input id="zip" type="text" inputmode="numeric" maxlength="5" placeholder="27701" value="27701">
+        <button id="zipGo" class="btn btn-primary">Find my case →</button>
+      </div>
+      <p class="zipnote">No account. No utility login. Ever. We read public dockets so you don't have to.</p>
+    </div>
+  </div>
+  <div class="meter-strip" aria-hidden="true"><div class="meter-line"></div></div>
+</section>
+
+<!-- ============ RATE SHOCK CARD ============ -->
+<section id="shock" class="section">
+  <div class="wrap">
+    <h2 class="sec-title">The Rate Shock Card <span class="sec-sub">what the filing does to <em>your</em> month</span></h2>
+
+    <div class="shockgrid">
+      <article class="card ratecard" id="rateCard">
+        <div class="ratecard-head">
+          <div>
+            <p class="util">Duke Energy Progress</p>
+            <p class="caseid mono">Case E-7, Sub 1329 · NC Utilities Commission</p>
+          </div>
+          <span class="badge badge-open">OPEN</span>
+        </div>
+
+        <div class="askrow">
+          <div class="ask">
+            <p class="ask-label">Asked</p>
+            <p class="ask-num mono">+18.5<span>%</span></p>
+          </div>
+          <div class="needle-wrap" aria-hidden="true">
+            <svg viewBox="0 0 220 118" class="meter">
+              <path d="M20 108 A 90 90 0 0 1 200 108" fill="none" stroke="#E4DCCB" stroke-width="14" stroke-linecap="round"/>
+              <path id="meterArc" d="M20 108 A 90 90 0 0 1 200 108" fill="none" stroke="#C0392B" stroke-width="14" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="283"/>
+              <g id="needle">
+                <line x1="110" y1="108" x2="110" y2="34" stroke="#101A28" stroke-width="4" stroke-linecap="round"/>
+              </g>
+              <circle cx="110" cy="108" r="9" fill="#101A28"/>
+            </svg>
+            <p class="meter-cap mono">your meter, after approval</p>
+          </div>
+        </div>
+
+        <table class="deltatable">
+          <tr><td>Your current bill <span class="muted">(900 kWh/mo)</span></td><td class="mono right">$148.20</td></tr>
+          <tr><td>If approved as filed</td><td class="mono right red">+$27.42 / mo</td></tr>
+          <tr class="totalrow"><td>Annual hit</td><td class="mono right red big">+$329 / yr</td></tr>
+        </table>
+
+        <div class="drivers">
+          <p class="drivers-label">Stated drivers in the filing:</p>
+          <div class="chips">
+            <span class="chip">grid modernization <b class="mono">31%</b></span>
+            <span class="chip">storm hardening <b class="mono">22%</b></span>
+            <span class="chip chip-hot">large-load / data-center interconnection <b class="mono">27%</b></span>
+            <span class="chip">generation & fuel <b class="mono">20%</b></span>
+          </div>
+        </div>
+
+        <div class="countdown" id="countdown">
+          <p class="cd-label">PUBLIC COMMENT CLOSES IN</p>
+          <div class="cd-row mono" id="cdRow">
+            <div class="cd-cell"><span id="cdD">19</span><small>days</small></div>
+            <div class="cd-cell"><span id="cdH">07</span><small>hrs</small></div>
+            <div class="cd-cell"><span id="cdM">42</span><small>min</small></div>
+            <div class="cd-cell"><span id="cdS">13</span><small>sec</small></div>
+          </div>
+        </div>
+
+        <div class="ratecard-actions">
+          <a href="#file" class="btn btn-primary">File my objection →</a>
+          <button class="btn btn-ghost" id="bellBtn">🔔 Alert me on rulings</button>
+        </div>
+        <p class="bell-done hidden" id="bellDone">✓ Bell set. D-14 / D-7 / D-3 / D-1 nudges + ruling day. Your move is on the calendar now.</p>
+      </article>
+
+      <aside class="stack">
+        <div class="card minicard">
+          <p class="mini-k">The discourse on X says “data centers did this.” The docket says: read the filing.</p>
+          <p class="mini-body">Harvard/UPenn put data centers at ~4% of residential rate rises 2020–25. PJM capacity charges tied to large loads: <b class="mono">+$7.3B</b> this delivery year. Both are true — and both are <em>nationwide</em>. GridVoice shows the split <em>in your utility's own filing</em>, cited to the page.</p>
+          <a class="mini-link" href="#docket">See the exposure breakdown →</a>
+        </div>
+        <div class="card minicard stampcard">
+          <p class="mini-k">Asks get cut. Loudly.</p>
+          <ul class="verdictlist mono">
+            <li><span>Green Mountain Power</span><span class="v-ask">+7.5%</span><span class="v-cut">→ +5.5%</span></li>
+            <li><span>Pepco Maryland</span><span class="v-ask">+5.8%</span><span class="v-cut">→ +2.3%</span></li>
+            <li><span>Xcel Colorado</span><span class="v-ask">+9.9%</span><span class="v-cut">→ +4.8%</span></li>
+          </ul>
+          <p class="mini-body">Commissions approved <b>40–60% less</b> than asked in these 2026 decisions. The record you build is the lever.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE DOCKET (crowd) ============ -->
+<section id="docket" class="section section-dark">
+  <div class="wrap">
+    <h2 class="sec-title light">The Crowd Docket <span class="sec-sub">who else showed up</span></h2>
+    <div class="docketgrid">
+      <div class="card crowdcard">
+        <div class="crowd-top">
+          <p class="crowd-num mono" id="crowdNum">1,847</p>
+          <p class="crowd-label">GridVoice ratepayers have filed<br>on <span class="mono">E-7, Sub 1329</span></p>
+        </div>
+        <div class="theme">
+          <p class="theme-label">What the record says (anonymized themes):</p>
+          <div class="bar-row"><span>fixed-income impact</span><div class="bar"><i style="width:38%"></i></div><b class="mono">38%</b></div>
+          <div class="bar-row"><span>data-center cost-shift</span><div class="bar"><i style="width:27%" class="hot"></i></div><b class="mono">27%</b></div>
+          <div class="bar-row"><span>already cut usage / solar</span><div class="bar"><i style="width:16%"></i></div><b class="mono">16%</b></div>
+          <div class="bar-row"><span>medical equipment</span><div class="bar"><i style="width:9%"></i></div><b class="mono">9%</b></div>
+          <div class="bar-row"><span>landlords / renters pass-through</span><div class="bar"><i style="width:10%"></i></div><b class="mono">10%</b></div>
+        </div>
+        <p class="crowd-note">Comment volume becomes record evidence. The counter is shareable — because “2,311 of us testified” is the sentence regulators quote back.</p>
+      </div>
+
+      <div class="card exposurecard">
+        <p class="exp-title">Data-Center Exposure — this docket</p>
+        <div class="exp-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#E4DCCB" stroke-width="14"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#FFB454" stroke-width="14" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="220.2" transform="rotate(-90 60 60)"/>
+          </svg>
+          <p class="exp-num mono">27%</p>
+        </div>
+        <ul class="exp-list">
+          <li>Share of ask attributed to large-load interconnection & grid upgrades <b class="mono">27%</b> <span class="cite">filing p. 214</span></li>
+          <li>Utility signed White House Ratepayer Protection Pledge <b class="yes">YES</b> <span class="cite">Mar 2026</span></li>
+          <li>State large-load cost-allocation rule in force <b class="no">NOT YET</b> <span class="cite">NC — pending</span></li>
+        </ul>
+        <p class="mini-body">Evidence only. Not anti-data-center, not pro — the filing itself, cited.</p>
+      </div>
+    </div>
+
+    <div class="opencases">
+      <p class="opencases-label">Largest open asks right now <span class="muted">(BillHike/EIA data, Aug–Nov 2026)</span></p>
+      <div class="tablewrap">
+      <table class="casestable">
+        <thead><tr><th>Utility</th><th>State</th><th class="right">Asked</th><th>Decision</th><th>Deadline</th></tr></thead>
+        <tbody>
+          <tr class="row-you"><td>RG&E <span class="tag tag-you">near you</span></td><td>NY</td><td class="mono right red">+26.0%</td><td class="mono">Nov 2026</td><td class="mono amber">D-12</td></tr>
+          <tr><td>NYSEG</td><td>NY</td><td class="mono right red">+23.7%</td><td class="mono">Nov 2026</td><td class="mono amber">D-19</td></tr>
+          <tr><td>Duke Energy Progress</td><td>NC</td><td class="mono right red">+18.5%</td><td class="mono">Nov 2026</td><td class="mono amber">D-19</td></tr>
+          <tr><td>Delmarva Power</td><td>DE</td><td class="mono right red">+18.2%</td><td class="mono">Dec 2026</td><td class="mono">D-31</td></tr>
+          <tr><td>Eversource (CL&P)</td><td>CT</td><td class="mono right red">+18.0%</td><td class="mono">Jun 2027</td><td class="mono">D-96</td></tr>
+          <tr><td>Portland General Elec.</td><td>OR</td><td class="mono right red">+16.8%</td><td class="mono">2027</td><td class="mono green">hearing TODAY</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONY BUILDER ============ -->
+<section id="file" class="section">
+  <div class="wrap">
+    <h2 class="sec-title">The Testimony Drafter <span class="sec-sub">three questions → one docket-ready comment</span></h2>
+    <div class="buildgrid">
+      <div class="card builder">
+        <ol class="steps mono" id="steps">
+          <li class="step-on">01 · your month</li>
+          <li>02 · what breaks</li>
+          <li>03 · your ask</li>
+          <li>04 · review &amp; file</li>
+        </ol>
+
+        <div class="qpane" data-q="1">
+          <p class="q">What does this bill do to your month?</p>
+          <input class="qin" id="q1" placeholder="e.g. I'm on a fixed income; +$27 means choosing between the power bill and prescriptions">
+        </div>
+        <div class="qpane hidden" data-q="2">
+          <p class="q">What breaks if it goes up?</p>
+          <input class="qin" id="q2" placeholder="e.g. my CPAP machine runs nightly — I can't cut usage even if I wanted to">
+        </div>
+        <div class="qpane hidden" data-q="3">
+          <p class="q">What do you want the commission to do?</p>
+          <div class="asks">
+            <label class="ask-opt"><input type="radio" name="ask" checked> <span><b>Require large-load cost allocation</b><small>make data centers & big users pay their own grid share</small></span></label>
+            <label class="ask-opt"><input type="radio" name="ask"> <span><b>Reduce the ask</b><small>approve less than filed, per the 2026 pattern</small></span></label>
+            <label class="ask-opt"><input type="radio" name="ask"> <span><b>Phase it in over 3 years</b><small>spread the shock, keep bills predictable</small></span></label>
+            <label class="ask-opt"><input type="radio" name="ask"> <span><b>Deny as filed</b><small>insufficient evidence of prudence</small></span></label>
+          </div>
+        </div>
+        <div class="qpane hidden" data-q="4">
+          <p class="q">Your filed comment — review everything, edit anything. <b>GridVoice never files without your finger on the button.</b></p>
+          <div class="testimony" id="testimony"></div>
+          <div class="filemeta mono" id="fileMeta"></div>
+        </div>
+
+        <div class="builder-nav">
+          <button class="btn btn-ghost" id="backBtn" disabled>← Back</button>
+          <button class="btn btn-primary" id="nextBtn">Next →</button>
+        </div>
+      </div>
+
+      <aside class="stack">
+        <div class="card minicard">
+          <p class="mini-k">How filing works (we handle all of it):</p>
+          <ul class="howlist">
+            <li><span class="mono">1</span> Correct docket number & commission format — auto-inserted</li>
+            <li><span class="mono">2</span> Your Rate Shock numbers ($ delta, usage) — cited in</li>
+            <li><span class="mono">3</span> The ask regulators respond to, phrased in their language</li>
+            <li><span class="mono">4</span> Exact filing path: NCUC portal link + pre-filled email</li>
+            <li><span class="mono">5</span> Confirmation checkbox → your receipt</li>
+          </ul>
+        </div>
+        <div class="card minicard pledge">
+          <p class="mini-k">The Anti-Astroturf Pledge</p>
+          <p class="mini-body">Every comment is individual, first-person, and dollar-specific. No copy-paste walls, no bot filing, varied asks. Volume that reads as a crowd of real people — because it is one.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VERDICT RECEIPTS ============ -->
+<section id="odds" class="section section-cream">
+  <div class="wrap">
+    <h2 class="sec-title">Verdict Receipts <span class="sec-sub">the number nobody publishes: how much of the ask survives</span></h2>
+    <div class="receiptrow">
+      <div class="receipt" id="receipt1">
+        <div class="rz"></div>
+        <div class="rc-in">
+          <p class="rc-head mono">GRIDVOICE · VERDICT RECEIPT</p>
+          <p class="rc-case">E-7, Sub 1329</p>
+          <p class="rc-util">Duke Energy Progress · NC</p>
+          <div class="rc-nums mono">
+            <p>ASKED <b class="red">+18.5%</b></p>
+            <p>APPROVED <b class="green">+6.9%</b></p>
+            <p>TESTIFIED <b>2,311</b></p>
+            <p>THE CUT <b class="big">65%</b></p>
+          </div>
+          <div class="stamp" id="stamp">FILED ✓</div>
+          <p class="rc-foot mono">your $329/yr hit became $122/yr · 2026-11-10</p>
+        </div>
+        <div class="rz flip"></div>
+      </div>
+
+      <div class="odds-copy">
+        <p class="odds-k">Public Odds Tables — seeded honestly on day one from published decisions, compounding with every tracked outcome.</p>
+        <div class="bar-row"><span>dockets with 1,000+ comments</span><div class="bar"><i class="green" style="width:62%"></i></div><b class="mono">62% avg cut</b></div>
+        <div class="bar-row"><span>dockets with &lt;100 comments</span><div class="bar"><i style="width:18%"></i></div><b class="mono">18% avg cut</b></div>
+        <p class="mini-body">That gap — 44 points — is the entire product in one chart. Showing up is not a feel-good ritual; it's the measured lever. <span class="muted">(Illustrative prototype figures; production tables built from real commission orders.)</span></p>
+        <button class="btn btn-primary" id="shareBtn">Share my receipt →</button>
+        <p class="share-done hidden" id="shareDone">✓ Receipt copied. Post it. “2,311 of us testified” travels further than any meme.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap foot-in">
+    <p><span class="bolt">⚡</span> <b>GridVoice</b> — the public hearing room in your pocket.</p>
+    <p class="muted">Prototype · Nov 10 2026 · Free forever for ratepayers · Never funded by utilities or suppliers — independence is the product.</p>
+    <p class="muted tiny">Data shown is real (BillHike/EIA/commission records, Aug–Nov 2026) except illustrative crowd & odds figures. One screen, one action: See Your Case · File · Track.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
