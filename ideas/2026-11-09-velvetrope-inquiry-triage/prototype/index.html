@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VelvetRope — The Three-Way Bouncer for Your Business Inbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0D0F14; --ink2:#12151C; --plum:#2A1B2E; --plum-soft:#221626;
+  --brass:#D4A94E; --brass-dim:#8a6f34;
+  --human:#3FB950; --agent:#8B7CF6; --bot:#E5484D;
+  --cream:#F4EEE2; --cream-dim:#b9b2a4; --line:#2b2f3a;
+  --mono:'JetBrains Mono',monospace; --disp:'Fraunces',serif; --body:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--cream);font-family:var(--body);min-height:100vh;
+  background-image:radial-gradient(1200px 500px at 70% -10%,rgba(42,27,46,.55),transparent 60%),
+  radial-gradient(900px 400px at 10% 110%,rgba(212,169,78,.06),transparent 60%);}
+.wrap{max-width:1060px;margin:0 auto;padding:24px 18px 80px}
+
+/* ===== MARQUEE / ROPE HEADER ===== */
+.marquee{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.brand{font-family:var(--disp);font-weight:900;font-size:clamp(30px,5vw,44px);letter-spacing:.01em}
+.brand em{font-style:italic;color:var(--brass)}
+.biz{font-family:var(--mono);font-size:12px;color:var(--cream-dim);text-align:right;line-height:1.7}
+.biz b{color:var(--cream)}
+.rope{position:relative;height:26px;margin:14px 0 4px}
+.rope .cord{position:absolute;left:0;right:0;top:11px;height:5px;border-radius:3px;background:#1c1418;overflow:hidden;display:flex}
+.rope .seg{height:100%;transition:flex-grow .8s cubic-bezier(.2,.8,.2,1)}
+.rope .stanchion{position:absolute;top:2px;width:9px;height:22px;border-radius:3px;background:linear-gradient(180deg,var(--brass),#6e551f)}
+.rope .stanchion.l{left:-2px}.rope .stanchion.r{right:-2px}
+.rope-counts{display:flex;gap:18px;font-family:var(--mono);font-size:12px;margin-top:8px;flex-wrap:wrap}
+.rope-counts span b{font-size:15px}
+.c-h{color:var(--human)}.c-a{color:var(--agent)}.c-b{color:var(--bot)}.c-brass{color:var(--brass)}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:8px;margin:26px 0 18px;flex-wrap:wrap}
+.tab{background:transparent;border:1px solid var(--line);color:var(--cream-dim);font-family:var(--mono);
+  font-size:12.5px;padding:9px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+.tab:hover{border-color:var(--brass-dim);color:var(--cream)}
+.tab.on{background:var(--brass);border-color:var(--brass);color:#1a1408;font-weight:700}
+.pane{display:none;animation:fade .35s ease}
+.pane.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ===== BELL STRIP ===== */
+.bell{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,rgba(63,185,80,.12),rgba(63,185,80,.03));
+  border:1px solid rgba(63,185,80,.35);border-radius:14px;padding:13px 16px;margin-bottom:18px;font-size:14px}
+.bell .dot{width:10px;height:10px;border-radius:50%;background:var(--human);box-shadow:0 0 12px var(--human);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.4}}
+.bell b{font-family:var(--mono);color:var(--human)}
+.bell .act{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--cream-dim)}
+
+/* ===== INQUIRY CARDS ===== */
+.q{background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:0;margin-bottom:12px;overflow:hidden;
+  cursor:pointer;transition:border-color .2s, transform .15s;position:relative}
+.q:hover{border-color:#3d4351;transform:translateY(-1px)}
+.q .rail{position:absolute;left:0;top:0;bottom:0;width:5px}
+.q.h .rail{background:var(--human)} .q.a .rail{background:var(--agent)} .q.b .rail{background:var(--bot);opacity:.75}
+.q .row{display:flex;gap:14px;align-items:center;padding:15px 18px 15px 22px}
+.q .who{flex:1;min-width:0}
+.q .nm{font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.q .sb{color:var(--cream-dim);font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q .meta{font-family:var(--mono);font-size:11px;color:var(--cream-dim);text-align:right;line-height:1.7;white-space:nowrap}
+.stamp{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:4px 9px;border-radius:6px;
+  border:1.5px solid;display:inline-block;transform:rotate(-2deg)}
+.stamp.h{color:var(--human);border-color:var(--human);background:rgba(63,185,80,.08)}
+.stamp.a{color:var(--agent);border-color:var(--agent);background:rgba(139,124,246,.09)}
+.stamp.b{color:var(--bot);border-color:var(--bot);background:rgba(229,72,77,.07)}
+.score{font-family:var(--mono);font-size:12px;font-weight:700}
+.score.h{color:var(--human)}.score.a{color:var(--agent)}.score.b{color:var(--bot)}
+.fresh{animation:stampIn .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes stampIn{from{transform:rotate(-14deg) scale(1.7);opacity:0}to{transform:rotate(-2deg) scale(1);opacity:1}}
+
+/* ===== EVIDENCE DRAWER ===== */
+.drawer{max-height:0;overflow:hidden;transition:max-height .4s ease;background:#0f1117;border-top:0 solid var(--line)}
+.q.open .drawer{max-height:640px;border-top-width:1px}
+.din{padding:16px 22px 18px}
+.receipt{font-family:var(--mono);font-size:12px;background:#14161d;border:1px dashed #343a48;border-radius:10px;padding:14px 16px}
+.receipt .rt{text-align:center;color:var(--brass);letter-spacing:.18em;font-size:10.5px;margin-bottom:10px}
+.receipt .ln{display:flex;justify-content:space-between;gap:10px;padding:3.5px 0;border-bottom:1px dotted #262b36}
+.receipt .ln:last-of-type{border-bottom:none}
+.receipt .k{color:var(--cream-dim)} .receipt .v{font-weight:500;text-align:right}
+.v.ok{color:var(--human)} .v.bad{color:var(--bot)} .v.mid{color:var(--brass)} .v.ag{color:var(--agent)}
+.why{margin:12px 2px 14px;font-size:13.5px;color:var(--cream);line-height:1.6}
+.why b{color:var(--brass);font-weight:600}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:12px;padding:9px 15px;border-radius:9px;cursor:pointer;border:1px solid var(--line);
+  background:transparent;color:var(--cream);transition:.15s}
+.btn:hover{border-color:var(--brass);color:var(--brass)}
+.btn.g{border-color:rgba(63,185,80,.5);color:var(--human)} .btn.g:hover{background:rgba(63,185,80,.12);border-color:var(--human)}
+.btn.r{border-color:rgba(229,72,77,.5);color:var(--bot)} .btn.r:hover{background:rgba(229,72,77,.1);border-color:var(--bot)}
+.btn.p{border-color:rgba(139,124,246,.5);color:var(--agent)} .btn.p:hover{background:rgba(139,124,246,.12);border-color:var(--agent)}
+
+/* agent pass card */
+.pass{margin:12px 0 2px;background:linear-gradient(135deg,#241b3d,#1a1430);border:1px solid rgba(139,124,246,.55);
+  border-radius:14px;padding:14px 16px;position:relative;overflow:hidden}
+.pass:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,var(--agent),#5b4fcf)}
+.pass:before2{}
+.pass .pt{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--agent);margin-bottom:6px}
+.pass .pn{font-family:var(--disp);font-weight:700;font-size:17px}
+.pass .pl{font-family:var(--mono);font-size:11.5px;color:var(--cream-dim);margin-top:6px;line-height:1.8}
+.pass .pl b{color:var(--cream)}
+.sig{position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:9.5px;color:#6f63c9;text-align:right;line-height:1.6}
+
+/* ===== QUARANTINE ===== */
+.alley{background:#100e13;border:1px solid #251f2b;border-radius:18px;padding:18px}
+.alley h3{font-family:var(--disp);font-size:20px;margin-bottom:4px}
+.alley .sub{color:var(--cream-dim);font-size:13px;margin-bottom:14px}
+.qrow{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid #251f2b;border-radius:11px;margin-bottom:8px;
+  background:#131018;font-size:13px;opacity:.85}
+.qrow:hover{opacity:1}
+.qrow .qn{font-family:var(--mono);font-size:12px;color:var(--cream);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qrow .qr{font-family:var(--mono);font-size:10.5px;color:var(--bot);white-space:nowrap}
+.qrow .mini{font-family:var(--mono);font-size:10.5px;padding:5px 10px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--cream-dim);cursor:pointer}
+.qrow .mini:hover{color:var(--brass);border-color:var(--brass)}
+.qrow.gone{animation:poof .4s forwards}
+@keyframes poof{to{opacity:0;transform:translateX(24px);max-height:0;padding:0;margin:0;border-width:0}}
+.pledge{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--cream-dim);border-left:2px solid var(--brass-dim);padding-left:12px;line-height:1.8}
+
+/* ===== REPORTS ===== */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--ink2);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--cream-dim);margin-bottom:14px;font-weight:500}
+.big{font-family:var(--disp);font-weight:900;font-size:42px;line-height:1}
+.big small{font-family:var(--mono);font-size:13px;font-weight:400;color:var(--cream-dim);display:block;margin-top:8px}
+.bars .brow{margin-bottom:13px}
+.bars .bl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;margin-bottom:5px;color:var(--cream-dim)}
+.bars .bl b{color:var(--cream)}
+.track{height:11px;border-radius:6px;background:#1b1f28;display:flex;overflow:hidden}
+.track i{display:block;height:100%}
+.track .th{background:var(--human)} .track .ta{background:var(--agent)} .track .tb{background:rgba(229,72,77,.7)}
+.money{font-family:var(--mono);font-size:13px;line-height:2}
+.money .pos{color:var(--human);font-weight:700}
+
+/* receipt (state of your door) */
+.door-receipt{background:var(--cream);color:#1a1712;border-radius:6px;padding:22px 24px;font-family:var(--mono);font-size:12.5px;
+  position:relative;max-width:380px;margin:0 auto;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.door-receipt:before,.door-receipt:after{content:"";position:absolute;left:0;right:0;height:9px;
+  background:repeating-conic-gradient(var(--cream) 0% 25%,transparent 0% 50%) 0 0/14px 9px}
+.door-receipt:before{top:-8px;transform:rotate(180deg)}
+.door-receipt:after{bottom:-8px}
+.dr-h{text-align:center;letter-spacing:.2em;font-size:10.5px;color:#7a6a4a;margin-bottom:4px}
+.dr-t{text-align:center;font-family:var(--disp);font-weight:900;font-size:21px;margin-bottom:14px}
+.dr-l{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dotted #c9c0ac}
+.dr-l:last-of-type{border-bottom:none}
+.dr-tot{margin-top:12px;padding-top:12px;border-top:2px solid #1a1712;display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.dr-f{text-align:center;margin-top:14px;font-size:10px;letter-spacing:.12em;color:#8a7a5a}
+
+/* registry */
+.reg{display:flex;align-items:center;gap:13px;padding:13px 15px;border:1px solid var(--line);border-radius:13px;margin-bottom:9px;background:var(--ink2)}
+.reg .av{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:rgba(139,124,246,.14);border:1px solid rgba(139,124,246,.4)}
+.reg .rn{font-weight:600;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.reg .rd{font-family:var(--mono);font-size:11px;color:var(--cream-dim);margin-top:3px}
+.badge{font-family:var(--mono);font-size:9.5px;padding:3px 7px;border-radius:5px;border:1px solid var(--agent);color:var(--agent);letter-spacing:.06em}
+.badge.dir{border-color:var(--human);color:var(--human)}
+.reg .rt2{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--human);white-space:nowrap}
+
+.foot{margin-top:44px;text-align:center;font-family:var(--mono);font-size:11px;color:#565c6b;line-height:2}
+.foot b{color:var(--brass-dim)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--plum);color:var(--cream);
+  border:1px solid var(--brass-dim);font-family:var(--mono);font-size:12px;padding:11px 18px;border-radius:11px;transition:.35s;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="marquee">
+    <div class="brand">Velvet<em>Rope</em></div>
+    <div class="biz">DOOR #0142 — <b>ROSSI ROOFING &amp; GUTTERS</b><br>Tampa, FL · forms: website quote · email forward · FB lead ads</div>
+  </div>
+
+  <div class="rope" id="rope">
+    <span class="stanchion l"></span><span class="stanchion r"></span>
+    <div class="cord">
+      <div class="seg" id="segH" style="background:var(--human);flex-grow:9"></div>
+      <div class="seg" id="segA" style="background:var(--agent);flex-grow:2"></div>
+      <div class="seg" id="segB" style="background:rgba(229,72,77,.65);flex-grow:14"></div>
+    </div>
+  </div>
+  <div class="rope-counts">
+    <span class="c-h">🧑 HUMAN <b id="cntH">9</b></span>
+    <span class="c-a">🤖 AGENT ✓ <b id="cntA">2</b></span>
+    <span class="c-b">🚫 TURNED AWAY <b id="cntB">14</b></span>
+    <span class="c-brass">TONIGHT'S DOOR: <b>25 knocks</b></span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-p="door">🔔 The Door</button>
+    <button class="tab" data-p="alley">🗄️ Quarantine <span id="qCount">(14)</span></button>
+    <button class="tab" data-p="reports">📊 True-Lead Reports</button>
+    <button class="tab" data-p="registry">🪪 Agent Registry</button>
+  </div>
+
+  <!-- ============ DOOR ============ -->
+  <div class="pane on" id="p-door">
+    <div class="bell">
+      <span class="dot"></span>
+      <div><b>BELL RANG 4 MIN AGO</b> — hot quote request from a verified human. Response clock is running.</div>
+      <span class="act">rule: quote+HUMAN → instant push · everything else → 9am digest</span>
+    </div>
+
+    <div id="inbox"></div>
+    <p style="font-family:var(--mono);font-size:11px;color:#565c6b;text-align:center;margin-top:14px">tap any card for the Evidence Ledger — verdicts are reversible, nothing is ever deleted</p>
+  </div>
+
+  <!-- ============ QUARANTINE ============ -->
+  <div class="pane" id="p-alley">
+    <div class="alley">
+      <h3>The alley out back</h3>
+      <div class="sub">Suspected bots live here — dimmed, skimmable, never deleted. One good lead is worth more than a week of junk skims.</div>
+      <div id="qList"></div>
+      <div class="pledge">
+        QUARANTINE PLEDGE · nothing auto-deletes, ever<br>
+        false-positive release = one tap · every release retrains the signal graph<br>
+        this week across all VelvetRope doors: <span style="color:var(--brass)">312 businesses</span> saw the same "roofing-seo-pitch" sender pattern
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REPORTS ============ -->
+  <div class="pane" id="p-reports">
+    <div class="grid2">
+      <div class="card">
+        <h4>REAL LEADS · LAST 30 DAYS</h4>
+        <div class="big c-h">163<small>of 402 total inquiries (40.5%) — the rest never existed</small></div>
+      </div>
+      <div class="card">
+        <h4>TRUE COST PER LEAD</h4>
+        <div class="money" style="font-size:13px;line-height:2.1;margin-top:4px">
+          Ad spend: <b>$2,140.00</b><br>
+          CPL you think: <span style="color:var(--bot)">$5.32</span> (402 "leads")<br>
+          CPL you pay: <span class="pos">$13.13</span> (163 real)<br>
+          Bot-attributed waste: <span style="color:var(--bot);font-weight:700">$1,296 / mo</span>
+        </div>
+      </div>
+      <div class="card bars" style="grid-column:1/-1">
+        <h4>BOT SHARE BY SOURCE — WHERE YOUR AD MONEY LEAKS</h4>
+        <div class="brow"><div class="bl"><span>Meta lead ads</span><b>61% suspected bot</b></div>
+          <div class="track"><i class="th" style="width:31%"></i><i class="ta" style="width:8%"></i><i class="tb" style="width:61%"></i></div></div>
+        <div class="brow"><div class="bl"><span>Google search ads</span><b>38% suspected bot</b></div>
+          <div class="track"><i class="th" style="width:54%"></i><i class="ta" style="width:8%"></i><i class="tb" style="width:38%"></i></div></div>
+        <div class="brow"><div class="bl"><span>Website quote form (organic)</span><b>12% suspected bot</b></div>
+          <div class="track"><i class="th" style="width:79%"></i><i class="ta" style="width:9%"></i><i class="tb" style="width:12%"></i></div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--cream-dim);margin-top:6px">
+          ▮ human ▮ verified agent ▮ suspected bot · <span style="color:var(--brass)">export invalid-traffic evidence → Meta/Google refund claims (1-click CSV)</span>
+        </div>
+      </div>
+      <div class="card" style="grid-column:1/-1;background:transparent;border:none;padding:0">
+        <h4 style="padding:0 4px">STATE OF YOUR DOOR — OCTOBER RECEIPT</h4>
+        <div class="door-receipt">
+          <div class="dr-h">VELVETROPE · MONTHLY DOOR RECEIPT</div>
+          <div class="dr-t">Rossi Roofing &amp; Gutters</div>
+          <div class="dr-l"><span>Knocks received</span><b>402</b></div>
+          <div class="dr-l"><span>🧑 Humans let in</span><b>156</b></div>
+          <div class="dr-l"><span>🤖 Verified agents (with a budget behind them)</span><b>12</b></div>
+          <div class="dr-l"><span>🚫 Bots turned away</span><b>179</b></div>
+          <div class="dr-l"><span>Quarantined, later released as real</span><b>7</b></div>
+          <div class="dr-l"><span>Median human response time</span><b>22 min ↓ from 3.1 hr</b></div>
+          <div class="dr-tot"><span>WASTE BLOCKED</span><span>$1,296</span></div>
+          <div class="dr-f">NOBODY WAS EVER DELETED. NOT TONIGHT, NOT EVER.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REGISTRY ============ -->
+  <div class="pane" id="p-registry">
+    <div class="card" style="margin-bottom:14px">
+      <h4>AGENT PASS™ — PUBLIC REGISTRY (EXCERPT)</h4>
+      <div style="font-size:13.5px;color:var(--cream-dim);line-height:1.7;margin-bottom:16px">
+        Signed agents (Web Bot Auth) verify cryptographically. Unsigned agents get the handshake: declare who you act for and what you need — real customer-agents answer coherently, fraud bots don't.
+      </div>
+      <div class="reg"><div class="av">🤖</div><div><div class="rn">Claude for Gmail <span class="badge dir">DIRECT</span></div><div class="rd">anthropic.com · signs: Web Bot Auth · acts for end-users drafting inquiries</div></div><div class="rt2">98.2% accepted</div></div>
+      <div class="reg"><div class="av">🛠️</div><div><div class="rn">HandyBook Agent <span class="badge">INTERMEDIARY</span></div><div class="rd">handybook.example · signs: Web Bot Auth · books home-service quotes for members</div></div><div class="rt2">94.7% accepted</div></div>
+      <div class="reg"><div class="av">📇</div><div><div class="rn">ChatGPT Atlas Assistant <span class="badge dir">DIRECT</span></div><div class="rd">openai.com · Cloudflare verified-bot list · form-fill on explicit user request</div></div><div class="rt2">96.1% accepted</div></div>
+      <div class="reg"><div class="av">❓</div><div><div class="rn">unsigned: "assistant/0.3" <span class="badge" style="border-color:var(--brass);color:var(--brass)">HANDSHAKE PENDING</span></div><div class="rd">no signature · purpose declaration requested · 3 of 5 doors voted: hold</div></div><div class="rt2" style="color:var(--brass)">awaiting vote</div></div>
+      <div style="margin-top:16px;text-align:center">
+        <button class="btn p" onclick="toast('Badge snippet copied — paste it under your form ✨')">⬇ Get the "Accepts Verified AI Agents" badge</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>VELVETROPE</b> · prototype · nov 9 2026<br>
+    46.7% of lead-form submissions are bot-filled (Opticks, 2B clicks) · AI agent calls up 6× YoY (NextPhone 2026)<br>
+    three doors, not one locked one: human 🧑 · verified agent 🤖 · not tonight 🚫
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA=[
+ {t:'h',name:'Maria G. Delgado',subj:'Quote request — 2,400 sq ft shingle roof, storm damage, insurance claim in progress',src:'website form',time:'4 min ago',score:96,
+  why:'Fill time 84s, typed with corrections, verified personal Gmail (7-yr domain age), phone matches Tampa area + carrier records, message is specific and local.',
+  ev:[['Fill duration','84 s','ok',''],['Honeypot field','untouched','ok',''],['Email domain age','7 yrs · gmail','ok',''],['Duplicate-submission check','1 door this week','ok',''],['Text-slop score','0.04','ok',''],['IP reputation','residential · clean','ok',''],['Category','QUOTE REQUEST · hot','mid','']]},
+ {t:'a',name:'Claude for Gmail',subj:'Drafting a gutter-replacement inquiry on behalf of m.rossi.warehouse@gmail.com (verified signature)',src:'website form',time:'31 min ago',score:99,
+  agent:{n:'Claude for Gmail',by:'Anthropic · acting for m.rossi.warehouse@gmail.com',claim:'quote: 600 ft seamless gutters, warehouse on 4002 N Nebraska Ave',sig:'Web Bot Auth ✓\nHTTP message signature valid\nagent-id: cl-gmail-prod-04\nlisted: DIRECT · anthropic.com/.well-known'},
+  why:'This is not spam wearing a robot costume — it is a customer\'s assistant, with a budget, doing exactly what the customer asked. The split that matters in 2026 is not bot vs human.',
+  ev:[['Signature','Web Bot Auth valid','ag',''],['Registry','cl-gmail-prod-04 · DIRECT','ag',''],['Acts for','m.rossi.warehouse@gmail.com','ok',''],['Behavior','3 form fields, 41 s, no probing','ok',''],['Door vote history','98.2% accepted (n=1,204)','ag','']]},
+ {t:'b',name:'“Jessica” <seo.jess@roofboost-xyz.top>',subj:'🔥 Hey!! I noticed your website ranks poorly for "roofing tampa" — our AI can fix that, quick call??',src:'website form',time:'52 min ago',score:4,
+  why:'Submitted in 1.8 seconds — humans don\'t type that fast. Disposable domain registered 9 days ago. The exact pitch text hit 312 VelvetRope businesses this week.',
+  ev:[['Fill duration','1.8 s','bad',''],['Honeypot field','FILLED','bad',''],['Email domain age','9 days · .top TLD','bad',''],['Cross-door pattern','312 businesses this week','bad',''],['Text-slop score','0.93 · seo-pitch-41','bad',''],['IP reputation','datacenter · fraud feed hit','bad','']]},
+ {t:'h',name:'Dwayne Ellis',subj:'Emergency — active leak near chimney after last night\'s storm, need someone today if possible',src:'email forward',time:'1 hr ago',score:91,
+  why:'Forwarded from your forms@ inbox. 6-yr-old Outlook account, message has photos attached (EXIF: Tampa, taken 6:42 AM), urgent-but-specific language.',
+  ev:[['Ingest','email forward · SES','ok',''],['Attachments','2 photos · EXIF Tampa 06:42','ok',''],['Email domain age','6 yrs · outlook','ok',''],['Phone','+1 813 · carrier active','ok',''],['Text-slop score','0.07','ok',''],['Bell rule','EMERGENCY · rang instantly','mid','']]},
+ {t:'a',name:'HandyBook Agent',subj:'Member requests 3 competitive quotes: full roof replacement, 1,850 sq ft, financing question',src:'API webhook',time:'2 hr ago',score:97,
+  agent:{n:'HandyBook Agent',by:'handybook.example · INTERMEDIARY (marketplace)',claim:'member #HB-88214 quote aggregation — budget disclosed: $18-24k',sig:'Web Bot Auth ✓\nregistry match: hb-quote-2\nlisted: INTERMEDIARY\ntrust score: 4.6/5'},
+  why:'A marketplace agent shopping for a real member who disclosed a budget. Your competitors answer these in 22 minutes on average — the Bell treats verified agents like humans for quote categories.',
+  ev:[['Signature','Web Bot Auth valid','ag',''],['Registry','hb-quote-2 · INTERMEDIARY','ag',''],['Member budget','$18-24k disclosed','ok',''],['Behavior','quote fields only, no crawling','ok',''],['Trust score','4.6/5 (Cloudflare BotBase)','ag','']]},
+ {t:'b',name:'“Daniel” +44 7700 900461',subj:'Hello dear, I am interested in your services kindly revert with your best price we have a project in UK',src:'FB lead ad',time:'3 hr ago',score:2,
+  why:'Classic lead-farm template. UK number on a Tampa-only ad campaign. Same phone submitted to 40 contractor doors in the last hour.',
+  ev:[['Duplicate phone','40 doors · 1 hour','bad',''],['Geo mismatch','UK number · Tampa campaign','bad',''],['Template match','lead-farm-17 (n=8,941)','bad',''],['Ad source','Meta · invalid-traffic flag ON','bad',''],['Text-slop score','0.88','bad','']]}
+];
+
+const QJUNK=[
+ ['seo.jess@roofboost-xyz.top','SEO pitch · 1.8 s fill · honeypot'],
+ ['+44 7700 900461','Lead farm · 40 doors/hour'],
+ ['billing@w9-irs-verify.com','Credential test · phishing pattern'],
+ ['"Karen" <karen.w@quickloans-now.xyz>','Payday-loan blast · 9-day domain'],
+ ['info@competitor-scrape.dev','0.4 s/page crawl · no form intent'],
+ ['"Mike" <mike@as8d7f6a5s.top>','Disposable domain · template-17'],
+ ['+1 832 000 1111','Robocall probe · AI voice agent, unsigned'],
+ ['leads@buy-tampa-leads.co','List-seller probe · honeypot filled'],
+];
+
+let counts={h:9,a:2,b:14};
+
+function stampHTML(t){return t==='h'?'<span class="stamp h fresh">🧑 HUMAN</span>':t==='a'?'<span class="stamp a fresh">🤖 AGENT ✓</span>':'<span class="stamp b fresh">🚫 SUSPECTED BOT</span>'}
+
+function card(d,i){
+ const el=document.createElement('div');
+ el.className='q '+d.t; el.id='q'+i;
+ let drawer='';
+ if(d.agent){
+   drawer+=`<div class="pass"><div class="pt">AGENT PASS™ · VERIFIED</div><div class="pn">${d.agent.n}</div>
+   <div class="pl">ACTING FOR · <b>${d.agent.by}</b><br>DECLARED PURPOSE · <b>${d.agent.claim}</b></div>
+   <div class="sig">${d.agent.sig.replace(/\n/g,'<br>')}</div></div>`;
+ }
+ drawer+=`<div class="why"><b>Doorman says:</b> ${d.why}</div>
+ <div class="receipt"><div class="rt">— EVIDENCE LEDGER —</div>`+
+ d.ev.map(([k,v,c])=>`<div class="ln"><span class="k">${k}</span><span class="v ${c}">${v}</span></div>`).join('')+
+ `</div><div class="acts" style="margin-top:14px">`+
+ (d.t==='b'
+   ?`<button class="btn g" onclick="event.stopPropagation();act('${i}','released')">↩ Release as real lead</button><button class="btn" onclick="event.stopPropagation();act('${i}','banned')">⛔ Ban sender pattern</button>`
+   :d.t==='a'
+   ?`<button class="btn g" onclick="event.stopPropagation();act('${i}','rang')">🔔 Ring me anyway</button><button class="btn p" onclick="event.stopPropagation();act('${i}','pass')">🪪 View Agent Pass</button>`
+   :`<button class="btn g" onclick="event.stopPropagation();act('${i}','rang')">🔔 Start response clock</button><button class="btn r" onclick="event.stopPropagation();act('${i}','moved')">🚫 Not tonight → quarantine</button>`)
+ +`</div>`;
+ el.innerHTML=`<div class="rail"></div><div class="row">
+   <div class="who"><div class="nm">${stampHTML(d.t)} ${d.name}</div><div class="sb">${d.subj}</div></div>
+   <div class="meta"><span class="score ${d.t}">${d.score}</span> confidence<br>${d.src} · ${d.time}</div>
+ </div><div class="drawer"><div class="din">${drawer}</div></div>`;
+ el.onclick=()=>{document.querySelectorAll('.q.open').forEach(x=>{if(x!==el)x.classList.remove('open')});el.classList.toggle('open')};
+ return el;
+}
+
+function renderInbox(){const box=document.getElementById('inbox');DATA.forEach((d,i)=>box.appendChild(card(d,i)))}
+
+function renderQ(){
+ const list=document.getElementById('qList');
+ QJUNK.forEach((j,i)=>{
+   const el=document.createElement('div');el.className='qrow';el.id='jr'+i;
+   el.innerHTML=`<span class="qn">${j[0]}</span><span class="qr">${j[1]}</span>
+     <button class="mini" onclick="qact(${i},'released')">↩ release</button>
+     <button class="mini" onclick="qact(${i},'kept')">✓ keep out</button>`;
+   list.appendChild(el);
+ });
+}
+
+function act(i,kind){
+ const msg={released:'Released — back through the rope. Signal graph learning from this.',
+  banned:'Sender pattern banned across YOUR door. 312 other doors already had it blocked.',
+  rang:'🔔 Bell rung. Response clock started — humans who answer in &lt;5 min win the job 3× more often.',
+  pass:'Agent Pass verified: signature valid, registry match, trust 4.6/5.',
+  moved:'Moved to the alley. Nothing deleted — ever.'}[kind];
+ toast(msg);
+}
+function qact(i,kind){
+ const el=document.getElementById('jr'+i);
+ el.classList.add('gone');
+ setTimeout(()=>{el.remove();
+   counts.b--;document.getElementById('cntB').textContent=counts.b;
+   document.getElementById('qCount').textContent='('+(counts.b)+')';
+   const tot=counts.h+counts.a+counts.b;
+   document.getElementById('segH').style.flexGrow=counts.h;
+   document.getElementById('segA').style.flexGrow=counts.a;
+   document.getElementById('segB').style.flexGrow=counts.b;
+ },380);
+ toast(kind==='released'?'↩ Released as a real lead — the false-positive that saves the job.':'✓ Kept out. Pattern confidence +1 across all doors.');
+}
+
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+ document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+ document.getElementById('p-'+t.dataset.p).classList.add('on');
+});
+
+let tt;function toast(m){const el=document.getElementById('toast');el.innerHTML=m;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),3400)}
+
+renderInbox();renderQ();
+</script>
+</body>
+</html>
