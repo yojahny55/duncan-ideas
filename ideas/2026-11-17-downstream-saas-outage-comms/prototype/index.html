@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Downstream — the response desk for when your SaaS goes dark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ HEADER / NOC BAR ============ -->
+  <header class="noc-bar">
+    <div class="noc-id">
+      <span class="wordmark">DOWNSTREAM</span>
+      <span class="noc-sub">response desk · v0 prototype</span>
+    </div>
+    <div class="incident-chip" id="incidentChip">
+      <span class="dot dot-red"></span>
+      <span class="mono" id="incidentClock">DOWN 4h 37m</span>
+    </div>
+  </header>
+
+  <!-- ============ RADAR TAB ============ -->
+  <section class="tab active" id="tab-radar">
+    <div class="panel">
+      <h1 class="panel-title">Outage Radar</h1>
+      <p class="panel-sub">Mapped services, vendor truth, your timezone — and what's exposed.</p>
+
+      <div class="health-board">
+        <div class="svc-row svc-down">
+          <span class="dot dot-red pulse"></span>
+          <div class="svc-name">Microsoft 365
+            <span class="svc-detail">Exchange Online · Teams calendar · SharePoint</span>
+          </div>
+          <div class="svc-time mono" id="svcDown1">4h 37m</div>
+        </div>
+        <div class="svc-row svc-down">
+          <span class="dot dot-red pulse"></span>
+          <div class="svc-name">Copilot (M365)
+            <span class="svc-detail">cascaded from Exchange Online</span>
+          </div>
+          <div class="svc-time mono" id="svcDown2">4h 31m</div>
+        </div>
+        <div class="svc-row svc-degraded">
+          <span class="dot dot-amber"></span>
+          <div class="svc-name">Outlook Web
+            <span class="svc-detail">slow send · Americas region</span>
+          </div>
+          <div class="svc-time mono">~2.1h</div>
+        </div>
+        <div class="svc-row svc-ok">
+          <span class="dot dot-green"></span>
+          <div class="svc-name">Stripe
+            <span class="svc-detail">payments running</span>
+          </div>
+          <div class="svc-time mono">OK</div>
+        </div>
+        <div class="svc-row svc-ok">
+          <span class="dot dot-green"></span>
+          <div class="svc-name">AWS us-east-1
+            <span class="svc-detail">app + backups</span>
+          </div>
+          <div class="svc-time mono">OK</div>
+        </div>
+      </div>
+
+      <div class="proof-strip card">
+        <div class="proof-row">
+          <span class="proof-label">INCIDENT</span>
+          <span class="mono proof-val">EX1550543</span>
+          <a class="proof-link" href="#" onclick="return false">vendor status page ↗</a>
+        </div>
+        <div class="proof-row">
+          <span class="proof-label">TIMELINE</span>
+          <span class="mono proof-val">12:35 first reported → 13:02 acknowledged → mitigating → your tz ET</span>
+        </div>
+      </div>
+
+      <div class="exposure card">
+        <div class="exposure-head">
+          <span class="exposure-label">YOUR EXPOSURE READ</span>
+          <span class="mono exposure-total" id="exposureTotal">$8,420</span>
+        </div>
+        <div class="meter"><div class="meter-fill" id="meterFill"></div><div class="meter-tick"></div></div>
+        <ul class="exposure-list">
+          <li><span class="mono">4</span> client commitments today touch email <span class="ex-warn">2 at risk</span></li>
+          <li><span class="mono">1</span> deliverable due <span class="mono">17:00</span> — proposal to Halcyon &amp; Co</li>
+          <li><span class="mono">2</span> FTEs idle since <span class="mono">13:00</span> @ <span class="mono">$68/hr</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BROADCAST TAB ============ -->
+  <section class="tab" id="tab-broadcast">
+    <div class="panel">
+      <h1 class="panel-title">Downstream Broadcast</h1>
+      <p class="panel-sub">Tell the people downstream before they ask. Proof attached. You review — we never send.</p>
+
+      <div class="composer card">
+        <div class="chip-row">
+          <button class="chip chip-on">Clients</button>
+          <button class="chip">Partners</button>
+          <button class="chip">Internal</button>
+        </div>
+        <div class="tone-row">
+          <span class="tone-label">tone</span>
+          <div class="tone-dial">
+            <span class="tone-opt">calm</span>
+            <span class="tone-opt on">urgent</span>
+            <span class="tone-opt">apologetic</span>
+          </div>
+        </div>
+
+        <div class="paper">
+          <div class="paper-stamp">DRAFT</div>
+          <h2 class="paper-head">A note on today's disruption</h2>
+          <p class="paper-body">Hi — quick note before you ask: our email and meeting tools are affected by a Microsoft 365 outage on the vendor's side. <strong>It's upstream of us</strong> — you can see it on their status page (incident EX1550543, attached below). We're monitoring it every 15 minutes. Your account is not affected; nothing you've sent is lost.</p>
+          <p class="paper-body">What you'll get from us: the first word when we're fully back, and a same-day recap of anything that slipped on our end. — The Meridian Team</p>
+          <div class="paper-proof">
+            <span class="mono">PROOF · EX1550543 · 12:35–now ET · status.microsoft.com ↗</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="sendBtn">Review &amp; Send · 12 clients</button>
+        <div class="send-stamp" id="sendStamp">SENT — 12 clients · 14:32 ET</div>
+        <p class="fineprint">Sends through <em>your</em> mailbox (hello@meridian.co). Downstream never auto-sends anything to anyone's customers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEDGER TAB ============ -->
+  <section class="tab" id="tab-ledger">
+    <div class="panel">
+      <h1 class="panel-title">Blackout Ledger</h1>
+      <p class="panel-sub">Tap what the outage is breaking. The number is your evidence.</p>
+
+      <div class="ledger-total card">
+        <span class="ledger-label">EXPOSURE SO FAR</span>
+        <div class="mono ledger-num" id="ledgerNum">$8,420</div>
+        <span class="ledger-note">and counting · <span class="mono" id="ledgerRate">$3.1K/hr</span> from your map</span>
+      </div>
+
+      <div class="chip-bank card">
+        <button class="log-chip" data-note="missed call" data-val="150">☎ Missed client call · $150</button>
+        <button class="log-chip" data-note="order stuck" data-val="240">📦 Order unprocessed · $240</button>
+        <button class="log-chip" data-note="staff idle" data-val="136">🪑 Staff idle · $136/hr</button>
+        <button class="log-chip" data-note="deadline hit" data-val="500">⏰ Deadline slipped · $500</button>
+        <button class="log-chip" data-note="custom" data-val="0">＋ Custom entry</button>
+      </div>
+
+      <ul class="ledger-list card" id="ledgerList">
+        <li><span class="mono ledger-t">13:05</span> Missed client call — Halcyon follow-up <span class="mono ledger-v">−$150</span></li>
+        <li><span class="mono ledger-t">13:40</span> 18 orders stuck in payment webhook <span class="mono ledger-v">−$1,152</span></li>
+        <li><span class="mono ledger-t">13:00</span> 2 FTEs idle (no mail, no Teams) <span class="mono ledger-v">−$272</span></li>
+        <li><span class="mono ledger-t">15:12</span> Onboarding emails delayed — 9 prospects <span class="mono ledger-v">−$6,848</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ REPORT TAB ============ -->
+  <section class="tab" id="tab-report">
+    <div class="panel">
+      <h1 class="panel-title">Blackout Report</h1>
+      <p class="panel-sub">When it recovers: the one-pager, the math, the claim.</p>
+
+      <div class="receipt">
+        <div class="receipt-stamp" id="receiptStamp">RECOVERED</div>
+        <div class="receipt-wordmark">DOWNSTREAM REPORT</div>
+        <div class="receipt-line mono">MERIDIAN STUDIO LLC · NOC-4471</div>
+        <hr class="receipt-hr">
+        <div class="r-row"><span>Incident</span><span class="mono">EX1550543 · M365</span></div>
+        <div class="r-row"><span>Window (your tz)</span><span class="mono">12:35 – 17:10 ET</span></div>
+        <div class="r-row"><span>Duration</span><span class="mono">4h 35m</span></div>
+        <div class="r-row"><span>Services hit</span><span class="mono">Exchange · Teams · SP</span></div>
+        <hr class="receipt-hr">
+        <div class="r-row"><span>Your exposure</span><span class="mono r-big">−$8,420</span></div>
+        <div class="r-row"><span>Client comms</span><span class="mono">12 sent · first 14:32</span></div>
+        <hr class="receipt-hr">
+        <div class="r-row r-sla">
+          <span>SLA MATH</span>
+          <div class="sla-mono mono">Nov uptime: 99.4% → &lt;99% tier<br>credit: 50% × $2,428/mo<br>claimable: <span class="r-big">$1,214</span></div>
+        </div>
+        <div class="r-row"><span>Filing path</span><span class="mono">admin center ↗</span></div>
+        <div class="claim-stamp" id="claimStamp">CLAIM FILED</div>
+        <div class="receipt-wordmark small">· · · · tear along the line · · · ·</div>
+      </div>
+      <button class="btn-primary wide" id="fileBtn">File SLA claim (draft)</button>
+      <p class="fineprint">Drafts the claim letter with the evidence bundle. You review and file in your admin center — we never file for you.</p>
+    </div>
+  </section>
+
+  <!-- ============ TAB BAR ============ -->
+  <nav class="tabbar">
+    <button class="tabbtn active" data-tab="radar"><span class="tabico">◉</span>Radar</button>
+    <button class="tabbtn" data-tab="broadcast"><span class="tabico">✉</span>Broadcast</button>
+    <button class="tabbtn" data-tab="ledger"><span class="tabico">▤</span>Ledger</button>
+    <button class="tabbtn" data-tab="report"><span class="tabico">⎙</span>Report</button>
+  </nav>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
