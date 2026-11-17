@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProofOnce — prove it once, renew everywhere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">▣</span>
+    <span class="brand-name">ProofOnce</span>
+    <span class="brand-sub">prove it once · renew everywhere</span>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-view="vault" role="tab">Vault</button>
+    <button class="tab" data-view="hours" role="tab">80-Hours</button>
+    <button class="tab" data-view="radar" role="tab">Renewals</button>
+    <button class="tab" data-view="check" role="tab">Check</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ VAULT ============ -->
+  <section id="view-vault" class="view active">
+    <div class="hero">
+      <h1>Your papers, <em>once.</em></h1>
+      <p class="lede">Snap or forward each document one time. We extract the facts, keep them fresh, and pre-fill <strong>every</strong> renewal — SNAP, Medicaid, childcare, school meals. No portal passwords. No re-typing. Ever.</p>
+      <div class="hero-cta">
+        <button class="btn primary" id="snapBtn">＋ Add a document</button>
+        <span class="hint">or forward anything to <code>pack@proofonce.app</code></span>
+      </div>
+    </div>
+
+    <div class="vault-grid" id="vaultGrid">
+      <!-- populated by app.js -->
+    </div>
+
+    <div class="vault-foot">
+      <span class="mono">6 documents · 3 programs pre-filled · 1 renewal ready</span>
+      <span class="pill safe">🔒 Local-first · zero agency logins · you review everything before it ships</span>
+    </div>
+  </section>
+
+  <!-- ============ 80 HOURS ============ -->
+  <section id="view-hours" class="view">
+    <div class="hours-head">
+      <div>
+        <h1>November 2026</h1>
+        <p class="lede">80 hours of work or qualifying activity. Log it in a tap. We print the statement your county expects.</p>
+      </div>
+      <div class="meter-block">
+        <div class="meter" id="meter"><div class="meter-fill" id="meterFill"></div><div class="meter-80" title="80 hours"></div></div>
+        <div class="meter-labels">
+          <span class="mono" id="meterNum">0 / 80 hrs</span>
+          <span class="stamp-stamp" id="hourStamp">IN PROGRESS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="log-row">
+      <button class="log-btn" data-type="paid" data-hours="8">🕘 Worked 8h</button>
+      <button class="log-btn" data-type="paid" data-hours="4">🕓 Worked 4h</button>
+      <button class="log-btn" data-type="jobsearch" data-hours="2">🔎 Job search 2h</button>
+      <button class="log-btn" data-type="school" data-hours="3">🎓 School 3h</button>
+      <button class="log-btn" data-type="volunteer" data-hours="2">🤝 Volunteer 2h</button>
+    </div>
+
+    <div class="hours-legend">
+      <span><i class="dot paid"></i>Paid <b class="mono" id="cPaid">0h</b></span>
+      <span><i class="dot jobsearch"></i>Job search <b class="mono" id="cJob">0h</b></span>
+      <span><i class="dot school"></i>School/training <b class="mono" id="cSchool">0h</b></span>
+      <span><i class="dot volunteer"></i>Volunteer <b class="mono" id="cVol">0h</b></span>
+    </div>
+
+    <ul class="log-list" id="logList"></ul>
+
+    <button class="btn primary wide" id="statementBtn" disabled>Generate 80-Hour Statement →</button>
+  </section>
+
+  <!-- ============ RADAR ============ -->
+  <section id="view-radar" class="view">
+    <div class="countdown-strip" id="countdownStrip">
+      <span class="cs-item"><b class="mono" id="csDays">21</b> days to Medicaid renewal</span>
+      <span class="cs-sep">·</span>
+      <span>Next 80-hour month closes <b class="mono">Nov 30</b></span>
+    </div>
+
+    <h1 class="view-title">Renewal radar</h1>
+    <p class="lede">Every person, every program, one board. Forward the agency's letter (photo or email) and the clock starts itself.</p>
+
+    <div class="radar-list" id="radarList">
+      <!-- populated by app.js -->
+    </div>
+
+    <div class="radar-note pill warn">⚠ Missed a window? The radar shows the <u>reinstatement</u> date — not just "too late."</div>
+  </section>
+
+  <!-- ============ CHECK ============ -->
+  <section id="view-check" class="view">
+    <h1 class="view-title">Mistake check</h1>
+    <p class="lede">Before you hit submit, we re-run the agency's math on <em>your</em> documents. Most denial reasons start here.</p>
+
+    <div class="diff">
+      <div class="diff-col theirs">
+        <h3>Their math <small>(agency formula)</small></h3>
+        <ul class="mono">
+          <li>Income source: 3 pay stubs</li>
+          <li>Total: <b>$6,153.00 / mo</b></li>
+          <li>Household size: 4</li>
+          <li>Per person: <b>$1,538.25</b></li>
+          <li class="flag">vs limit $1,597.48 → <b>MARGIN $59.23</b></li>
+        </ul>
+      </div>
+      <div class="diff-col yours">
+        <h3>Your papers <small>(Proof Vault)</small></h3>
+        <ul class="mono">
+          <li>Income source: 4 pay periods</li>
+          <li>Total: <b>$6,021.00 / mo</b></li>
+          <li>Household size: 4</li>
+          <li>Per person: <b>$1,505.25</b></li>
+          <li class="ok">vs limit $1,597.48 → <b>MARGIN $92.23</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="verdict-card">
+      <span class="verdict-stamp warn">MISMATCH RISK: MEDIUM</span>
+      <p>Their formula grabbed <b>3 pay stubs</b>; your vault holds <b>4 pay periods</b> for November. The 4th stub is <b class="mono">lower</b> (part-time week) and <b>raises your margin from $59 to $92</b>. If they use the high 3, you pass — barely — and any rounding error flips it.</p>
+      <p class="action-line">Fix: attach all 4 stubs from your Vault before submitting.</p>
+    </div>
+
+    <div class="check-row">
+      <button class="btn primary" id="fixBtn">Attach 4th stub from Vault</button>
+      <button class="btn ghost">See common denials in OH</button>
+    </div>
+
+    <div id="checkResolved" class="resolved hidden">
+      <span class="verdict-stamp safe">CLEARED</span>
+      <span>4 pay periods attached. Their math now matches yours: <b class="mono">$6,021.00 / mo</b>. Ready to renew.</span>
+    </div>
+  </section>
+</main>
+
+<!-- thermal receipt -->
+<div class="receipt-veil hidden" id="receiptVeil">
+  <div class="receipt" id="receipt">
+    <pre id="receiptText"></pre>
+    <div class="zigzag"></div>
+    <button class="btn ghost small" id="receiptClose">Done</button>
+  </div>
+</div>
+
+<footer class="foot">
+  <span class="mono">ProofOnce — prototype · 2026-11-16 · "the benefits counter at 9am, but you're not behind"</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
