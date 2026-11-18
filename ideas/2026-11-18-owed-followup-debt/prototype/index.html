@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owed — prototype</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1d212b; --line:#262b36;
+    --text:#e8ebf0; --muted:#8b93a3; --accent:#5ee7a0; --accent-d:#123526;
+    --warn:#ffc46b; --over:#ff7a7a; --chip:#232936;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+  body{background:#0a0c0f;color:var(--text);display:flex;justify-content:center;padding:24px 12px;min-height:100vh}
+  .frame{width:390px;max-width:100%;background:var(--bg);border:1px solid var(--line);border-radius:36px;padding:20px 16px 0;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+  .statusbar{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:2px 6px 12px}
+  header{display:flex;align-items:baseline;justify-content:space-between;padding:4px 6px 14px}
+  h1{font-size:24px;letter-spacing:-.5px}
+  h1 span{color:var(--accent)}
+  .count-badge{background:var(--chip);color:var(--muted);font-size:12px;padding:4px 10px;border-radius:99px}
+  .count-badge b{color:var(--text)}
+  .sub{font-size:12.5px;color:var(--muted);padding:0 6px 14px;line-height:1.45}
+
+  .tabbar{display:flex;gap:8px;padding:0 4px 14px}
+  .tab{flex:1;text-align:center;font-size:13px;font-weight:600;padding:9px 0;border-radius:12px;background:var(--card);color:var(--muted);border:1px solid var(--line);cursor:pointer;transition:.15s}
+  .tab.active{background:var(--accent);color:#08130d;border-color:var(--accent)}
+
+  .screen{display:none;animation:fade .18s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+  .card.overdue{border-color:rgba(255,122,122,.45)}
+  .card.due{border-color:rgba(255,196,107,.4)}
+  .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .who{font-weight:700;font-size:14.5px}
+  .rel{font-size:11px;color:var(--muted);font-weight:500;margin-left:6px}
+  .chip{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 9px;border-radius:99px}
+  .chip.fresh{background:var(--chip);color:var(--muted)}
+  .chip.due{background:rgba(255,196,107,.14);color:var(--warn)}
+  .chip.over{background:rgba(255,122,122,.14);color:var(--over)}
+  .what{font-size:13.5px;line-height:1.5;margin-bottom:10px}
+  .meta{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin-bottom:12px}
+  .meta b{color:var(--text);font-weight:600}
+  .actions{display:flex;gap:8px}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:600;transition:.15s}
+  .btn-primary{background:var(--accent);color:#08130d;flex:1}
+  .btn-ghost{background:var(--chip);color:var(--text)}
+  button:active{transform:scale(.97)}
+
+  .empty{text-align:center;color:var(--muted);padding:48px 20px;font-size:13.5px;line-height:1.6}
+  .empty .big{font-size:34px;margin-bottom:10px}
+
+  /* capture */
+  .src{font-size:12px;color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-bottom:12px;line-height:1.5}
+  textarea{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:14px;color:var(--text);font:inherit;font-size:13.5px;padding:12px;resize:none;height:96px;line-height:1.5}
+  textarea:focus{outline:none;border-color:var(--accent)}
+  .parse-hint{font-size:11.5px;color:var(--muted);margin:10px 2px 14px}
+  .parse-result{display:none}
+  .parse-result.show{display:block;animation:fade .25s ease}
+  .kv{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .kv:last-of-type{border-bottom:none}
+  .kv span{color:var(--muted)}
+  .kv b{font-weight:600;text-align:right;max-width:60%}
+  .parsed-tag{display:inline-block;background:rgba(94,231,160,.12);color:var(--accent);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:99px;margin-bottom:10px;letter-spacing:.4px}
+
+  /* detail / closure */
+  .quote{font-size:12.5px;color:var(--muted);background:var(--card2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:10px 12px;margin-bottom:12px;line-height:1.5}
+  .draft{font-size:13.5px;line-height:1.55;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+  .draft .via{font-size:11px;color:var(--muted);margin-top:8px}
+  .closed-note{text-align:center;padding:8px 0 14px}
+  .closed-note .stamp{display:inline-block;border:2px solid var(--accent);color:var(--accent);font-weight:800;font-size:13px;letter-spacing:2px;padding:8px 18px;border-radius:10px;transform:rotate(-3deg)}
+
+  /* score */
+  .score-hero{text-align:center;padding:18px 0 8px}
+  .ring{width:130px;height:130px;margin:0 auto 10px;position:relative}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .pct b{font-size:30px}
+  .ring .pct span{font-size:10.5px;color:var(--muted);letter-spacing:.5px}
+  .score-line{display:flex;justify-content:space-between;font-size:13px;padding:9px 2px;border-bottom:1px solid var(--line)}
+  .score-line:last-child{border-bottom:none}
+  .score-line span{color:var(--muted)}
+  .share-card{margin-top:14px;background:linear-gradient(135deg,#123526,#171a21);border:1px solid rgba(94,231,160,.35);border-radius:16px;padding:16px;text-align:center}
+  .share-card b{font-size:15px;display:block;margin-bottom:4px}
+  .share-card p{font-size:12px;color:var(--muted);margin-bottom:12px}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:#08130d;font-size:13px;font-weight:700;padding:11px 20px;border-radius:99px;transition:.25s;opacity:0;z-index:9;white-space:nowrap}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .foot{padding:16px 0 8px;text-align:center;font-size:10.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="statusbar"><span>9:41</span><span>Owed · prototype</span><span>100%</span></div>
+  <header>
+    <h1>ow<span>e</span>d.</h1>
+    <div class="count-badge"><b id="activeCount">0</b> open loops</div>
+  </header>
+  <div class="sub" id="subline">Your follow-up debt, finite and visible. Close the loop — you promised.</div>
+
+  <div class="tabbar">
+    <div class="tab active" data-tab="queue">Debt Queue</div>
+    <div class="tab" data-tab="capture">Capture</div>
+    <div class="tab" data-tab="score">Score</div>
+  </div>
+
+  <!-- QUEUE -->
+  <div class="screen active" id="screen-queue">
+    <div id="queueList"></div>
+    <div class="empty" id="queueEmpty" style="display:none">
+      <div class="big">🧾</div>
+      Queue is clear.<br>You owe nobody anything.<br><br>That's what this feels like.
+    </div>
+  </div>
+
+  <!-- CAPTURE -->
+  <div class="screen" id="screen-capture">
+    <div class="src">In the moment — share/forward the message to Owed. Here: paste it.</div>
+    <textarea id="captureInput" placeholder="e.g. Maria: 'Hey, whenever you get a chance, could you send me those Q3 numbers before Friday? I need them for the board deck.'"></textarea>
+    <div class="parse-hint">⚡ Parsed on-device — your chat text never leaves the phone.</div>
+    <button class="btn-primary" style="width:100%" id="parseBtn">Extract the promise</button>
+    <div class="parse-result" id="parseResult">
+      <div class="card" style="margin-top:14px">
+        <div class="parsed-tag">DEBT CARD · READY</div>
+        <div class="kv"><span>Person</span><b id="pWho">—</b></div>
+        <div class="kv"><span>Relationship</span><b id="pRel">—</b></div>
+        <div class="kv"><span>Commitment</span><b id="pWhat">—</b></div>
+        <div class="kv"><span>Smart due</span><b id="pDue">—</b></div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" id="discardBtn">Discard</button>
+        <button class="btn-primary" id="addBtn">Add to queue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORE -->
+  <div class="screen" id="screen-score">
+    <div class="card">
+      <div class="score-hero">
+        <div class="ring">
+          <svg width="130" height="130">
+            <circle cx="65" cy="65" r="56" stroke="#262b36" stroke-width="10" fill="none"/>
+            <circle id="ringFg" cx="65" cy="65" r="56" stroke="#5ee7a0" stroke-width="10" fill="none"
+              stroke-linecap="round" stroke-dasharray="351.8" stroke-dashoffset="52.8"/>
+          </svg>
+          <div class="pct"><b id="pct">85%</b><span>WEEKLY FOLLOW-THROUGH</span></div>
+        </div>
+        <div id="scoreSub" style="font-size:12.5px;color:var(--muted)">Closed 9 of 11 loops this week</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="score-line"><span>Closed with proof (last 30d)</span><b id="statClosed">23</b></div>
+      <div class="score-line"><span>Overdue 6+ days</span><b id="statOver">1</b></div>
+      <div class="score-line"><span>Fastest loop closed</span><b>1h 42m</b></div>
+      <div class="score-line"><span>Longest open loop</span><b id="statLongest">6d (Tom — pick up the paint)</b></div>
+    </div>
+    <div class="share-card">
+      <b>You closed 85% of your follow-ups this week</b>
+      <p>Proof of closure: sent timestamps across WhatsApp, SMS &amp; email. That's a flex.</p>
+      <button class="btn-primary" style="width:100%" onclick="toast('Shared — screenshot saved')">Share my follow-through</button>
+    </div>
+  </div>
+
+  <div class="foot">Owed · follow-up debt, finite &amp; visible · local-first · raw chat never leaves the device</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------- state ----------
+const now = Date.now();
+const H = 36e5, D = 24*H;
+let debts = [
+  {id:1, who:'Maria L.', rel:'Client', what:'Send Q3 numbers for the board deck', promised: now-3*H, due: now+18*H, src:"'…could you send me those Q3 numbers before Friday? I need them for the board deck.'"},
+  {id:2, who:'Dan', rel:'Coworker', what:'Call him back about the vendor contract', promised: now-26*H, due: now-2*H, src:"'I'll give you a shout tonight.'"},
+  {id:3, who:'Priya', rel:'Friend', what:'Pick a date for that birthday dinner (she suggested 5 options)', promised: now-4*D, due: now-1.5*D, src:"'whenever you get around to it 🙂'"},
+  {id:4, who:'Tom', rel:'Neighbor', what:'Pick up the paint from his garage', promised: now-6*D, due: now-3*D, src:"'grab the paint when you can.'"},
+  {id:5, who:'Sofia R.', rel:'Client', what:'Send proposal v2 with the revised scope', promised: now-50*H, due: now+6*H, src:"'I'll get the revised scope to you by EOD tomorrow.'"},
+];
+let nextId = 6, statClosed = 23;
+
+// ---------- helpers ----------
+const $ = id => document.getElementById(id);
+function relTime(ts){
+  const d = ts - now;
+  const abs = Math.abs(d), f = (n,u)=>`${n} ${u}`;
+  if(abs < 6e4) return 'just now';
+  const m = Math.round(abs/6e4), h = Math.round(abs/H), dd = Math.round(abs/D);
+  let s;
+  if(abs < H) s = f(m,'m');
+  else if(abs < D) s = f(h, h===1?'h':'h');
+  else s = f(dd, dd===1?'d':'d');
+  return d < 0 ? `${s} overdue` : `in ${s}`;
+}
+function dueLabel(ts){
+  const d = ts - now;
+  if(d < 0) return `${relTime(ts)}`;
+  if(d < H) return `in ${Math.round(d/6e4)} min`;
+  if(d < D) return `in ${Math.round(d/H)} h`;
+  const dt = new Date(ts);
+  const day = dt.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+  const hm = dt.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+  return `${day} ${hm}`;
+}
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id==='screen-'+name));
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchTab(t.dataset.tab));
+
+// ---------- queue ----------
+function statusOf(d){
+  const o = Date.now() - d.due;
+  if(o > 0) return 'over';
+  if(o > -D) return 'due';
+  return 'fresh';
+}
+function render(){
+  const open = debts.filter(d=>!d.closed).sort((a,b)=>a.due-b.due);
+  $('activeCount').textContent = open.length;
+  const over = open.filter(d=>statusOf(d)==='over').length;
+  $('subline').textContent = over
+    ? `${over} loop${over>1?'s':''} overdue. You promised — close the loop.`
+    : 'Your follow-up debt, finite and visible. Close the loop — you promised.';
+  const list = $('queueList'); list.innerHTML='';
+  $('queueEmpty').style.display = open.length ? 'none' : 'block';
+  open.forEach(d=>{
+    const st = statusOf(d);
+    const card = document.createElement('div');
+    card.className = 'card' + (st==='over'?' overdue':st==='due'?' due':'');
+    card.innerHTML = `
+      <div class="row1">
+        <div><span class="who">${d.who}</span><span class="rel">${d.rel}</span></div>
+        <span class="chip ${st}">${st==='over'?'Overdue':st==='due'?'Due soon':'Fresh'}</span>
+      </div>
+      <div class="what">${d.what}</div>
+      <div class="meta">
+        <span>promised <b>${relTime(d.promised).replace(' ',' ')}</b></span>
+        <span>due <b>${dueLabel(d.due)}</b></span>
+      </div>
+      <div class="actions">
+        <button class="btn-primary close-btn">Close loop ↩</button>
+        <button class="btn-ghost snooze-btn">+1 day</button>
+      </div>`;
+    card.querySelector('.snooze-btn').onclick = ()=>{ d.due += D; render(); toast('Snoozed +1 day'); };
+    card.querySelector('.close-btn').onclick = ()=> showClosure(d, card);
+    list.appendChild(card);
+  });
+  $('statOver').textContent = over;
+  const longest = open[0];
+  if(longest) $('statLongest').textContent = `${Math.max(1,Math.round((Date.now()-longest.due)/D))}d (${longest.who} — ${longest.what.toLowerCase().slice(0,28)}…)`;
+}
+
+// ---------- closure ----------
+function showClosure(d, card){
+  card.innerHTML = `
+    <div class="row1">
+      <div><span class="who">${d.who}</span><span class="rel">${d.rel}</span></div>
+      <span class="chip fresh">Closing</span>
+    </div>
+    <div class="what">${d.what}</div>
+    <div class="quote">${d.src} — ${relTime(d.promised).replace('overdue','ago')}</div>
+    <div class="draft">
+      "Hey ${d.who.split(' ')[0]}, here's what you asked for — ${d.what.toLowerCase().replace(/\?$/,'')} ✅<br>Let me know if you need anything else."
+      <div class="via">⌗ Draft generated on-device · opens WhatsApp / SMS / Email pre-filled · you review, you send</div>
+    </div>
+    <div class="actions">
+      <button class="btn-ghost back-btn">← Back</button>
+      <button class="btn-primary send-btn">Send &amp; close loop</button>
+    </div>
+    <div class="closed-note" style="display:none">
+      <div class="stamp">LOOP CLOSED · PROOF SAVED</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:10px" id="closedWhen"></div>
+    </div>`;
+  card.querySelector('.back-btn').onclick = render;
+  card.querySelector('.send-btn').onclick = ()=>{
+    d.closed = true; statClosed++;
+    const when = new Date().toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+    card.querySelector('.actions').style.display='none';
+    card.querySelector('.closed-note').style.display='block';
+    card.querySelector('#closedWhen').textContent = `Sent via WhatsApp · ${when} · stamped with proof`;
+    render();
+    toast(`Loop closed — ${d.who}. Proof stamped.`);
+  };
+}
+
+// ---------- capture / parse ----------
+$('parseBtn').onclick = ()=>{
+  const raw = $('captureInput').value.trim();
+  if(!raw){ toast('Paste a message first'); return; }
+  const btn = $('parseBtn'); btn.disabled=true; btn.textContent='⚡ Parsing on-device…';
+  setTimeout(()=>{
+    btn.disabled=false; btn.textContent='Extract the promise';
+    // naive on-device-style extraction (demo of the rules fallback)
+    const nameM = raw.match(/^([A-Z][a-z]+[A-Za-z'’-]*(?:\s[A-Z][a-z]+[A-Za-z'’-]*)?)(?::|\s+['“])/);
+    const who = nameM ? nameM[1] : 'Unknown';
+    const rel = /client|board|deal|proposal|invoice|contract/i.test(raw) ? 'Client' :
+                /cowork|team|vendor|office/i.test(raw) ? 'Coworker' : 'Friend';
+    let what = raw.replace(/^.*?['“:]\s*/,'').replace(/^['“]/,'').replace(/^hey|hi|yo/i,'').trim();
+    what = what.replace(/^,\s*/,'').replace(/^[a-z'’]+\s+(could|can|would|please)\s+(you\s+)?/i,'');
+    if(what.length > 90) what = what.slice(0,87)+'…';
+    let due;
+    let hint='';
+    if(/asap|right away|immediately/i.test(raw)){ due = now+4*H; hint='“asap” → +4h'; }
+    else if(/before (friday|fridays)/i.test(raw)){ const f=new Date(); f.setHours(17,0,0,0); const off=(5-f.getDay()+7)%7; f.setDate(f.getDate()+off); due=f.getTime(); hint='“before Friday” → Fri 5:00 pm'; }
+    else if(/by eod|end of day/i.test(raw)){ const e=new Date(); e.setDate(e.getDate()+1); e.setHours(17,0,0,0); due=e.getTime(); hint='“EOD” → tomorrow 5:00 pm'; }
+    else if(/tonight|today/i.test(raw)){ due=now+6*H; hint='“tonight” → +6h'; }
+    else if(/tomorrow/i.test(raw)){ due=now+26*H; hint='“tomorrow” → tomorrow 9:00 am'; }
+    else if(/soon|whenever|when you can/i.test(raw)){ due=now+2*D; hint='“soon / whenever” → +48h'; }
+    else if(rel==='Client'){ due=now+24*H; hint='no time given, client → +24h'; }
+    else { due=now+5*D; hint='no time given, casual → +5d'; }
+    $('pWho').textContent = who;
+    $('pRel').textContent = rel;
+    $('pWhat').textContent = what || '(review the card)';
+    $('pDue').textContent = dueLabel(due) + `  (${hint})`;
+    $('parseResult').dataset.due = due;
+    $('parseResult').dataset.who = who;
+    $('parseResult').dataset.rel = rel;
+    $('parseResult').dataset.what = what;
+    $('parseResult').dataset.src = '“'+raw.slice(0,120)+(raw.length>120?'…':'')+'”';
+    $('parseResult').classList.add('show');
+  }, 700);
+};
+$('addBtn').onclick = ()=>{
+  const p = $('parseResult');
+  debts.unshift({ id:nextId++, who:p.dataset.who||'Unknown', rel:p.dataset.rel||'Friend',
+    what:p.dataset.what||'Follow up', promised:Date.now(), due:+p.dataset.due, src:p.dataset.src });
+  p.classList.remove('show'); $('captureInput').value='';
+  switchTab('queue'); render(); toast('Debt captured — it\u2019s in the queue.');
+};
+$('discardBtn').onclick = ()=> $('parseResult').classList.remove('show');
+
+render();
+</script>
+</body>
+</html>
