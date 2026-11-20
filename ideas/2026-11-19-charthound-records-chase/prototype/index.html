@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChartHound — The Records Chase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F7F3EA; --ink:#101A28; --ink-soft:#3D4A5C; --slate:#5A6B80;
+  --amber:#C98A16; --green:#2F7D4F; --red:#B23A2E; --line:#D8CFBB;
+  --card:#FFFCF5; --shadow:0 2px 8px rgba(16,26,40,.08);
+  --serif:'Fraunces',serif; --sans:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate)}
+
+/* ── topbar ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:2px solid var(--ink)}
+.logo{font-family:var(--serif);font-weight:700;font-size:21px;display:flex;align-items:center;gap:9px}
+.logo .paw{font-size:18px}
+.nav{display:flex;gap:22px;font-size:13.5px;color:var(--ink-soft)}
+.nav a{text-decoration:none;color:inherit}
+.btn{display:inline-block;background:var(--ink);color:var(--cream);font-weight:600;font-size:14px;padding:10px 20px;border-radius:6px;text-decoration:none;border:none;cursor:pointer;font-family:var(--sans)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.small{padding:7px 14px;font-size:13px}
+
+/* ── hero ── */
+.hero{padding:52px 0 30px;display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center}
+.hero h1{font-family:var(--serif);font-size:44px;line-height:1.08;font-weight:600;margin:14px 0 16px}
+.hero h1 em{font-style:italic;color:var(--amber)}
+.hero p.lead{font-size:16.5px;color:var(--ink-soft);max-width:46ch;margin-bottom:22px}
+.hero .rule-banner{display:inline-flex;align-items:center;gap:8px;background:#EFE7D2;border:1px solid var(--line);border-radius:6px;padding:7px 12px;font-size:12.5px;margin-bottom:18px}
+.hero .rule-banner b{font-family:var(--mono)}
+.hero-actions{display:flex;gap:12px;align-items:center;margin-top:6px}
+.hero .note{font-size:12px;color:var(--slate);margin-top:14px}
+
+/* ── THE COUNTER card ── */
+.counter-card{background:var(--card);border:2px solid var(--ink);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+.cc-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px dashed var(--line)}
+.cc-head .prov{font-weight:600;font-size:14.5px}
+.cc-head .loc{font-size:12px;color:var(--slate)}
+.stamp{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;padding:5px 10px;border-radius:4px;transform:rotate(-2deg)}
+.stamp.wait{color:var(--amber);border:1.5px solid var(--amber);background:#FBF3E2}
+.stamp.over{color:var(--red);border:1.5px solid var(--red);background:#F8E9E7}
+.stamp.got{color:var(--green);border:1.5px solid var(--green);background:#E7F1EB}
+.cc-body{padding:22px 18px 18px}
+.dayrow{display:flex;align-items:baseline;gap:10px;justify-content:center}
+.dayrow .big{font-family:var(--serif);font-size:64px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.dayrow .of{font-family:var(--mono);font-size:15px;color:var(--slate)}
+.clock-note{ text-align:center;font-family:var(--mono);font-size:11.5px;color:var(--slate);margin:6px 0 16px}
+.tickbar{height:12px;border:1.5px solid var(--ink);border-radius:6px;overflow:hidden;background:#EFE9DA;margin-bottom:6px}
+.tickfill{height:100%;width:80%;background:repeating-linear-gradient(45deg,var(--amber),var(--amber) 6px,#B87C10 6px,#B87C10 12px);transition:width .6s ease}
+.ticklabels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--slate);margin-bottom:16px}
+.cc-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cc-foot{border-top:1px dashed var(--line);margin-top:14px;padding:12px 18px;font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;align-items:center}
+
+/* ── sections ── */
+section{padding:44px 0;border-top:2px solid var(--ink)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600}
+.sec-sub{color:var(--ink-soft);max-width:64ch;margin-bottom:26px;font-size:15px}
+
+/* fleet board */
+.fleet{background:var(--card);border:1.5px solid var(--ink);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+.frow{display:grid;grid-template-columns:1.4fr .9fr .7fr auto;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px dashed var(--line);font-size:14px}
+.frow:last-child{border-bottom:none}
+.frow.head{background:#EFE9DA;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.frow .who{font-weight:600}
+.frow .who small{display:block;font-weight:400;color:var(--slate);font-size:12px}
+.pill{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 9px;border-radius:4px;display:inline-block}
+.pill.day{background:#FBF3E2;color:var(--amber);border:1px solid var(--amber)}
+.pill.over{background:#F8E9E7;color:var(--red);border:1px solid var(--red)}
+.pill.got{background:#E7F1EB;color:var(--green);border:1px solid var(--green)}
+.pill.send{background:#E9ECF2;color:var(--slate);border:1px solid var(--slate)}
+.crowd{font-family:var(--mono);font-size:11px;color:var(--slate)}
+
+/* ladder */
+.ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.rung{background:var(--card);border:1.5px solid var(--line);border-radius:8px;padding:16px 14px;position:relative}
+.rung .n{font-family:var(--mono);font-size:11px;color:var(--slate)}
+.rung h4{font-family:var(--serif);font-size:16.5px;margin:6px 0 8px;font-weight:600}
+.rung p{font-size:12.5px;color:var(--ink-soft)}
+.rung .artifact{margin-top:10px;font-family:var(--mono);font-size:10.5px;background:#EFE9DA;border:1px dashed var(--line);border-radius:4px;padding:6px 8px;color:var(--ink-soft)}
+.rung.current{border:2px solid var(--amber);box-shadow:0 0 0 4px #F5E7C8}
+.you-here{position:absolute;top:-11px;right:10px;background:var(--amber);color:#fff;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:3px 8px;border-radius:3px;transform:rotate(2deg)}
+.rung.done{border-color:var(--green)}
+.rung.done .n{color:var(--green)}
+.ladder-odds{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--slate);text-align:center}
+
+/* fee audit */
+.fee{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}
+.invoice{background:var(--card);border:1.5px solid var(--ink);border-radius:10px;padding:20px;font-family:var(--mono);font-size:13px;box-shadow:var(--shadow)}
+.invoice .ihead{display:flex;justify-content:space-between;border-bottom:1.5px solid var(--ink);padding-bottom:10px;margin-bottom:12px}
+.invoice .ilines{display:grid;gap:7px}
+.invoice .il{display:flex;justify-content:space-between}
+.invoice .il b{font-weight:700}
+.verdict{position:relative;padding:24px 20px;background:var(--card);border:1.5px solid var(--ink);border-radius:10px;box-shadow:var(--shadow)}
+.verdict .vstamp{position:absolute;top:16px;right:16px;font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.12em;color:var(--red);border:2.5px solid var(--red);border-radius:6px;padding:7px 12px;transform:rotate(6deg);background:#F8E9E7}
+.verdict h3{font-family:var(--serif);font-size:22px;margin-bottom:8px}
+.verdict .math{font-family:var(--mono);font-size:12.5px;background:#F1EBDC;border-radius:6px;padding:12px;margin:12px 0;line-height:1.8}
+.verdict .math .cap{color:var(--green);font-weight:700}
+.verdict .math .over{color:var(--red);font-weight:700}
+
+/* completeness + receipt */
+.duo{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:start}
+.bundle{background:var(--card);border:1.5px solid var(--ink);border-radius:10px;padding:20px;box-shadow:var(--shadow)}
+.bundle h3{font-family:var(--serif);font-size:20px;margin-bottom:4px}
+.bundle .bmeta{font-family:var(--mono);font-size:11.5px;color:var(--slate);margin-bottom:16px}
+.meter{height:14px;border:1.5px solid var(--ink);border-radius:7px;overflow:hidden;margin-bottom:6px}
+.meterfill{height:100%;width:75%;background:repeating-linear-gradient(45deg,var(--green),var(--green) 6px,#276B43 6px,#276B43 12px)}
+.meterlbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--slate);margin-bottom:14px}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+.slot{display:flex;gap:8px;align-items:center;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.slot .box{width:15px;height:15px;border:1.5px solid var(--ink);border-radius:3px;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.slot.have .box{background:var(--green);color:#fff;border-color:var(--green)}
+.slot.miss{color:var(--slate);font-style:italic}
+.slot.miss .box{border-style:dashed}
+/* receipt */
+.receipt{background:#FDFCF8;border:1px solid var(--line);box-shadow:var(--shadow);padding:22px 20px 30px;font-family:var(--mono);font-size:12.5px;position:relative;max-width:340px}
+.receipt::after{content:"";position:absolute;bottom:-10px;left:0;right:0;height:10px;background:linear-gradient(45deg,transparent 33.5%,#FDFCF8 33.5%,#FDFCF8 66.5%,transparent 66.5%),linear-gradient(-45deg,transparent 33.5%,#FDFCF8 33.5%,#FDFCF8 66.5%,transparent 66.5%);background-size:16px 16px}
+.receipt .rhead{text-align:center;font-weight:700;letter-spacing:.1em;border-bottom:1.5px dashed var(--ink);padding-bottom:10px;margin-bottom:12px}
+.receipt .rl{display:flex;justify-content:space-between;padding:4px 0}
+.receipt .rdiv{border-top:1px dashed var(--line);margin:10px 0}
+.receipt .rfoot{text-align:center;font-size:11px;color:var(--slate);margin-top:10px}
+.receipt .rstamp{display:block;text-align:center;font-weight:700;letter-spacing:.14em;color:var(--green);border:2.5px solid var(--green);border-radius:6px;padding:6px;margin-top:12px;transform:rotate(-3deg)}
+
+/* footer */
+footer{border-top:2px solid var(--ink);padding:26px 0 40px;font-size:12.5px;color:var(--slate)}
+footer .frow{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.cta-band{background:var(--ink);color:var(--cream);border-radius:10px;padding:30px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.cta-band h3{font-family:var(--serif);font-size:26px;font-weight:600}
+.cta-band p{font-size:13.5px;color:#B8C2D0;max-width:52ch}
+.btn.amber{background:var(--amber);color:var(--ink)}
+
+@media(max-width:860px){
+  .hero{grid-template-columns:1fr;padding-top:34px}
+  .hero h1{font-size:34px}
+  .ladder{grid-template-columns:1fr 1fr}
+  .fee,.duo{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr 1fr;gap:6px}
+  .frow.head{display:none}
+  .nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo"><span class="paw">🐕</span> ChartHound</div>
+    <nav class="nav">
+      <a href="#counter">The Counter</a><a href="#fleet">Fleet</a><a href="#ladder">Escalation</a><a href="#fee">Fee Audit</a><a href="#vault">Vault</a>
+    </nav>
+    <a class="btn small" href="#counter">Start the Clock — Free</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="rule-banner">📜 NEW FEDERAL RULE · PUBLISHED <b>NOV 16, 2026</b> · HHS OMB → OCR: records responses <b>30 → 15 DAYS</b></div>
+      <h1>Your health system owes you a response. <em>ChartHound counts the days.</em></h1>
+      <p class="lead">You asked for your own medical records. The portal says nothing. The phone says hold. ChartHound knows which clock is running, writes the demand letter that cites it, and escalates — rung by rung — until the chart shows up.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#counter">Start the Clock — Free</a>
+        <a class="btn ghost" href="#ladder">See the Ladder</a>
+      </div>
+      <p class="note">No portal logins. No EHR access. No credentials — ever. We work in letters, deadlines, and receipts.</p>
+    </div>
+
+    <!-- THE COUNTER -->
+    <div class="counter-card" id="counter">
+      <div class="cc-head">
+        <div>
+          <div class="prov">Cedar Ridge Hospital — Health Information Mgmt</div>
+          <div class="loc">Requested Nov 6, 2026 · electronic · FL</div>
+        </div>
+        <span class="stamp wait" id="ccStamp">DAY 12 OF 15</span>
+      </div>
+      <div class="cc-body">
+        <div class="dayrow"><span class="big" id="bigDay">12</span><span class="of">/ 15 days · 45 CFR 164.524 (15-day rule, FL adopted)</span></div>
+        <div class="clock-note">REQUEST MADE UNDER THE POST-NOV 2026 CLOCK — NO EXTENSION FILED (WE CHECKED)</div>
+        <div class="tickbar"><div class="tickfill" id="tickfill"></div></div>
+        <div class="ticklabels"><span>DAY 1</span><span>D-5 → NUDGE</span><span>D-0</span></div>
+        <div class="cc-actions">
+          <button class="btn" onclick="nudge(this)">Nudge (D-3 auto)</button>
+          <button class="btn ghost" onclick="draft(this)">Draft Demand Letter</button>
+        </div>
+      </div>
+      <div class="cc-foot">
+        <span>Crowd: Cedar Ridge avg <b class="mono">19 days</b> · 23% needed rung 3+</span>
+        <button class="btn ghost small" onclick="alert('Request Card copied (shareable, anonymous — no PHI)')">Share Card</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLEET -->
+  <section id="fleet">
+    <div class="sec-head"><h2>The Fleet — one episode, every provider, one board</h2><span class="eyebrow">MARCH 12 ADMISSION</span></div>
+    <p class="sec-sub">A hospitalization touches 4–6 covered entities. ChartHound tracks them all, knows each clock, and shows you exactly who's late — and what people like you had to do to get it from them.</p>
+    <div class="fleet">
+      <div class="frow head"><div>Provider</div><div>Status</div><div>Day</div><div>Crowd truth</div></div>
+      <div class="frow">
+        <div class="who">Cedar Ridge Hospital<small>Health Information Mgmt · req Nov 6</small></div>
+        <div><span class="pill over">DAY 16 · OVERDUE</span></div>
+        <div class="mono">+1 over 15</div>
+        <div class="crowd">avg 19d · 23% needed rung 3+</div>
+      </div>
+      <div class="frow">
+        <div class="who">Dr. Okafor — Lakeside Cardiology<small>Records line · req Nov 8</small></div>
+        <div><span class="pill day">DAY 11 OF 30</span></div>
+        <div class="mono">pre-rule clock</div>
+        <div class="crowd">avg 9d · rarely escalate</div>
+      </div>
+      <div class="frow">
+        <div class="who">Lakeside Imaging<small>Portal request · req Nov 3</small></div>
+        <div><span class="pill got">RECEIVED NOV 20</span></div>
+        <div class="mono">17d</div>
+        <div class="crowd">avg 21d · $0 fee (electronic)</div>
+      </div>
+      <div class="frow">
+        <div class="who">Anesthesia Partners<small>Demand letter sent Nov 19</small></div>
+        <div><span class="pill send">RUNG 2 · SENT</span></div>
+        <div class="mono">awaiting</div>
+        <div class="crowd">avg 26d · 31% need rung 4</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LADDER -->
+  <section id="ladder">
+    <div class="sec-head"><h2>The Escalation Ladder</h2><span class="eyebrow">EVERY RUNG IS AN ARTIFACT</span></div>
+    <p class="sec-sub">The ladder is secret knowledge — scattered across law-firm blog posts. ChartHound builds each rung for your facts, with the statute cited. You always review and send; ChartHound drafts, dates, and tracks.</p>
+    <div class="ladder">
+      <div class="rung done"><div class="n">RUNG 1</div><h4>Nudge</h4><p>D-5 / D-1 polite reminder with request date + clock.</p><div class="artifact">✓ sent D-5 · read by HIM dept</div></div>
+      <div class="rung current"><span class="you-here">YOU ARE HERE</span><div class="n">RUNG 2</div><h4>Demand Letter</h4><p>Cites the exact clock, fee cap, and extension rules for your state.</p><div class="artifact">draft ready · "…I will file a complaint with HHS OCR"</div></div>
+      <div class="rung"><div class="n">RUNG 3</div><h4>Privacy Officer</h4><p>Named contact per health system + the phone path that works.</p><div class="artifact">patient-advocate line beats main 3:1</div></div>
+      <div class="rung"><div class="n">RUNG 4</div><h4>HHS OCR + State AG</h4><p>Completes the federal complaint form fields. OCR must respond in 60 days — we count those too.</p><div class="artifact">OCR complaint pack + FL AG letter</div></div>
+      <div class="rung"><div class="n">RUNG 5</div><h4>Attorney</h4><p>Per-state access-rights attorneys, contingency-friendly.</p><div class="artifact">3 FL firms · no referral fee to us</div></div>
+    </div>
+    <p class="ladder-odds">CROWD ODDS (n=2,304, seeded from OCR penalty cases + user outcomes): RUNG 3 → 81% within 7d · RUNG 4 → 94% · RUNG 5 → 99%</p>
+  </section>
+
+  <!-- FEE AUDIT -->
+  <section id="fee">
+    <div class="sec-head"><h2>The Fee Audit</h2><span class="eyebrow">SNAP THE INVOICE → VERDICT</span></div>
+    <p class="sec-sub">"Search and retrieval" invoices of $40–$150 are routine. State law caps them — often hard. ChartHound reads the invoice, checks your state's statute, and stamps the math.</p>
+    <div class="fee">
+      <div class="invoice">
+        <div class="ihead"><div>CEDAR RIDGE HOSPITAL</div><div>INV #44-88213</div></div>
+        <div class="ilines">
+          <div class="il"><span>Medical records — search & retrieval</span><b>$85.00</b></div>
+          <div class="il"><span>Copier charges (214 pages @ $0.30)</span><b>$64.20</b></div>
+          <div class="il"><span>Fax delivery</span><b>$15.00</b></div>
+          <div class="il" style="border-top:1.5px solid var(--ink);padding-top:8px;margin-top:4px"><span><b>TOTAL CHARGED</b></span><b>$164.20</b></div>
+        </div>
+      </div>
+      <div class="verdict">
+        <span class="vstamp">OVER CAP</span>
+        <h3>You owe $0.00 extra.</h3>
+        <p style="font-size:13.5px;color:var(--ink-soft)">Requested <b>electronically</b>. FL Stat. §456.057(3)(c): no fee for electronic copies on request; paper capped at $0.50/page after first 100 free.</p>
+        <div class="math">
+          ELECTRONIC REQUEST → FEE ALLOWED: <span class="cap">$0.00</span><br>
+          CHARGED: <span class="over">$164.20</span> · EXCESS: <span class="over">$164.20</span><br>
+          FAX FEE ON ELECTRONIC COPY: <span class="over">NOT PERMITTED</span>
+        </div>
+        <button class="btn" onclick="alert('Fee objection letter drafted — cites §456.057(3)(c), demands refund of $164.20. You review and send.')">Draft Fee Objection →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- VAULT + RECEIPT -->
+  <section id="vault">
+    <div class="sec-head"><h2>The Vault & Completeness Meter</h2><span class="eyebrow">GOT RECORDS ≠ GOT ALL RECORDS</span></div>
+    <p class="sec-sub">"Got my records" is not the same as "got <em>all</em> my records." Every care event has expected contents. The meter tells you what's still missing — and the Bundle Builder tells the providers exactly who to send it to. Directly. No middleman, no middleman fee.</p>
+    <div class="duo">
+      <div class="bundle">
+        <h3>March 12 Admission — St. Mary's</h3>
+        <div class="bmeta">EPISODE: 2026-03-12 → 03-15 · 3 PROVIDERS · 9 OF 12 DOCUMENTS</div>
+        <div class="meter"><div class="meterfill"></div></div>
+        <div class="meterlbl"><span>COMPLETENESS 75%</span><span>2 MISSING · 1 PENDING</span></div>
+        <div class="slots">
+          <div class="slot have"><span class="box">✓</span>Discharge summary</div>
+          <div class="slot have"><span class="box">✓</span>Inpatient labs</div>
+          <div class="slot have"><span class="box">✓</span>Imaging report (CT chest)</div>
+          <div class="slot have"><span class="box">✓</span>Nursing flowsheet</div>
+          <div class="slot miss"><span class="box"></span>Anesthesia record</div>
+          <div class="slot have"><span class="box">✓</span>Consult note (cardio)</div>
+          <div class="slot have"><span class="box">✓</span>ER triage sheet</div>
+          <div class="slot miss"><span class="box"></span>Discharge med rec</div>
+          <div class="slot have"><span class="box">✓</span>Code status</div>
+          <div class="slot have"><span class="box">✓</span>Admission vitals</div>
+          <div class="slot have"><span class="box">✓</span>Physician H&P</div>
+          <div class="slot have"><span class="box">✓</span>Med admin log</div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <button class="btn" onclick="alert('Bundle built: "Complete chart — Dr. Reyes, oncology" (ordered PDF + cover page instructing providers to send missing items directly).')">Build Bundle for Dr. Reyes →</button>
+        </div>
+      </div>
+      <div class="receipt">
+        <div class="rhead">CHARTHOUND · RECORDS RECEIPT</div>
+        <div class="rl"><span>PROVIDER</span><span>CEDAR RIDGE HOSPITAL</span></div>
+        <div class="rl"><span>REQUESTED</span><span>NOV 06 2026</span></div>
+        <div class="rl"><span>RECEIVED</span><span>NOV 21 2026</span></div>
+        <div class="rl"><span>DOCUMENTS</span><span>41 / 41 PAGES</span></div>
+        <div class="rl"><span>FEE PAID</span><span>$0.00 (ELECTRONIC)</span></div>
+        <div class="rdiv"></div>
+        <div class="rl"><span>NUDGES SENT</span><span>2</span></div>
+        <div class="rl"><span>RUNGS USED</span><span>1 → 2</span></div>
+        <div class="rl"><span>DAY 16 VERDICT</span><span>OVERRULED: GOT IT</span></div>
+        <div class="rstamp">RECORDS RECEIVED — 15 DAYS, $0, 2 NUDGES</div>
+        <div class="rfoot">share the receipt · your provider's time feeds the public Access Speed board</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section>
+    <div class="cta-band">
+      <div>
+        <h3>The clock is already running.</h3>
+        <p style="margin-top:8px">Start it where you can see it. Free Radar for one active request — provider, date, state, and ChartHound tells you the exact day they're in violation and what to send.</p>
+      </div>
+      <a class="btn amber" href="#counter">Start the Clock — Free</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="frow">
+      <div><b style="font-family:var(--serif);color:var(--ink)">🐕 ChartHound</b> · prototype · not a service, not legal advice — the real product drafts documents you review and send.</div>
+      <div class="mono">15-DAY RULE: HHS OCR FINAL RULE · PUB NOV 16 2026 · COMPLIANCE JUL 19 2027</div>
+    </div>
+  </footer>
+</div>
+
+<script>
+function nudge(btn){
+  btn.textContent='Nudge scheduled · D-3 + D-1';
+  btn.style.background='var(--green)';
+  btn.style.color='#fff';
+}
+function draft(btn){
+  btn.textContent='Draft ready — review before sending';
+  btn.style.background='var(--amber)';
+  btn.style.color='var(--ink)';
+}
+// animate the tick bar to 80% on load
+window.addEventListener('load',()=>{ 
+  const f=document.getElementById('tickfill');
+  f.style.width='0%';
+  setTimeout(()=>{f.style.width='80%'},200);
+});
+</script>
+</body>
+</html>
