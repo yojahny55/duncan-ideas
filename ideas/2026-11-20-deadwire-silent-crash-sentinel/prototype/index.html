@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DeadWire — The dead-man's switch for your automations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wire-black:#0A0D12;
+  --panel-steel:#121821;
+  --panel-2:#161d29;
+  --signal-green:#3FB950;
+  --dead-red:#E5484D;
+  --drift-amber:#FFB454;
+  --copper:#C87E4F;
+  --paper-cream:#F4EEE2;
+  --ink:#0d1016;
+  --txt:#E8EDF4;
+  --txt-dim:#8b97a8;
+  --txt-faint:#5b6675;
+  --line:#232c3a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--wire-black);
+  color:var(--txt);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.mono{font-family:'JetBrains Mono',monospace}
+.display{font-family:'Fraunces',serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+/* ---------- top nav ---------- */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,13,18,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{display:flex;align-items:center;gap:18px;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em}
+.logo-mark{
+  width:26px;height:26px;border-radius:6px;
+  background:linear-gradient(135deg,var(--signal-green),var(--copper));
+  position:relative;overflow:hidden;
+}
+.logo-mark::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent 45%,var(--wire-black) 45%,var(--wire-black) 55%,transparent 55%),
+    linear-gradient(90deg,transparent 70%,var(--wire-black) 70%,var(--wire-black) 78%,transparent 78%);
+}
+.nav-links{display:flex;gap:22px;margin-left:auto}
+.nav-links a{color:var(--txt-dim);text-decoration:none;font-size:13.5px;font-weight:500}
+.nav-links a:hover{color:var(--txt)}
+.btn{
+  font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;
+  border:none;border-radius:8px;padding:9px 16px;cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s;
+  letter-spacing:.01em;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--signal-green);color:#06130a}
+.btn-primary:hover{box-shadow:0 0 0 4px rgba(63,185,80,.15)}
+.btn-ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--txt-dim)}
+.btn-amber{background:var(--drift-amber);color:#1c1204}
+
+/* ---------- hero ---------- */
+.hero{padding:64px 0 30px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--drift-amber);margin-bottom:18px;
+}
+.kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--drift-amber);box-shadow:0 0 8px var(--drift-amber);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+h1{
+  font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(34px,4.6vw,52px);line-height:1.04;letter-spacing:-.015em;
+  margin-bottom:18px;
+}
+h1 .hl{color:var(--dead-red)}
+h1 .hl2{color:var(--signal-green)}
+.lede{color:var(--txt-dim);font-size:16.5px;max-width:520px;margin-bottom:26px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.ping-line{
+  margin-top:26px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:var(--panel-steel);border:1px solid var(--line);border-radius:10px;
+  padding:12px 16px;display:flex;align-items:center;gap:10px;color:var(--txt-dim);
+}
+.ping-line .live{color:var(--signal-green);font-weight:700}
+.caret{display:inline-block;width:7px;height:14px;background:var(--signal-green);animation:blink 1s infinite;border-radius:1px}
+
+/* ---------- ECG board (hero card) ---------- */
+.board{
+  background:var(--panel-steel);border:1px solid var(--line);border-radius:16px;
+  padding:18px 18px 14px;position:relative;
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.7);
+}
+.board-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.board-title{font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint)}
+.board-clock{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--txt-dim)}
+.ecg-row{display:flex;align-items:center;gap:14px;padding:10px 8px;border-radius:10px}
+.ecg-row.dead{background:rgba(229,72,77,.06);border:1px solid rgba(229,72,77,.25)}
+.ecg-name{width:150px;flex-shrink:0;font-size:13px;font-weight:600}
+.ecg-name small{display:block;font-weight:400;color:var(--txt-faint);font-size:11px;font-family:'JetBrains Mono',monospace}
+.ecg-canvas{flex:1;height:52px;position:relative}
+.ecg-canvas canvas{width:100%;height:100%;display:block}
+.ecg-state{width:96px;flex-shrink:0;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700}
+.st-live{color:var(--signal-green)}
+.st-dead{color:var(--dead-red)}
+.count-strip{
+  margin-top:8px;background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.35);
+  border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;
+  animation:alarm 2s ease-in-out infinite;
+}
+@keyframes alarm{0%,100%{background:rgba(229,72,77,.08)}50%{background:rgba(229,72,77,.16)}}
+.count-strip .lbl{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--dead-red)}
+.count-strip .t{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--dead-red)}
+
+/* ---------- section ---------- */
+section{padding:56px 0}
+.sec-head{max-width:640px;margin-bottom:34px}
+.sec-kicker{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--copper);margin-bottom:10px}
+h2{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(26px,3vw,36px);letter-spacing:-.01em;line-height:1.1;margin-bottom:12px}
+.sec-lede{color:var(--txt-dim);font-size:15.5px}
+
+/* ---------- verdicts ---------- */
+.verdicts{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.vcard{background:var(--panel-steel);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:transform .15s,border-color .15s}
+.vcard:hover{transform:translateY(-3px)}
+.vcard .ico{font-size:22px;margin-bottom:12px}
+.vcard h3{font-family:'Fraunces',serif;font-size:19px;font-weight:700;margin-bottom:6px}
+.vcard p{font-size:13.5px;color:var(--txt-dim)}
+.vcard .tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;display:inline-block;margin-top:14px;padding:3px 9px;border-radius:20px}
+.t-green{color:var(--signal-green);background:rgba(63,185,80,.12)}
+.t-amber{color:var(--drift-amber);background:rgba(255,180,84,.12)}
+.t-red{color:var(--dead-red);background:rgba(229,72,77,.12)}
+.t-copper{color:var(--copper);background:rgba(200,126,79,.14)}
+
+/* ---------- killer diagnostics ---------- */
+.diag-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.killers{display:flex;flex-direction:column;gap:10px}
+.killer{
+  display:flex;align-items:center;gap:14px;background:var(--panel-steel);
+  border:1px solid var(--line);border-radius:12px;padding:13px 16px;
+}
+.killer .num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:var(--txt-faint);width:22px}
+.killer .kn{font-weight:600;font-size:14px}
+.killer .kn small{display:block;font-weight:400;color:var(--txt-faint);font-size:12px}
+.killer .pct{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--drift-amber)}
+.bar{position:absolute;left:0;bottom:0;height:2px;background:var(--drift-amber);border-radius:2px}
+/* triage card */
+.triage{background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:22px;position:sticky;top:76px}
+.triage-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.triage-head .wire-name{font-family:'Fraunces',serif;font-weight:700;font-size:19px}
+.triage-head .wire-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txt-faint)}
+.stamp{
+  font-family:'Fraunces',serif;font-weight:900;font-size:15px;letter-spacing:.12em;
+  color:var(--dead-red);border:2px solid var(--dead-red);border-radius:6px;padding:3px 12px;
+  transform:rotate(-6deg);margin-left:auto;opacity:.92;
+}
+.diag-verdict{background:rgba(229,72,77,.08);border:1px solid rgba(229,72,77,.3);border-radius:10px;padding:12px 14px;font-size:13.5px;margin-bottom:16px}
+.diag-verdict b{color:var(--dead-red)}
+.checklist{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.check{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:var(--txt-dim)}
+.check .box{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--txt-faint);flex-shrink:0;margin-top:1px;position:relative;cursor:pointer}
+.check.done .box{background:var(--signal-green);border-color:var(--signal-green)}
+.check.done .box::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#06130a;font-size:11px;font-weight:800}
+.check.done{color:var(--txt)}
+.probe{width:100%;background:var(--drift-amber);color:#1c1204;font-weight:700;border-radius:9px;padding:12px;font-size:14px;cursor:pointer;border:none;transition:box-shadow .12s}
+.probe:hover{box-shadow:0 0 0 4px rgba(255,180,84,.2)}
+.probe-result{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--wire-black);border:1px solid var(--line);border-radius:8px;padding:11px 13px;color:var(--txt-dim);display:none}
+.probe-result.show{display:block}
+.probe-result .ok{color:var(--signal-green)}
+.probe-result .bad{color:var(--dead-red)}
+
+/* ---------- post mortem receipt ---------- */
+.receipt-sec{background:linear-gradient(180deg,transparent, rgba(200,126,79,.04))}
+.receipt-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.receipt{
+  background:var(--paper-cream);color:var(--ink);border-radius:4px;
+  padding:26px 26px 30px;font-family:'JetBrains Mono',monospace;font-size:13px;
+  box-shadow:0 30px 60px -25px rgba(0,0,0,.8);position:relative;
+  transform:rotate(-1deg);
+}
+.receipt::after{
+  content:"";position:absolute;left:0;right:0;bottom:-10px;height:10px;
+  background:
+    linear-gradient(-45deg,transparent 8px,var(--paper-cream) 0) 0 0/16px 100% repeat-x,
+    linear-gradient(45deg,transparent 8px,var(--paper-cream) 0) 8px 0/16px 100% repeat-x;
+  filter:drop-shadow(0 8px 6px rgba(0,0,0,.5));
+}
+.receipt .rhead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1.5px dashed #b8ac97;padding-bottom:10px;margin-bottom:14px}
+.receipt .rtitle{font-weight:700;font-size:14px;letter-spacing:.06em}
+.receipt .rrow{display:flex;justify-content:space-between;padding:3px 0;color:#3a352c}
+.receipt .rrow b{color:var(--ink)}
+.receipt .rdiv{border-top:1.5px dashed #b8ac97;margin:12px 0}
+.receipt .rstamp{
+  font-weight:700;font-size:14px;letter-spacing:.14em;text-align:center;
+  color:#1f7a34;border:2.5px solid #1f7a34;border-radius:8px;padding:5px 0;
+  transform:rotate(-3deg);margin:16px auto 4px;width:max-content;
+}
+.receipt-note{margin-top:20px;color:var(--txt-dim);font-size:14px}
+
+/* ---------- crowd intel ---------- */
+.intel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:26px}
+.intel-card{background:var(--panel-steel);border:1px solid var(--line);border-radius:14px;padding:20px}
+.intel-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:34px;letter-spacing:-.02em}
+.intel-num.green{color:var(--signal-green)}
+.intel-num.amber{color:var(--drift-amber)}
+.intel-num.copper{color:var(--copper)}
+.intel-lbl{font-size:12.5px;color:var(--txt-dim);margin-top:4px}
+.leader{background:var(--panel-steel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.leader h3{font-family:'Fraunces',serif;font-size:18px;margin-bottom:16px}
+.lead-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.lead-row:last-child{border-bottom:none}
+.lead-rank{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txt-faint);width:20px}
+.lead-name{font-size:13.5px;font-weight:500;flex:1}
+.lead-name small{color:var(--txt-faint);font-family:'JetBrains Mono',monospace;font-size:11px;margin-left:8px}
+.lead-bar{width:180px;height:7px;background:var(--wire-black);border-radius:4px;overflow:hidden;flex-shrink:0}
+.lead-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--copper),var(--drift-amber));border-radius:4px}
+.lead-pct{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;width:44px;text-align:right;color:var(--drift-amber)}
+
+/* ---------- agent watch ---------- */
+.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+.agent-panel{background:var(--panel-steel);border:1px solid var(--line);border-radius:16px;padding:22px}
+.agent-panel h3{font-family:'Fraunces',serif;font-size:18px;margin-bottom:6px}
+.agent-panel .sub{font-size:13.5px;color:var(--txt-dim);margin-bottom:18px}
+.diffbars{display:flex;flex-direction:column;gap:12px}
+.dbar-lbl{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+.dbar-lbl .mono{color:var(--txt-dim);font-size:11.5px}
+.dbar{height:14px;background:var(--wire-black);border-radius:6px;overflow:hidden;position:relative}
+.dbar i{display:block;height:100%;border-radius:6px;transition:width 1s ease}
+.dbar .before{background:var(--signal-green);opacity:.8}
+.dbar .after{background:var(--dead-red)}
+.dmark{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--drift-amber);left:58%}
+.dmark::after{content:"agent patch 11:40";position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--drift-amber);white-space:nowrap}
+
+/* ---------- pricing ---------- */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pcard{background:var(--panel-steel);border:1px solid var(--line);border-radius:16px;padding:26px;position:relative}
+.pcard.feat{border-color:var(--signal-green);box-shadow:0 0 0 1px var(--signal-green), 0 20px 50px -30px rgba(63,185,80,.4)}
+.pcard .pname{font-family:'Fraunces',serif;font-weight:700;font-size:19px}
+.pcard .pprice{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:34px;margin:12px 0 4px}
+.pcard .pprice small{font-size:14px;color:var(--txt-faint);font-weight:400}
+.pcard .pdesc{font-size:13px;color:var(--txt-dim);margin-bottom:18px;min-height:38px}
+.pfeat{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
+.pfeat li{font-size:13.5px;color:var(--txt-dim);display:flex;gap:9px}
+.pfeat li::before{content:"—";color:var(--copper)}
+.pcard .btn{width:100%}
+.feat-tag{position:absolute;top:-11px;left:24px;background:var(--signal-green);color:#06130a;font-size:11px;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:20px}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:34px 0 44px;margin-top:20px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.foot p{color:var(--txt-faint);font-size:13px}
+.foot .mono{font-size:12px}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  .hero-grid,.diag-grid,.receipt-wrap,.agent-grid{grid-template-columns:1fr}
+  .verdicts,.intel-grid,.price-grid{grid-template-columns:1fr 1fr}
+  .triage{position:static}
+  .nav-links{display:none}
+}
+@media(max-width:560px){
+  .verdicts,.intel-grid,.price-grid{grid-template-columns:1fr}
+  .ecg-name{width:104px;font-size:12px}
+  .ecg-state{width:70px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="wrap nav-in">
+    <div class="logo"><span class="logo-mark"></span> DeadWire</div>
+    <div class="nav-links">
+      <a href="#verdicts">Verdicts</a>
+      <a href="#diagnostics">Diagnostics</a>
+      <a href="#receipt">Post-Mortems</a>
+      <a href="#intel">Crowd Intel</a>
+      <a href="#agent">Agent Watch</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <button class="btn btn-primary" onclick="startPing()">Get your ping line</button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker"><span class="dot"></span> Live wire board · 02:14 AM</div>
+      <h1>n8n will not phone you.<br><span class="hl2">DeadWire</span> hears the <span class="hl">silence</span>.</h1>
+      <p class="lede">A dead-man's switch + behavioral sentinel for every workflow on n8n, Zapier, Make, and any webhook. It watches <b>behavior</b> — cadence, burst, shape — from outside the platform, so a dead instance can never kill the monitor. One silent line, zero credentials, 90 seconds to arm.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="startPing()">Arm a wire — free</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('verdicts').scrollIntoView()">See how it works</button>
+      </div>
+      <div class="ping-line">
+        <span class="live">●</span>
+        <span>ORDER-SYNC · wire live · ping #4,812 · cadence ~15m · last 02:02:11</span>
+        <span class="caret"></span>
+      </div>
+    </div>
+
+    <!-- ECG board -->
+    <div class="board">
+      <div class="board-head">
+        <span class="board-title">Wire Board — 14 wires</span>
+        <span class="board-clock mono" id="clock">02:14:07</span>
+      </div>
+      <div class="ecg-row">
+        <div class="ecg-name">Order Sync<small>n8n · queue mode</small></div>
+        <div class="ecg-canvas"><canvas data-ecg="live" data-speed="1"></canvas></div>
+        <div class="ecg-state st-live">LIVE</div>
+      </div>
+      <div class="ecg-row">
+        <div class="ecg-name">Lead Router<small>Zapier · 3 tasks</small></div>
+        <div class="ecg-canvas"><canvas data-ecg="live" data-speed="0.7"></canvas></div>
+        <div class="ecg-state st-live">LIVE</div>
+      </div>
+      <div class="ecg-row">
+        <div class="ecg-name">Invoice Bot<small>Make · 12 ops</small></div>
+        <div class="ecg-canvas"><canvas data-ecg="live" data-speed="1.3"></canvas></div>
+        <div class="ecg-state st-live">LIVE</div>
+      </div>
+      <div class="ecg-row dead">
+        <div class="ecg-name">Slack Digest<small>n8n · web hook</small></div>
+        <div class="ecg-canvas"><canvas data-ecg="dead"></canvas></div>
+        <div class="ecg-state st-dead">SILENT</div>
+      </div>
+      <div class="ecg-row">
+        <div class="ecg-name">Inventory Feed<small>webhook · bare</small></div>
+        <div class="ecg-canvas"><canvas data-ecg="live" data-speed="0.5"></canvas></div>
+        <div class="ecg-state st-live">LIVE</div>
+      </div>
+      <div class="count-strip">
+        <span class="lbl">⚠ SILENT — and counting</span>
+        <span class="t mono" id="count">47:12</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ VERDICTS ============ -->
+<section id="verdicts">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker">Cadence Learning</div>
+      <h2>Four verdicts. 48 hours to learn your rhythm.</h2>
+      <p class="sec-lede">After two days of pings, every wire gets a learned baseline — interval, daily volume, quiet hours. Exit codes say nothing; <b>behavior</b> says everything.</p>
+    </div>
+    <div class="verdicts">
+      <div class="vcard">
+        <div class="ico">🟢</div>
+        <h3>LIVE</h3>
+        <p>On rhythm. Pings arriving inside the learned envelope.</p>
+        <span class="tag t-green">ON CADENCE</span>
+      </div>
+      <div class="vcard">
+        <div class="ico">🟡</div>
+        <h3>LAG</h3>
+        <p>Running, but slower than baseline — "median gap 31m vs usual 15m". Early warning, not yet dead.</p>
+        <span class="tag t-amber">SLOWING</span>
+      </div>
+      <div class="vcard">
+        <div class="ico">📈</div>
+        <h3>BURST</h3>
+        <p>Runaway loop or dedup filter gone — "duplicate-send volume 4.1× baseline for 22 min". The agent-patch failure, caught by rhythm.</p>
+        <span class="tag t-red">RUNAWAY</span>
+      </div>
+      <div class="vcard">
+        <div class="ico">🔴</div>
+        <h3>SILENT</h3>
+        <p>The dead-man's-switch trip. Sticky countdown, escalation D-0 → D+15m → D+1h. This is the one nobody else catches.</p>
+        <span class="tag t-red">FLATLINE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIAGNOSTICS ============ -->
+<section id="diagnostics" style="background:rgba(18,24,33,.4)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker">Killer Diagnostics</div>
+      <h2>Five boring, predictable killers. Instant triage.</h2>
+      <p class="sec-lede">Most disaster tickets trace back to the same five — not exotic bugs. When a wire trips, DeadWire weighs the killers and hands you the fix checklist, plus a one-tap health probe that tells you <b>instance vs. workflow</b> before 3 a.m.</p>
+    </div>
+    <div class="diag-grid">
+      <div class="killers">
+        <div class="killer" style="position:relative;overflow:hidden">
+          <span class="num">01</span>
+          <span class="kn">Deactivated<small>toggle flipped · agent patch · bulk-edit accident</small></span>
+          <span class="pct">28%</span>
+          <span class="bar" style="width:28%"></span>
+        </div>
+        <div class="killer" style="position:relative;overflow:hidden">
+          <span class="num">02</span>
+          <span class="kn">Webhook misfire<small>pointed at a test/staging URL — the #1 silent killer</small></span>
+          <span class="pct">23%</span>
+          <span class="bar" style="width:23%"></span>
+        </div>
+        <div class="killer" style="position:relative;overflow:hidden">
+          <span class="num">03</span>
+          <span class="kn">Queue dead<small>worker lost Redis · instance down</small></span>
+          <span class="pct">19%</span>
+          <span class="bar" style="width:19%"></span>
+        </div>
+        <div class="killer" style="position:relative;overflow:hidden">
+          <span class="num">04</span>
+          <span class="kn">Auth expired<small>OAuth/credentials silently lapsed — Stripe webhook tops the crowd</small></span>
+          <span class="pct">15%</span>
+          <span class="bar" style="width:15%"></span>
+        </div>
+        <div class="killer" style="position:relative;overflow:hidden">
+          <span class="num">05</span>
+          <span class="kn">Rate-limited<small>upstream 429 loop · held-run queue growth</small></span>
+          <span class="pct">15%</span>
+          <span class="bar" style="width:15%"></span>
+        </div>
+      </div>
+
+      <div class="triage">
+        <div class="triage-head">
+          <div>
+            <div class="wire-name">Slack Digest</div>
+            <div class="wire-id mono">wire #4,809 · n8n · expected ~15m</div>
+          </div>
+          <span class="stamp">SILENT</span>
+        </div>
+        <div class="diag-verdict">
+          The wire went cold at <b>01:27</b>. Leading killer: <b>Queue dead (19%)</b> — instance is up but the queue worker for this workflow dropped. One-tap probe below.
+        </div>
+        <div class="checklist">
+          <div class="check done"><span class="box"></span><span>Check the instance is up (health probe)</span></div>
+          <div class="check done"><span class="box"></span><span>Confirm the workflow is still activated</span></div>
+          <div class="check"><span class="box"></span><span>Restart the queue worker / re-attach Redis</span></div>
+          <div class="check"><span class="box"></span><span>Verify the webhook target URL is production, not staging</span></div>
+          <div class="check"><span class="box"></span><span>Check credential expiry (Stripe webhook)</span></div>
+        </div>
+        <button class="probe" onclick="runProbe(this)">⚡ Run health probe</button>
+        <div class="probe-result" id="probe-out"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RECEIPT ============ -->
+<section id="receipt" class="receipt-sec">
+  <div class="wrap receipt-wrap">
+    <div class="receipt">
+      <div class="rhead">
+        <span class="rtitle">DEADWIRE · POST-MORTEM</span>
+        <span class="mono">#PM-1120-047</span>
+      </div>
+      <div class="rrow"><span>wire</span><b>Slack Digest</b></div>
+      <div class="rrow"><span>platform</span><b>n8n · queue mode</b></div>
+      <div class="rdiv"></div>
+      <div class="rrow"><span>silent</span><b>47m 12s</b></div>
+      <div class="rrow"><span>cause</span><b>queue worker down</b></div>
+      <div class="rrow"><span>missed runs</span><b>~3</b></div>
+      <div class="rrow"><span>recovered</span><b>02:14 ET</b></div>
+      <div class="rrow"><span>data loss</span><b>none (retry queue)</b></div>
+      <div class="rdiv"></div>
+      <div class="rrow"><span>ping</span><b>#4,809 → #4,810</b></div>
+      <div class="rrow"><span>client found out</span><b>never · we did</b></div>
+      <div class="rstamp">✓ RESTORED</div>
+    </div>
+    <div>
+      <div class="sec-kicker">The Viral Artifact</div>
+      <h2 style="margin-bottom:14px">Every recovery prints a receipt.</h2>
+      <p class="sec-lede" style="margin-bottom:16px">Thermal paper, zigzag tear, stamped verdict. It's the LinkedIn-native proof that your automations have a night-shift operator — and the shareable artifact that turns a 3-day-discovered silent crash into an 11-minute catch.</p>
+      <p class="receipt-note">One silent crash caught per client covers the agency tier for a year. That's the whole pitch.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CROWD INTEL ============ -->
+<section id="intel" style="background:rgba(18,24,33,.4)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker">Crowd Failure Intel</div>
+      <h2>The numbers nobody publishes.</h2>
+      <p class="sec-lede">A failure-signature database by platform × integration × killer, seeded honestly day one and compounded by every trip. Free wires feed it; everyone reads it.</p>
+    </div>
+    <div class="intel-grid">
+      <div class="intel-card">
+        <div class="intel-num copper" id="n-wires">12,408</div>
+        <div class="intel-lbl">wires monitored this week</div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-num amber">4.2 days</div>
+        <div class="intel-lbl">median time-to-discovery <b>without</b> DeadWire</div>
+      </div>
+      <div class="intel-card">
+        <div class="intel-num green">11 min</div>
+        <div class="intel-lbl">median time-to-discovery <b>with</b> DeadWire</div>
+      </div>
+    </div>
+    <div class="leader">
+      <h3>Weekly Killer Leaderboard — all platforms</h3>
+      <div class="lead-row">
+        <span class="lead-rank">1</span>
+        <span class="lead-name">Webhook misfire — test URL left in prod<small>n=4,913</small></span>
+        <span class="lead-bar"><i style="width:92%"></i></span>
+        <span class="lead-pct">28%</span>
+      </div>
+      <div class="lead-row">
+        <span class="lead-rank">2</span>
+        <span class="lead-name">Auth expired — Stripe webhook<small>n=3,261</small></span>
+        <span class="lead-bar"><i style="width:74%"></i></span>
+        <span class="lead-pct">23%</span>
+      </div>
+      <div class="lead-row">
+        <span class="lead-rank">3</span>
+        <span class="lead-name">Queue worker lost Redis<small>n=1,844</small></span>
+        <span class="lead-bar"><i style="width:58%"></i></span>
+        <span class="lead-pct">19%</span>
+      </div>
+      <div class="lead-row">
+        <span class="lead-rank">4</span>
+        <span class="lead-name">Runaway loop — dedup filter removed<small>n=1,204</small></span>
+        <span class="lead-bar"><i style="width:44%"></i></span>
+        <span class="lead-pct">15%</span>
+      </div>
+      <div class="lead-row">
+        <span class="lead-rank">5</span>
+        <span class="lead-name">Rate-limited 429 loop<small>n=1,186</small></span>
+        <span class="lead-bar"><i style="width:44%"></i></span>
+        <span class="lead-pct">15%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AGENT WATCH ============ -->
+<section id="agent">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker">The 2026 Differentiator</div>
+      <h2>Who checks the agent that's fixing your automation?</h2>
+      <p class="sec-lede">An AI agent "fixed" a crash and quietly removed the dedup filter. The next execution succeeded — everything looked fine, except it wasn't. Agent Watch shows the before/after diff window so the human approval step has evidence.</p>
+    </div>
+    <div class="agent-grid">
+      <div class="agent-panel">
+        <h3>Slack Digest — cadence diff</h3>
+        <p class="sub">Rhythm and field-shape across the change timestamp. The spike at 11:40 is the burst; the extra fields are the shape drift.</p>
+        <div class="diffbars">
+          <div>
+            <div class="dbar-lbl"><span>Duplicate-send volume</span><span class="mono">4.1× baseline</span></div>
+            <div class="dbar">
+              <i class="before" style="width:22%"></i>
+              <span class="dmark"></span>
+              <i class="after" style="width:88%;margin-left:30%"></i>
+            </div>
+          </div>
+          <div>
+            <div class="dbar-lbl"><span>Payload fields</span><span class="mono">3 → 9 fields</span></div>
+            <div class="dbar">
+              <i class="before" style="width:26%"></i>
+              <span class="dmark"></span>
+              <i class="after" style="width:80%;margin-left:32%"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="ping-line" style="margin-top:0">
+          <span style="color:var(--dead-red)">▲</span>
+          <span>BURST 4.1× · 22 min · 6 extra fields · <b style="color:var(--drift-amber)">agent patch at 11:40 — review the diff</b></span>
+        </div>
+        <p class="receipt-note" style="margin-top:22px">DeadWire doesn't stop the agent — that's a release-gate's job. It <b>proves what changed and when</b>, so "AI proposes, human approves" actually has a monitoring rung behind it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing" style="background:rgba(18,24,33,.4)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-kicker">Pricing</div>
+      <h2>Free to arm. Cheap to keep the lights on.</h2>
+      <p class="sec-lede">Alert density is the dataset — the free tier is the moat. Payload values never leave your stack; we see a ping, not your business.</p>
+    </div>
+    <div class="price-grid">
+      <div class="pcard">
+        <div class="pname">Free</div>
+        <div class="pprice">$0<small> forever</small></div>
+        <div class="pdesc">Arm your first wires and see the silence before your client does.</div>
+        <ul class="pfeat">
+          <li>3 wires</li>
+          <li>The Ping + SILENCE/LAG alerts</li>
+          <li>Public Killer Leaderboards & Silent-Crash Index</li>
+        </ul>
+        <button class="btn btn-ghost" onclick="startPing()">Start free</button>
+      </div>
+      <div class="pcard feat">
+        <span class="feat-tag">MOST ARMED</span>
+        <div class="pname">Pro</div>
+        <div class="pprice">$9<small>/mo · $59/yr</small></div>
+        <div class="pdesc">The full night shift: every verdict, every diagnostic, every receipt.</div>
+        <ul class="pfeat">
+          <li>Unlimited wires + Cadence Learning</li>
+          <li>Shape Sentinel (field-name drift)</li>
+          <li>Killer Diagnostics + health probe</li>
+          <li>Post-Mortem Receipts + SMS escalation</li>
+        </ul>
+        <button class="btn btn-primary" onclick="startPing()">Go Pro</button>
+      </div>
+      <div class="pcard">
+        <div class="pname">Wire Agency</div>
+        <div class="pprice">$49<small>/mo</small></div>
+        <div class="pdesc">For the 40-client-workflow shop where one silent crash is a churn event.</div>
+        <ul class="pfeat">
+          <li>25 client workspaces</li>
+          <li>White-label status pages</li>
+          <li>Per-client monthly reliability reports</li>
+        </ul>
+        <button class="btn btn-ghost" onclick="startPing()">For agencies</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap foot">
+    <div class="logo"><span class="logo-mark"></span> DeadWire</div>
+    <p>A concept prototype · researched from X/Twitter + automation-community signal, Nov 20 2026 · <span class="mono">the wire is live</span></p>
+  </div>
+</footer>
+
+<script>
+/* ---------- ECG animation ---------- */
+(function(){
+  const canvases = document.querySelectorAll('canvas[data-ecg]');
+  function setup(c){
+    const dpr = window.devicePixelRatio||1;
+    const r = c.getBoundingClientRect();
+    c.width = r.width*dpr; c.height = r.height*dpr;
+    const ctx = c.getContext('2d');
+    ctx.scale(dpr,dpr);
+    return {ctx,w:r.width,h:r.height};
+  }
+  const items = [];
+  canvases.forEach(c=>{
+    const meta = setup(c);
+    items.push({c,meta,type:c.dataset.ecg,speed:parseFloat(c.dataset.speed||1),phase:Math.random()*100});
+  });
+  function ecgPoint(t){ // returns 0..1 normalized
+    const m = t % 1;
+    if(m<0.12) return 0.5 - 0.06*Math.sin(m/0.12*Math.PI);
+    if(m<0.18) return 0.5 - 0.55*( (m-0.12)/0.06 );
+    if(m<0.24) return 0.5 - 0.55 + 0.95*((m-0.18)/0.06);
+    if(m<0.30) return 0.5 + 0.40 - 1.10*((m-0.24)/0.06);
+    if(m<0.42) return 0.5;
+    if(m<0.52) return 0.5 + 0.16*Math.sin((m-0.42)/0.10*Math.PI);
+    return 0.5;
+  }
+  let last = performance.now();
+  function draw(now){
+    const dt = (now-last)/1000; last=now;
+    items.forEach(it=>{
+      const {ctx,w,h} = it.meta;
+      const speed = it.speed*0.25;
+      it.phase += dt*speed;
+      ctx.clearRect(0,0,w,h);
+      // baseline
+      ctx.strokeStyle = 'rgba(139,151,168,0.18)';
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,h/2); ctx.lineTo(w,h/2); ctx.stroke();
+      const color = it.type==='dead' ? '#E5484D' : '#3FB950';
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = color; ctx.shadowBlur = 6;
+      ctx.beginPath();
+      const steps = 90;
+      for(let i=0;i<=steps;i++){
+        const x = (i/steps)*w;
+        let y;
+        if(it.type==='dead'){
+          y = h/2 + Math.sin(i*0.7+now*0.004)*0.8; // dead flatline w/ tiny noise
+        }else{
+          const t = it.phase + (i/steps)*1.0;
+          y = h/2 - ecgPoint(t)*(h*0.42);
+        }
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    });
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+  window.addEventListener('resize',()=>{items.forEach(it=>{const m=setup(it.c);it.meta=m;});});
+})();
+
+/* ---------- live clock ---------- */
+(function(){
+  const el = document.getElementById('clock');
+  let s = new Date(); s.setHours(2,14,7,0);
+  function tick(){ s=new Date(s.getTime()+1000);
+    const p=n=>String(n).padStart(2,'0');
+    el.textContent = p(s.getHours())+':'+p(s.getMinutes())+':'+p(s.getSeconds());
+  }
+  setInterval(tick,1000);
+})();
+
+/* ---------- silent countdown ---------- */
+(function(){
+  const el = document.getElementById('count');
+  let sec = 47*60+12;
+  setInterval(()=>{ sec++; const m=Math.floor(sec/60), s=sec%60;
+    el.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); },1000);
+})();
+
+/* ---------- probe ---------- */
+function runProbe(btn){
+  const out = document.getElementById('probe-out');
+  btn.textContent = 'Probing…'; btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent='⚡ Run health probe'; btn.disabled=false;
+    out.innerHTML =
+      '<span class="ok">✓ instance up</span> (n8n v2.19 · 200 in 84ms)<br>'+
+      '<span class="bad">✗ queue worker: DOWN</span> — redis connection refused on worker-2<br>'+
+      '<span class="ok">✓ webhook target: production</span> · <span class="ok">✓ credentials valid</span> (Stripe, 61d left)<br>'+
+      '<b style="color:var(--drift-amber)">→ verdict: restart worker-2 / re-attach Redis</b>';
+    out.classList.add('show');
+  },900);
+}
+
+/* ---------- cta ---------- */
+function startPing(){
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
