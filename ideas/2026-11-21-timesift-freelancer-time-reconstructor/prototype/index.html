@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeSift — The timesheet that reconstructs itself</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;550;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7F3EA; --paper:#FFFDF7; --ink:#1E1B16; --ink-soft:#5C564A;
+    --line:#E4DCCC; --amber:#C77B2B; --amber-soft:#F3E2CC; --slate:#8A8F98;
+    --slate-soft:#ECEDEF; --green:#5E7C4F; --green-soft:#E4EAD9; --red:#A5462F;
+    --card-shadow:0 1px 2px rgba(30,27,22,.05), 0 6px 18px rgba(30,27,22,.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 80px}
+
+  /* ---------- top bar ---------- */
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px 0 18px;border-bottom:1.5px solid var(--line);margin-bottom:26px;flex-wrap:wrap;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:40px;height:40px;border-radius:10px;background:var(--ink);color:var(--cream);display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:700;font-size:22px}
+  .brand h1{font-family:'Fraunces',serif;font-size:24px;font-weight:600;letter-spacing:-.01em}
+  .brand small{display:block;font-family:'Inter';font-size:12px;font-weight:500;color:var(--ink-soft);letter-spacing:.02em}
+  .capture{display:flex;align-items:center;gap:16px;font-size:12.5px;color:var(--ink-soft);flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-weight:600;font-size:12px;color:var(--ink)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft);animation:pulse 2.2s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--green-soft)}50%{box-shadow:0 0 0 6px rgba(94,124,79,.12)}}
+  .priv{cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:8px}
+  .switch{width:34px;height:19px;border-radius:999px;background:var(--green);position:relative;transition:background .2s}
+  .switch::after{content:'';position:absolute;top:2px;left:17px;width:15px;height:15px;border-radius:50%;background:#fff;transition:left .2s}
+  .priv.off .switch{background:var(--slate)} .priv.off .switch::after{left:2px}
+
+  /* ---------- layout ---------- */
+  .grid{display:grid;grid-template-columns:1fr 330px;gap:26px;align-items:start}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .dayhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+  .dayhead h2{font-family:'Fraunces',serif;font-size:27px;font-weight:600}
+  .dayhead .est{font-size:13px;color:var(--ink-soft)}
+  .dayhead .est b{color:var(--ink)}
+  .sift-note{font-size:12px;color:var(--ink-soft);background:var(--amber-soft);border:1px solid #E8D3B4;border-radius:8px;padding:7px 12px;margin-bottom:18px}
+  .sift-note b{color:var(--amber)}
+
+  /* ---------- sessions ---------- */
+  .sessions{display:flex;flex-direction:column;gap:12px}
+  .sess{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:15px 17px;box-shadow:var(--card-shadow);opacity:0;transform:translateY(14px)}
+  .sess.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.7,.3,1)}
+  .sess .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .t{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+  .dur{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:var(--cream);border:1px solid var(--line);padding:2px 8px;border-radius:6px}
+  .what{font-size:14.5px;font-weight:600;margin-top:7px}
+  .what .app{color:var(--ink-soft);font-weight:500}
+  .evidence{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .chip{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:7px;border:1px solid}
+  .chip.url{background:var(--slate-soft);border-color:#D8DADE;color:#4C515B}
+  .chip.git{background:var(--green-soft);border-color:#CBD8BF;color:var(--green)}
+  .chip.cal{background:#E7E4F3;border-color:#CFC9E6;color:#5B5485}
+  .maprow{display:flex;align-items:center;gap:9px;margin-top:11px;flex-wrap:wrap}
+  .maplabel{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+  .client{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;padding:5px 12px;border-radius:8px}
+  .client.b{background:var(--amber-soft);color:#8A4E14}
+  .client.n{background:var(--slate-soft);color:#565B64}
+  .conf{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:6px}
+  .conf.hi{background:var(--green-soft);color:var(--green)}
+  .conf.mid{background:var(--amber-soft);color:var(--amber)}
+  .conf.lo{background:#F2DDD7;color:var(--red)}
+  .actions{margin-left:auto;display:flex;gap:7px}
+  .btn{font-family:'Inter';font-size:12px;font-weight:600;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:6px 11px;cursor:pointer;transition:all .15s}
+  .btn:hover{border-color:var(--ink-soft);transform:translateY(-1px)}
+  .btn.keep{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .btn.non{color:var(--slate)} .btn.non.active{background:var(--slate-soft);color:var(--ink);border-color:var(--slate)}
+  .btn.ghost{border-style:dashed}
+  .sess.reassigning .maprow select{display:block}
+  select{font-family:'Inter';font-size:12.5px;font-weight:600;border:1.5px solid var(--amber);border-radius:8px;padding:5px 8px;background:var(--paper);color:var(--ink)}
+
+  /* ---------- sidebar ---------- */
+  .side{display:flex;flex-direction:column;gap:18px;position:sticky;top:18px}
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--card-shadow)}
+  .panel h3{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin-bottom:4px}
+  .panel .sub{font-size:12px;color:var(--ink-soft);margin-bottom:14px}
+
+  .dial{position:relative;width:150px;height:150px;margin:6px auto 12px}
+  .dial svg{transform:rotate(-90deg)}
+  .dial .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .dial .val b{font-family:'Fraunces',serif;font-size:34px;font-weight:700;display:block;line-height:1}
+  .dial .val span{font-size:11px;font-weight:600;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase}
+  .leak{background:#F2DDD7;border:1px solid #E5C0B4;border-radius:10px;padding:11px 13px;font-size:13px;color:var(--red)}
+  .leak b{font-size:16px;font-family:'Fraunces',serif}
+  .rate{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12.5px;color:var(--ink-soft)}
+  .rate input{width:74px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border:1.5px solid var(--line);border-radius:7px;padding:4px 8px;text-align:right}
+
+  .stat{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .stat:last-child{border:none}
+  .stat b{font-family:'JetBrains Mono',monospace;font-size:13px}
+  .bar{height:6px;border-radius:4px;background:var(--slate-soft);overflow:hidden;margin-top:4px}
+  .bar i{display:block;height:100%;background:var(--amber);border-radius:4px;transition:width .5s ease}
+
+  /* ---------- timesheet ---------- */
+  .ts-modal{position:fixed;inset:0;background:rgba(30,27,22,.45);display:none;place-items:center;z-index:50;padding:20px}
+  .ts-modal.open{display:grid}
+  .ts-card{background:var(--paper);border-radius:18px;max-width:560px;width:100%;box-shadow:0 30px 80px rgba(30,27,22,.35);overflow:hidden;animation:pop .3s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes pop{from{transform:scale(.94) translateY(10px);opacity:0}}
+  .ts-head{background:var(--ink);color:var(--cream);padding:20px 24px;display:flex;justify-content:space-between;align-items:center}
+  .ts-head h3{font-family:'Fraunces',serif;font-size:21px;font-weight:600}
+  .ts-head .wk{font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.75}
+  .ts-body{padding:20px 24px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:8px 6px;border-bottom:1.5px solid var(--line)}
+  th.r,td.r{text-align:right}
+  td{padding:10px 6px;border-bottom:1px dashed var(--line)}
+  td .c-name{font-weight:700}
+  td .c-note{font-size:12px;color:var(--ink-soft)}
+  tr.total td{border-bottom:none;border-top:2px solid var(--ink);font-weight:700;padding-top:12px}
+  tr.total td b{font-family:'Fraunces',serif;font-size:19px}
+  .ts-foot{display:flex;gap:10px;padding:0 24px 22px}
+  .ts-foot .btn{flex:1;padding:11px;font-size:13px}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--cream);padding:12px 22px;border-radius:10px;font-size:13px;font-weight:600;transition:transform .35s cubic-bezier(.2,.9,.3,1.15);z-index:60}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  .privdetail{margin-top:10px;font-size:12px;color:var(--ink-soft);display:none}
+  .privdetail.on{display:block}
+  .privdetail li{margin:5px 0 5px 16px}
+  footer{margin-top:34px;text-align:center;font-size:11.5px;color:var(--slate)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="mark">T</div>
+      <div>
+        <h1>TimeSift</h1>
+        <small>the timesheet that reconstructs itself</small>
+      </div>
+    </div>
+    <div class="capture">
+      <span class="pill"><span class="dot"></span> Passive capture · on-device</span>
+      <span class="pill">git ✓ · calendar ✓</span>
+      <span class="pill priv" id="privToggle" title="Toggle privacy mode">
+        <span class="switch"></span>
+        <span id="privLabel">Local-only sync</span>
+      </span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- ============ LEFT: the day ============ -->
+    <section>
+      <div class="dayhead">
+        <h2>Tuesday, November 17</h2>
+        <span class="est">reconstructed in <b>38s</b> · est. billable <b id="estBillable">—</b></span>
+      </div>
+      <div class="sift-note">🔎 <b>3 sessions need a look</b> — low-confidence mappings are flagged below. The other 9 were mapped from learned rules (repo/URL/domain → client). Total work captured: <b>8h 25m</b>.</div>
+      <div class="sessions" id="sessions"></div>
+    </section>
+
+    <!-- ============ RIGHT: fiction report + stats ============ -->
+    <aside class="side">
+      <div class="panel">
+        <h3>The Fiction Report</h3>
+        <div class="sub">week of Nov 10 – Nov 14, reconstructed vs. what memory would have billed</div>
+        <div class="dial">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="62" fill="none" stroke="var(--slate-soft)" stroke-width="13"/>
+            <circle id="dialArc" cx="75" cy="75" r="62" fill="none" stroke="var(--amber)" stroke-width="13"
+              stroke-linecap="round" stroke-dasharray="389.6" stroke-dashoffset="389.6"/>
+          </svg>
+          <div class="val"><div><b id="covVal">0%</b><span>recovered by<br>reconstruction</span></div></div>
+        </div>
+        <div class="leak">Untracked time last week: <b id="leakTime">9h 40m</b><br><span id="leakMoney">≈ $490</span> left on the table</div>
+        <div class="rate">Your rate: $/hr <input id="rateInput" type="number" value="50" min="1" max="500"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Today, by client</h3>
+        <div class="sub">billable · non-billable · unattributed</div>
+        <div id="clientStats"></div>
+      </div>
+
+      <div class="panel" style="text-align:center">
+        <button class="btn keep" style="width:100%;padding:13px;font-size:14px" id="genBtn">
+          ⏳ Generate weekly timesheet
+        </button>
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:9px">exports CSV · Toggl · Harvest · QuickBooks</div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>TimeSift prototype · data is simulated · capture never leaves the machine — metadata &amp; aggregates only</footer>
+</div>
+
+<!-- ============ timesheet modal ============ -->
+<div class="ts-modal" id="tsModal">
+  <div class="ts-card">
+    <div class="ts-head">
+      <h3>Weekly Timesheet</h3>
+      <span class="wk">Nov 10 – 14 · draft</span>
+    </div>
+    <div class="ts-body">
+      <table>
+        <thead><tr><th>Client</th><th>Notes</th><th class="r">Hours</th><th class="r">Value</th></tr></thead>
+        <tbody id="tsRows"></tbody>
+      </table>
+    </div>
+    <div class="ts-foot">
+      <button class="btn" id="tsClose">Back to review</button>
+      <button class="btn keep" id="tsExport">Export CSV ↓</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= data (simulated day) ================= */
+const clients = {
+  acme:   {name:"Acme Inc",        billable:true},
+  bloom:  {name:"Bloom Health",    billable:true},
+  self:   {name:"Personal / admin",billable:false},
+  none:   {name:"Unattributed",    billable:false},
+};
+
+let sessions = [
+  {t:"08:05", m:55,  what:"Standup — Bloom Health sprint sync", app:"Google Meet",
+   chips:[["cal","📅 Calendar: Bloom standup 8:00"]], client:"bloom", conf:"hi", note:"sprint sync, 3 action items"},
+  {t:"09:05", m:95,  what:"github.com/acme/checkout — PR #412", app:"Chrome",
+   chips:[["git","⌥ git: feat/checkout-retry · 2 commits"], ["url","PR #412 · 14 reviews"]], client:"acme", conf:"hi", note:"checkout retry logic"},
+  {t:"10:45", m:20,  what:"gmail — invoice #1181 payment Q&A", app:"Gmail",
+   chips:[["url","2 threads · acme.com sender"]], client:"acme", conf:"mid", note:"finance question, 2 replies"},
+  {t:"11:10", m:40,  what:"Slack — #general, vendor ping", app:"Slack",
+   chips:[["url","workspace: personal"]], client:"self", conf:"mid", note:"non-client noise"},
+  {t:"11:55", m:70,  what:"bloom-api — patient portal API", app:"VS Code",
+   chips:[["git","⌥ git: bloom/api · 4 commits"], ["cal","📅 Deep work block (self-booked)"]], client:"bloom", conf:"hi", note:"portal endpoints"},
+  {t:"13:10", m:50,  what:"Figma — acme onboarding mock review", app:"Figma",
+   chips:[["url","file: acme-onboarding-v3"]], client:"acme", conf:"hi", note:"design review"},
+  {t:"14:05", m:35,  what:"chrome — tabs: 12 open, mixed", app:"Chrome",
+   chips:[["url","no dominant domain · low signal"]], client:"none", conf:"lo", note:"needs a look"},
+  {t:"14:45", m:65,  what:"bloom-api — E2E test fixes", app:"Terminal",
+   chips:[["git","⌥ git: bloom/api · 3 commits (main)"]], client:"bloom", conf:"hi", note:"stabilizing suite"},
+  {t:"15:55", m:25,  what:"notion — writing something", app:"Notion",
+   chips:[["url","no client tag learned yet"]], client:"none", conf:"lo", note:"needs a look"},
+  {t:"16:25", m:55,  what:"acme staging deploy + smoke test", app:"Terminal + Chrome",
+   chips:[["git","⌥ git: acme/checkout · release tag v2.9"], ["cal","📅 Deploy window (Acme)"]], client:"acme", conf:"hi", note:"v2.9 shipped"},
+  {t:"17:25", m:35,  what:"spotify / cooking", app:"—",
+   chips:[["url","personal time · auto non-billable"]], client:"self", conf:"hi", note:"off the clock"},
+];
+let rate = 50;
+
+/* ================= helpers ================= */
+const $ = s => document.querySelector(s);
+const fmt = m => m>=60 ? `${Math.floor(m/60)}h ${String(m%60).padStart(2,"0")}m` : `${m}m`;
+const money = m => "$" + (m*rate).toLocaleString("en-US",{maximumFractionDigits:0});
+
+function toast(msg){
+  const t=$("#toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+/* ================= render sessions ================= */
+function renderSessions(){
+  const el=$("#sessions"); el.innerHTML="";
+  sessions.forEach((s,i)=>{
+    const c=clients[s.client];
+    const div=document.createElement("div");
+    div.className="sess";
+    div.innerHTML=`
+      <div class="top">
+        <span class="t">${s.t}</span><span class="dur">${fmt(s.m)}</span>
+        <span class="conf ${s.conf}" title="mapping confidence">${s.conf==="hi"?"96%":s.conf==="mid"?"71%":"38%"}</span>
+        <div class="actions">
+          <button class="btn keep act-keep" data-i="${i}">keep</button>
+          <button class="btn act-re" data-i="${i}">reassign</button>
+          <button class="btn non act-non ${!c.billable?"active":""}" data-i="${i}">non-billable</button>
+        </div>
+      </div>
+      <div class="what">${s.what} <span class="app">· ${s.app}</span></div>
+      <div class="evidence">${s.chips.map(([k,v])=>`<span class="chip ${k}">${v}</span>`).join("")}</div>
+      <div class="maprow">
+        <span class="maplabel">↦</span>
+        <span class="client ${c.billable?"b":"n"}" data-cl>${c.name}</span>
+        <select data-sel="${i}" style="display:none">
+          ${Object.entries(clients).map(([k,v])=>`<option value="${k}" ${k===s.client?"selected":""}>${v.name}</option>`).join("")}
+        </select>
+        <span style="margin-left:auto;font-size:12px;color:var(--ink-soft)">${s.note}</span>
+      </div>`;
+    el.appendChild(div);
+    setTimeout(()=>div.classList.add("in"), 60*i+120);
+
+    const keep=div.querySelector(".act-keep"), re=div.querySelector(".act-re"),
+          non=div.querySelector(".act-non"), sel=div.querySelector("select"), clTag=div.querySelector("[data-cl]");
+    keep.onclick=()=>toast("✓ Kept as mapped — saved to rules");
+    re.onclick=()=>{ div.classList.toggle("reassigning"); sel.style.display = sel.style.display==="block"?"none":"block"; if(sel.style.display==="block") sel.focus(); };
+    sel.onchange=()=>{
+      s.client=sel.value;
+      const nc=clients[s.client];
+      clTag.className="client "+(nc.billable?"b":"n"); clTag.textContent=nc.name;
+      non.classList.toggle("active",!nc.billable);
+      sel.style.display="none"; div.classList.remove("reassigning");
+      toast(`↦ Remapped to ${nc.name} — learned for next time`); refresh();
+    };
+    non.onclick=()=>{
+      if(clients[s.client].billable){ s.client="none"; } else { s.client="self"; toast("Marked non-billable"); }
+      const nc=clients[s.client];
+      clTag.className="client "+(nc.billable?"b":"n"); clTag.textContent=nc.name;
+      non.classList.toggle("active",!nc.billable);
+      toast("Marked non-billable"); refresh();
+    };
+  });
+}
+
+/* ================= stats + dial ================= */
+function refresh(){
+  let billMin=0, nonMin=0, unMin=0;
+  sessions.forEach(s=>{
+    const c=clients[s.client];
+    if(s.client==="none") unMin+=s.m;
+    else if(c.billable) billMin+=s.m; else nonMin+=s.m;
+  });
+  $("#estBillable").textContent=fmt(billMin)+` (${money(billMin/60)})`;
+  const leakMin=9*60+40;
+  $("#leakMoney").textContent="≈ $"+Math.round(leakMin/60*rate).toLocaleString();
+
+  const box=$("#clientStats"); box.innerHTML="";
+  const rows=[
+    ["Acme Inc", billMin, "amber"],
+    ["Non-billable", nonMin, "slate"],
+    ["Unattributed", unMin, "red"],
+  ];
+  const max=Math.max(billMin,nonMin,unMin,1);
+  rows.forEach(([label,min])=>{
+    const d=document.createElement("div");
+    d.innerHTML=`<div class="stat"><span>${label}</span><b>${fmt(min)}</b></div>
+      <div class="bar"><i style="width:0%"></i></div>`;
+    box.appendChild(d);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ d.querySelector("i").style.width=(min/max*100)+"%"; }));
+  });
+}
+
+function animateDial(pct){
+  const arc=$("#dialArc"), val=$("#covVal"), C=389.6;
+  let start=null;
+  function step(ts){
+    if(!start)start=ts;
+    const p=Math.min((ts-start)/1100,1), e=1-Math.pow(1-p,3);
+    arc.style.strokeDashoffset=C*(1-(pct/100)*e);
+    val.textContent=Math.round(pct*e)+"%";
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ================= timesheet modal ================= */
+function buildTimesheet(){
+  const by={};
+  sessions.forEach(s=>{
+    const c=clients[s.client]; if(!c.billable)return;
+    if(!by[s.client])by[s.client]={min:0,notes:[]};
+    by[s.client].min+=s.m; by[s.client].notes.push(s.note);
+  });
+  const tb=$("#tsRows"); tb.innerHTML="";
+  let totMin=0, totVal=0;
+  Object.entries(by).forEach(([k,v])=>{
+    totMin+=v.min; totVal+=v.min/60*rate;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><span class="c-name">${clients[k].name}</span></td>
+      <td class="c-note">${v.notes.slice(0,3).join(" · ")}</td>
+      <td class="r">${(v.min/60).toFixed(2)}</td>
+      <td class="r">$${Math.round(v.min/60*rate).toLocaleString()}</td>`;
+    tb.appendChild(tr);
+  });
+  const tr=document.createElement("tr"); tr.className="total";
+  tr.innerHTML=`<td colspan="2">Total billable — week of Nov 10–14 (incl. Mon/Fri, simulated)</td>
+    <td class="r">${(totMin/60+21.4).toFixed(1)}</td><td class="r"><b>$${Math.round(totVal+21.4*rate).toLocaleString()}</b></td>`;
+  tb.appendChild(tr);
+  $("#tsModal").classList.add("open");
+}
+
+$("#genBtn").onclick=buildTimesheet;
+$("#tsClose").onclick=()=>$("#tsModal").classList.remove("open");
+$("#tsModal").onclick=e=>{ if(e.target.id==="tsModal")$("#tsModal").classList.remove("open"); };
+$("#tsExport").onclick=()=>{ $("#tsModal").classList.remove("open"); toast("↓ timesheet-2026-11-10.csv exported (simulated)"); };
+
+/* ================= misc ================= */
+$("#rateInput").oninput=e=>{ rate=Math.max(1,+e.target.value||50); refresh(); };
+$("#privToggle").onclick=function(){
+  this.classList.toggle("off");
+  const off=this.classList.contains("off");
+  $("#privLabel").textContent=off?"Sync off":"Local-only sync";
+  toast(off?"🔒 Cloud sync off — everything stays on this machine":"☁️ Local-only sync resumed — metadata & aggregates only");
+};
+
+/* go */
+renderSessions();
+refresh();
+setTimeout(()=>animateDial(61),400);
+</script>
+</body>
+</html>
