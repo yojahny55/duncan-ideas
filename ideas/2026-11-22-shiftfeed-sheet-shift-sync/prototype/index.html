@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ShiftFeed — Your spreadsheet is your schedule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --board:#101418; --panel:#1A2027; --panel2:#222A33; --line:#2C353F;
+  --green:#3FB950; --green-dim:#2a7d38; --amber:#FFB454; --red:#E5484D;
+  --cream:#F2EDE4; --ink:#E8EAF0; --mut:#8A96A5; --mut2:#5C6875;
+  --mono:'JetBrains Mono',monospace; --disp:'Fraunces',serif; --body:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#0A0C0F;font-family:var(--body);color:var(--ink);display:flex;justify-content:center;min-height:100vh}
+#phone{width:100%;max-width:410px;min-height:100vh;background:var(--board);position:relative;overflow-x:hidden;box-shadow:0 0 80px rgba(0,0,0,.6)}
+.screen{display:none;padding:20px 18px 40px;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+.kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:600}
+h1{font-family:var(--disp);font-size:30px;line-height:1.12;font-weight:600;margin:10px 0 12px}
+h1 em{font-style:normal;color:var(--green)}
+.sub{color:var(--mut);font-size:14.5px;line-height:1.55}
+.mono{font-family:var(--mono)}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:15px 16px;font-family:var(--body);font-size:15.5px;font-weight:600;cursor:pointer;text-align:center;transition:transform .08s ease, background .15s}
+.btn:active{transform:scale(.985)}
+.btn-primary{background:var(--green);color:#08130B}
+.btn-primary:hover{background:#4cc75f}
+.btn-ghost{background:transparent;color:var(--mut);border:1px solid var(--line);margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;color:var(--mut);font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%}
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-weight:700;font-size:19px}
+.logo .sq{width:26px;height:26px;border-radius:7px;background:var(--green);display:grid;place-items:center;font-size:15px}
+/* hero morph */
+.morph{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:18px 0}
+.morph .cap{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut2);font-weight:600;margin-bottom:12px;text-align:center}
+.morph-row{display:flex;align-items:center;gap:10px}
+.cell{flex:1;background:var(--board);border:1px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center}
+.cell .who{font-size:12px;color:var(--mut);font-weight:600}
+.cell .tm{font-family:var(--mono);font-size:16px;color:var(--amber);margin-top:5px}
+.cell.mine{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset}
+.cell.mine .tm{color:var(--green)}
+.arrow{color:var(--mut2);font-size:20px;flex:none}
+.evt{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+.evt .t{font-family:var(--mono);font-size:15px;color:var(--green);font-weight:700}
+.evt .n{font-size:12px;color:var(--mut);margin-top:4px}
+.evt .bar{height:4px;border-radius:2px;background:var(--green);margin-top:9px;opacity:.85}
+.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 1px var(--green) inset}50%{box-shadow:0 0 0 3px rgba(63,185,80,.28) inset}}
+/* steps */
+.steps{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.step .num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:700}
+.step b{display:block;font-size:14px;margin-bottom:2px}
+.step span{font-size:13px;color:var(--mut);line-height:1.45}
+/* connect flow */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h3{font-size:14.5px;font-weight:600;margin-bottom:10px}
+.sheet-name{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+.sheet-name .ic{width:32px;height:32px;border-radius:8px;background:#2E7D32;display:grid;place-items:center;font-size:15px;flex:none}
+.sheet-name .nm{font-size:14px;font-weight:600}
+.sheet-name .mt{font-size:11.5px;color:var(--mut)}
+.grid-wrap{overflow-x:auto;margin-top:12px;border-radius:10px;border:1px solid var(--line)}
+table.sheet{border-collapse:collapse;width:100%;min-width:340px;background:var(--board)}
+table.sheet th{font-size:11px;color:var(--mut);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+table.sheet td{font-family:var(--mono);font-size:12.5px;padding:9px 10px;border-bottom:1px solid #1E252D;white-space:nowrap;color:var(--ink)}
+td.mine-cell{background:rgba(63,185,80,.12);color:var(--green);font-weight:700}
+.map-choices{display:flex;gap:8px;flex-wrap:wrap}
+.pick{padding:9px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--mut);font-size:13px;font-weight:500;cursor:pointer}
+.pick.on{border-color:var(--green);color:var(--green);background:rgba(63,185,80,.1)}
+.parse-line{display:flex;align-items:center;justify-content:space-between;padding:10px 2px;border-bottom:1px solid #1E252D;font-size:13px}
+.parse-line:last-child{border-bottom:0}
+.parse-line .d{color:var(--mut);font-family:var(--mono);font-size:12px}
+.parse-line .t{font-family:var(--mono);font-size:13px}
+.conf{font-size:10px;font-weight:700;letter-spacing:.06em;padding:3px 7px;border-radius:5px}
+.conf.hi{background:rgba(63,185,80,.14);color:var(--green)}
+.conf.mid{background:rgba(255,180,84,.14);color:var(--amber)}
+/* week strip */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:14px 0 6px}
+.day{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 4px 9px;text-align:center;position:relative}
+.day .dn{font-size:10px;color:var(--mut2);font-weight:600;letter-spacing:.05em}
+.day .dt{font-family:var(--mono);font-size:10.5px;color:var(--green);margin-top:5px;font-weight:500;line-height:1.35}
+.day.changed{border-color:var(--amber)}
+.day.changed .dt{color:var(--amber)}
+.day.changed::after{content:"";position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.day.today{border-color:var(--green)}
+.notice{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.notice .nm{font-size:11px;color:var(--mut);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.notice .bar{flex:1;height:5px;border-radius:3px;background:var(--panel2);overflow:hidden}
+.notice .fill{height:100%;width:62%;background:var(--amber);border-radius:3px}
+.notice .val{font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:700;flex:none}
+/* shift list */
+.shift{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:13px}
+.shift .dcol{flex:none;width:46px;text-align:center;background:var(--board);border-radius:10px;padding:8px 0}
+.shift .dcol .dd{font-size:10px;color:var(--mut2);font-weight:700;letter-spacing:.08em}
+.shift .dcol .num{font-family:var(--disp);font-size:19px;font-weight:700;line-height:1.1}
+.shift .inf{flex:1;min-width:0}
+.shift .tm{font-family:var(--mono);font-size:15px;font-weight:700}
+.shift .loc{font-size:12px;color:var(--mut);margin-top:3px}
+.shift .hrs{font-family:var(--mono);font-size:11.5px;color:var(--green);margin-top:4px}
+.shift.moved .tm{color:var(--amber)}
+.stamp{font-size:10px;font-weight:800;letter-spacing:.1em;padding:4px 8px;border-radius:6px;flex:none}
+.stamp.new{background:rgba(63,185,80,.15);color:var(--green)}
+.stamp.moved{background:rgba(255,180,84,.15);color:var(--amber)}
+.done-btn{flex:none;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:transparent;color:var(--mut);font-size:17px;cursor:pointer;transition:all .15s}
+.done-btn.hit{background:var(--green);border-color:var(--green);color:#08130B}
+/* swap */
+.swap{border-color:var(--amber)}
+.swap .q{font-size:13px;color:var(--amber);font-weight:600}
+.reply{background:var(--board);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:12.5px;color:var(--mut);margin-top:10px;line-height:1.5}
+.mini{display:inline-block;border:0;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer;margin-top:10px;margin-right:8px}
+.mini.yes{background:var(--green);color:#08130B}
+.mini.copy{background:var(--panel2);color:var(--mut);border:1px solid var(--line)}
+/* toast */
+#toast{position:fixed;left:50%;top:14px;transform:translate(-50%,-140%);width:calc(100% - 32px);max-width:378px;background:var(--panel2);border:1px solid var(--amber);border-radius:14px;padding:14px 16px;z-index:50;transition:transform .35s cubic-bezier(.2,.9,.3,1.2);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#toast.show{transform:translate(-50%,0)}
+#toast .hd{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+#toast .hd .stamp{background:rgba(255,180,84,.15);color:var(--amber)}
+#toast .hd b{font-size:13.5px}
+#toast p{font-size:13px;color:var(--mut);line-height:1.5}
+#toast .ok{color:var(--green);font-weight:600;font-size:12.5px;margin-top:7px;font-family:var(--mono)}
+/* ledger / receipt */
+.receipt{background:var(--cream);color:#171B21;border-radius:4px 4px 0 0;padding:20px 18px 26px;margin-top:6px;font-family:var(--mono)}
+.receipt h4{font-family:var(--disp);font-size:19px;font-weight:700;margin-bottom:2px}
+.receipt .rsub{font-size:11px;color:#6B7280;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+.rrow{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed #C9C2B4}
+.rrow b{font-weight:700}
+.rrow.tot{border-bottom:0;border-top:2px solid #171B21;margin-top:6px;padding-top:11px;font-size:15px}
+.stamp-seal{display:inline-block;margin-top:16px;border:2.5px solid #2F7D4F;color:#2F7D4F;font-weight:800;letter-spacing:.14em;font-size:13px;padding:6px 14px;border-radius:6px;transform:rotate(-4deg)}
+.tear{height:14px;background:var(--cream);clip-path:polygon(0 0,100% 0, 100% 40%, 96% 100%, 92% 40%, 88% 100%, 84% 40%, 80% 100%, 76% 40%, 72% 100%, 68% 40%, 64% 100%, 60% 40%, 56% 100%, 52% 40%, 48% 100%, 44% 40%, 40% 100%, 36% 40%, 32% 100%, 28% 40%, 24% 100%, 20% 40%, 16% 100%, 12% 40%, 8% 100%, 4% 40%, 0 100%);margin-left:-1px}
+/* nav */
+.nav{position:sticky;bottom:0;background:rgba(16,20,24,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;margin:20px -18px 0;padding:10px 8px calc(10px + env(safe-area-inset-bottom))}
+.nav button{flex:1;background:none;border:0;color:var(--mut2);font-size:11px;font-weight:600;font-family:var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0}
+.nav button .ic{font-size:19px}
+.nav button.on{color:var(--green)}
+.sp{height:12px}
+/* pro panel */
+.pro{background:linear-gradient(150deg,#1A2027,#141A20);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px}
+.pro .pk{color:var(--amber)}
+.pro ul{list-style:none;margin-top:12px}
+.pro li{font-size:13px;color:var(--mut);padding:5px 0 5px 22px;position:relative}
+.pro li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700}
+.price{font-family:var(--mono);font-size:22px;font-weight:700;margin:8px 0 2px}
+.price small{font-size:12px;color:var(--mut);font-weight:400}
+.hint{font-size:12px;color:var(--mut2);margin-top:14px;text-align:center}
+.fadein{animation:fi .4s ease both}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="phone">
+
+<!-- CHANGE TOAST -->
+<div id="toast">
+  <div class="hd"><span class="stamp">MOVED</span><b>Tuesday · 11:00 → 15:00</b></div>
+  <p>The sheet changed. Your Tuesday starts at <b class="mono" style="color:var(--amber)">15:00</b> now (was 11:00). Change made Thu 14:02 by the sheet owner.</p>
+  <div class="ok">✓ calendar updated · diff logged</div>
+</div>
+
+<!-- ============ SCREEN 1: HERO ============ -->
+<div class="screen active" id="s-hero">
+  <div class="top">
+    <div class="logo"><div class="sq">▦</div>ShiftFeed</div>
+    <div class="chip"><span class="dot" style="background:var(--green)"></span>read-only</div>
+  </div>
+  <div class="kicker">for people whose shifts live in a spreadsheet</div>
+  <h1>Your sheet is your schedule.<br><em>It doesn't know it yet.</em></h1>
+  <p class="sub">Connect the shared sheet your manager already uses. ShiftFeed finds <b style="color:var(--ink)">you</b> in it, keeps your calendar synced — and pings you the moment your shifts change.</p>
+
+  <div class="morph">
+    <div class="cap">one cell → one calendar event, automatically</div>
+    <div class="morph-row">
+      <div class="cell mine pulse">
+        <div class="who">YOU · TUE</div>
+        <div class="tm">6a – 2p</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="evt">
+        <div class="t">06:00 – 14:00</div>
+        <div class="n">Shift · Café Del Mar</div>
+        <div class="bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="go('s-connect')">Connect the sheet — 4 minutes</button>
+  <button class="btn btn-ghost" onclick="go('s-board')">Just look at the board</button>
+
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div><b>Point it at the sheet</b><span>Read-only access to the one spreadsheet your crew uses. No manager account, no install, no credentials anywhere else.</span></div></div>
+    <div class="step"><div class="num">2</div><div><b>Tap your name</b><span>ShiftFeed parses the layout — names sideways, “6a–2p”, OT flags, TBDs — and shows you exactly what it saw.</span></div></div>
+    <div class="step"><div class="num">3</div><div><b>It watches for you</b><span>Sheet changes → your calendar updates → one push in plain words. You never have to check the sheet again.</span></div></div>
+  </div>
+  <div class="hint">Free forever for one job · no employer involvement · ICS works with any calendar</div>
+</div>
+
+<!-- ============ SCREEN 2: CONNECT ============ -->
+<div class="screen" id="s-connect">
+  <div class="top">
+    <div class="logo"><div class="sq">▦</div>ShiftFeed</div>
+    <div class="chip" id="step-chip">step 1 of 3</div>
+  </div>
+
+  <div id="c-sheet" class="card">
+    <h3>1 · The sheet</h3>
+    <div class="sheet-name">
+      <div class="ic">▦</div>
+      <div><div class="nm">CafeDelMar_Schedule_Nov-Dec</div><div class="mt">shared with you · 14 tabs · last edited 2h ago</div></div>
+    </div>
+    <div class="grid-wrap">
+      <table class="sheet">
+        <tr><th></th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th><th>SUN</th></tr>
+        <tr><td>Diego</td><td>6a–2p</td><td>6a–2p</td><td>—</td><td>2p–10p</td><td>6a–2p</td><td>10a–6p</td><td>—</td></tr>
+        <tr><td style="color:var(--green);font-weight:700">You</td><td class="mine-cell">off</td><td class="mine-cell">6a–2p</td><td class="mine-cell">2p–10p</td><td class="mine-cell">2p–10p</td><td class="mine-cell">6a–2p</td><td class="mine-cell">10a–6p</td><td class="mine-cell">off</td></tr>
+        <tr><td>Marta</td><td>2p–10p</td><td>—</td><td>6a–2p</td><td>6a–2p</td><td>TBD</td><td>10a–6p</td><td>2p–10p</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="c-name" class="card" style="display:none">
+    <h3>2 · Which one is you?</h3>
+    <div class="map-choices" id="name-picks">
+      <div class="pick" onclick="pick(this,'Diego')">Diego</div>
+      <div class="pick" onclick="pick(this,'You')">You</div>
+      <div class="pick" onclick="pick(this,'Marta')">Marta</div>
+    </div>
+    <div class="hint" id="picked" style="margin-top:12px"></div>
+  </div>
+
+  <div id="c-parse" class="card" style="display:none">
+    <h3>3 · What ShiftFeed parsed</h3>
+    <div id="parse-list">
+      <div class="parse-line"><span class="d">TUE 11/24</span><span class="t">06:00 – 14:00</span><span class="conf hi">98%</span></div>
+      <div class="parse-line"><span class="d">WED 11/25</span><span class="t">14:00 – 22:00</span><span class="conf hi">98%</span></div>
+      <div class="parse-line"><span class="d">THU 11/26</span><span class="t">14:00 – 22:00</span><span class="conf hi">98%</span></div>
+      <div class="parse-line"><span class="d">FRI 11/27</span><span class="t">06:00 – 14:00</span><span class="conf hi">97%</span></div>
+      <div class="parse-line"><span class="d">SAT 11/28</span><span class="t">10:00 – 18:00</span><span class="conf hi">97%</span></div>
+      <div class="parse-line"><span class="d">FRI (Marta)</span><span class="t" style="color:var(--mut2)">TBD — watched, not synced</span><span class="conf mid">WATCH</span></div>
+    </div>
+    <div class="hint">anything wrong? tap a row to fix it — fixes make the layout library better for everyone.</div>
+  </div>
+
+  <div id="c-cal" class="card" style="display:none">
+    <h3>4 · Where should shifts land?</h3>
+    <div class="map-choices">
+      <div class="pick on" onclick="pickCal(this)">ICS feed · any calendar</div>
+      <div class="pick" onclick="pickCal(this)">Google Calendar (direct)</div>
+    </div>
+    <div class="hint">ICS works everywhere with one extra login. Google direct is a Pro convenience.</div>
+  </div>
+
+  <button class="btn btn-primary" id="next-btn" onclick="nextStep()">Continue</button>
+  <div class="sp"></div>
+  <div style="margin-top:auto"></div>
+</div>
+
+<!-- ============ SCREEN 3: BOARD ============ -->
+<div class="screen" id="s-board">
+  <div class="top">
+    <div class="logo"><div class="sq">▦</div>ShiftFeed</div>
+    <div class="chip"><span class="dot" style="background:var(--green)"></span>synced 2m ago</div>
+  </div>
+
+  <div class="kicker" style="margin-bottom:4px">this week · nov 23–29</div>
+  <div class="week" id="week">
+    <div class="day today"><div class="dn">MON</div><div class="dt">off</div></div>
+    <div class="day changed" id="day-tue"><div class="dn">TUE</div><div class="dt" id="tue-dt">11:00–19:00</div></div>
+    <div class="day"><div class="dn">WED</div><div class="dt">14:00–22:00</div></div>
+    <div class="day"><div class="dn">THU</div><div class="dt">14:00–22:00</div></div>
+    <div class="day"><div class="dn">FRI</div><div class="dt">06:00–14:00</div></div>
+    <div class="day"><div class="dn">SAT</div><div class="dt">10:00–18:00</div></div>
+    <div class="day"><div class="dn">SUN</div><div class="dt">off</div></div>
+  </div>
+
+  <div class="notice">
+    <div class="nm">notice<br>quality</div>
+    <div class="bar"><div class="fill" id="notice-fill"></div></div>
+    <div class="val" id="notice-val">6.2 days</div>
+  </div>
+
+  <div class="kicker" style="margin-bottom:10px">upcoming</div>
+
+  <div class="shift" id="shift-tue">
+    <div class="dcol"><div class="dd">TUE</div><div class="num">24</div></div>
+    <div class="inf">
+      <div class="tm" id="tue-tm">11:00 – 19:00</div>
+      <div class="loc">Café Del Mar</div>
+      <div class="hrs">8.0h · was 11:00–19:00</div>
+    </div>
+    <span class="stamp moved">MOVED</span>
+    <button class="done-btn" title="done">✓</button>
+  </div>
+
+  <div class="shift">
+    <div class="dcol"><div class="dd">WED</div><div class="num">25</div></div>
+    <div class="inf">
+      <div class="tm">14:00 – 22:00</div>
+      <div class="loc">Café Del Mar</div>
+      <div class="hrs">8.0h</div>
+    </div>
+    <span class="stamp new">IN CAL</span>
+    <button class="done-btn" title="done">✓</button>
+  </div>
+
+  <div class="shift swap">
+    <div class="dcol"><div class="dd">SAT</div><div class="num">28</div></div>
+    <div class="inf">
+      <div class="q">Swap? “Marta → you, Sat 6a?”</div>
+      <div class="loc">from the sheet · 3h ago · unconfirmed</div>
+    </div>
+    <span class="stamp moved">ASK</span>
+  </div>
+  <div class="card" style="padding:13px 15px" id="swap-card">
+    <div class="reply">“Confirming Sat 6a swap — yes, I'm in. Let me know when it's on the board.”</div>
+    <button class="mini yes" onclick="confirmSwap()">Confirm the swap</button>
+    <button class="mini copy">Copy reply</button>
+  </div>
+
+  <div class="shift">
+    <div class="dcol"><div class="dd">FRI</div><div class="num">27</div></div>
+    <div class="inf">
+      <div class="tm">06:00 – 14:00</div>
+      <div class="loc">Café Del Mar</div>
+      <div class="hrs">8.0h</div>
+    </div>
+    <span class="stamp new">IN CAL</span>
+    <button class="done-btn" title="done">✓</button>
+  </div>
+
+  <button class="btn btn-ghost" onclick="demoChange()">▶ Watch the killer feature (simulate a sheet change)</button>
+
+  <div class="pro">
+    <div class="kicker pk">shiftfeed pro</div>
+    <div class="price">$3<small>/mo · $25/yr · the price of a lunch</small></div>
+    <ul>
+      <li>Second sheet — 2nd job or seasonal counted too</li>
+      <li>Google / Apple direct sync, no ICS step</li>
+      <li>Swap Radar: draft replies, nudge until confirmed</li>
+      <li>Full ledger + weekly CSV + estimated pay at your rate</li>
+      <li>Notice-quality history: how early your employer really gives changes</li>
+    </ul>
+    <button class="btn btn-primary" style="margin-top:14px">Go Pro</button>
+  </div>
+
+  <div class="nav">
+    <button class="on"><span class="ic">▦</span>Board</button>
+    <button onclick="go('s-ledger')"><span class="ic">▤</span>Ledger</button>
+    <button onclick="go('s-connect')"><span class="ic">⚙</span>Sheet</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 4: LEDGER ============ -->
+<div class="screen" id="s-ledger">
+  <div class="top">
+    <div class="logo"><div class="sq">▦</div>ShiftFeed</div>
+    <div class="chip">week of nov 17–23</div>
+  </div>
+  <div class="kicker">tap ✓ when you clock out — the sheet is the promise, this is the receipt</div>
+  <div style="flex:1"></div>
+  <div class="receipt">
+    <h4>WEEK OF NOV 17</h4>
+    <div class="rsub">Café Del Mar · shiftfeed receipt</div>
+    <div class="rrow"><span>shifts worked</span><b>5 / 5</b></div>
+    <div class="rrow"><span>hours</span><b>34.5h</b></div>
+    <div class="rrow"><span>over 40?</span><b>no</b></div>
+    <div class="rrow"><span>sheet changes</span><b>2 · both noticed</b></div>
+    <div class="rrow"><span>swaps confirmed</span><b>1</b></div>
+    <div class="rrow"><span>avg notice this month</span><b>6.2 days</b></div>
+    <div class="rrow tot"><span>est. pay @ $17.70</span><b>$610.65</b></div>
+    <div class="stamp-seal">PAID FOR ✓</div>
+  </div>
+  <div class="tear"></div>
+  <div class="sp"></div>
+  <button class="btn btn-ghost" onclick="go('s-board')">← back to the board</button>
+  <div class="hint">CSV export: the Monday timesheet, in one tap (Pro)</div>
+</div>
+
+</div>
+
+<script>
+const order=['s-hero','s-connect','s-board','s-ledger'];
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active','fadein');
+  window.scrollTo(0,0);
+}
+/* connect flow */
+let step=1;
+const parts=['c-sheet','c-name','c-parse','c-cal'];
+function refreshConnect(){
+  parts.forEach((p,i)=>document.getElementById(p).style.display = i<step?'block':'none');
+  document.getElementById('step-chip').textContent = step<=4 ? 'step '+step+' of 4' : 'done';
+  document.getElementById('next-btn').textContent =
+    step===1?'Find my name in it':
+    step===2?'Parse the week':
+    step===3?'Pick my calendar':
+    'Start watching ▸';
+}
+function pick(el,name){
+  document.querySelectorAll('#name-picks .pick').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('picked').innerHTML = name==='You'
+    ? '✓ matched <b style="color:var(--green)">"You"</b> — 5 shifts, 2 off-days, 1 TBD watched'
+    : 'picked <b style="color:var(--ink)">'+name+'</b>';
+}
+function pickCal(el){
+  el.parentElement.querySelectorAll('.pick').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+}
+function nextStep(){
+  if(step<4){step++;refreshConnect();}
+  else{go('s-board');fireToast(2200);}
+}
+refreshConnect();
+/* change simulation */
+let changed=false;
+function fireToast(delay=0){
+  setTimeout(()=>{
+    const t=document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),4200);
+  },delay);
+}
+function demoChange(){
+  if(changed)return;changed=true;
+  fireToast(600);
+  setTimeout(()=>{
+    document.getElementById('tue-dt').textContent='15:00–23:00';
+    document.getElementById('tue-tm').textContent='15:00 – 23:00';
+    document.querySelector('#shift-tue .hrs').textContent='8.0h · was 11:00–19:00 (Thu 14:02)';
+  },1500);
+}
+/* swap */
+function confirmSwap(){
+  document.getElementById('swap-card').innerHTML=
+    '<div class="reply" style="color:var(--green);font-weight:600">✓ swap confirmed — Sat 10:00–18:00 synced to calendar. Marta\'s row updates on the sheet.</div>';
+  document.querySelector('#s-board .swap .stamp').textContent='SYNCED';
+  document.querySelector('#s-board .swap .stamp').className='stamp new';
+}
+/* done buttons */
+document.querySelectorAll('.done-btn').forEach(b=>{
+  b.onclick=()=>b.classList.toggle('hit');
+});
+</script>
+</body>
+</html>
