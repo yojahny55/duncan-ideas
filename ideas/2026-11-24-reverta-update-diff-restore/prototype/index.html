@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reverta — The Settings Diff for OS Updates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#101418; --panel:#1A2027; --panel2:#212933; --line:#2E3844;
+    --green:#3FB950; --cyan:#5CC8FF; --red:#E5484D; --amber:#FFB454;
+    --cream:#F4EEE2; --text:#E8ECF1; --dim:#93A1B1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .serif{font-family:'Fraunces',serif}
+  header{padding:22px 28px 10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .logo{font-family:'Fraunces',serif;font-weight:900;font-size:22px;letter-spacing:.5px}
+  .logo span{color:var(--amber)}
+  .tag{color:var(--dim);font-size:12px}
+  .stepbar{display:flex;gap:6px;padding:0 28px 14px;flex-wrap:wrap}
+  .stepbar button{background:var(--panel);border:1px solid var(--line);color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:11px;padding:7px 12px;border-radius:6px;cursor:pointer}
+  .stepbar button.on{background:var(--amber);color:var(--ink);border-color:var(--amber);font-weight:700}
+  main{padding:8px 28px 60px;max-width:1060px;margin:0 auto}
+  .screen{display:none}
+  .screen.on{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(28px,4.5vw,44px);line-height:1.1;margin-bottom:10px}
+  h1 em{font-style:normal;color:var(--amber)}
+  .sub{color:var(--dim);font-size:15px;max-width:640px;line-height:1.55}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .big{font-family:'Fraunces',serif;font-weight:900;font-size:56px;line-height:1;color:var(--text)}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:8px}
+  .btn{display:inline-block;background:var(--amber);color:var(--ink);font-weight:700;font-size:14px;padding:13px 26px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;margin-top:16px}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+  /* radar */
+  .ticker{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:22px 0;display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:13px}
+  .ticker .dot{width:9px;height:9px;border-radius:50%;background:var(--red);animation:pulse 1.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .ticker b{color:var(--amber)}
+  .risklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:14px}
+  .risk{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:8px;padding:12px 14px;font-size:13px}
+  .risk .mono{font-size:11px;color:var(--dim);display:block;margin-top:4px}
+  /* checklist */
+  .checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-top:16px}
+  .check{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:13px 15px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px;cursor:pointer;transition:border-color .2s}
+  .check:hover{border-color:var(--amber)}
+  .check .st{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);white-space:nowrap}
+  .check.done{border-color:var(--green)}
+  .check.done .st{color:var(--green)}
+  .progress{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:16px}
+  .progress i{display:block;height:100%;background:var(--green);width:0%;transition:width .3s}
+  /* flip report */
+  .verdict{display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px}
+  .verdict .n{font-family:'Fraunces',serif;font-weight:900;font-size:64px;line-height:1}
+  .verdict .n.red{color:var(--red)} .verdict .n.cyan{color:var(--cyan)} .verdict .n.green{color:var(--green)}
+  .verdict .lbl{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:6px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1px;color:var(--dim);text-transform:uppercase;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .stamp{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px;white-space:nowrap}
+  .stamp.red{background:rgba(229,72,77,.14);color:var(--red);border:1px solid var(--red)}
+  .stamp.cyan{background:rgba(92,200,255,.12);color:var(--cyan);border:1px solid var(--cyan)}
+  .stamp.green{background:rgba(63,185,80,.12);color:var(--green);border:1px solid var(--green)}
+  .ba{font-family:'JetBrains Mono',monospace;font-size:12px}
+  .ba s{color:var(--dim)}
+  .ba .to{color:var(--text);font-weight:700}
+  /* revert cards */
+  .rv{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:16px}
+  .rvcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;position:relative;transition:opacity .3s}
+  .rvcard.done{opacity:.55}
+  .rvcard h3{font-size:14px;margin-bottom:6px}
+  .rvcard .path{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);background:rgba(92,200,255,.08);border-radius:5px;padding:7px 9px;display:block;margin:8px 0;line-height:1.5}
+  .rvcard p{font-size:12.5px;color:var(--dim);line-height:1.5}
+  .rvcard .donebtn{margin-top:12px;background:transparent;border:1px solid var(--green);color:var(--green);font-family:'JetBrains Mono',monospace;font-size:11px;padding:7px 14px;border-radius:6px;cursor:pointer}
+  .rvcard.done .donebtn{background:var(--green);color:var(--ink)}
+  .meter{height:14px;background:var(--panel2);border-radius:7px;overflow:hidden;margin:8px 0 4px}
+  .meter i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--green));width:0%;transition:width .4s}
+  /* index */
+  .bars{margin-top:16px;display:grid;gap:10px}
+  .bar{display:grid;grid-template-columns:220px 1fr 90px;gap:12px;align-items:center;font-size:13px}
+  .bar .track{height:10px;background:var(--panel2);border-radius:5px;overflow:hidden}
+  .bar .track i{display:block;height:100%;background:var(--red);border-radius:5px;width:0;transition:width 1s ease}
+  .bar .pct{font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;color:var(--dim)}
+  .note{font-size:11.5px;color:var(--dim);margin-top:14px;font-style:italic}
+  /* receipt */
+  .receipt{background:var(--cream);color:#2A2620;max-width:420px;margin:24px auto 0;padding:26px 26px 34px;font-family:'JetBrains Mono',monospace;font-size:13px;position:relative;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  .receipt::after{content:"";position:absolute;left:0;right:0;bottom:-12px;height:14px;background:linear-gradient(45deg,transparent 33.33%,var(--cream) 33.33%,var(--cream) 66.67%,transparent 66.67%),linear-gradient(-45deg,transparent 33.33%,var(--cream) 33.33%,var(--cream) 66.67%,transparent 66.67%);background-size:14px 14px;background-position:0 0}
+  .receipt h2{font-family:'Fraunces',serif;font-weight:900;font-size:20px;margin-bottom:4px}
+  .receipt .rline{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #B9B0A0}
+  .receipt .stampbig{position:absolute;top:16px;right:14px;transform:rotate(8deg);border:3px solid var(--green);color:var(--green);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:13px;padding:6px 10px;border-radius:6px;letter-spacing:1px}
+  .foot{text-align:center;color:var(--dim);font-size:11.5px;margin-top:44px}
+  @media(max-width:640px){.bar{grid-template-columns:1fr;gap:4px}.bar .pct{text-align:left}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">REVERTA<span>.</span></div>
+  <div class="tag mono">the settings diff for OS updates · iOS 27.2 → demo</div>
+</header>
+<div class="stepbar">
+  <button class="on" data-s="radar">1 · RADAR</button>
+  <button data-s="baseline">2 · BASELINE</button>
+  <button data-s="diff">3 · FLIP REPORT</button>
+  <button data-s="revert">4 · REVERT</button>
+  <button data-s="index">5 · FLIP INDEX</button>
+</div>
+
+<main>
+<!-- 1 RADAR -->
+<section class="screen on" id="radar">
+  <div class="kicker">update radar</div>
+  <h1>Control Centre is broken <em>again?</em></h1>
+  <p class="sub">Apple tells you what it <b>added</b>. Nobody tells you what it <b>changed</b> on your phone. Reverta snapshots your settings before the update, diffs them after, and hands you a one-tap path back for every flip.</p>
+  <div class="ticker">
+    <span class="dot"></span>
+    <span><b>iOS 27.3</b> · ships FRI</span>
+    <span>11 Flip-Registry settings at risk</span>
+    <span class="mono">release notes digested · 14:02</span>
+  </div>
+  <div class="risklist">
+    <div class="risk">Notification grouping reset <span class="mono">risky: release note §4 “notification experience”</span></div>
+    <div class="risk">Focus mode schedules <span class="mono">risky: §6 “refined Focus controls”</span></div>
+    <div class="risk">Keyboard auto-correction default <span class="mono">risky: crowd flip 38% on 27.2</span></div>
+    <div class="risk">Background app refresh <span class="mono">risky: §9 “battery improvements”</span></div>
+    <div class="risk">Wi-Fi assist <span class="mono">risky: crowd flip 24% on 27.2</span></div>
+    <div class="risk">Dark mode schedule <span class="mono">watch: unchanged 3 releases</span></div>
+  </div>
+  <button class="btn" onclick="go('baseline')">Take the baseline — 3 min, on-device, zero credentials</button>
+</section>
+
+<!-- 2 BASELINE -->
+<section class="screen" id="baseline">
+  <div class="kicker">step 1 · pre-update snapshot</div>
+  <h1>The <em>Baseline</em></h1>
+  <p class="sub">80 settings that actually flip — not all 1,000. Tap a row; Reverta opens the setting for you, you confirm the state. Everything stays on this device.</p>
+  <div class="progress"><i id="bp"></i></div>
+  <div class="checks" id="checks"></div>
+  <button class="btn" id="snapbtn" onclick="takeSnapshot()" disabled>Snapshot taken — update away</button>
+</section>
+
+<!-- 3 DIFF -->
+<section class="screen" id="diff">
+  <div class="kicker">step 2 · post-update diff · iOS 27.2 → 27.3 (simulated)</div>
+  <h1>The <em>Flip Report</em></h1>
+  <div class="verdict">
+    <div><div class="n red">9</div><div class="lbl">SUSPECTED UPDATE FLIPS</div></div>
+    <div><div class="n cyan">3</div><div class="lbl">YOU FLIPPED</div></div>
+    <div><div class="n green">68</div><div class="lbl">UNTOUCHED</div></div>
+  </div>
+  <div class="card" style="padding:8px 12px">
+  <table>
+    <thead><tr><th>Setting</th><th>Before → After</th><th>Verdict</th><th>Window</th></tr></thead>
+    <tbody id="flips"></tbody>
+  </table>
+  </div>
+  <button class="btn" onclick="go('revert')">Revert the 9 suspects</button>
+</section>
+
+<!-- 4 REVERT -->
+<section class="screen" id="revert">
+  <div class="kicker">step 3 · the fix</div>
+  <h1><em>Revert Cards</em></h1>
+  <p class="sub">Exact path, one tap, and why it matters. Tap DONE as you go — the meter fills, the phone comes back.</p>
+  <div class="meter"><i id="rp"></i></div>
+  <div class="mono" style="font-size:12px;color:var(--dim)" id="rcount">0 of 9 reverted</div>
+  <div class="rv" id="rvcards"></div>
+  <div id="receiptwrap" style="display:none">
+    <div class="receipt">
+      <div class="stampbig">PHONE IS FINE</div>
+      <h2>REVERTA RECEIPT</h2>
+      <div class="rline"><span>DEVICE</span><span>iPhone 15 · iOS 27.3</span></div>
+      <div class="rline"><span>SUSPECTS</span><span>9</span></div>
+      <div class="rline"><span>REVERTED</span><span id="rdone">9 OF 9</span></div>
+      <div class="rline"><span>TIME ON BENCH</span><span>6 MIN</span></div>
+      <div class="rline"><span>NEXT RADAR</span><span>iOS 28 · SEPT</span></div>
+      <div style="text-align:center;margin-top:16px;letter-spacing:2px">· · · ZIGZAG TEAR · · ·</div>
+    </div>
+  </div>
+  <div style="text-align:center"><button class="btn" onclick="go('index')">See the Flip Index →</button></div>
+</section>
+
+<!-- 5 INDEX -->
+<section class="screen" id="index">
+  <div class="kicker">crowd moat · seeded from public reports — n compounding</div>
+  <h1>The <em>Flip Index</em></h1>
+  <p class="sub">What iOS 27.2 actually did to 6,412 phones. Seeded day one from Reddit/X complaint threads — every device makes it realer.</p>
+  <div class="bars">
+    <div class="bar"><span>Notification grouping</span><div class="track"><i data-w="38"></i></div><span class="pct">38% · n=2435</span></div>
+    <div class="bar"><span>Keyboard autocorrect</span><div class="track"><i data-w="31"></i></div><span class="pct">31% · n=1987</span></div>
+    <div class="bar"><span>Wi-Fi Assist</span><div class="track"><i data-w="24"></i></div><span class="pct">24% · n=1538</span></div>
+    <div class="bar"><span>Focus schedules</span><div class="track"><i data-w="19"></i></div><span class="pct">19% · n=1218</span></div>
+    <div class="bar"><span>Battery optimization</span><div class="track"><i data-w="12"></i></div><span class="pct">12% · n=770</span></div>
+    <div class="bar"><span>Dark mode schedule</span><div class="track"><i data-w="4"></i></div><span class="pct">4% · n=256</span></div>
+  </div>
+  <p class="note">Weekly SSG shelf: “iOS 27.2 changed my settings” · “Pixel November update broke” · “iPhone slow after update — what actually changed.” Median time-to-notice: 2.3 days — your baseline makes it 0.</p>
+  <div style="text-align:center"><button class="btn" onclick="go('radar')">Back to the Radar</button></div>
+</section>
+
+<div class="foot">Reverta — daily app idea 2026-11-24 · prototype only, no real device data · on-device capture, zero credentials</div>
+</main>
+
+<script>
+const CHECKS=[
+ ["Notification grouping","Grouped"],["Focus: Work schedule","On · 9–18"],
+ ["Keyboard autocorrect","On"],["Dark mode","Schedule · sunset"],
+ ["Wi-Fi Assist","Off"],["Background app refresh","On · all apps"],
+ ["Battery optimization","Standard"],["Bluetooth auto-pair","On"],
+ ["Control Center layout","Custom · 2 pages"],["App permissions · Photos","12 apps full"],
+ ["Siri suggestions","On"],["Hotspot","Off · WPA2"],
+ ["Auto-lock","2 min"],["Keyboard language","EN-US"],
+ ["Notification stacking","On per-app"],["Location services","Precise · 8 apps"],
+ ["AirDrop","Contacts"],["Screen recording","Off"]
+];
+const FLIPS=[
+ ["Notification grouping","Grouped","Stacked","UPDATE","in window"],
+ ["Keyboard autocorrect","On","Off","UPDATE","in window"],
+ ["Wi-Fi Assist","Off","On","UPDATE","in window"],
+ ["Focus: Work schedule","On · 9–18","Off","UPDATE","in window"],
+ ["Background app refresh","On · all","On · manual","UPDATE","in window"],
+ ["Control Center layout","Custom · 2p","Default · 1p","UPDATE","in window"],
+ ["Dark mode","Schedule","Auto","UPDATE","in window"],
+ ["Siri suggestions","On","Off","UPDATE","in window"],
+ ["Location · Maps","Precise","Approx.","UPDATE","in window"],
+ ["Hotspot","Off · WPA2","Off · WPA3","YOU","3d ago"],
+ ["Screen recording","Off","Off · mirror","YOU","1d ago"],
+ ["Auto-lock","2 min","5 min","YOU","6d ago"]
+];
+const WHY={
+ "Notification grouping":"this is why your Focus notifications went quiet — grouped stacks collapse per-app banners",
+ "Keyboard autocorrect":"your messages are being ‘fixed’ since Friday",
+ "Wi-Fi Assist":"your data plan got tapped by the router — the ‘slow at home’ cause",
+ "Focus: Work schedule":"work alerts are now hitting you at 11pm",
+ "Background app refresh":"music and mail now wake late — the battery-drain suspect",
+ "Control Center layout":"your second page of toggles is gone",
+ "Dark mode":"the midnight white-screen surprise",
+ "Siri suggestions":"the home-screen clutter you removed in 27.1, back",
+ "Location · Maps":"your commute history precision just dropped — and re-tracks coarser"
+};
+const checks=document.getElementById('checks');
+let doneN=0;
+CHECKS.forEach(([n,s])=>{
+  const d=document.createElement('div');d.className='check';
+  d.innerHTML=`<span>${n}</span><span class="st">${s} → confirm</span>`;
+  d.onclick=()=>{if(d.classList.contains('done'))return;d.classList.add('done');d.querySelector('.st').textContent='✓ '+s;doneN++;
+    document.getElementById('bp').style.width=(doneN/CHECKS.length*100)+'%';
+    if(doneN>=CHECKS.length){const b=document.getElementById('snapbtn');b.disabled=false;b.textContent='Snapshot taken · '+new Date().toLocaleTimeString()+' — update away';}};
+  checks.appendChild(d);
+});
+const flips=document.getElementById('flips');
+FLIPS.forEach(([n,b,a,v,w])=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><b>${n}</b></td><td class="ba"><s>${b}</s> → <span class="to">${a}</span></td><td><span class="stamp ${v==='UPDATE'?'red':'cyan'}">${v==='UPDATE'?'⚑ UPDATE FLIP':'YOU FLIPPED'}</span></td><td class="mono" style="font-size:11px;color:var(--dim)">${w}</td>`;
+  flips.appendChild(tr);
+});
+const suspects=FLIPS.filter(f=>f[3]==='UPDATE');
+const rv=document.getElementById('rvcards');
+let rvDone=0;
+suspects.forEach(([n,b,a])=>{
+  const c=document.createElement('div');c.className='rvcard';
+  c.innerHTML=`<h3>${n}</h3><span class="stamp red">⚑ ${b} → ${a}</span><span class="path">Settings › General › ${n==='Dark mode'?'Appearance':n==='Location · Maps'?'Privacy & Security › Location Services':n==='Wi-Fi Assist'?'Network › Wi-Fi':'Keyboard'}</span><p>${WHY[n]}</p><button class="donebtn">REVERT · DONE</button>`;
+  c.querySelector('.donebtn').onclick=()=>{c.classList.add('done');rvDone++;
+    document.getElementById('rp').style.width=(rvDone/suspects.length*100)+'%';
+    document.getElementById('rcount').textContent=rvDone+' of '+suspects.length+' reverted';
+    if(rvDone===suspects.length){document.getElementById('receiptwrap').style.display='block';setTimeout(()=>document.getElementById('receiptwrap').scrollIntoView({behavior:'smooth'}),150);}};
+  rv.appendChild(c);
+});
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.stepbar button').forEach(b=>b.classList.toggle('on',b.dataset.s===id));
+  if(id==='index')document.querySelectorAll('.bar .track i').forEach(i=>{i.style.width=i.dataset.w+'%'});
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.stepbar button').forEach(b=>b.onclick=()=>go(b.dataset.s));
+</script>
+</body>
+</html>
