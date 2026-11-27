@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpecCheck — Proof You're Getting What You Paid For</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">🔬</span>
+    <div>
+      <div class="brand-name">SpecCheck</div>
+      <div class="brand-sub">THE AI PLAN AUDIT · PROOF YOU'RE GETTING WHAT YOU PAID FOR</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-view="spec">The Spec</button>
+    <button class="tab" data-view="audit">Audit</button>
+    <button class="tab" data-view="ledger">Ledger</button>
+    <button class="tab" data-view="registry">Cutoff Registry</button>
+    <button class="tab" data-view="receipt">Receipt</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ THE SPEC ============ -->
+  <section id="view-spec" class="view active">
+    <div class="radar-ticker" aria-hidden="true">
+      <span class="tick">DEC 1 · CHATGPT + CODEX METERS MERGE — SPEC v12 RECORDING</span>
+      <span class="dot">·</span>
+      <span class="tick">NOV 26 · OPENAI CORRECTED GPT-6.2 ASTRa BILLING — ALLOWANCE DEPLETING 40% FASTER</span>
+      <span class="dot">·</span>
+      <span class="tick">NOV 24 · STEALTH OPUS 5.6 PROBE WAVE — REGISTRY FLAGGED</span>
+      <span class="dot">·</span>
+      <span class="tick">CUT-OFF REGISTRY: 7 SOURCES, 7 DATES — CROWD-VERIFIED n=412</span>
+    </div>
+
+    <div class="spec-hero">
+      <div class="spec-card">
+        <div class="spec-card-head">
+          <span class="spec-tool">CLAUDE</span>
+          <span class="spec-plan chip chip-cyan">PRO · $20/MO</span>
+          <span class="spec-specver chip">SPEC v11 · 11-20</span>
+        </div>
+        <table class="spec-table">
+          <tr><td>Promised model</td><td class="mono">Opus 5.5</td></tr>
+          <tr><td>Published cutoff</td><td class="mono">June 2026 <span class="flag">⚑ 2 sources say May</span></td></tr>
+          <tr><td>Available in tier</td><td class="mono">Opus 5.5 · Sonnet 5.5 · Haiku 5.5</td></tr>
+          <tr><td>Stated meters</td><td class="mono">5h session window · weekly cap</td></tr>
+          <tr><td>Tools / search</td><td class="mono">on (opt-out available)</td></tr>
+        </table>
+        <div class="spec-note">The Spec is the contract text the consumer currently doesn't have — curated from official pages, community-verified, dated, versioned.</div>
+      </div>
+
+      <div class="score-panel">
+        <div class="score-label">SPEC SCORE</div>
+        <div class="dial-wrap">
+          <div class="dial" id="dial">
+            <svg viewBox="0 0 120 120"><circle class="dial-bg" cx="60" cy="60" r="52"/><circle class="dial-arc" id="dialArc" cx="60" cy="60" r="52"/></svg>
+            <div class="dial-center"><span class="dial-num" id="dialNum">--</span><span class="dial-unit">/100</span></div>
+          </div>
+        </div>
+        <div class="verdict-stamp" id="verdictStamp">UNVERIFIED</div>
+        <p class="lab-voice" id="labVoice">No audit on record for this tool. The lab can't certify what it hasn't measured. Run the audit — 2 minutes, paste-in/paste-out, zero credentials.</p>
+        <button class="cta" id="runAuditBtn">▶ RUN THE AUDIT</button>
+      </div>
+    </div>
+
+    <h2 class="section-title">This week's deviations, straight from X</h2>
+    <div class="story-grid">
+      <article class="story-card">
+        <div class="story-date mono">NOV 26 · X</div>
+        <h3>THE SILENT RE-PRICE</h3>
+        <p><span class="mono">@thsottiaux</span>: "We made a billing mistake at launch of GPT-6.2 that incorrectly discounted Astra &amp; Sol usage for most users." Fixed → <strong>limits deplete ~40% faster</strong>. Remedy: one-time reset. X: "insufficient."</p>
+        <span class="story-tag">meter · billing</span>
+      </article>
+      <article class="story-card">
+        <div class="story-date mono">NOV 24–26 · X</div>
+        <h3>THE SILENT SWAP</h3>
+        <p>Users probe a <strong>stealth Opus 5.6</strong> in the normal Claude UI: knowledge-cutoff test ("it knows May 2026 news — impossible for a June-2025-cutoff model") + render demos. Results inconsistent across accounts = limited rollout. Anthropic: no comment.</p>
+        <span class="story-tag">model identity</span>
+      </article>
+      <article class="story-card">
+        <div class="story-date mono">NOV 25 · X → PRESS</div>
+        <h3>THE SILENT DOWNGRADE</h3>
+        <p>"Can Claude stop treating every question like I'm planning a crime?" — and the smoking gun: security-topic prompts <strong>auto-route from Opus 5.5 to Opus 4.8</strong>. Professional work, quieter model, no label. (India Today, Nov 25)</p>
+        <span class="story-tag">defensive routing</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ AUDIT ============ -->
+  <section id="view-audit" class="view">
+    <h2 class="section-title">The Audit — four probes, two minutes, zero credentials</h2>
+    <p class="lab-voice">Paste-in/paste-out: the constraint that makes it work on every surface — web, desktop, mobile, CLI. No logins. No API. The provider can route anything; the probe doesn't care.</p>
+
+    <div class="probe-list" id="probeList">
+      <div class="probe" id="probe-0">
+        <div class="probe-head"><span class="probe-idx mono">P1</span><span class="probe-name">Cutoff Probe</span><span class="probe-state" data-state="idle">READY</span></div>
+        <div class="probe-detail">Post-cutoff event bank · tools-off checklist · expected-answer scoring</div>
+        <div class="probe-result" data-result></div>
+      </div>
+      <div class="probe" id="probe-1">
+        <div class="probe-head"><span class="probe-idx mono">P2</span><span class="probe-name">Capability Probe</span><span class="probe-state" data-state="idle">READY</span></div>
+        <div class="probe-detail">5 standardized prompts · fixed rubric · LLM-judge 0–100</div>
+        <div class="probe-result" data-result></div>
+      </div>
+      <div class="probe" id="probe-2">
+        <div class="probe-head"><span class="probe-idx mono">P3</span><span class="probe-name">Feature Check</span><span class="probe-state" data-state="idle">READY</span></div>
+        <div class="probe-detail">Does the tier expose the promised models, tools, and windows?</div>
+        <div class="probe-result" data-result></div>
+      </div>
+      <div class="probe" id="probe-3">
+        <div class="probe-head"><span class="probe-idx mono">P4</span><span class="probe-name">Defensive-Route Check</span><span class="probe-state" data-state="idle">READY</span></div>
+        <div class="probe-detail">Paired prompts: direct framing vs benign framing → model/behavior tier diff</div>
+        <div class="probe-result" data-result></div>
+      </div>
+    </div>
+
+    <button class="cta big" id="startProbesBtn">▶ START PROBES</button>
+    <div class="audit-verdict" id="auditVerdict" hidden>
+      <div class="verdict-stamp red" id="auditStamp">DEVIATION</div>
+      <p class="lab-voice" id="auditVoice"></p>
+      <button class="cta" id="toReceiptBtn">VIEW THE RECEIPT →</button>
+    </div>
+  </section>
+
+  <!-- ============ LEDGER ============ -->
+  <section id="view-ledger" class="view">
+    <h2 class="section-title">The Ledger — when your delivery changed, in writing</h2>
+    <p class="lab-voice">SpecCheck never declares "this IS Opus 5.6." It shows <strong>when your delivery changed</strong> — dated, probe-stamped, against the crowd median. That timeline doesn't exist anywhere else.</p>
+
+    <div class="ledger">
+      <div class="ledger-line"><span class="ledger-dot d-green"></span><span class="ledger-date mono">10-19</span><span class="ledger-text">Baseline audit · Capability <span class="mono">87</span> · Cutoff CONSISTENT · <em>median 87 (n=2,114)</em></span></div>
+      <div class="ledger-line"><span class="ledger-dot d-green"></span><span class="ledger-date mono">10-27</span><span class="ledger-text">Capability <span class="mono">85</span> · Cutoff CONSISTENT · no spec change</span></div>
+      <div class="ledger-line drift"><span class="ledger-dot d-amber"></span><span class="ledger-date mono">11-20</span><span class="ledger-text"><strong>DRIFT</strong> · Capability <span class="mono">87 → 74</span> · <em>median 86 (n=3,908) — your tool is 12 below the crowd</em></span></div>
+      <div class="ledger-line drift"><span class="ledger-dot d-red"></span><span class="ledger-date mono">11-24</span><span class="ledger-text"><strong>FLAG</strong> · Cutoff probe CONSISTENT → <strong>NEWER-THAN-SPEC</strong> · "stealth rollout" band opens · Spec v11 re-verified from official page (unchanged)</span></div>
+      <div class="ledger-line"><span class="ledger-dot d-cyan"></span><span class="ledger-date mono">11-26</span><span class="ledger-text">Change Radar · CHATGPT+CODEX meter merge effective DEC 1 recorded · Claude spec unchanged · audit re-run queued</span></div>
+    </div>
+
+    <div class="crowd-panel">
+      <div class="crowd-title">CROWD MEDIAN · CLAUDE PRO · CAPABILITY</div>
+      <div class="crowd-bars" id="crowdBars"></div>
+      <div class="crowd-note">Every user's audit (anonymized, no prompts stored) thickens the median. The drift you feel is the band you're compared to.</div>
+    </div>
+  </section>
+
+  <!-- ============ REGISTRY ============ -->
+  <section id="view-registry" class="view">
+    <h2 class="section-title">The Cutoff Registry — crowd-verified, disagreement-flagged</h2>
+    <p class="lab-voice">Seven tracker blogs, seven different dates for the same models. The Registry records every source, every date, and what <em>n</em> probes actually measured.</p>
+    <table class="registry">
+      <thead><tr><th>MODEL</th><th>PUBLISHED CUT-OFF</th><th>SOURCES</th><th>CROWD-VERIFIED</th><th>n</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">GPT-6.2 Astra</td><td class="mono">Jun 2026</td><td class="mono">3 agree · 1 says Apr</td><td class="mono green">Jun 2026</td><td class="mono">1,204</td></tr>
+        <tr><td class="mono">GPT-6.2 Sol</td><td class="mono">Jun 2026</td><td class="mono">3 agree</td><td class="mono green">Jun 2026</td><td class="mono">988</td></tr>
+        <tr class="flag-row"><td class="mono">Opus 5.5</td><td class="mono">Jun 2026 <span class="flag">⚑ 2 say May</span></td><td class="mono">5 agree · 2 disagree</td><td class="mono green">Jun 2026</td><td class="mono">1,731</td></tr>
+        <tr class="flag-row alert"><td class="mono">"Opus 5.6" (unverified)</td><td class="mono">— none published</td><td class="mono">X probe cluster · no lab confirmation</td><td class="mono amber">NEWER-THAN-SPEC · 61 probes</td><td class="mono">61</td></tr>
+        <tr><td class="mono">Gemini 4 Neon</td><td class="mono">Mar 2026</td><td class="mono">4 agree</td><td class="mono green">Mar 2026</td><td class="mono">2,450</td></tr>
+        <tr><td class="mono">Grok 4.7</td><td class="mono">May 2026</td><td class="mono">4 agree</td><td class="mono green">May 2026</td><td class="mono">1,902</td></tr>
+      </tbody>
+    </table>
+    <div class="seo-strip">
+      <span class="chip">is opus 5.6 real</span>
+      <span class="chip">claude pro which model am i getting</span>
+      <span class="chip">chatgpt plus 5-hour limit changed</span>
+      <span class="chip">gpt-6.2 billing error what to ask for</span>
+      <span class="chip weekly">weekly SSG · refreshed every model cycle</span>
+    </div>
+  </section>
+
+  <!-- ============ RECEIPT ============ -->
+  <section id="view-receipt" class="view">
+    <h2 class="section-title">The Receipt — the thing "it feels dumber" was missing</h2>
+    <div class="receipt-wrap">
+      <div class="receipt" id="receipt">
+        <div class="receipt-top">
+          <div class="receipt-brand">🔬 SPECHECK · CERTIFICATE OF CONFORMANCE</div>
+          <div class="receipt-hash mono" id="receiptHash">SHA-256 · 9f3c…a41e</div>
+        </div>
+        <div class="receipt-row"><span>TOOL</span><span class="mono">CLAUDE PRO · $20/MO</span></div>
+        <div class="receipt-row"><span>AUDIT</span><span class="mono">2026-11-27 06:02 UTC · 4/4 PROBES</span></div>
+        <div class="receipt-row"><span>SPEC</span><span class="mono">OPUS 5.5 · CUT-OFF JUN 2026 · SPEC v11</span></div>
+        <div class="receipt-row"><span>P1 CUT-OFF</span><span class="mono red">NEWER-THAN-SPEC (stealth rollout band)</span></div>
+        <div class="receipt-row"><span>P2 CAPABILITY</span><span class="mono">74 · MEDIAN 86 (n=3,908) · Δ −12</span></div>
+        <div class="receipt-row"><span>P3 FEATURES</span><span class="mono green">ALL PROMISED FEATURES PRESENT</span></div>
+        <div class="receipt-row"><span>P4 DEFENSIVE-ROUTE</span><span class="mono amber">1 HIT · SECURITY TOPIC → PRIOR TIER</span></div>
+        <div class="receipt-verdict"><span class="verdict-stamp red small">DEVIATION</span></div>
+        <div class="receipt-foot">
+          <span class="mono">LEDGER: 5 ENTRIES · FIRST DRIFT 11-20</span>
+          <span class="mono qr">▦</span>
+        </div>
+      </div>
+      <div class="tear" aria-hidden="true"></div>
+    </div>
+
+    <div class="appeal-panel">
+      <h3 class="section-title small">The Appeal Kit — from evidence to leverage</h3>
+      <div class="appeal-tabs">
+        <button class="atab active">Support ticket</button>
+        <button class="atab">X post</button>
+        <button class="atab">Compensation ask</button>
+      </div>
+      <div class="appeal-body mono" id="appealBody">
+Subject: Claude Pro — delivery deviating from plan (evidence attached)
+
+Your plan page states Opus 5.5, published cutoff June 2026.
+Attached: SpecCheck ledger, 5 dated audits (10-19 → 11-27), hash 9f3c…a41e.
+- 11-20: capability score dropped 87 → 74 (crowd median that day: 86, n=3,908)
+- 11-24: cutoff probe indicates training data past the published cutoff
+- 11-27: paired-prompt test: security-topic prompt routed to a prior model tier
+Please clarify which model(s) serve Claude Pro accounts and what remedy applies
+when delivered quality deviates from the stated plan.
+      </div>
+      <p class="lab-voice small">You review. You send. SpecCheck never posts for you — the appeal is yours, it just comes pre-drafted with exhibits.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  SpecCheck · a Duncan's Daily App Ideas prototype · 2026-11-27 · source: X/Twitter (GPT-6.2 billing correction Nov 26 · stealth Opus 5.6 probe wave Nov 24–26 · Claude defensive-routing story Nov 25)
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
