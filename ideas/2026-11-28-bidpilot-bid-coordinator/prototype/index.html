@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BidPilot — The Bid Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ======= HEADER ======= -->
+  <header class="hdr">
+    <div class="hdr-top">
+      <div class="brand">
+        <span class="brand-mark">◍</span>
+        <div>
+          <h1>BidPilot</h1>
+          <p class="brand-sub">THE BID DESK</p>
+        </div>
+      </div>
+      <div class="scope-chip" title="The identical scope doc sent to every bidder">
+        <span class="scope-chip-label">SCOPE DOC</span>
+        <span class="scope-chip-ver mono">v2 · shared 4/4</span>
+      </div>
+    </div>
+    <div class="proj">
+      <h2>Kitchen Remodel — Maple St.</h2>
+      <p class="proj-meta mono">SCOPE v2 · 2 QUOTES IN · 4 BIDDERS · DUE DEC 14</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-num mono" id="stat-fees">$425</span>
+        <span class="stat-label">EST. FEES PAID</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num mono" id="stat-silent">1</span>
+        <span class="stat-label">GHOSTING</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num mono" id="stat-quotes">2/4</span>
+        <span class="stat-label">QUOTES IN</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======= TABS ======= -->
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="board" role="tab">Bid Board</button>
+    <button class="tab" data-tab="ledger" role="tab">Fee Ledger</button>
+    <button class="tab" data-tab="compare" role="tab">Compare</button>
+  </nav>
+
+  <!-- ======= BID BOARD ======= -->
+  <main class="view" id="view-board">
+    <div class="board-note">
+      <strong>Same scope, every bidder.</strong> v2 sent to all 4 on Nov 20. Response speed is a hiring signal — the fast quoter is usually the fast responder mid-project.
+    </div>
+
+    <article class="bidder ok" data-id="marcus">
+      <div class="bidder-head">
+        <div class="bidder-id">
+          <span class="bidder-name">Marcus Electric &amp; Remodel</span>
+          <span class="chip chip-quote">QUOTE RECEIVED</span>
+        </div>
+        <span class="fee-chip mono">$150 · CREDITED IF HIRED</span>
+      </div>
+      <div class="bidder-meta">
+        <div class="meter" title="First response: 1 day">
+          <span class="meter-label">RESPONSE</span>
+          <div class="meter-track"><div class="meter-fill fast" style="width:92%"></div></div>
+          <span class="meter-val mono">QUOTE IN 4 DAYS</span>
+        </div>
+        <div class="bidder-quote mono">QUOTE $18,400 · NET $18,250</div>
+      </div>
+      <div class="bidder-actions">
+        <button class="btn btn-ghost" data-nudge="marcus">Nudge</button>
+        <button class="btn btn-hire" data-hire="marcus">Hire</button>
+      </div>
+    </article>
+
+    <article class="bidder ok" data-id="lena">
+      <div class="bidder-head">
+        <div class="bidder-id">
+          <span class="bidder-name">Lena &amp; Co. Roofing</span>
+          <span class="chip chip-visit">VISIT SCHEDULED</span>
+        </div>
+        <span class="fee-chip mono">$75 · NON-REFUNDABLE</span>
+      </div>
+      <div class="bidder-meta">
+        <div class="meter" title="First response: 2 days">
+          <span class="meter-label">RESPONSE</span>
+          <div class="meter-track"><div class="meter-fill mid" style="width:68%"></div></div>
+          <span class="meter-val mono">FIRST REPLY 2 DAYS</span>
+        </div>
+        <div class="bidder-quote mono">VISIT DEC 2 · QUOTE PENDING</div>
+      </div>
+      <div class="bidder-actions">
+        <button class="btn btn-ghost" data-nudge="lena">Confirm visit</button>
+      </div>
+    </article>
+
+    <article class="bidder warn" data-id="denny">
+      <div class="bidder-head">
+        <div class="bidder-id">
+          <span class="bidder-name">Denny's Plumbing &amp; General</span>
+          <span class="chip chip-ghost">GHOSTING</span>
+        </div>
+        <span class="fee-chip mono">$100 · CREDITED IF HIRED</span>
+      </div>
+      <div class="bidder-meta">
+        <div class="meter" title="First response: never">
+          <span class="meter-label">RESPONSE</span>
+          <div class="meter-track"><div class="meter-fill slow" style="width:8%"></div></div>
+          <span class="meter-val mono">12 DAYS SILENT · 2 NUDGES</span>
+        </div>
+        <div class="bidder-quote mono">QUOTE $16,900 (EMAIL) · SEE COMPARE</div>
+      </div>
+      <div class="bidder-actions">
+        <button class="btn btn-ghost" data-nudge="denny">Final notice</button>
+        <button class="btn btn-drop" data-drop="denny">Drop</button>
+      </div>
+    </article>
+
+    <article class="bidder warn" data-id="ray">
+      <div class="bidder-head">
+        <div class="bidder-id">
+          <span class="bidder-name">Ray HVAC</span>
+          <span class="chip chip-invited">INVITED</span>
+        </div>
+        <span class="fee-chip mono">$100 · PREPAID</span>
+      </div>
+      <div class="bidder-meta">
+        <div class="meter">
+          <span class="meter-label">RESPONSE</span>
+          <div class="meter-track"><div class="meter-fill slow" style="width:12%"></div></div>
+          <span class="meter-val mono">6 DAYS SILENT · 1 NUDGE</span>
+        </div>
+        <div class="bidder-quote mono">SCOPE v2 SENT NOV 20</div>
+      </div>
+      <div class="bidder-actions">
+        <button class="btn btn-ghost" data-nudge="ray">Nudge</button>
+      </div>
+    </article>
+
+    <div class="log" id="log">
+      <div class="log-title">NUDGE LOG</div>
+    </div>
+  </main>
+
+  <!-- ======= FEE LEDGER ======= -->
+  <main class="view hidden" id="view-ledger">
+    <div class="receipt">
+      <div class="receipt-head">
+        <div class="receipt-brand">BIDPILOT FEE LEDGER</div>
+        <div class="mono receipt-date">KITCHEN REMODEL — MAPLE ST. · DEC 2026</div>
+      </div>
+      <div class="receipt-rows" id="fee-rows"></div>
+      <div class="receipt-total">
+        <span>GROSS SPENT ON BIDDING</span>
+        <span class="mono" id="fee-gross">$425</span>
+      </div>
+      <div class="receipt-tear"></div>
+      <div class="net-section">
+        <div class="net-title">NET COST IF YOU HIRE…</div>
+        <div class="net-rows" id="net-rows"></div>
+      </div>
+    </div>
+
+    <form class="fee-form" id="fee-form">
+      <div class="fee-form-title">ADD FEE</div>
+      <div class="fee-form-grid">
+        <select id="fee-vendor">
+          <option>Marcus Electric &amp; Remodel</option>
+          <option>Lena &amp; Co. Roofing</option>
+          <option>Denny's Plumbing &amp; General</option>
+          <option>Ray HVAC</option>
+        </select>
+        <input id="fee-amount" type="number" min="1" placeholder="$ amount" required>
+        <select id="fee-terms">
+          <option value="credited">Credited if hired</option>
+          <option value="nonrefundable">Non-refundable</option>
+        </select>
+        <button class="btn btn-primary" type="submit">Log it</button>
+      </div>
+      <div class="fairness" id="fairness">
+        <span class="fairness-flag">⚑</span> Fee fairness: $65–$150 is the 2025–26 typical range (crowd data, n=212 in your metro). Fees surfaced <em>after</em> the visit are the top complaint in the r/HomeImprovement cluster.
+      </div>
+    </form>
+  </main>
+
+  <!-- ======= COMPARE ======= -->
+  <main class="view hidden" id="view-compare">
+    <div class="alert">
+      <span class="alert-icon">⚠</span>
+      <div>
+        <strong>Denny looks cheapest on paper. He isn't.</strong>
+        <span>Permits and haul-away are unstated. After adds, Denny runs <span class="mono">+$750</span> over Marcus — not <span class="mono">−$1,500</span> under.</span>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th class="line-col">LINE ITEM</th>
+            <th>MARCUS</th>
+            <th>LENA*</th>
+            <th>DENNY</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Demo &amp; haul-away</td>
+            <td class="mono">$2,100</td>
+            <td class="cell-missing"><span class="stamp">MISSING</span></td>
+            <td class="cell-missing"><span class="stamp">MISSING</span></td>
+          </tr>
+          <tr>
+            <td>Permits</td>
+            <td class="mono">$950</td>
+            <td class="cell-missing"><span class="stamp">MISSING</span></td>
+            <td class="cell-excluded"><span class="stamp">EXCLUDED</span></td>
+          </tr>
+          <tr>
+            <td>Cabinets &amp; counters (mid tier)</td>
+            <td class="mono">$6,800</td>
+            <td class="mono">$6,450</td>
+            <td class="mono">$6,100</td>
+          </tr>
+          <tr>
+            <td>Electrical / plumbing labor</td>
+            <td class="mono">$5,200</td>
+            <td class="mono">$4,900</td>
+            <td class="mono">$4,750</td>
+          </tr>
+          <tr>
+            <td>Appliance hookup</td>
+            <td class="mono">$450</td>
+            <td class="mono">$450</td>
+            <td class="mono">$450</td>
+          </tr>
+          <tr>
+            <td>Warranty</td>
+            <td class="cell-note">2 yr workmanship</td>
+            <td class="cell-note">1 yr</td>
+            <td class="cell-excluded"><span class="stamp">EXCLUDED</span></td>
+          </tr>
+          <tr class="total-row">
+            <td>TOTAL (as quoted)</td>
+            <td class="mono">$18,400</td>
+            <td class="mono mono-pending">PENDING</td>
+            <td class="mono">$16,900</td>
+          </tr>
+          <tr class="total-row net">
+            <td>EFFECTIVE*</td>
+            <td class="mono">$18,250</td>
+            <td class="mono mono-pending">PENDING</td>
+            <td class="mono">$19,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="matrix-foot">* Effective = as-quoted + standard adds for MISSING/EXCLUDED items (permits $950, haul-away $1,250) − fee credit if hired. Every parsed cell is reviewable — you are the auditor, the app is the clerk.</p>
+
+    <div class="memo">
+      <div class="memo-title">DECISION MEMO <span class="mono">1 PAGE · FRIDGE-PIN SIZED</span></div>
+      <ul>
+        <li><strong>Scope:</strong> v2, shared 4/4, Nov 20.</li>
+        <li><strong>Bidding cost so far:</strong> <span class="mono">$425</span> gross — $150 of it credited back if you hire Marcus.</li>
+        <li><strong>Real spread:</strong> <span class="mono">$18,250 → $19,000</span> effective — the "cheapest" bid is $750 MORE, not the $1,500 the paper gap claims.</li>
+        <li><strong>Open questions before signing:</strong> Denny — permits &amp; haul-away in writing; Lena — visit Dec 2, chase the fee terms; Marcus — 40% deposit vs. 30/30/40.</li>
+        <li><strong>Signal check:</strong> Marcus quoted in 4 days; Denny 12 days silent. That ratio predicts project-weeks communication.</li>
+      </ul>
+      <button class="btn btn-primary memo-btn" id="memo-btn">Generate full memo (PDF)</button>
+    </div>
+  </main>
+
+  <footer class="foot mono">BIDPILOT PROTOTYPE · ONE SCOPE · EVERY BIDDER TRACKED · EVERY FEE ON THE LEDGER</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
